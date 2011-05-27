@@ -307,14 +307,14 @@ public class PongLogic implements Logic {
 		data.setPlayer1Score(player1Score);
 		data.setPlayer2Score(player2Score);
 		
-		Data.save(NAME, parent, data);
+		Data.saveObject(NAME, parent, data);
 	}
 
 	@Override
 	public void load(Activity parent) {
 		try {
 			//load data
-			PongData data = (PongData)Data.load(NAME, parent);
+			PongData data = (PongData)Data.loadObject(NAME, parent);
 			this.ballVelX = data.getBallVelX();
 			this.ballVelY = data.getBallVelY();
 			this.ballX = data.getBallX();
