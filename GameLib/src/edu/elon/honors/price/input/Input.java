@@ -210,7 +210,16 @@ public final class Input {
 	 * @return True if the event was successfully handled
 	 */
 	public static boolean onTouch(View v, MotionEvent event) {
-		//record the TouchEvent, but don't process it until the next frame
+		
+		//We want to override the last event if it wasn't up or down
+		if (touchEvents.size() > 0) {
+			TouchEvent e = touchEvents.get(0);
+			if (!(e.getAction() == MotionEvent.ACTION_DOWN || 
+					e.getAction() == MotionEvent.ACTION_UP)) {
+				touchEvents.remove(0);
+			}
+		}
+		//record the TouchEvent, but don't process it until the next frame			
 		touchEvents.add(new TouchEvent(event));
 		return true;
 	}
