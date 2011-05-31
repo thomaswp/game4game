@@ -199,6 +199,7 @@ public class AsteroidsLogic implements Logic {
 			float y = (float)(Math.sin(dir) * rad) + data.shipY;
 			Bullet b = new Bullet(x, y, dir);
 			b.sprite = getNewBullet();
+			b.updateSprite();
 			data.bullets.add(b);
 		}
 		
