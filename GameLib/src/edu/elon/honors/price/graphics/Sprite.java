@@ -33,9 +33,11 @@ public class Sprite implements Comparable<Sprite> {
 
 	private Canvas bitmapCanvas;
 
+	//Matrix to transform this sprite to its location, zoom and rotation
 	private Matrix drawMatrix;
-
+	//Region of this sprite, not including transparent area
 	private Region collidableRegion;
+	//A path created for the bitmap of the opaque regions
 	private Path bitmapPath;
 
 	/**
@@ -68,6 +70,7 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setBitmap(Bitmap bitmap) {
 		this.bitmap = bitmap;
+		//the bitmap has changed, so reset the path
 		bitmapPath = null;
 		if (isMutable()) {
 			bitmapCanvas.setBitmap(bitmap);
@@ -78,10 +81,14 @@ public class Sprite implements Comparable<Sprite> {
 
 	/**
 	 * Gets the Canvas used to draw on this Sprite's Bitmap.
-	 * Returns null if the Bitmap is not mutable.
+	 * Returns null if the Bitmap is not mutable. Do not store
+	 * the bitmap canvas. This may cause unexpected results.
+	 * Reacquire it each time you access it.
 	 * @return The Canvas
 	 */
 	public Canvas getBitmapCanvas() {
+		//If the player gets the canvas, they may alter it
+		//so reset the path
 		bitmapPath = null;
 		return bitmapCanvas;
 	}
@@ -189,6 +196,11 @@ public class Sprite implements Comparable<Sprite> {
 		return (int)(bitmap.getHeight() * zoom);
 	}
 
+	/**
+	 * Gets the Rect of this sprite, or the Bitmap's Rect
+	 * transformed by this Sprite's transform Matrix.
+	 * @return
+	 */
 	public RectF getRect() {
 		RectF r = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
 		RectF r2 = new RectF();
@@ -246,14 +258,31 @@ public class Sprite implements Comparable<Sprite> {
 		}
 	}
 
+	/**
+	 * Gets the zoom of this sprite.
+	 * Zoom of less than 1.0 shrinks the image and
+	 * more than 1.0 enlarges it.
+	 * @return The zoom
+	 */
 	public float getZoom() {
 		return zoom;
 	}
 
+	/**
+	 * Sets the zoom of this sprite.
+	 * Zoom of less than 1.0 shrinks the image and
+	 * more than 1.0 enlarges it.
+	 * @param zoom The zoom
+	 */
 	public void setZoom(float zoom) {
 		this.zoom = zoom;
 	}
 
+	/**
+	 * Gets the rotation of this Sprite.
+	 * Rotation ranges from 0 to 360 degrees with 0 being North.
+	 * @return The rotation
+	 */
 	public float getRotation() {
 		return rotation;
 	}
@@ -263,10 +292,23 @@ public class Sprite implements Comparable<Sprite> {
 		return drawMatrix;
 	}
 
+	/**
+	 * Sets the rotation of this Sprite.
+	 * Rotation ranges from 0 to 360 degrees with 0 being North.
+	 * @param rotation The rotation
+	 */
 	public void setRotation(float rotation) {
-		this.rotation = rotation;
+		this.rotation = rotation % 360;
+		while (this.rotation < 0)
+			this.rotation += 360;
 	}
 
+	/**
+	 * Gets the collidable region for this sprite.
+	 * This region includes all opaque regions of the bitmap
+	 * transformed to the current location of the sprite.
+	 * @return
+	 */
 	public Region getCollidableRegion() {
 		createCollidableRegion();
 		return collidableRegion;
@@ -311,6 +353,12 @@ public class Sprite implements Comparable<Sprite> {
 		viewport.removeSprite(this);
 	}
 
+	/**
+	 * Gets the region of intersection between this sprite
+	 * and another Sprite. If empty the two Sprites are disjoint.
+	 * @param sprite The sprite to test
+	 * @return The region of intersection.
+	 */
 	public Region intersection(Sprite sprite) {
 		if (sprite.getRect().intersect(getRect())) {
 			Region r = new Region(getCollidableRegion());
@@ -321,6 +369,9 @@ public class Sprite implements Comparable<Sprite> {
 		}
 	}
 
+	/**
+	 * Centers the origin of this Sprite.
+	 */
 	public void centerOrigin() {
 		originX = getWidth() / 2;
 		originY = getHeight() / 2;
@@ -365,23 +416,30 @@ public class Sprite implements Comparable<Sprite> {
 
 		bitmapPath = new Path();
 
+		//points = points in the path, checks = accuracy of the path
 		int points = 120, checks = 60;
 
 		int width = bitmap.getWidth();
 		int height = bitmap.getHeight();
 
+		//middle x and y
 		double mX = width / 2.0, mY = height / 2.0;
 
+		//dTheta
 		double dT = Math.PI * 2 / points;
 
+		//have we started the path
 		boolean start = false;
 
 		for (int i = 0; i < points - 1; i ++) {
+			//increase theta - calculate sin and cos
 			double theta = dT * i;
 			double sin = Math.sin(theta);
 			double cos = Math.cos(theta);
 			double length;
 
+			//find out the max possible length of a line at this angle
+			//going out from the origin
 			if (cos == 0)
 				length = mY;
 			else if (sin == 0)
@@ -389,22 +447,29 @@ public class Sprite implements Comparable<Sprite> {
 			else
 				length = Math.min(mX / Math.abs(cos), mY / Math.abs(sin));
 
+			//deltaLength
 			double dl = length / checks;
 
 			for (int j = checks; j >= 0; j--) {
+				//at each length
 				double l = dl * j;
+				//get x and y
 				int x = (int)(mX + l * cos);
 				int y = (int)(mY - l * sin);
 
+				//if it's in the Bitmap
 				if (x > 0 && y > 0 && x < width && y < height) {
+					//check the color
 					int color = bitmap.getPixel(x, y);
 					if (Color.alpha(color) > 0) {
+						//if it's not transparent, add it to the path
 						if (!start) {
 							bitmapPath.moveTo(x, y);
 							start = true;
 						}
 						else
 							bitmapPath.lineTo(x, y);
+						//and go to the next theta
 						break;
 					}
 				}
@@ -415,6 +480,7 @@ public class Sprite implements Comparable<Sprite> {
 	}
 
 	private Path getPath() {
+		//get the path and transform it by the drawMatrix
 		if (bitmapPath == null) {
 			createBitmapPath();
 		}
@@ -424,6 +490,7 @@ public class Sprite implements Comparable<Sprite> {
 	}
 
 	private void createCollidableRegion() {
+		//create a region from the path
 		collidableRegion = new Region();
 		collidableRegion.setPath(getPath(), new Region(viewport.getRect()));
 	}
