@@ -3,8 +3,10 @@ package edu.elon.honors.price.graphics;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 
 public final class Graphics {
@@ -123,12 +125,10 @@ public final class Graphics {
 				for (Sprite sprite : viewport.getSprites()) {
 					if (sprite != null && sprite.isVisible()) {
 						//Draw visible Sprites
-						canvas.drawBitmap(
-								sprite.getBitmap(),
-								//Use the Viewport's X, plus the Sprites, minus it's origin
-								(float)(viewport.getX() + sprite.getX() - sprite.getOriginX()), 
-								(float)(viewport.getY() + sprite.getY() - sprite.getOriginY()), 
-								paint);
+						
+						//canvas.drawPath(sprite.getCollidableRegion().getBoundaryPath(), paint);
+						//canvas.drawRect(sprite.getRect(), paint);
+						canvas.drawBitmap(sprite.getBitmap(), sprite.getDrawMatrix(), paint);
 					}
 				}
 			}
@@ -150,18 +150,6 @@ public final class Graphics {
 			long currentTime = System.currentTimeMillis();
 			fps = (int)(FRAME_BLOCK * 1000 / (currentTime - lastSystemTime));
 			lastSystemTime = currentTime;
-		}
-	}
-	
-	public static class Handle<T> {
-		private T[] items;
-		
-		public T[] getItems() {
-			return items;
-		}
-		
-		public Handle(T... items) {
-			this.items = items;
 		}
 	}
 }

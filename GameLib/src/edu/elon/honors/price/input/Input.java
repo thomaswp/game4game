@@ -35,9 +35,9 @@ public final class Input {
 	//Is the user touching the screen, have they just tapped it
 	private static boolean touchDown = false, tapped = false;
 	//Last coordinates of a TouchEvent
-	private static double lastTouchX = 0, lastTouchY = 0;
+	private static float lastTouchX = 0, lastTouchY = 0;
 	//Starting coordinates of a TouchEvent
-	private static double startTouchX = 0, startTouchY = 0;
+	private static float startTouchX = 0, startTouchY = 0;
 	
 	//A list of unprocessed TouchEvents
 	private static LinkedList<TouchEvent> touchEvents = new LinkedList<TouchEvent>();
@@ -57,7 +57,7 @@ public final class Input {
 	 * Gets the last X Coordinate where the user touched the screen
 	 * @return The X Coordinate
 	 */
-	public static double getLastTouchX() {
+	public static float getLastTouchX() {
 		return lastTouchX;
 	}
 
@@ -65,7 +65,7 @@ public final class Input {
 	 * Gets the last Y Coordinate where the user touched the screen
 	 * @return The Y Coordinate
 	 */
-	public static double getLastTouchY() {
+	public static float getLastTouchY() {
 		return lastTouchY;
 	}
 	
@@ -82,7 +82,7 @@ public final class Input {
 	 * screen during this touch event.
 	 * @return The X Coordinate
 	 */
-	public static double getStartTouchX() {
+	public static float getStartTouchX() {
 		return startTouchX;
 	}
 
@@ -91,7 +91,7 @@ public final class Input {
 	 * screen during this touch event.
 	 * @return The Y Coordinate
 	 */
-	public static double getStartTouchY() {
+	public static float getStartTouchY() {
 		return startTouchY;
 	}
 
@@ -99,7 +99,7 @@ public final class Input {
 	 * Gets the X distance the user's touch has moved during this touch event.
 	 * @return The X distance
 	 */
-	public static double getDistanceTouchX() {
+	public static float getDistanceTouchX() {
 		return lastTouchX - startTouchX;
 	}
 
@@ -107,7 +107,7 @@ public final class Input {
 	 * Gets the Y distance the user's touch has moved during this touch event.
 	 * @return The Y distance
 	 */
-	public static double getDistanceTouchY() {
+	public static float getDistanceTouchY() {
 		return lastTouchY - startTouchY;
 	}
 	
@@ -280,14 +280,14 @@ public final class Input {
 	
 	//Keeps track of the data in a TouchEvent
 	private static class TouchEvent {
-		double x, y;
+		float x, y;
 		int action;
 		
-		public double getX() {
+		public float getX() {
 			return x;
 		}
 
-		public double getY() {
+		public float getY() {
 			return y;
 		}
 
