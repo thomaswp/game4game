@@ -6,6 +6,7 @@ import edu.elon.honors.price.graphics.GraphicsView;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -93,6 +94,6 @@ public abstract class Game extends Activity {
 	 * @param text The text to be written.
 	 */
 	public static void debug(String text) {
-		System.out.println("---" + text + "---");
+		Log.d("Game", "---" + text + "---");
 	}
 }

@@ -118,12 +118,12 @@ public class Viewport implements Comparable<Viewport> {
 	
 	/**
 	 * Gets the rect that the Viewport fills.
-	 * Returns null if the Viewport is stretched to fill
-	 * the drawable area.
 	 * @return
 	 */
 	public Rect getRect() {
-		if (!hasRect()) return null;
+		if (!hasRect()) {
+			return new Rect(0, 0, Graphics.getWidth(), Graphics.getHeight());
+		}
 		return new Rect(x, y, width + x, height + y);
 	}
 
