@@ -27,7 +27,7 @@ public class PongLogic implements Logic {
 	//the sprites
 	private Sprite paddle1, paddle2, ball, score;
 	//the Y of the paddle when a touch sequence occurs
-	private double startTouchY;
+	private float startTouchY;
 
 	//the last system of an update
 	private long lastTime;
@@ -42,8 +42,8 @@ public class PongLogic implements Logic {
 	
 	//instance data
 	private int player1Score, player2Score;
-	private double paddle1X, paddle1Y, paddle2X, paddle2Y;
-	private double ballVelX, ballVelY, ballX, ballY;
+	private float paddle1X, paddle1Y, paddle2X, paddle2Y;
+	private float ballVelX, ballVelY, ballX, ballY;
 	
 	public boolean isPaused() {
 		return paused;
@@ -55,13 +55,13 @@ public class PongLogic implements Logic {
 
 	//the amount the paddle moves per frame if
 	//the player is using a key
-	private double getPlayerMove() {
-		return 1.0 / 5;
+	private float getPlayerMove() {
+		return 1.0f / 5;
 	}
 
 	//the amound the ai's paddle moves per frame
-	private double getAIMove() {
-		return 1.0 / 5;
+	private float getAIMove() {
+		return 1.0f / 5;
 	}
 
 	private int getPaddleWidth() {
@@ -267,10 +267,10 @@ public class PongLogic implements Logic {
 		ballY = height / 2;
 
 		rand = new Random();
-		//double angle = rand.nextDouble() * Math.PI / 6 + rand.nextInt(4) * Math.PI / 4 + Math.PI / 6;
-		double angle = rand.nextInt(4) * Math.PI / 2 + Math.PI / 4;
-		ballVelX = Math.cos(angle) / 3;
-		ballVelY = Math.sin(angle) / 3;
+		//float angle = rand.nextfloat() * Math.PI / 6 + rand.nextInt(4) * Math.PI / 4 + Math.PI / 6;
+		float angle = (float) (rand.nextInt(4) * Math.PI / 2 + Math.PI / 4);
+		ballVelX = (float) (Math.cos(angle) / 3);
+		ballVelY = (float) (Math.sin(angle) / 3);
 
 		paddle1X = getPaddleWidth() * 2;
 		paddle1Y = (height - getPaddleHeight()) / 2;
