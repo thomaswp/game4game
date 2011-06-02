@@ -14,7 +14,7 @@ import android.view.View;
  *
  */
 public final class Input {
-	
+
 	/**
 	 * An enum listing the possible states of a Key.
 	 * 
@@ -38,13 +38,13 @@ public final class Input {
 	private static float lastTouchX = 0, lastTouchY = 0;
 	//Starting coordinates of a TouchEvent
 	private static float startTouchX = 0, startTouchY = 0;
-	
+
 	//A list of unprocessed TouchEvents
 	private static LinkedList<TouchEvent> touchEvents = new LinkedList<TouchEvent>();
-	
+
 	//A map of Keys and their current KeyState
 	private static HashMap<Integer, KeyStates> keyMap = new HashMap<Integer, Input.KeyStates>();
-	
+
 	/**
 	 * Returns whether or not the user is touching the screen
 	 * @return
@@ -68,7 +68,7 @@ public final class Input {
 	public static float getLastTouchY() {
 		return lastTouchY;
 	}
-	
+
 	/**
 	 * Gets whether or not the user has just touched the screen 
 	 * @return
@@ -110,7 +110,7 @@ public final class Input {
 	public static float getDistanceTouchY() {
 		return lastTouchY - startTouchY;
 	}
-	
+
 	/**
 	 * Gets the state of the key with the given keycode
 	 * @param keycode The keycode
@@ -162,7 +162,7 @@ public final class Input {
 	public static boolean isLifted(int keycode) {
 		return getState(keycode) == KeyStates.Lifted;
 	}
-	
+
 	/**
 	 * Returns whether or not the key with the given keycode
 	 * is down (Triggered or Held) this frame. 
@@ -182,9 +182,9 @@ public final class Input {
 	public static boolean isUp(int keycode) {
 		return isLifted(keycode) || isReleased(keycode);
 	}
-	
+
 	private Input() {}
-	
+
 	/**
 	 * Records a KeyUp event.
 	 * @param keycode The KeyCode
@@ -202,7 +202,7 @@ public final class Input {
 	public static void keyDown(int keycode, KeyEvent msg) {
 		keyMap.put(keycode, KeyStates.Triggered);
 	}
-	
+
 	/**
 	 * Records a TouchEvent.
 	 * @param v The View the was touched
@@ -210,28 +210,29 @@ public final class Input {
 	 * @return True if the event was successfully handled
 	 */
 	public static boolean onTouch(View v, MotionEvent event) {
-		
-		//We want to override the last event if it wasn't up or down
-		if (touchEvents.size() > 0) {
-			TouchEvent e = touchEvents.get(0);
-			if (!(e.getAction() == MotionEvent.ACTION_DOWN || 
-					e.getAction() == MotionEvent.ACTION_UP)) {
-				touchEvents.remove(0);
+		synchronized(touchEvents) {
+			//We want to override the last event if it wasn't up or down
+			if (touchEvents.size() > 0) {
+				TouchEvent e = touchEvents.get(0);
+				if (!(e.getAction() == MotionEvent.ACTION_DOWN || 
+						e.getAction() == MotionEvent.ACTION_UP)) {
+					touchEvents.remove(0);
+				}
 			}
+			//record the TouchEvent, but don't process it until the next frame			
+			touchEvents.add(new TouchEvent(event));
 		}
-		//record the TouchEvent, but don't process it until the next frame			
-		touchEvents.add(new TouchEvent(event));
 		return true;
 	}
-	
+
 	private static void handleTouchEvents() {
 		//process the touch event
-		
+
 		if (touchEvents.size() == 0)
 			return;
-		
+
 		TouchEvent event = touchEvents.remove(0);
-		
+
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			//User just touched the screen
 			touchDown = true;
@@ -242,20 +243,20 @@ public final class Input {
 			//User is still touching the screen
 			tapped = false;
 		}
-			
+
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			//User just lifted
 			touchDown = false;
 		}
-		
+
 		lastTouchX =  event.getX();
 		lastTouchY =  event.getY();
 	}
-	
+
 	public static void update() {
 		LinkedList<Integer> released = new LinkedList<Integer>();
 		LinkedList<Integer> triggered = new LinkedList<Integer>();
-		
+
 		//Get all the released and triggered keys
 		for (int key : keyMap.keySet()) {
 			if (keyMap.get(key) == KeyStates.Released) {
@@ -264,25 +265,25 @@ public final class Input {
 				triggered.add(key);
 			}
 		}
-		
-		
+
+
 		//Change their state to Lifted or Held if they're staying that way 
 		for (int key : released) {
 			keyMap.put(key, KeyStates.Lifted);
 		}
-		
+
 		for (int key : triggered) {
 			keyMap.put(key, KeyStates.Held);
 		}
-		
+
 		handleTouchEvents();
 	}
-	
+
 	//Keeps track of the data in a TouchEvent
 	private static class TouchEvent {
 		float x, y;
 		int action;
-		
+
 		public float getX() {
 			return x;
 		}
@@ -294,7 +295,7 @@ public final class Input {
 		public int getAction() {
 			return action;
 		}
-		
+
 		public TouchEvent(MotionEvent event) {
 			x = event.getX();
 			y = event.getY();
