@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
@@ -27,6 +28,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
 import android.util.Log;
 
@@ -36,7 +38,7 @@ import android.util.Log;
  * frame.  It also manages loading of textures and (when VBOs are used) the
  * allocation of vertex buffer objects.
  */
-public class SimpleGLRenderer implements GLSurfaceView.Renderer {
+public class SimpleGLRenderer implements Renderer {
 	// Specifies the format our textures should be converted to upon load.
 	private static BitmapFactory.Options sBitmapOptions
 	= new BitmapFactory.Options();
@@ -75,22 +77,14 @@ public class SimpleGLRenderer implements GLSurfaceView.Renderer {
 	/** Draws the sprites. */
 	public void drawFrame(GL10 gl) {
 		if (mSprites != null) {
-
-			gl.glMatrixMode(GL10.GL_MODELVIEW);
-
-
-			Grid.beginDrawing(gl, true, false);
-
-
-			for (int x = 0; x < mSprites.length; x++) {
-				mSprites[x].draw(gl);
+			synchronized (mSprites) {
+				gl.glMatrixMode(GL10.GL_MODELVIEW);
+				Grid.beginDrawing(gl, true, false);
+				for (int x = 0; x < mSprites.length; x++) {
+					mSprites[x].draw(gl);
+				}
+				Grid.endDrawing(gl);
 			}
-
-
-			Grid.endDrawing(gl);
-
-
-
 		}
 	}
 
@@ -240,6 +234,21 @@ public class SimpleGLRenderer implements GLSurfaceView.Renderer {
 		}
 
 		return textureName;
+	}
+
+	@Override
+	public void onDrawFrame(GL10 gl) {
+		this.drawFrame(gl);
+	}
+
+	@Override
+	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		this.sizeChanged(gl, width, height);
+	}
+
+	@Override
+	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		this.surfaceCreated(gl);
 	}
 
 }

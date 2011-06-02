@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
@@ -33,6 +34,7 @@ public class OpenGLTestActivity extends Activity {
 
 
 	private GLSurfaceView mGLSurfaceView;
+	private Thread moveThread;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -124,13 +126,25 @@ public class OpenGLTestActivity extends Activity {
 
 		mGLSurfaceView.setRenderer(spriteRenderer);
 
-		if (animate) {
-			Mover simulationRuntime = new Mover();
-			simulationRuntime.setRenderables(renderableArray);
+		final Mover simulationRuntime = new Mover();
+		simulationRuntime.setRenderables(renderableArray);
+		simulationRuntime.setViewSize(dm.widthPixels, dm.heightPixels);
+		moveThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (!moveThread.isInterrupted()) {
+					simulationRuntime.run();
+				}
+			}
+		});
+		moveThread.start();
 
-			simulationRuntime.setViewSize(dm.widthPixels, dm.heightPixels);
-			mGLSurfaceView.setEvent(simulationRuntime);
-		}
 		setContentView(mGLSurfaceView);
+	}
+	
+	@Override
+	public void onDestroy() {
+		moveThread.interrupt();
+		super.onDestroy();
 	}
 }
