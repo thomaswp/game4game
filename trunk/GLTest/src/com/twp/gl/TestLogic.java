@@ -10,15 +10,23 @@ public class TestLogic implements Logic {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
+		s.setX(s.getX() + 1f);
+		s.setRotation(s.getRotation() + 1);
 		
 	}
 
+	Sprite s, t;
+	
 	@Override
 	public void initialize() {
-		Sprite s = new Sprite(Viewport.DefaultViewport, 0, 0, 64, 64);
-		s.getBitmapCanvas().drawPaint(Sprite.paintFromColor(Color.BLACK));
+		s = new Sprite(Viewport.DefaultViewport, 100, 100, 100, 100);
+		s.getBitmapCanvas().drawPaint(Sprite.paintFromColor(Color.RED));
+		s.centerOrigin();
+		//s.setRotation(3);
+		s.setZoom(1.5f);
 		
+		t = new Sprite(Viewport.DefaultViewport, 100, 100, 300, 3);
+		t.getBitmap().eraseColor(Color.GREEN);
 	}
 
 	@Override

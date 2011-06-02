@@ -46,7 +46,7 @@ class Grid {
     private Buffer mVertexBuffer;
     private Buffer mTexCoordBuffer;
     private Buffer mColorBuffer;
-    private int mCoordinateSize;
+    //private int mCoordinateSize;
     private int mCoordinateType;
 
     private int mW;
@@ -89,7 +89,7 @@ class Grid {
         	mVertexBuffer = mFixedVertexBuffer;
         	mTexCoordBuffer = mFixedTexCoordBuffer;
         	mColorBuffer = mFixedColorBuffer;
-        	mCoordinateSize = FIXED_SIZE;
+        	//mCoordinateSize = FIXED_SIZE;
         	mCoordinateType = GL10.GL_FIXED;
         	
         } else {
@@ -104,7 +104,7 @@ class Grid {
         	mVertexBuffer = mFloatVertexBuffer;
         	mTexCoordBuffer = mFloatTexCoordBuffer;
         	mColorBuffer = mFloatColorBuffer;
-        	mCoordinateSize = FLOAT_SIZE;
+        	//mCoordinateSize = FLOAT_SIZE;
         	mCoordinateType = GL10.GL_FLOAT;
         }
         
