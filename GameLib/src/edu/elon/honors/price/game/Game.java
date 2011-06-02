@@ -2,6 +2,7 @@ package edu.elon.honors.price.game;
 
 
 import edu.elon.honors.price.game.Logic;
+import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.GraphicsView;
 
 import android.app.Activity;
@@ -32,6 +33,7 @@ public abstract class Game extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		Data.setResources(getResources());
 		view = new GraphicsView(this);
+		view.setRenderer(new Graphics());
 		this.setContentView(view);
 	}
 	

@@ -6,11 +6,10 @@ import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.input.Input;
 
 import android.content.Context;
-import android.graphics.Canvas;
+import android.opengl.GLSurfaceView;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 
 /**
@@ -21,7 +20,7 @@ import android.view.View;
  * @author Thomas
  *
  */
-public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback {
+public class GraphicsView extends GLSurfaceView {
 
 	private Thread thread;
 	private Logic logic;
@@ -54,6 +53,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback 
 				this.logic = logic;			
 			}
 		}
+		Graphics.setLogic(logic);
 	}
 
 	public GraphicsView(Context context) {
@@ -78,18 +78,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	@Override
-	public void surfaceChanged(SurfaceHolder surfaceHolder, 
-			int format, int width, int height) {
-		synchronized (surfaceHolder) {
-			//Set the drawable area to this surface's dimensions.
-			Graphics.setWidth(width);
-			Graphics.setHeight(height);
-		}
-	}
-
-	@Override
-	public void surfaceCreated(SurfaceHolder arg0) {
+	public void surfaceCreated(SurfaceHolder holder) {
 		Game.debug("Surface Holder Created");
+
+		super.surfaceCreated(holder);
 
 		//If for some reasons the Thread is still running, let's get rid of it.
 		if (thread != null) {
@@ -116,7 +108,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback 
 	}
 
 	@Override
-	public void surfaceDestroyed(SurfaceHolder arg0) {
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		Game.debug("Surface destroyed");
 		//End the thread safely
 		boolean retry = true;
 		thread.interrupt();
@@ -128,6 +121,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback 
 			}
 		}
 		thread = null;
+
+		super.surfaceDestroyed(holder);
 	}
 
 	@Override
@@ -149,31 +144,22 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback 
 
 	private void doLoop(SurfaceHolder surfaceHolder) {
 		while(!thread.isInterrupted()) {
-			Canvas c = null;
 			try {
 				//Make sure we're thread safe
 				if (logic != null) {
 					synchronized (logic) {
 						if (logic != null) {
-							//Lock the canvas
-							c = surfaceHolder.lockCanvas(null);
-							synchronized (surfaceHolder) {
-								//Update everything
-								Input.update();
-								logic.update();
-								Graphics.update();
-								
-								//And draw
-								Graphics.draw(c);
-							}
+							//Game.debug("Game Loop");
+							//Update everything
+							Input.update();
+							logic.update();
+							Graphics.update();
 						}
 					}
+					Thread.sleep(1000 / 60);
 				}
-			} finally {
-				if (c != null) {
-					//Ensure the surgaceHolder is unlocked.
-					surfaceHolder.unlockCanvasAndPost(c);
-				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}

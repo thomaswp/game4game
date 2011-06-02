@@ -1,5 +1,9 @@
 package edu.elon.honors.price.graphics;
 
+import java.util.HashMap;
+
+import edu.elon.honors.price.game.Data;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -31,6 +35,10 @@ public class Sprite implements Comparable<Sprite> {
 	private int z;
 	private boolean visible;
 
+	private int textureId = -1;
+	private Grid grid;
+	private static HashMap<Integer, Integer> bitmapHash = new HashMap<Integer, Integer>();
+	
 	private Canvas bitmapCanvas;
 
 	//Matrix to transform this sprite to its location, zoom and rotation
@@ -72,6 +80,7 @@ public class Sprite implements Comparable<Sprite> {
 		this.bitmap = bitmap;
 		//the bitmap has changed, so reset the path
 		bitmapPath = null;
+		textureId = -1;
 		if (isMutable()) {
 			bitmapCanvas.setBitmap(bitmap);
 		} else {
@@ -90,6 +99,7 @@ public class Sprite implements Comparable<Sprite> {
 		//If the player gets the canvas, they may alter it
 		//so reset the path
 		bitmapPath = null;
+		textureId = -1;
 		return bitmapCanvas;
 	}
 
@@ -184,16 +194,16 @@ public class Sprite implements Comparable<Sprite> {
 	 * Gets the width of this Sprite's Bitmap.
 	 * @return The width
 	 */
-	public int getWidth() {
-		return (int)(bitmap.getWidth() * zoom);
+	public float getWidth() {
+		return bitmap.getWidth() * zoom;
 	}
 
 	/**
 	 * Gets the height of this Sprite's Bitmap.
 	 * @return The height
 	 */
-	public int getHeight() {
-		return (int)(bitmap.getHeight() * zoom);
+	public float getHeight() {
+		return bitmap.getHeight() * zoom;
 	}
 
 	/**
@@ -313,6 +323,22 @@ public class Sprite implements Comparable<Sprite> {
 		createCollidableRegion();
 		return collidableRegion;
 	}
+	
+	public int getTextureId() {
+		return textureId;
+	}
+
+	public void setTextureId(int textureId) {
+		this.textureId = textureId;
+	}
+	
+	public Grid getGrid() {
+		return grid;
+	}
+
+	public void setGrid(Grid grid) {
+		this.grid = grid;
+	}
 
 	/**
 	 * Creates a Sprite with the given Viewport and coordinates and creates
@@ -336,6 +362,7 @@ public class Sprite implements Comparable<Sprite> {
 	 * @param bitmap The Bitmap
 	 */
 	public Sprite(Viewport viewport, Bitmap bitmap) {
+		
 		this.viewport = viewport;
 		this.bitmapCanvas = new Canvas();
 		setBitmap(bitmap);
