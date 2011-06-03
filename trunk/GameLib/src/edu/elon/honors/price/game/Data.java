@@ -24,6 +24,7 @@ import android.graphics.BitmapFactory;
 public final class Data {
 	
 	private static Resources resources;
+	private static HashMap<Integer, Bitmap> cache = new HashMap<Integer, Bitmap>();
 	
 	/**
 	 * Sets the resources to load from. Must be set
@@ -41,7 +42,16 @@ public final class Data {
 	 */
 	public static Bitmap loadBitmap(int id) {
 		try {
-			return BitmapFactory.decodeResource(resources, id);
+			if (cache.containsKey(id)) {
+				//Game.debug("Cache");
+				return cache.get(id);
+			}
+			else {
+				//Game.debug("Load New");
+				Bitmap bmp = BitmapFactory.decodeResource(resources, id);
+				cache.put(id, bmp);
+				return bmp;
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

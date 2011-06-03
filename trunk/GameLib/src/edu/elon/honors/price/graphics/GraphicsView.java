@@ -143,6 +143,9 @@ public class GraphicsView extends GLSurfaceView {
 	}
 
 	private void doLoop(SurfaceHolder surfaceHolder) {
+		long lastTime = System.currentTimeMillis();
+		final int TARGET_FPS = 60;
+		int frame = 0;
 		while(!thread.isInterrupted()) {
 			try {
 				//Make sure we're thread safe
@@ -156,7 +159,16 @@ public class GraphicsView extends GLSurfaceView {
 							Graphics.update();
 						}
 					}
-					Thread.sleep(1000 / 60);
+					frame++;
+					long timePassed = System.currentTimeMillis() - lastTime;
+					int sleep = 1000 * frame / TARGET_FPS - (int)timePassed;
+					if (sleep > 0) {
+						Thread.sleep(sleep);
+					}
+					if (frame == TARGET_FPS) {
+						frame = 0;
+						lastTime = System.currentTimeMillis();
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
