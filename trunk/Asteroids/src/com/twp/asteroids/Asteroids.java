@@ -4,6 +4,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
+import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.GraphicsView;
 
 public class Asteroids extends Game {
@@ -27,7 +28,7 @@ public class Asteroids extends Game {
         	AsteroidsLogic logic = (AsteroidsLogic)view.getLogic();
         	view.setLogic(null);
         	synchronized (logic) {
-        		logic.dispose();
+        		Graphics.reset();
         		logic.setNewGame(true);
         		logic.initialize();
         	}
