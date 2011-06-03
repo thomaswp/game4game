@@ -9,15 +9,15 @@ public class Viewport implements Comparable<Viewport> {
 	//A width or height given when the Viewport should be stretched
 	//to fill the drawable area
 	public static final int STRETCH = -1;
-	
+
 	private int x, y, z, width, height;
-	
+
 	private boolean visible;
-	
+
 	private LinkedList<Sprite> sprites;
-	
+
 	public static Viewport DefaultViewport = new Viewport(0, 0, STRETCH, STRETCH);
-	
+
 	/**
 	 * Gets the X coordinate of the Viewport
 	 * @return The X coordinate
@@ -106,7 +106,7 @@ public class Viewport implements Comparable<Viewport> {
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	
+
 	/**
 	 * Returns true if the Viewport has a defined
 	 * height and width.
@@ -115,7 +115,7 @@ public class Viewport implements Comparable<Viewport> {
 	public boolean hasRect() {
 		return height != STRETCH && width != STRETCH;
 	}
-	
+
 	/**
 	 * Gets the rect that the Viewport fills.
 	 * @return
@@ -134,7 +134,7 @@ public class Viewport implements Comparable<Viewport> {
 	public LinkedList<Sprite> getSprites() {
 		return sprites;
 	}
-	
+
 	/**
 	 * Gets whether or not this Viewport's Sprites will be drawn
 	 * @return The visibility
@@ -142,7 +142,7 @@ public class Viewport implements Comparable<Viewport> {
 	public boolean isVisible() {
 		return visible;
 	}
-	
+
 	/**
 	 * Sets whether or not this Viewport's Sprites will be drawn
 	 * @param visible The visibility
@@ -164,14 +164,14 @@ public class Viewport implements Comparable<Viewport> {
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		
+
 		this.z = 0;
 		this.sprites = new LinkedList<Sprite>();
 		this.visible = true;
-		
+
 		Graphics.addViewport(this);
 	}
-	
+
 	/**
 	 * Adds a Sprite to this Viewport
 	 * @param sprite the Sprite
@@ -179,7 +179,7 @@ public class Viewport implements Comparable<Viewport> {
 	public void addSprite(Sprite sprite) {
 		sprites.add(sprite);
 	}
-	
+
 	/**
 	 * Removes a Sprite from this Viewport
 	 * @param sprite The Sprite
@@ -187,22 +187,26 @@ public class Viewport implements Comparable<Viewport> {
 	public void removeSprite(Sprite sprite) {
 		sprites.remove(sprite);
 	}
-	
+
 	@Override
 	public int compareTo(Viewport another) {
 		return ((Integer)z).compareTo(another.z);
 	}
-	
+
 	/**
 	 * Updates this Viewport and each Sprite in it
 	 */
-	public void upadte() {
-		for (Sprite sprite : sprites) {
-			if (sprite != null) {
-				sprite.update();
+	public void upadte(long timeElapsed) {
+		for (int i = 0; i < sprites.size(); i++) {
+			Sprite sprite = sprites.get(i);
+			if (sprite.isDisposed()) {
+				sprites.remove(sprite);
+				i--;
+			} else if (sprite != null) {
+				sprite.update(timeElapsed);
 			}
 		}
 	}
-	
-	
+
+
 }

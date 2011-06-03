@@ -231,29 +231,31 @@ public final class Input {
 		if (touchEvents.size() == 0)
 			return;
 
-		TouchEvent event = touchEvents.remove(0);
+		synchronized (touchEvents) {
+			TouchEvent event = touchEvents.remove(0);
 
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			//User just touched the screen
-			touchDown = true;
-			tapped = true;
-			startTouchX = event.getX();
-			startTouchY = event.getY();
-		} else {
-			//User is still touching the screen
-			tapped = false;
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				//User just touched the screen
+				touchDown = true;
+				tapped = true;
+				startTouchX = event.getX();
+				startTouchY = event.getY();
+			} else {
+				//User is still touching the screen
+				tapped = false;
+			}
+
+			if (event.getAction() == MotionEvent.ACTION_UP) {
+				//User just lifted
+				touchDown = false;
+			}
+
+			lastTouchX =  event.getX();
+			lastTouchY =  event.getY();
 		}
-
-		if (event.getAction() == MotionEvent.ACTION_UP) {
-			//User just lifted
-			touchDown = false;
-		}
-
-		lastTouchX =  event.getX();
-		lastTouchY =  event.getY();
 	}
 
-	public static void update() {
+	public static void update(long timeElapsed) {
 		LinkedList<Integer> released = new LinkedList<Integer>();
 		LinkedList<Integer> triggered = new LinkedList<Integer>();
 
