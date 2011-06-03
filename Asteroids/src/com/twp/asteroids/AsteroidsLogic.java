@@ -2,7 +2,6 @@ package com.twp.asteroids;
 
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.Vector;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -11,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Region;
 import android.graphics.Region.Op;
+import edu.elon.edu.price.helper.Helper;
 import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
@@ -18,9 +18,11 @@ import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.input.Input;
+import edu.elon.honors.price.physics.Physics;
+import edu.elon.honors.price.physics.Vector;
 
 public class AsteroidsLogic implements Logic {
-	
+
 	private final static float SHIP_ACCEL = 0.007f;
 	private final static float DRAG = 0.001f;
 	//Delay before ship starts moving when the player touches the screen
@@ -29,32 +31,34 @@ public class AsteroidsLogic implements Logic {
 	//The number of pixels a sprite has to pass off the screen before it
 	//flips to the other side
 	private final static int THRESH = 3;
-	private final static int MAX_BULLETS = 4;
+	private final static int MAX_BULLETS = 3;
 	//How many asteroids does the first level have
-	private final int START_ASTEROIDS = 3;
+	private final int START_ASTEROIDS = 4;
 	//Length of an animation frame
 	private final int FRAME_LENGTH = 30;
 	//Time to wait after a player clears a level
 	private final int NEXT_LEVEL_WAIT = 2000;
+	private final boolean COLLIDE = true;
 	private final static Random rand = new Random();
-	
+
 	private Sprite ship, thrust, pauseScreen, defeat, victory, stars, score;
+	private Physics physics;
 	private AsteroidsData data;
 	private boolean paused, newGame;
-	private long lastTime, lastShoot;
+	private long lastShoot;
 	private Bitmap[] expAnimation;
 	private int nextAnim;
 	private long winTime;
-	
+
 	public void setNewGame(boolean newGame) {
 		this.newGame = newGame;
 	}
-	
+
 	public AsteroidsLogic() {
 		newGame = true;
 		createExpAnimation();
 	}
-	
+
 	@Override
 	public void initialize() {
 		//Start the game over if no data is loaded
@@ -73,53 +77,30 @@ public class AsteroidsLogic implements Logic {
 		data = new AsteroidsData();
 		nextLevel();
 	}
-	
-	@Override
-	public void dispose() {
-		//Get rid of all the sprites
-		ship.dispose();
-		thrust.dispose();
-		for (Asteroid a : data.asteroids) {
-			a.dispose();
-		}
-		for (Bullet b : data.bullets) {
-			b.dispose();
-		}
-		for (Explosion e : data.explosions) {
-			e.dispose();
-		}
-		pauseScreen.dispose();
-		victory.dispose();
-		defeat.dispose();
-		stars.dispose();
-		score.dispose();
-	}
 
 	@Override
-	public void update() {
+	public void update(long timeElapsed) {
 		if (Input.isTapped()) {
 			//resume the game on tap
 			paused = false;
-			lastTime =  System.currentTimeMillis();
 		}
-		
+
 		if (!paused) {
-			long msPassed = System.currentTimeMillis() - lastTime;
-			lastTime += msPassed;
-			
+
 			int s = data.score;
-			
+
 			//update everything
-			updatePlayer(msPassed);
-			updateAsteroids(msPassed);
-			updateBullets(msPassed);
-			updateExplosions(msPassed);
-			
+			updatePlayer(timeElapsed);
+			updateAsteroids(timeElapsed);
+			updateBullets(timeElapsed);
+			updateExplosions(timeElapsed);
+			physics.update(timeElapsed);
+
 			if (s != data.score) {
 				drawScoreBitmap();
 			}
 		}
-		
+
 		updateSprites();
 	}
 
@@ -127,7 +108,7 @@ public class AsteroidsLogic implements Logic {
 	public void setPaused(boolean paused) {
 		this.paused = paused;
 	}
-	
+
 	@Override
 	public void save(Activity parent) {
 		Data.saveObject("ast", parent, data);		
@@ -144,10 +125,10 @@ public class AsteroidsLogic implements Logic {
 			data = d;
 		}
 	}
-	
+
 	private void nextLevel() {
 		data.level++;
-		
+
 		data.shipX = Graphics.getWidth() / 2;
 		data.shipY = Graphics.getHeight() / 2;
 		data.shipVX = 0;
@@ -156,7 +137,7 @@ public class AsteroidsLogic implements Logic {
 		data.asteroids = new LinkedList<Asteroid>();
 		data.explosions = new LinkedList<Explosion>();
 		data.state = 0;
-		
+
 		//Create some asteroids
 		for (int i = 0; i < START_ASTEROIDS + data.level - 1; i++) {
 			data.asteroids.add(new Asteroid(rand.nextInt(i/2+1)));
@@ -166,15 +147,15 @@ public class AsteroidsLogic implements Logic {
 		loadSprites();
 		paused = true;
 	}
-	
+
 	private void updateExplosions(long msPassed) {
 		nextAnim -= msPassed;
 		if (nextAnim <= 0) {
 			nextAnim = FRAME_LENGTH;
-			
+
 			//Update all explosions
 			LinkedList<Explosion> remove = new LinkedList<Explosion>();
-			
+
 			for (Explosion e : data.explosions) {
 				//next frame
 				e.state++;
@@ -182,51 +163,49 @@ public class AsteroidsLogic implements Logic {
 					remove.add(e);
 				}
 			}
-			
+
 			for (Explosion e : remove) {
 				e.dispose();
 				data.explosions.remove(e);
 			}
 		}
 	}
-	
+
 	private void updateBullets(long msPassed) {
 		if (Input.isTapped() && data.bullets.size() < MAX_BULLETS && data.state != -1) {
+			
 			//create a bullet
 			float dir = (data.shipRot - 90) / 180 * (float)Math.PI;
 			float rad = ship.getWidth() / 2;
 			float x = (float)(Math.cos(dir) * rad) + data.shipX;
 			float y = (float)(Math.sin(dir) * rad) + data.shipY;
-			Bullet b = new Bullet(x, y, dir);
-			b.sprite = getNewBullet();
+			Bullet b = new Bullet(physics, x, y, dir);
 			b.updateSprite();
+			b.setSprite(getNewBullet());
 			data.bullets.add(b);
 		}
-		
+
 		LinkedList<Bullet> remove = new LinkedList<Bullet>();
 		LinkedList<Asteroid> hit = new LinkedList<Asteroid>();
-		
+
 		for (Bullet b : data.bullets) {
-			b.x += b.getDx() * msPassed;
-			b.y += b.getDy() * msPassed;
-			
+
 			//check which bullets hit an asteroid
 			for (Asteroid a : data.asteroids) {
-				if (!a.sprite.intersection(b.sprite).isEmpty()) {
+				if (!b.intersection(a.sprite).isEmpty()) {
 					if (!hit.contains(a)) {
 						hit.add(a);
 					}
 					remove.add(b);
 				}
 			}
-			
+
 			//Remove any off screen
-			if (b.x < 0 || b.x > Graphics.getWidth() ||
-					b.y < 0 || b.y > Graphics.getHeight()) {
+			if (b.getSprite() == null) {
 				remove.add(b);
 			}
 		}
-		
+
 		for (Asteroid a : hit) {
 			float dir = 2 * (float)Math.PI * rand.nextFloat();
 			int size = a.size + 1;
@@ -239,27 +218,30 @@ public class AsteroidsLogic implements Logic {
 				a1.sprite = getNewAsteroid(); a2.sprite = getNewAsteroid();
 				data.asteroids.add(a1); data.asteroids.add(a2);
 			}
-			
+
 			//And an explosion
 			Explosion ex = new Explosion(a.x, a.y, a.getZoom() * 2, expAnimation);
 			ex.sprite = getNewExplosion();
 			data.explosions.add(ex);
 
 			//Add score
-			data.score += 50 * (Asteroid.SMALLEST_SIZE - a.size + 1); 
-			
+			int score = 50 * (Asteroid.SMALLEST_SIZE - a.size + 1);
+			data.score += score; 
+			Helper.popupText(physics, "" + score, new Vector(a.x, a.y),
+					Color.LTGRAY, 24, 1000);
+
 			//Remove the destroyed asteroid
 			data.asteroids.remove(a);
 			a.dispose();
 		}
-		
+
 		//And the bullets
 		for (Bullet b : remove) {
 			data.bullets.remove(b);
 			b.dispose();
 		}
 	}
-	
+
 	private void updateAsteroids(long msPassed) {
 		if (data.asteroids.size() == 0) {
 			//If there are no asteroids left
@@ -270,69 +252,73 @@ public class AsteroidsLogic implements Logic {
 				winTime = System.currentTimeMillis();
 			} else if (System.currentTimeMillis() - winTime > NEXT_LEVEL_WAIT) {
 				//if it's time dispose the level and start the next one
-				dispose();
+				Graphics.reset();
 				nextLevel();
 				return;
 			}
 		}
-		
+
 		for (int i = 0; i < data.asteroids.size(); i++) {
 			Asteroid a = data.asteroids.get(i);
-			
+
 			//Move the asteroid
 			a.x += a.dx * msPassed;
 			a.y += a.dy * msPassed;
-			
+
 			//Flip it to the other side of the screen if necessary
 			a.x = flip(a.x, a.sprite.getWidth(), Graphics.getWidth());
 			a.y = flip(a.y, a.sprite.getHeight(), Graphics.getHeight());
-			
+
 			//Rotate
 			a.rotation += a.dRotation * msPassed;
-			
-			for (int j = i + 1; j < data.asteroids.size(); j++) {
-				Asteroid a2 = data.asteroids.get(j);
-				if (a != a2) {
-					if (!a.sprite.intersection(a2.sprite).isEmpty()) {
-						//If we're touching another asteroid, bounce them both
-						//We do both because the collision detection should only
-						//Happen once per collision
-						double speed1 = Math.sqrt(a.dx * a.dx + a.dy * a.dy);
-						double speed2 = Math.sqrt(a2.dx * a2.dx + a2.dy * a2.dy);
-						float dx = a.x - a2.x;
-						float dy = a.y - a2.y;
-						double bSpeed = Math.sqrt(dx * dx + dy * dy);
-						a.dx = (float)(dx * speed1 / bSpeed);
-						a.dy = (float)(dy * speed1 / bSpeed);
-						a2.dx = (float)(-dx * speed2 / bSpeed);
-						a2.dy = (float)(-dy * speed2 / bSpeed);
-						
+
+			if (COLLIDE) {
+				for (int j = i + 1; j < data.asteroids.size(); j++) {
+					Asteroid a2 = data.asteroids.get(j);
+					if (a != a2) {
+						if (!a.sprite.intersection(a2.sprite).isEmpty()) {
+							//If we're touching another asteroid, bounce them both
+							//We do both because the collision detection should only
+							//Happen once per collision
+							double speed1 = Math.sqrt(a.dx * a.dx + a.dy * a.dy);
+							double speed2 = Math.sqrt(a2.dx * a2.dx + a2.dy * a2.dy);
+							float dx = a.x - a2.x;
+							float dy = a.y - a2.y;
+							double bSpeed = Math.sqrt(dx * dx + dy * dy);
+							a.dx = (float)(dx * speed1 / bSpeed);
+							a.dy = (float)(dy * speed1 / bSpeed);
+							a2.dx = (float)(-dx * speed2 / bSpeed);
+							a2.dy = (float)(-dy * speed2 / bSpeed);
+
+						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void updatePlayer(long msPassed) {
-		
+
 		//By default, we shouldn't see the thruster
 		thrust.setVisible(false);
+
+		long currentTime = System.currentTimeMillis();
 		
 		//Stop if we've lost
 		if (data.state == -1)
 			return;
-		
+
 		if (Input.isTapped()) {
 			//If we've tapped, set the last time we've shot to now 
-			lastShoot = lastTime;
+			lastShoot = currentTime;
 		}
 		if (Input.isTouchDown()) {
 			float tx = Input.getLastTouchX();
 			float ty = Input.getLastTouchY();
-			
+
 			float dx = tx - data.shipX;
 			float dy = ty - data.shipY;
-			
+
 			//get the angle between the tapped location and the ship
 			double angle;
 			if (dx == 0) {
@@ -341,12 +327,12 @@ public class AsteroidsLogic implements Logic {
 				angle = Math.atan(dy / dx);;
 				if (dx < 0) angle += Math.PI;
 			}
-			
+
 			//rotate the ship
 			data.shipRot = (float)(angle * 180 / Math.PI) + 90;
-			
+
 			//if it's been long enough, start the thrusters
-			if (lastTime - lastShoot > MOVE_DELAY) {
+			if (currentTime - lastShoot > MOVE_DELAY) {
 				data.shipVX += (float)Math.cos(angle) * SHIP_ACCEL;
 				data.shipVY += (float)Math.sin(angle) * SHIP_ACCEL;
 				thrust.setVisible(true);
@@ -357,20 +343,20 @@ public class AsteroidsLogic implements Logic {
 		float dragC = 1 - DRAG * msPassed;
 		data.shipVX *= dragC;
 		data.shipVY *= dragC;
-		
+
 		//move
 		data.shipX += data.shipVX * msPassed;
 		data.shipY += data.shipVY * msPassed;
-		
+
 		int width = Graphics.getWidth();
 		int height = Graphics.getHeight();
 		float sWidth = ship.getWidth();
 		float sHeight = ship.getHeight();
-		
+
 		//flip the ship if we need to
 		data.shipX = flip(data.shipX, sWidth, width);
 		data.shipY = flip(data.shipY, sHeight, height);
-		
+
 		for (Asteroid a : data.asteroids) {
 			if (!a.sprite.intersection(ship).isEmpty()) {
 				//If we touch an asteroid, game over
@@ -383,7 +369,7 @@ public class AsteroidsLogic implements Logic {
 			}
 		}
 	}
-	
+
 	private float flip(float x, float size, float max) {
 		//If a coordinate is past the max, flip it
 		if (x > max + size / 2 + THRESH) {
@@ -394,7 +380,7 @@ public class AsteroidsLogic implements Logic {
 		}
 		return x;
 	}
-	
+
 	private void updateSprites() {
 		ship.setX(data.shipX);
 		ship.setY(data.shipY);
@@ -408,72 +394,77 @@ public class AsteroidsLogic implements Logic {
 			a.updateSprite();
 		}
 		
-		for (Bullet b : data.bullets) {
-			b.updateSprite();
+		if (paused) {
+			for (Bullet b : data.bullets) {
+				b.updateSprite();
+			}
 		}
-		
+
 		for (Explosion e : data.explosions) {
 			e.updateSprite();
 		}
-		
+
 		//pause is visible if we're paused and it's not victory or defeat
 		pauseScreen.setVisible(paused && data.state == 0);
 		victory.setVisible(data.state == 1);
 		defeat.setVisible(data.state == -1);
 	}
-	
+
 	private void loadSprites() {
 		//load each sprite
 		Bitmap bmp = Data.loadBitmap(R.drawable.ship);
 		ship = new Sprite(Viewport.DefaultViewport, bmp);
 		ship.centerOrigin();
-		
+
 		Bitmap sBmp = Data.loadBitmap(R.drawable.thrust);
 		thrust = new Sprite(Viewport.DefaultViewport, sBmp);
 		thrust.centerOrigin();
 		thrust.setVisible(false);
-		
+
 		pauseScreen = getNewPause();
 		drawPauseBitmap();
-		
+
 		victory = getTextSprite("Victory!", 36, Color.BLUE);
 		defeat = getTextSprite("Defeat!", 36, Color.RED);
-		
+
 		stars = getNewStars();
-		
+
 		score = getNewScore();
 		drawScoreBitmap();
 		
+		physics = new Physics();
+
 		for (Asteroid a : data.asteroids) {
 			a.sprite = getNewAsteroid();
 		}
-		
+
 		for (Bullet b : data.bullets) {
-			b.sprite = getNewBullet();
+			b.setSprite(getNewBullet());
+			physics.addBody(b);
 		}
-		
+
 		for (Explosion e : data.explosions) {
 			e.sprite = getNewExplosion();
 			e.expAnimation = expAnimation;
 		}
 	}
-	
+
 	private void drawPauseBitmap() {
 		//create the pause bitmap with level
 		Paint p = new Paint();
 		p.setColor(Color.WHITE);
 		p.setTextSize(24);
-		
+
 		String text = "Paused - Level " + (data.level);
-		
+
 		float width = p.measureText(text);
-		
+
 		pauseScreen.getBitmap().eraseColor(Color.TRANSPARENT);
 		pauseScreen.getBitmapCanvas().drawText(text, 
 				(pauseScreen.getWidth() - width) / 2, 
 				(pauseScreen.getHeight() + 24) / 2, p);
 	}
-	
+
 	private Sprite getNewPause() {
 		//create the sprite
 		Sprite s = new Sprite(Viewport.DefaultViewport, 
@@ -484,7 +475,7 @@ public class AsteroidsLogic implements Logic {
 		s.setZ(10);
 		return s;
 	}
-	
+
 	private void drawScoreBitmap() {
 		//same with the score bitmap
 		score.getBitmap().eraseColor(Color.TRANSPARENT);
@@ -493,14 +484,14 @@ public class AsteroidsLogic implements Logic {
 		p.setTextSize(24);
 		score.getBitmapCanvas().drawText("" + data.score, 0, 22, p);
 	}
-	
+
 	private Sprite getNewScore() {
 		Sprite s = new Sprite(Viewport.DefaultViewport, 0, 0, 200, 30);
 		s.setZ(10);
 		return s;
 	}
-	
-	
+
+
 	private Sprite getNewStars() {
 		//create the background - tile if necessary
 		Sprite s = new Sprite(Viewport.DefaultViewport, 0, 0, 
@@ -516,13 +507,13 @@ public class AsteroidsLogic implements Logic {
 		s.setZ(-10);
 		return s;
 	}
-	
+
 	private Sprite getTextSprite(String text, float textSize, int color) {
 		//create a centered static text sprite like Victory or Defeat
 		Paint p = new Paint();
 		p.setColor(color);
 		p.setTextSize(textSize);
-		
+
 		float width = p.measureText(text);
 		Sprite s = new Sprite(Viewport.DefaultViewport, 
 				Graphics.getWidth() / 2, 
@@ -533,7 +524,7 @@ public class AsteroidsLogic implements Logic {
 		s.getBitmapCanvas().drawText(text, 0, textSize, p);
 		return s;
 	}
-	
+
 	private Sprite getNewExplosion() {
 		//Create an explosion sprite
 		Sprite s = new Sprite(Viewport.DefaultViewport, expAnimation[0]);
@@ -541,7 +532,7 @@ public class AsteroidsLogic implements Logic {
 		s.centerOrigin();
 		return s;
 	}
-	
+
 	private Sprite getNewAsteroid() {
 		//Create an asteroid sprite
 		Bitmap aBmp = Data.loadBitmap(R.drawable.rock);
@@ -549,7 +540,7 @@ public class AsteroidsLogic implements Logic {
 		s.centerOrigin();
 		return s;
 	}
-	
+
 	private Sprite getNewBullet() {
 		//Create a bullet sprite
 		Sprite s = new Sprite(Viewport.DefaultViewport, 0, 0, 7, 7);
@@ -557,7 +548,7 @@ public class AsteroidsLogic implements Logic {
 		s.centerOrigin();
 		return s;
 	}
-	
+
 	private void createExpAnimation() {
 		//Create the 16-frame explosion animation
 		expAnimation = new Bitmap[16];

@@ -40,7 +40,7 @@ public class Asteroid implements Serializable{
 	}
 
 	public Asteroid(float x, float y, int size) {
-		this.size = size;
+		this.size = Math.min(size, SMALLEST_SIZE);
 		this.x = x;
 		this.y = y;
 		rotation = rand.nextFloat() * 360;

@@ -1,36 +1,18 @@
 package com.twp.asteroids;
 
-import java.io.Serializable;
+import edu.elon.honors.price.physics.Body;
+import edu.elon.honors.price.physics.Physics;
 
-import edu.elon.honors.price.graphics.Sprite;
-
-public class Bullet implements Serializable{
+public class Bullet extends Body {
 	private static final long serialVersionUID = 1L;
 	
 	public static final transient float SPEED = 0.3f;
-	public float x, y, direction;
-	public transient Sprite sprite;
 	
-	public float getDx() {
-		return SPEED * (float)Math.cos(direction);
-	}
-
-	public float getDy() {
-		return SPEED * (float)Math.sin(direction);
-	}
-	
-	public Bullet(float x, float y, float direction) {
-		this.x = x;
-		this.y = y;
-		this.direction = direction;
-	}
-	
-	public void updateSprite() {
-		sprite.setX(x);
-		sprite.setY(y);
-	}
-	
-	public void dispose() {
-		sprite.dispose();
+	public Bullet(Physics physics, float x, float y, float direction) {
+		super(physics, x, y);
+		setSpeed(SPEED);
+		setDirectionRadians(direction);
+		//setVelocity(new Vector(0, 0.01f));
+		setEdgeBehavior(EdgeBehavior.DESTROY);
 	}
 }
