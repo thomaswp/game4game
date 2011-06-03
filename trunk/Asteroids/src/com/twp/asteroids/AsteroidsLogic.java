@@ -420,8 +420,6 @@ public class AsteroidsLogic implements Logic {
 		pauseScreen.setVisible(paused && data.state == 0);
 		victory.setVisible(data.state == 1);
 		defeat.setVisible(data.state == -1);
-		
-		stars.setVisible(false);
 	}
 	
 	private void loadSprites() {
