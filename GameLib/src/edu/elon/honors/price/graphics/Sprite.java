@@ -31,13 +31,15 @@ public class Sprite implements Comparable<Sprite> {
 	private Bitmap bitmap;
 	private Viewport viewport;
 
-	private float x, y, originX, originY, rotation, zoom;
+	private float x, y, originX, originY, rotation, zoomX, zoomY;
 	private int z;
-	private boolean visible;
+	private boolean visible, disposed;
+	
+	private int timeout = -1;
 
 	private int textureId = -1;
 	private Grid grid;
-	private static HashMap<Integer, Integer> bitmapHash = new HashMap<Integer, Integer>();
+	private boolean bitmapModified;
 	
 	private Canvas bitmapCanvas;
 
@@ -100,6 +102,7 @@ public class Sprite implements Comparable<Sprite> {
 		//so reset the path
 		bitmapPath = null;
 		textureId = -1;
+		bitmapModified = true;
 		return bitmapCanvas;
 	}
 
@@ -195,7 +198,7 @@ public class Sprite implements Comparable<Sprite> {
 	 * @return The width
 	 */
 	public float getWidth() {
-		return bitmap.getWidth() * zoom;
+		return bitmap.getWidth() * zoomX;
 	}
 
 	/**
@@ -203,7 +206,7 @@ public class Sprite implements Comparable<Sprite> {
 	 * @return The height
 	 */
 	public float getHeight() {
-		return bitmap.getHeight() * zoom;
+		return bitmap.getHeight() * zoomY;
 	}
 
 	/**
@@ -269,23 +272,54 @@ public class Sprite implements Comparable<Sprite> {
 	}
 
 	/**
-	 * Gets the zoom of this sprite.
+	 * Gets the x zoom of this sprite.
 	 * Zoom of less than 1.0 shrinks the image and
 	 * more than 1.0 enlarges it.
 	 * @return The zoom
 	 */
-	public float getZoom() {
-		return zoom;
+	public float getZoomX() {
+		return zoomX;
 	}
 
 	/**
-	 * Sets the zoom of this sprite.
+	 * Sets the x zoom of this sprite.
+	 * Zoom of less than 1.0 shrinks the image and
+	 * more than 1.0 enlarges it.
+	 * @param zoom The zoom
+	 */
+	public void setZoomX(float zoom) {
+		this.zoomX = zoom;
+	}
+	
+	/**
+	 * Gets the y zoom of this sprite.
+	 * Zoom of less than 1.0 shrinks the image and
+	 * more than 1.0 enlarges it.
+	 * @return The zoom
+	 */
+	public float getZoomY() {
+		return zoomY;
+	}
+
+	/**
+	 * Sets the y zoom of this sprite.
+	 * Zoom of less than 1.0 shrinks the image and
+	 * more than 1.0 enlarges it.
+	 * @param zoom The zoom
+	 */
+	public void setZoomY(float zoom) {
+		this.zoomY = zoom;
+	}
+	
+	/**
+	 * Sets the x and y zoom of this sprite.
 	 * Zoom of less than 1.0 shrinks the image and
 	 * more than 1.0 enlarges it.
 	 * @param zoom The zoom
 	 */
 	public void setZoom(float zoom) {
-		this.zoom = zoom;
+		setZoomX(zoom);
+		setZoomY(zoom);
 	}
 
 	/**
@@ -339,6 +373,26 @@ public class Sprite implements Comparable<Sprite> {
 	public void setGrid(Grid grid) {
 		this.grid = grid;
 	}
+	
+	public boolean isBitmapModified() {
+		return bitmapModified;
+	}
+
+	public void setBitmapModified(boolean bitmapModified) {
+		this.bitmapModified = bitmapModified;
+	}
+	
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	public boolean isDisposed() {
+		return disposed;
+	}
 
 	/**
 	 * Creates a Sprite with the given Viewport and coordinates and creates
@@ -367,17 +421,16 @@ public class Sprite implements Comparable<Sprite> {
 		this.bitmapCanvas = new Canvas();
 		setBitmap(bitmap);
 		this.visible = true;
-		this.zoom = 1;
+		this.zoomX = 1;
+		this.zoomY = 1;
 		viewport.addSprite(this);
 	}
 
 	/**
-	 * Removes the Sprite's reference to its Bitmap and
-	 * removes it from it's Viewport.
+	 * Marks the sprite as disposed
 	 */
 	public void dispose() {
-		this.bitmap = null;
-		viewport.removeSprite(this);
+		this.disposed = true;
 	}
 
 	/**
@@ -412,8 +465,15 @@ public class Sprite implements Comparable<Sprite> {
 	/**
 	 * Updates the Sprite
 	 */
-	public void update() {
-
+	public void update(long timeElapsed) {
+		if (timeout > 0) {
+			if (timeElapsed >= timeout) {
+				timeout = -1;
+				dispose();
+			} else {
+				timeout -= timeElapsed;
+			}
+		}
 	}
 
 	/**
@@ -433,7 +493,7 @@ public class Sprite implements Comparable<Sprite> {
 		drawMatrix.postTranslate(-originX, -originY);
 		//rotate and zoom
 		drawMatrix.postRotate(rotation);
-		drawMatrix.postScale(zoom, zoom);
+		drawMatrix.postScale(zoomX, zoomY);
 		//then move it to it's position (relative to the Viewport)
 		drawMatrix.postTranslate(viewport.getX() + x, 
 				viewport.getY() + y);

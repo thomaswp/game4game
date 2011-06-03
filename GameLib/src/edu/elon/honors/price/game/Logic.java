@@ -10,10 +10,9 @@ import android.app.Activity;
  *
  */
 public interface Logic {
-	public void update();
+	public void setPaused(boolean paused);
 	public void initialize();
-	public void dispose();
+	public void update(long timeElapsed);
 	public void save(Activity parent);
 	public void load(Activity parent);
-	public void setPaused(boolean paused);
 }

@@ -2,6 +2,7 @@ package edu.elon.honors.price.game;
 
 
 import edu.elon.honors.price.game.Logic;
+import edu.elon.honors.price.graphics.GraphicsRenderer;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.GraphicsView;
 
@@ -11,6 +12,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+
+/**
+ * TODO:
+ * Functions-
+ * Popup Text
+ * Sprite operations:
+ * -move
+ * -squash
+ * -spin
+ * -score
+ * 
+ * Sound
+ * Vector
+ */
 
 /**
  * An abstract class which defines some helpful methods for Activities using
@@ -33,7 +48,7 @@ public abstract class Game extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		Data.setResources(getResources());
 		view = new GraphicsView(this);
-		view.setRenderer(new Graphics());
+		view.setRenderer(new GraphicsRenderer());
 		this.setContentView(view);
 	}
 	
@@ -49,9 +64,10 @@ public abstract class Game extends Activity {
 		synchronized(logic) {
 			//clear the Graphics View's Logic
 			view.setLogic(null);
-			//save the logic and dispose it
+			//save the logic
 			logic.save(this);
-			logic.dispose();
+			//reset the Graphics
+			Graphics.reset();
 		}
 
 		super.onPause();
@@ -68,7 +84,8 @@ public abstract class Game extends Activity {
 	@Override
 	public void onResume() {
 		debug("Activity Resumed");
-		
+
+		view.getRenderer().setFlush(true);
 		//Load the logic back on resume
 		Logic logic = getNewLogic();
 		view.setLogic(logic);
@@ -86,6 +103,7 @@ public abstract class Game extends Activity {
 		Logic logic = view.getLogic();
 		if (logic != null)
 			logic.setPaused(true);
+		view.getRenderer().setFlush(true);
 		
 		return super.onMenuOpened(featureId, menu);
 	}

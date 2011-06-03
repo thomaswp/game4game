@@ -4,6 +4,7 @@ package edu.elon.honors.price.graphics;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.input.Input;
+import edu.elon.honors.price.physics.Physics;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -24,6 +25,7 @@ public class GraphicsView extends GLSurfaceView {
 
 	private Thread thread;
 	private Logic logic;
+	private GraphicsRenderer renderer;
 
 	/**
 	 * Gets the Thread on which the Logic is running.
@@ -31,6 +33,10 @@ public class GraphicsView extends GLSurfaceView {
 	 */
 	public Thread getThread() {
 		return thread;
+	}
+	
+	public GraphicsRenderer getRenderer() {
+		return renderer;
 	}
 
 	/**
@@ -41,6 +47,11 @@ public class GraphicsView extends GLSurfaceView {
 		return logic;
 	}
 
+	public void setRenderer (GraphicsRenderer renderer) {
+		super.setRenderer(renderer);
+		this.renderer = renderer;
+	}
+	
 	/**
 	 * Sets the Logic this view is running.
 	 * @param logic The Logic
@@ -53,7 +64,7 @@ public class GraphicsView extends GLSurfaceView {
 				this.logic = logic;			
 			}
 		}
-		Graphics.setLogic(logic);
+		renderer.setLogic(logic);
 	}
 
 	public GraphicsView(Context context) {
@@ -144,6 +155,7 @@ public class GraphicsView extends GLSurfaceView {
 
 	private void doLoop(SurfaceHolder surfaceHolder) {
 		long lastTime = System.currentTimeMillis();
+		long lastUpdate = System.currentTimeMillis();
 		final int TARGET_FPS = 60;
 		int frame = 0;
 		while(!thread.isInterrupted()) {
@@ -154,9 +166,11 @@ public class GraphicsView extends GLSurfaceView {
 						if (logic != null) {
 							//Game.debug("Game Loop");
 							//Update everything
-							Input.update();
-							logic.update();
-							Graphics.update();
+							long timeElapsed = System.currentTimeMillis() - lastUpdate;
+							lastUpdate += timeElapsed;
+							Input.update(timeElapsed);
+							logic.update(timeElapsed);
+							Graphics.update(timeElapsed);
 						}
 					}
 					frame++;
