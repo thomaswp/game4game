@@ -4,6 +4,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.microedition.khronos.egl.EGL10;
@@ -16,7 +17,12 @@ import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Paint.Align;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
@@ -28,11 +34,24 @@ public class Graphics implements Renderer {
 	private static LinkedList<Viewport> viewports = new LinkedList<Viewport>();
 	private static int width, height;
 
-	private static int frameCount = 0;
-	private static long lastSystemTime = System.currentTimeMillis();
-	private static int fps;
+	private static int frameCountDraw = 0;
+	private static long lastSystemTimeDraw = System.currentTimeMillis();
+	private static int fpsDraw;
+	private static int frameCountGame = 0;
+	private static long lastSystemTimeGame = System.currentTimeMillis();
+	private static int fpsGame;
 	private static boolean showFPS;
+	private static Bitmap fpsBitmap;
+	private static boolean fpsBitmapRefresh;
+	private static Paint paint = new Paint();
+	private static Canvas canvas = new Canvas();
+	private static int fpsId = -1;
+	private static Grid fpsGrid;
+
 	private static Logic logic;
+
+
+	private static HashMap<Integer, Integer> textures = new HashMap<Integer, Integer>();
 
 	// Pre-allocated arrays to use at runtime so that allocation during the
 	// test can be avoided.
@@ -66,16 +85,20 @@ public class Graphics implements Renderer {
 		Graphics.showFPS = showFPS;
 	}
 
-	public static int getFps() {
-		return fps;
+	public static int getFpsDraw() {
+		return fpsDraw;
 	}
 
-	public int[] getConfigSpec() {
-		// We don't need a depth buffer, and don't care about our
-		// color depth.
-		int[] configSpec = { EGL10.EGL_DEPTH_SIZE, 0, EGL10.EGL_NONE };
-		return configSpec;
+	public static int getFpsGame() {
+		return fpsGame;
 	}
+
+	//	public int[] getConfigSpec() {
+	//		// We don't need a depth buffer, and don't care about our
+	//		// color depth.
+	//		int[] configSpec = { EGL10.EGL_DEPTH_SIZE, 0, EGL10.EGL_NONE };
+	//		return configSpec;
+	//	}
 
 	public static void setLogic(Logic logic) {
 		Graphics.logic = logic;
@@ -152,11 +175,15 @@ public class Graphics implements Renderer {
 		}
 	}
 
+	
+	long times = 0;
+	int frame = 0;
 	/**
 	 * Draws the the Sprites in each Viewport.
 	 * @param canvas The canvas on which to draw.
 	 */
 	public void onDrawFrame(GL10 gl) {
+		long time = System.currentTimeMillis();
 		if (Graphics.logic != null) {
 			synchronized(Graphics.logic) {
 				//Game.debug("Draw");
@@ -189,12 +216,18 @@ public class Graphics implements Renderer {
 								//Draw visible Sprites
 
 								if (sprite.getTextureId() == -1) {
-									int rid = loadBitmap(gl, sprite.getBitmap());
-									resources.add(rid);
-									sprite.setTextureId(rid);
+									int hash = sprite.getBitmap().hashCode();
+									if (textures.containsKey(hash)) {
+										sprite.setTextureId(textures.get(hash));
+									} else {
+										int rid = loadBitmap(gl, sprite.getBitmap());
+										resources.add(rid);
+										sprite.setTextureId(rid);
+										textures.put(hash, rid);
+									}
 								}
 								if (sprite.getGrid() == null) {
-									sprite.setGrid(createNewGrid(sprite));
+									sprite.setGrid(createNewGrid(sprite.getBitmap()));
 								}
 
 								gl.glBindTexture(GL10.GL_TEXTURE_2D, sprite.getTextureId());
@@ -221,18 +254,38 @@ public class Graphics implements Renderer {
 					}
 				}
 
+				updateFPSDraw();
+				//if (fpsBitmap != null) fpsBitmapRefresh = false;
+				if (fpsBitmapRefresh) {
+					updateFPSBitmap();
+					if (fpsId > 0) {
+						int[] texture = new int[] { fpsId };
+						gl.glDeleteTextures(1, texture, 0);
+					}
+					fpsId = loadBitmap(gl, fpsBitmap);
+				}
+				if (fpsBitmap != null) {
+					if (fpsGrid == null) {
+						fpsGrid = createNewGrid(fpsBitmap);
+					}
+					gl.glBindTexture(GL10.GL_TEXTURE_2D, fpsId);
+					gl.glPushMatrix();
+					gl.glLoadIdentity();
+					gl.glTranslatef(width - fpsBitmap.getWidth(), height - fpsBitmap.getHeight(), 0);
+					fpsGrid.draw(gl, true, false);
+					gl.glPopMatrix();
+
+				}
 				Grid.endDrawing(gl);
 			}
 		}
-
-		//		if (clipSet) {
-		//			canvas.restore();
-		//		}
-		//		paint.setColor(Color.GRAY);
-		//		paint.setTextSize(20);
-		//		String fpsString = "" + fps;
-		//		float width = paint.measureText(fpsString);
-		//		canvas.drawText(fpsString, getWidth() - width, paint.getTextSize(), paint);
+		times += System.currentTimeMillis() - time;
+		frame++;
+		if (frame == 60) {
+			Game.debug("" + (times / frame));
+			frame = 0;
+			times = 0;
+		}
 	}
 
 	/**
@@ -252,23 +305,45 @@ public class Graphics implements Renderer {
 				viewport.upadte();
 			}
 		}
-		updateFPS();
+		updateFPSGame();
 	}
 
 
-	private static void updateFPS() {
-		frameCount = (frameCount + 1) % FRAME_BLOCK;
-		if (frameCount == 0) {
+	private static void updateFPSDraw() {
+		frameCountDraw = (frameCountDraw + 1) % FRAME_BLOCK;
+		if (frameCountDraw == 0) {
 			long currentTime = System.currentTimeMillis();
-			fps = (int)(FRAME_BLOCK * 1000 / (currentTime - lastSystemTime));
-			lastSystemTime = currentTime;
+			fpsDraw = (int)(FRAME_BLOCK * 1000 / (currentTime - lastSystemTimeDraw));
+			lastSystemTimeDraw = currentTime;
+			fpsBitmapRefresh = true;
 		}
 	}
 
-	private Grid createNewGrid(Sprite sprite) {
-		Game.debug("Create grid");
+	private static void updateFPSGame() {
+		frameCountGame = (frameCountGame + 1) % FRAME_BLOCK;
+		if (frameCountGame == 0) {
+			long currentTime = System.currentTimeMillis();
+			fpsGame = (int)(FRAME_BLOCK * 1000 / (currentTime - lastSystemTimeGame));
+			lastSystemTimeGame = currentTime;
+			fpsBitmapRefresh = true;
+		}
+	}
 
-		Bitmap bitmap = sprite.getBitmap();
+	private void updateFPSBitmap() {
+		if (fpsBitmap == null) {
+			fpsBitmap = Bitmap.createBitmap(64, 32, Config.ARGB_8888);
+			canvas.setBitmap(fpsBitmap);
+			paint.setColor(Color.GRAY);
+			paint.setTextSize(16);
+		}
+		fpsBitmap.eraseColor(Color.TRANSPARENT);
+		canvas.drawText(fpsDraw + "/" + fpsGame, 0, 12, paint);
+		fpsBitmapRefresh = false;
+	}
+
+	private Grid createNewGrid(Bitmap bitmap) {
+		//Game.debug("Create grid");
+
 		int width = bitmap.getWidth(), height = bitmap.getHeight();
 		int targetWidth = 1, targetHeight = 1;
 		while (targetWidth < width) targetWidth *= 2;
@@ -288,7 +363,7 @@ public class Graphics implements Renderer {
 	 * 2D texture maps. 
 	 */
 	public static int loadBitmap(GL10 gl, Bitmap bitmap) {
-		Game.debug("Load texture");
+		//Game.debug("Load texture");
 		int textureName = -1;
 		if (gl != null) {
 			gl.glGenTextures(1, mTextureNameWorkspace, 0);
@@ -309,30 +384,30 @@ public class Graphics implements Renderer {
 			while (targetWidth < width) targetWidth *= 2;
 			while (targetHeight < height) targetHeight *= 2;
 			if ((width != targetWidth || height != targetHeight)) {
-//				int[] bmpPixels = new int[width * height];
-//				bitmap.getPixels(bmpPixels, 0, width, 0, 0, width, height);
-//				ByteBuffer pixels = ByteBuffer.allocateDirect(targetWidth * targetHeight * 4);
-//
-//				int index = 0;
-//
-//				for (int i = 0; i < targetHeight; i++) {
-//					for (int j = 0; j < targetWidth; j++) {
-//						if (i < height && j < width) {
-//							int pix = bmpPixels[i * width + j];
-//							pixels.put(index++, (byte)Color.red(pix));
-//							pixels.put(index++,(byte)Color.green(pix));
-//							pixels.put(index++, (byte)Color.blue(pix));
-//							pixels.put(index++, (byte)Color.alpha(pix));
-//						} else {
-//							for (int k = 0; k < 4; k++) {
-//								pixels.put(index++, (byte)0);
-//							}
-//						}
-//					}
-//				}
-//
-//				gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, targetWidth, targetHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixels);
-				
+				//				int[] bmpPixels = new int[width * height];
+				//				bitmap.getPixels(bmpPixels, 0, width, 0, 0, width, height);
+				//				ByteBuffer pixels = ByteBuffer.allocateDirect(targetWidth * targetHeight * 4);
+				//
+				//				int index = 0;
+				//
+				//				for (int i = 0; i < targetHeight; i++) {
+				//					for (int j = 0; j < targetWidth; j++) {
+				//						if (i < height && j < width) {
+				//							int pix = bmpPixels[i * width + j];
+				//							pixels.put(index++, (byte)Color.red(pix));
+				//							pixels.put(index++,(byte)Color.green(pix));
+				//							pixels.put(index++, (byte)Color.blue(pix));
+				//							pixels.put(index++, (byte)Color.alpha(pix));
+				//						} else {
+				//							for (int k = 0; k < 4; k++) {
+				//								pixels.put(index++, (byte)0);
+				//							}
+				//						}
+				//					}
+				//				}
+				//
+				//				gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, targetWidth, targetHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixels);
+
 				int[] bmpPixels = new int[targetWidth * targetHeight];
 				bitmap.getPixels(bmpPixels, 0, targetWidth, 0, 0, width, height);
 				for (int i = 0; i < bmpPixels.length; i++) {
@@ -344,7 +419,7 @@ public class Graphics implements Renderer {
 				}
 				IntBuffer pixels = IntBuffer.wrap(bmpPixels);
 				gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, targetWidth, targetHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixels);
-				
+
 			} else {
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
 			}
