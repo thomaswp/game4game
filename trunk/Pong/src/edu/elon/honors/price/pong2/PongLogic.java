@@ -122,8 +122,8 @@ public class PongLogic implements Logic {
 		linePaint.setColor(Color.GRAY);
 		int length = (int)linePaint.measureText(text);
 
-		int x = (score.getWidth() - length) / 2;
-		int y = (score.getHeight()) / 2 - 16;
+		float x = (score.getWidth() - length) / 2;
+		float y = (score.getHeight()) / 2 - 16;
 
 		score.getBitmapCanvas().drawText(text, x, y, linePaint);
 	}
