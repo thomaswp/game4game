@@ -51,6 +51,7 @@ public class AsteroidsLogic implements Logic {
 	private Bitmap[] expAnimation;
 	private int nextAnim;
 	private long winTime;
+	private float timeScale = 1;
 	
 	private MediaPlayer whir;
 
@@ -77,8 +78,8 @@ public class AsteroidsLogic implements Logic {
 		}
 		
 		Audio.stop();
-		//Audio.play(R.raw.music).setLooping(true);
-		whir = Audio.play(R.raw.whir);
+		Audio.play(R.raw.music).setLooping(true);
+		whir = Audio.play(R.raw.thruster);
 		whir.setVolume(0, 0);
 		whir.setLooping(true);
 	}
@@ -99,6 +100,8 @@ public class AsteroidsLogic implements Logic {
 		if (!paused) {
 
 			int s = data.score;
+			
+			timeElapsed = (long)(timeElapsed * timeScale);
 
 			//update everything
 			updatePlayer(timeElapsed);
@@ -243,7 +246,7 @@ public class AsteroidsLogic implements Logic {
 			Helper.popupText(physics, "" + score, new Vector(a.getX(), a.getY()),
 					Color.LTGRAY, 24, 1000);
 			
-			Audio.play(R.raw.boom).setVolume(0.5f, 0.5f);
+			Audio.play(R.raw.boom).setVolume(a.getZoom(), a.getZoom());
 
 			//Remove the destroyed asteroid
 			data.asteroids.remove(a);
@@ -302,7 +305,7 @@ public class AsteroidsLogic implements Logic {
 
 	private void updatePlayer(long msPassed) {
 
-		int volume = thrust.isVisible() ? 1 : 0;
+		float volume = thrust.isVisible() && !paused ? 1 : 0f;
 		whir.setVolume(volume, volume);
 		
 		//By default, we shouldn't see the thruster
@@ -363,6 +366,7 @@ public class AsteroidsLogic implements Logic {
 		data.shipX = flip(data.shipX, sWidth, width);
 		data.shipY = flip(data.shipY, sHeight, height);
 
+		float minDis = Integer.MAX_VALUE;
 		for (Asteroid a : data.asteroids) {
 			if (!a.intersection(ship).isEmpty()) {
 				//If we touch an asteroid, game over
@@ -374,7 +378,14 @@ public class AsteroidsLogic implements Logic {
 				Audio.play(R.raw.boom);
 				break;
 			}
+
+			float dis = a.getPosition().minus(new Vector(ship.getX(), ship.getY())).magnitude(); 
+			dis -= new Vector(a.getSprite().getWidth(), a.getSprite().getHeight()).magnitude() / 2;
+			if (dis < minDis) {
+				minDis = dis;
+			}
 		}
+		timeScale = Math.max(Math.min(1, minDis / 50), 0.2f);
 	}
 
 	private float flip(float x, float size, float max) {
