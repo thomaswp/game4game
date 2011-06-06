@@ -1,6 +1,7 @@
 package edu.elon.honors.price.game;
 
 
+import edu.elon.honors.price.audio.Audio;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.GraphicsRenderer;
 import edu.elon.honors.price.graphics.Graphics;
@@ -47,6 +48,7 @@ public abstract class Game extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		Data.setResources(getResources());
+		Audio.setContext(this);
 		view = new GraphicsView(this);
 		view.setRenderer(new GraphicsRenderer());
 		this.setContentView(view);
@@ -69,6 +71,8 @@ public abstract class Game extends Activity {
 			//reset the Graphics
 			Graphics.reset();
 		}
+		
+		Audio.stop();
 
 		super.onPause();
 		

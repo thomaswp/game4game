@@ -1,14 +1,17 @@
 package com.twp.asteroids;
 
+import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View.OnCreateContextMenuListener;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.GraphicsView;
 
 public class Asteroids extends Game {
-  
+
 	@Override
 	protected Logic getNewLogic() {
 		return new AsteroidsLogic();
