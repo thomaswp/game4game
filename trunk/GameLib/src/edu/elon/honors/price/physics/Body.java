@@ -193,7 +193,6 @@ public class Body implements Serializable {
 	}
 
 	public void dispose() {
-		Game.debug("DISOPSE");
 		physics.removeBody(this);
 		if (sprite != null) {
 			sprite.dispose();
@@ -271,16 +270,5 @@ public class Body implements Serializable {
 				dispose();
 			}
 		}
-	}
-
-	private float flip(float x, float size, float max) {
-		//If a coordinate is past the max, flip it
-		if (x > max + size / 2 + flipThreshold) {
-			x = -size / 2;
-		}
-		if (x < -size / 2 - flipThreshold) {
-			x = max + size / 2;
-		}
-		return x;
 	}
 }

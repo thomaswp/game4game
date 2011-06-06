@@ -212,8 +212,14 @@ public class GraphicsRenderer implements Renderer {
 								// Draw using verts or VBO verts.
 								gl.glPushMatrix();
 								gl.glLoadIdentity();
-								gl.glTranslatef(sprite.getX() + viewport.getX(), Graphics.getHeight() + bY - targetHeight + sprite.getOriginY() * 2
-										- (sprite.getY() + viewport.getY()), 0);
+
+//								gl.glTranslatef(viewport.getX(), Graphics.getHeight() - viewport.getY(), 0);
+//								gl.glRotatef(-viewport.getRotation(), 0, 0, 1);
+//								gl.glScalef(viewport.getZoomX(), viewport.getZoomY(), 0);
+//								gl.glTranslatef(-viewport.getOriginX(), -viewport.getOriginY(), 0);
+								
+								gl.glTranslatef(sprite.getX(), Graphics.getHeight() + bY - targetHeight + sprite.getOriginY() * 2
+										- sprite.getY(), 0);
 								gl.glRotatef(-sprite.getRotation(), 0, 0, 1);
 								gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 0);
 								gl.glTranslatef(-sprite.getOriginX(), -bY - sprite.getOriginY(), 0);
