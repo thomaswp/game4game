@@ -28,9 +28,7 @@ public class PongLogic implements Logic {
 	private Sprite paddle1, paddle2, ball, score;
 	//the Y of the paddle when a touch sequence occurs
 	private float startTouchY;
-
-	//the last system of an update
-	private long lastTime;
+	
 	//is the game paused
 	private boolean paused;
 
@@ -83,7 +81,6 @@ public class PongLogic implements Logic {
 
 	@Override
 	public void initialize() {
-		lastTime = System.currentTimeMillis();
 		paused = true;
 		if (needReset) 
 			newGame();
@@ -150,10 +147,7 @@ public class PongLogic implements Logic {
 	}
 
 	@Override
-	public void update() {
-
-		long elapsedTime = System.currentTimeMillis() - lastTime;
-		lastTime = System.currentTimeMillis();
+	public void update(long elapsedTime) {
 
 		if (Input.isTapped()) {
 			//start the game if it's paused
@@ -277,19 +271,6 @@ public class PongLogic implements Logic {
 
 		paddle2X = width - paddle1X - getPaddleWidth();
 		paddle2Y = paddle1Y;
-	}
-
-	@Override
-	public void dispose() {
-		//clear the sprites and any reference to them
-		paddle1.dispose();
-		paddle1 = null;
-		paddle2.dispose();
-		paddle2 = null;
-		ball.dispose();
-		ball = null;
-		score.dispose();
-		score = null;
 	}
 
 	@Override

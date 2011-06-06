@@ -10,13 +10,15 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Region;
 import android.graphics.Region.Op;
-import edu.elon.edu.price.helper.Helper;
+import android.media.MediaPlayer;
+import edu.elon.honors.price.audio.Audio;
 import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
+import edu.elon.honors.price.helper.Helper;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.physics.Physics;
 import edu.elon.honors.price.physics.Vector;
@@ -31,9 +33,9 @@ public class AsteroidsLogic implements Logic {
 	//The number of pixels a sprite has to pass off the screen before it
 	//flips to the other side
 	private final static int THRESH = 3;
-	private final static int MAX_BULLETS = 3;
+	private final static int MAX_BULLETS = 4;
 	//How many asteroids does the first level have
-	private final int START_ASTEROIDS = 4;
+	private final int START_ASTEROIDS = 3;
 	//Length of an animation frame
 	private final int FRAME_LENGTH = 30;
 	//Time to wait after a player clears a level
@@ -49,6 +51,8 @@ public class AsteroidsLogic implements Logic {
 	private Bitmap[] expAnimation;
 	private int nextAnim;
 	private long winTime;
+	
+	private MediaPlayer whir;
 
 	public void setNewGame(boolean newGame) {
 		this.newGame = newGame;
@@ -67,9 +71,16 @@ public class AsteroidsLogic implements Logic {
 		}
 		//or just reload the sprites
 		else {
+			physics = new Physics();
 			loadSprites();
 			paused = true;
 		}
+		
+		Audio.stop();
+		//Audio.play(R.raw.music).setLooping(true);
+		whir = Audio.play(R.raw.whir);
+		whir.setVolume(0, 0);
+		whir.setLooping(true);
 	}
 
 	public void newGame() {
@@ -94,7 +105,7 @@ public class AsteroidsLogic implements Logic {
 			updateAsteroids(timeElapsed);
 			updateBullets(timeElapsed);
 			updateExplosions(timeElapsed);
-			physics.update(timeElapsed);
+			physics.updatePhysics(timeElapsed);
 
 			if (s != data.score) {
 				drawScoreBitmap();
@@ -138,9 +149,11 @@ public class AsteroidsLogic implements Logic {
 		data.explosions = new LinkedList<Explosion>();
 		data.state = 0;
 
+		physics = new Physics();
+		
 		//Create some asteroids
 		for (int i = 0; i < START_ASTEROIDS + data.level - 1; i++) {
-			data.asteroids.add(new Asteroid(rand.nextInt(i/2+1)));
+			data.asteroids.add(new Asteroid(physics, rand.nextInt(i/2+1)));
 		}
 
 		//Load the sprites
@@ -180,8 +193,8 @@ public class AsteroidsLogic implements Logic {
 			float x = (float)(Math.cos(dir) * rad) + data.shipX;
 			float y = (float)(Math.sin(dir) * rad) + data.shipY;
 			Bullet b = new Bullet(physics, x, y, dir);
-			b.updateSprite();
 			b.setSprite(getNewBullet());
+			b.updateSprite();
 			data.bullets.add(b);
 		}
 
@@ -192,7 +205,7 @@ public class AsteroidsLogic implements Logic {
 
 			//check which bullets hit an asteroid
 			for (Asteroid a : data.asteroids) {
-				if (!b.intersection(a.sprite).isEmpty()) {
+				if (!b.intersection(a).isEmpty()) {
 					if (!hit.contains(a)) {
 						hit.add(a);
 					}
@@ -208,27 +221,29 @@ public class AsteroidsLogic implements Logic {
 
 		for (Asteroid a : hit) {
 			float dir = 2 * (float)Math.PI * rand.nextFloat();
-			int size = a.size + 1;
+			int size = a.getSize() + 1;
 			if (size <= Asteroid.SMALLEST_SIZE) {
 				//Create two smaller asteroids
-				float rad = Asteroid.getZoom(size) * a.sprite.getBitmap().getWidth() / 1.5f;
-				float x1 = rad * (float)Math.cos(dir) + a.x, y1 = rad * (float)Math.sin(dir) + a.y;
-				float x2 = rad * (float)Math.cos(dir + 180) + a.x, y2 = rad * (float)Math.sin(dir + 180) + a.y;
-				Asteroid a1 = new Asteroid(x1, y1, size), a2 = new Asteroid(x2, y2, size);
-				a1.sprite = getNewAsteroid(); a2.sprite = getNewAsteroid();
+				float rad = Asteroid.getZoom(size) * a.getSprite().getBitmap().getWidth() / 1.5f;
+				float x1 = rad * (float)Math.cos(dir) + a.getX(), y1 = rad * (float)Math.sin(dir) + a.getY();
+				float x2 = rad * (float)Math.cos(dir + 180) + a.getX(), y2 = rad * (float)Math.sin(dir + 180) + a.getY();
+				Asteroid a1 = new Asteroid(physics, x1, y1, size), a2 = new Asteroid(physics, x2, y2, size);
+				a1.setSprite(getNewAsteroid()); a2.setSprite(getNewAsteroid());
 				data.asteroids.add(a1); data.asteroids.add(a2);
 			}
 
 			//And an explosion
-			Explosion ex = new Explosion(a.x, a.y, a.getZoom() * 2, expAnimation);
-			ex.sprite = getNewExplosion();
+			Explosion ex = new Explosion(physics, a.getX(), a.getY(), a.getZoom() * 2, expAnimation);
+			ex.setSprite(getNewExplosion());
 			data.explosions.add(ex);
 
 			//Add score
-			int score = 50 * (Asteroid.SMALLEST_SIZE - a.size + 1);
+			int score = 50 * (Asteroid.SMALLEST_SIZE - a.getSize() + 1);
 			data.score += score; 
-			Helper.popupText(physics, "" + score, new Vector(a.x, a.y),
+			Helper.popupText(physics, "" + score, new Vector(a.getX(), a.getY()),
 					Color.LTGRAY, 24, 1000);
+			
+			Audio.play(R.raw.boom).setVolume(0.5f, 0.5f);
 
 			//Remove the destroyed asteroid
 			data.asteroids.remove(a);
@@ -261,34 +276,22 @@ public class AsteroidsLogic implements Logic {
 		for (int i = 0; i < data.asteroids.size(); i++) {
 			Asteroid a = data.asteroids.get(i);
 
-			//Move the asteroid
-			a.x += a.dx * msPassed;
-			a.y += a.dy * msPassed;
-
-			//Flip it to the other side of the screen if necessary
-			a.x = flip(a.x, a.sprite.getWidth(), Graphics.getWidth());
-			a.y = flip(a.y, a.sprite.getHeight(), Graphics.getHeight());
-
-			//Rotate
-			a.rotation += a.dRotation * msPassed;
-
 			if (COLLIDE) {
 				for (int j = i + 1; j < data.asteroids.size(); j++) {
 					Asteroid a2 = data.asteroids.get(j);
 					if (a != a2) {
-						if (!a.sprite.intersection(a2.sprite).isEmpty()) {
+						if (!a.intersection(a2).isEmpty()) {
 							//If we're touching another asteroid, bounce them both
 							//We do both because the collision detection should only
 							//Happen once per collision
-							double speed1 = Math.sqrt(a.dx * a.dx + a.dy * a.dy);
-							double speed2 = Math.sqrt(a2.dx * a2.dx + a2.dy * a2.dy);
-							float dx = a.x - a2.x;
-							float dy = a.y - a2.y;
-							double bSpeed = Math.sqrt(dx * dx + dy * dy);
-							a.dx = (float)(dx * speed1 / bSpeed);
-							a.dy = (float)(dy * speed1 / bSpeed);
-							a2.dx = (float)(-dx * speed2 / bSpeed);
-							a2.dy = (float)(-dy * speed2 / bSpeed);
+							float speed1 = a.getVelocity().magnitude();
+							float speed2 = a2.getVelocity().magnitude();
+							Vector r = a.getPosition().minus(a2.getPosition());
+							float bSpeed = r.magnitude();
+							a.setVelocity(r.times(speed1 / bSpeed));
+							a.updateSprite();
+							a2.setVelocity(r.times(-speed2 / bSpeed));
+							a2.updateSprite();
 
 						}
 					}
@@ -299,6 +302,9 @@ public class AsteroidsLogic implements Logic {
 
 	private void updatePlayer(long msPassed) {
 
+		int volume = thrust.isVisible() ? 1 : 0;
+		whir.setVolume(volume, volume);
+		
 		//By default, we shouldn't see the thruster
 		thrust.setVisible(false);
 
@@ -358,13 +364,14 @@ public class AsteroidsLogic implements Logic {
 		data.shipY = flip(data.shipY, sHeight, height);
 
 		for (Asteroid a : data.asteroids) {
-			if (!a.sprite.intersection(ship).isEmpty()) {
+			if (!a.intersection(ship).isEmpty()) {
 				//If we touch an asteroid, game over
-				Explosion e = new Explosion(data.shipX, data.shipY, 2, expAnimation);
-				e.sprite = getNewExplosion();
+				Explosion e = new Explosion(physics, data.shipX, data.shipY, 2, expAnimation);
+				e.setSprite(getNewExplosion());
 				data.explosions.add(e);
 				//Set state to Defeat
 				data.state = -1;
+				Audio.play(R.raw.boom);
 				break;
 			}
 		}
@@ -390,19 +397,7 @@ public class AsteroidsLogic implements Logic {
 		thrust.setY(data.shipY);
 		thrust.setRotation(data.shipRot);
 		
-		for (Asteroid a : data.asteroids) {
-			a.updateSprite();
-		}
-		
-		if (paused) {
-			for (Bullet b : data.bullets) {
-				b.updateSprite();
-			}
-		}
-
-		for (Explosion e : data.explosions) {
-			e.updateSprite();
-		}
+		physics.updateSprites();
 
 		//pause is visible if we're paused and it's not victory or defeat
 		pauseScreen.setVisible(paused && data.state == 0);
@@ -431,20 +426,20 @@ public class AsteroidsLogic implements Logic {
 
 		score = getNewScore();
 		drawScoreBitmap();
-		
-		physics = new Physics();
 
 		for (Asteroid a : data.asteroids) {
-			a.sprite = getNewAsteroid();
+			a.setSprite(getNewAsteroid());
+			a.setPhysics(physics);
 		}
 
 		for (Bullet b : data.bullets) {
 			b.setSprite(getNewBullet());
-			physics.addBody(b);
+			b.setPhysics(physics);
 		}
 
 		for (Explosion e : data.explosions) {
-			e.sprite = getNewExplosion();
+			e.setSprite(getNewExplosion());
+			e.setPhysics(physics);
 			e.expAnimation = expAnimation;
 		}
 	}

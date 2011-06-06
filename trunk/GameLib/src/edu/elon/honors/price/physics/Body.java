@@ -45,6 +45,22 @@ public class Body implements Serializable {
 		this.position = position;
 	}
 
+	public float getX() {
+		return position.getX();
+	}
+	
+	public void setX(float x) {
+		position.setX(x);
+	}
+	
+	public float getY() {
+		return position.getY();
+	}
+	
+	public void setY(float y) {
+		position.setY(y);
+	}
+	
 	public Vector getVelocity() {
 		return velocity;
 	}
@@ -121,6 +137,11 @@ public class Body implements Serializable {
 	public void setZoomY(float zoomY) {
 		this.zoomY = zoomY;
 	}
+	
+	public void setZoom(float zoom) {
+		setZoomX(zoom);
+		setZoomY(zoom);
+	}
 
 	public int getTimeout() {
 		return timeout;
@@ -148,6 +169,11 @@ public class Body implements Serializable {
 
 	public Physics getPhysics() {
 		return physics;
+	}
+	
+	public void setPhysics(Physics physics) {
+		this.physics = physics;
+		physics.addBody(this);
 	}
 
 	public Body(Physics physics, Sprite sprite) {
@@ -200,7 +226,7 @@ public class Body implements Serializable {
 		}
 	}
 
-	public void update(long timeElapsed) {
+	public void updatePhysics(long timeElapsed) {
 		if (timeout > 0) {
 			if (timeElapsed >= timeout) {
 				timeout = -1;
@@ -214,8 +240,6 @@ public class Body implements Serializable {
 		rotation += dRotation * timeElapsed;
 
 		doEdgeBehavior();
-
-		updateSprite();
 	}
 
 	private void doEdgeBehavior() {
@@ -226,9 +250,22 @@ public class Body implements Serializable {
 		} else {
 			rect = sprite.getRect();
 		}
+		int width = Graphics.getWidth();
+		int height = Graphics.getHeight();
 		
 		if (edgeBehavior == EdgeBehavior.FLIP) {
-
+			if (rect.left > width + flipThreshold) {
+				position.setX(position.getX() - rect.right);
+			}
+			if (rect.right < -flipThreshold) {
+				position.setX(width + position.getX() - rect.left);
+			}
+			if (rect.top > height + flipThreshold) {
+				position.setY(position.getY() - rect.bottom);
+			}
+			if (rect.bottom < -flipThreshold) {
+				position.setY(height + position.getY() - rect.top);
+			}
 		} else if (edgeBehavior == EdgeBehavior.DESTROY) {
 			if (!rect.intersect(Graphics.getRect())) {
 				dispose();

@@ -37,6 +37,15 @@ public class Vector implements Serializable{
 		return new Vector(x + v.getX(), y + v.getY());
 	}
 	
+	public void subtract(Vector v) {
+		this.x -= v.getX();
+		this.y -= v.getY();
+	}
+	
+	public Vector minus(Vector v) {
+		return new Vector(x - v.getX(), y - v.getY());
+	}
+	
 	public void multiply(float c) {
 		this.x *= c;
 		this.y *= c;

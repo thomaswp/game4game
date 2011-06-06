@@ -1,32 +1,8 @@
 package edu.elon.honors.price.graphics;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
-
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.game.Logic;
-
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Paint.Align;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
-import android.opengl.GLUtils;
-import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 public class Graphics {
 

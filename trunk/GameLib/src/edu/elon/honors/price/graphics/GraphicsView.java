@@ -1,6 +1,7 @@
 package edu.elon.honors.price.graphics;
 
 
+import edu.elon.honors.price.audio.Audio;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.input.Input;
@@ -171,6 +172,7 @@ public class GraphicsView extends GLSurfaceView {
 							Input.update(timeElapsed);
 							logic.update(timeElapsed);
 							Graphics.update(timeElapsed);
+							Audio.update();
 						}
 					}
 					frame++;

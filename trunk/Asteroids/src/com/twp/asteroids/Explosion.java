@@ -4,30 +4,26 @@ import java.io.Serializable;
 
 import android.graphics.Bitmap;
 import edu.elon.honors.price.graphics.Sprite;
+import edu.elon.honors.price.physics.Body;
+import edu.elon.honors.price.physics.Physics;
 
-public class Explosion implements Serializable {
-	public float x, y, zoom;
+public class Explosion extends Body {
+	private static final long serialVersionUID = 1L;
+	
 	public int state;
-	public transient Sprite sprite;
 	public transient Bitmap[] expAnimation;
 	
-	public Explosion(float x, float y, float zoom, Bitmap[] expAnimation) {
-		this.x = x;
-		this.y = y;
-		this.zoom = zoom;
+	public Explosion(Physics physics, float x, float y, float zoom, Bitmap[] expAnimation) {
+		super(physics, x, y);
+		setZoom(zoom);
 		this.expAnimation = expAnimation;
 	}
 	
+	@Override
 	public void updateSprite() {
-		sprite.setX(x);
-		sprite.setY(y);
-		sprite.setZoom(zoom);
+		super.updateSprite();
 		if (state < expAnimation.length) {
 			sprite.setBitmap(expAnimation[state]);
 		}
-	}
-	
-	public void dispose() {
-		sprite.dispose();
 	}
 }
