@@ -17,15 +17,10 @@ import android.view.WindowManager;
 /**
  * TODO:
  * Functions-
- * Popup Text
  * Sprite operations:
- * -move
  * -squash
  * -spin
  * -score
- * 
- * Sound
- * Vector
  */
 
 /**

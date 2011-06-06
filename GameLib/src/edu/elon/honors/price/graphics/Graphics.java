@@ -19,7 +19,7 @@ public class Graphics {
 	private static int fpsGame;
 	private static boolean showFPS;
 	private static boolean fpsBitmapRefresh;
-	
+
 	public static boolean getFPSBitmapRefresh() {
 		return fpsBitmapRefresh;
 	}

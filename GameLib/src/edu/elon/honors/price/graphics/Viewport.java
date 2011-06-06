@@ -3,6 +3,7 @@ package edu.elon.honors.price.graphics;
 import java.util.LinkedList;
 
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 public class Viewport implements Comparable<Viewport> {
 
@@ -11,6 +12,8 @@ public class Viewport implements Comparable<Viewport> {
 	public static final int STRETCH = -1;
 
 	private int x, y, z, width, height;
+
+	private float zoomX = 1, zoomY = 1, rotation, originX, originY;
 
 	private boolean visible;
 
@@ -58,6 +61,46 @@ public class Viewport implements Comparable<Viewport> {
 	 */
 	public int getZ() {
 		return z;
+	}
+
+	public float getZoomX() {
+		return zoomX;
+	}
+
+	public void setZoomX(float zoomX) {
+		this.zoomX = zoomX;
+	}
+
+	public float getZoomY() {
+		return zoomY;
+	}
+
+	public void setZoomY(float zoomY) {
+		this.zoomY = zoomY;
+	}
+
+	public float getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(float rotation) {
+		this.rotation = rotation;
+	}
+
+	public float getOriginX() {
+		return originX;
+	}
+
+	public void setOriginX(float originX) {
+		this.originX = originX;
+	}
+
+	public float getOriginY() {
+		return originY;
+	}
+
+	public void setOriginY(float originY) {
+		this.originY = originY;
 	}
 
 	/**

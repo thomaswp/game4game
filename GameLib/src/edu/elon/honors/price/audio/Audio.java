@@ -4,9 +4,10 @@ import java.util.*;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 
 public class Audio {
-	private static LinkedList<MediaPlayer> players = new LinkedList<MediaPlayer>();
+	private static LinkedList<MediaPlayer> players = new LinkedList<MediaPlayer>(), remove = new LinkedList<MediaPlayer>();
 	private static Context context;
 	
 	public static void setContext(Context context) {
@@ -15,22 +16,23 @@ public class Audio {
 	
 	public static MediaPlayer play(int resourceId) {
 		MediaPlayer mp =  MediaPlayer.create(context, resourceId);
-		mp.start();
+		mp.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				if (!mp.isLooping()) {
+					remove.add(mp);
+				}
+			}
+		});
+		//mp.start();
 		players.add(mp);
 		return mp;
 	}
 	
 	public static void update() {
-		LinkedList<MediaPlayer> remove = new LinkedList<MediaPlayer>();
-//		for (MediaPlayer p : players) {
-//			if (p != null) {
-//				if ((p.getCurrentPosition() == p.getDuration()) && !p.isLooping()) {
-//					remove.add(p);
-//				}
-//			}
-//		}
 		for (MediaPlayer p : remove) {
 			players.remove(p);
+			p.release();
 		}
 	}
 	
