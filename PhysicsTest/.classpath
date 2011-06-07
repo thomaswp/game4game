@@ -3,7 +3,7 @@
 	<classpathentry excluding="org/jbox2d/testbed/|org/jbox2d/testbed/tests/" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry kind="lib" path="jbox2d-2.0.1-library-only.jar"/>
+	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
