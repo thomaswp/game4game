@@ -1,11 +1,11 @@
 package edu.elon.honors.price.physics;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 public class Physics {
 
-	private LinkedList<Body> bodies = new LinkedList<Body>(), toRemove = new LinkedList<Body>();
+	private ArrayList<Body> bodies = new ArrayList<Body>(100);
 
 	public void addBody(Body body) {
 		if (!bodies.contains(body)) {
@@ -13,30 +13,29 @@ public class Physics {
 		}
 	}
 
-	public void removeBody(Body body) {
-		toRemove.add(body);
-	}
-
 	public void updatePhysics(long timeElapsed) {
-		cleanup();
-		for (Body b : bodies) {
-			b.updatePhysics(timeElapsed);
+		for (int i = 0; i < bodies.size(); i++) {
+			Body b = bodies.get(i);
+			if (b.isDisposed()) {
+				bodies.remove(i);
+				i--;
+			}
+			else {
+				b.updatePhysics(timeElapsed);
+			}
 		}
 	}
 	
 	public void updateSprites() {
-		cleanup();
-		for (Body b : bodies) {
-			b.updateSprite();
-		}
-	}
-	
-	private void cleanup() {
-		if (toRemove.size() > 0) {
-			for (Body b : toRemove) {
-				bodies.remove(b);
+		for (int i = 0; i < bodies.size(); i++) {
+			Body b = bodies.get(i);
+			if (b.isDisposed()) {
+				bodies.remove(i);
+				i--;
 			}
-			toRemove.clear();
+			else {
+				b.updateSprite();
+			}
 		}
 	}
 }

@@ -33,6 +33,8 @@ public class Body implements Serializable {
 	protected int timeout = -1;
 
 	protected transient Sprite sprite;
+	
+	protected boolean disposed;
 
 	protected EdgeBehavior edgeBehavior = EdgeBehavior.NONE;
 	protected float flipThreshold = DEFAULT_EDGE_THRESH;
@@ -107,8 +109,6 @@ public class Body implements Serializable {
 
 	public void setDirectionRadians(float angle) {
 		velocity = Vector.angleVectorRadians(angle).times(velocity.magnitude());
-		Game.debug("" + angle);
-		Game.debug(velocity.toString());
 	}
 
 	public float getSpeed() {
@@ -176,6 +176,10 @@ public class Body implements Serializable {
 		physics.addBody(this);
 	}
 
+	public boolean isDisposed() {
+		return disposed;
+	}
+	
 	public Body(Physics physics, Sprite sprite) {
 		this(physics, sprite.getX(), sprite.getY());
 		this.sprite = sprite;
@@ -193,7 +197,7 @@ public class Body implements Serializable {
 	}
 
 	public void dispose() {
-		physics.removeBody(this);
+		disposed = true;
 		if (sprite != null) {
 			sprite.dispose();
 			sprite = null;
@@ -266,7 +270,7 @@ public class Body implements Serializable {
 				position.setY(height + position.getY() - rect.top);
 			}
 		} else if (edgeBehavior == EdgeBehavior.DESTROY) {
-			if (!rect.intersect(Graphics.getRect())) {
+			if (!rect.intersect(Graphics.getRectF())) {
 				dispose();
 			}
 		}

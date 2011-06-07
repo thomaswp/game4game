@@ -1,14 +1,16 @@
 package edu.elon.honors.price.graphics;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 public class Graphics {
 
 	final static int FRAME_BLOCK = 60;
 
-	private static LinkedList<Viewport> viewports = new LinkedList<Viewport>();
+	private static ArrayList<Viewport> viewports = new ArrayList<Viewport>();
 	private static int width, height;
 
 	private static int frameCountDraw = 0;
@@ -44,7 +46,11 @@ public class Graphics {
 		return height;
 	}
 	
-	public static RectF getRect() {
+	public static Rect getRect() {
+		return new Rect(0, 0, width, height);
+	}
+	
+	public static RectF getRectF() {
 		return new RectF(0, 0, width, height);
 	}
 	
@@ -64,7 +70,7 @@ public class Graphics {
 		return fpsGame;
 	}
 	
-	public static LinkedList<Viewport> getViewports() {
+	public static ArrayList<Viewport> getViewports() {
 		return viewports;
 	}
 
@@ -85,7 +91,8 @@ public class Graphics {
 	 * Updates the Graphics class, which updates all of its Viewports.
 	 */
 	public static void update(long timeElapsed) {
-		for (Viewport viewport : viewports) {
+		for (int i = 0; i < viewports.size(); i++) {
+			Viewport viewport = viewports.get(i);
 			if (viewport != null) {
 				viewport.upadte(timeElapsed);
 			}
@@ -100,8 +107,10 @@ public class Graphics {
 	}
 	
 	public static void reset() {
-		for (Viewport v : viewports) {
-			for (Sprite s : v.getSprites()) {
+		for (int i = 0; i < viewports.size(); i++) {
+			Viewport viewport = viewports.get(i);
+			for (int j = 0; j < viewport.getSprites().size(); j++) {
+				Sprite  s = viewport.getSprites().get(j);
 				s.dispose();
 			}
 		}
