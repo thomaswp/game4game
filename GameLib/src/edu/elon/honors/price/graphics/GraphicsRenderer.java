@@ -1,6 +1,7 @@
 package edu.elon.honors.price.graphics;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -116,17 +117,20 @@ public class GraphicsRenderer implements Renderer {
 		Game.debug("Flush");
 		textures = new HashMap<Integer, Integer>();
 		int[] texture = new int[1];
-		for (Integer x : resources) {
+		for (int i = 0; i < resources.size(); i++) {
+			int x = resources.get(i);
 			texture[0] = x;
 			gl.glDeleteTextures(1, texture, 0);
 		}
-		for (Viewport v : Graphics.getViewports()) {
-			for (Sprite s : v.getSprites()) {
+		for (int i = 0; i < Graphics.getViewports().size(); i++) {
+			Viewport viewport = Graphics.getViewports().get(i);
+			for (int j = 0; j < viewport.getSprites().size(); j++) {
+				Sprite  s = viewport.getSprites().get(j);
 				s.setTextureId(-1);
 			}
 		}
 		System.gc();
-		resources = new LinkedList<Integer>();
+		resources.clear();
 		flush = false;
 	}
 
@@ -155,25 +159,28 @@ public class GraphicsRenderer implements Renderer {
 				//Allow us to reset the clip to full if we need to
 				boolean clipSet = false;
 				
-				LinkedList<Viewport> viewports = Graphics.getViewports();
+				ArrayList<Viewport> viewports = Graphics.getViewports();
 
 				//Sort Viewports by Z
 				Collections.sort(viewports);
-				for (Viewport viewport : viewports) {
+				for (int i = 0; i < Graphics.getViewports().size(); i++) {
+					Viewport viewport = Graphics.getViewports().get(i);
 					//Draw visible Viewports
 					if (viewport != null && viewport.isVisible()) {
 
 						if (viewport.hasRect()) {
 							//If the Viewport isn't the whole drawable area, set the clip
+							gl.glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
 							clipSet = true;
 						} else if (clipSet) {
-							//Otherwise restore it to the whole area
+							gl.glViewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
 							clipSet = false;
 						}
 
 						//Sort the Sprites as well
 						Collections.sort(viewport.getSprites());
-						for (Sprite sprite : viewport.getSprites()) {
+						for (int j = 0; j < viewport.getSprites().size(); j++) {
+							Sprite  sprite = viewport.getSprites().get(j);
 							if (sprite != null && sprite.isVisible()) {
 								//Draw visible Sprites
 
@@ -218,10 +225,16 @@ public class GraphicsRenderer implements Renderer {
 //								gl.glScalef(viewport.getZoomX(), viewport.getZoomY(), 0);
 //								gl.glTranslatef(-viewport.getOriginX(), -viewport.getOriginY(), 0);
 								
+								if (clipSet) {
+									float stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
+									float stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
+									gl.glScalef(stretchX, stretchY, 0);
+								}
+								
 								gl.glTranslatef(sprite.getX(), Graphics.getHeight() + bY - targetHeight + sprite.getOriginY() * 2
 										- sprite.getY(), 0);
 								gl.glRotatef(-sprite.getRotation(), 0, 0, 1);
-								gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 0);
+								gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 1);
 								gl.glTranslatef(-sprite.getOriginX(), -bY - sprite.getOriginY(), 0);
 
 								sprite.getGrid().draw(gl, true, false);
@@ -231,6 +244,7 @@ public class GraphicsRenderer implements Renderer {
 						}
 					}
 				}
+				gl.glViewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
 
 				Graphics.updateFPSDraw();
 				//if (fpsBitmap != null) fpsBitmapRefresh = false;
@@ -261,7 +275,7 @@ public class GraphicsRenderer implements Renderer {
 		times += System.currentTimeMillis() - time;
 		frame++;
 		if (frame == 60) {
-			Game.debug("" + (times / frame));
+			Game.debug("" + (times / frame) + ": " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
 			frame = 0;
 			times = 0;
 		}

@@ -1,5 +1,6 @@
 package edu.elon.honors.price.input;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -40,7 +41,7 @@ public final class Input {
 	private static float startTouchX = 0, startTouchY = 0;
 
 	//A list of unprocessed TouchEvents
-	private static LinkedList<TouchEvent> touchEvents = new LinkedList<TouchEvent>();
+	private static ArrayList<TouchEvent> touchEvents = new ArrayList<TouchEvent>(20);
 
 	//A map of Keys and their current KeyState
 	private static HashMap<Integer, KeyStates> keyMap = new HashMap<Integer, Input.KeyStates>();
@@ -256,26 +257,17 @@ public final class Input {
 	}
 
 	public static void update(long timeElapsed) {
-		LinkedList<Integer> released = new LinkedList<Integer>();
-		LinkedList<Integer> triggered = new LinkedList<Integer>();
+
+		Object[] keys = keyMap.keySet().toArray();
 
 		//Get all the released and triggered keys
-		for (int key : keyMap.keySet()) {
+		for (int i = 0; i < keys.length; i++) {
+			int key = (Integer)keys[i];
 			if (keyMap.get(key) == KeyStates.Released) {
-				released.add(key);
+				keyMap.put(key, KeyStates.Lifted);
 			} else if (keyMap.get(key) == KeyStates.Triggered) {
-				triggered.add(key);
+				keyMap.put(key, KeyStates.Held);
 			}
-		}
-
-
-		//Change their state to Lifted or Held if they're staying that way 
-		for (int key : released) {
-			keyMap.put(key, KeyStates.Lifted);
-		}
-
-		for (int key : triggered) {
-			keyMap.put(key, KeyStates.Held);
 		}
 
 		handleTouchEvents();

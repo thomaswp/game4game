@@ -26,7 +26,7 @@ import android.graphics.Region.Op;
  */
 public class Sprite implements Comparable<Sprite> {
 
-	private static Config defaultConfig = Config.ARGB_8888;
+	protected static Config defaultConfig = Config.ARGB_8888;
 
 	private Bitmap bitmap;
 	private Viewport viewport;

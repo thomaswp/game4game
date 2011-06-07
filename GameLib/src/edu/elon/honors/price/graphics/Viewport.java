@@ -1,5 +1,6 @@
 package edu.elon.honors.price.graphics;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import android.graphics.Rect;
@@ -17,7 +18,7 @@ public class Viewport implements Comparable<Viewport> {
 
 	private boolean visible;
 
-	private LinkedList<Sprite> sprites;
+	private ArrayList<Sprite> sprites;
 
 	public static Viewport DefaultViewport = new Viewport(0, 0, STRETCH, STRETCH);
 
@@ -174,7 +175,7 @@ public class Viewport implements Comparable<Viewport> {
 	 * Gets the list of Sprites contained in this Viewport 
 	 * @return The Sprites
 	 */
-	public LinkedList<Sprite> getSprites() {
+	public ArrayList<Sprite> getSprites() {
 		return sprites;
 	}
 
@@ -209,7 +210,7 @@ public class Viewport implements Comparable<Viewport> {
 		this.height = height;
 
 		this.z = 0;
-		this.sprites = new LinkedList<Sprite>();
+		this.sprites = new ArrayList<Sprite>(100);
 		this.visible = true;
 
 		Graphics.addViewport(this);
