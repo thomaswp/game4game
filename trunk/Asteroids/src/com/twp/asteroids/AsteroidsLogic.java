@@ -1,5 +1,6 @@
 package com.twp.asteroids;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -92,6 +93,7 @@ public class AsteroidsLogic implements Logic {
 
 	@Override
 	public void update(long timeElapsed) {
+		
 		if (Input.isTapped()) {
 			//resume the game on tap
 			paused = false;
@@ -101,7 +103,7 @@ public class AsteroidsLogic implements Logic {
 
 			int s = data.score;
 			
-			timeElapsed = (long)(timeElapsed * timeScale);
+			timeElapsed = data.state == 0 ? (long)(timeElapsed * timeScale) : timeElapsed;
 
 			//update everything
 			updatePlayer(timeElapsed);
@@ -147,9 +149,9 @@ public class AsteroidsLogic implements Logic {
 		data.shipY = Graphics.getHeight() / 2;
 		data.shipVX = 0;
 		data.shipVY = 0;
-		data.bullets = new LinkedList<Bullet>();
-		data.asteroids = new LinkedList<Asteroid>();
-		data.explosions = new LinkedList<Explosion>();
+		data.bullets = new ArrayList<Bullet>(MAX_BULLETS);
+		data.asteroids = new ArrayList<Asteroid>(START_ASTEROIDS * 2);
+		data.explosions = new ArrayList<Explosion>(data.asteroids.size());
 		data.state = 0;
 
 		physics = new Physics();
@@ -169,25 +171,22 @@ public class AsteroidsLogic implements Logic {
 		if (nextAnim <= 0) {
 			nextAnim = FRAME_LENGTH;
 
-			//Update all explosions
-			LinkedList<Explosion> remove = new LinkedList<Explosion>();
-
-			for (Explosion e : data.explosions) {
+			for (int i = 0; i < data.explosions.size(); i++) {
+				Explosion e = data.explosions.get(i);
 				//next frame
 				e.state++;
 				if (e.state > expAnimation.length) {
-					remove.add(e);
+					e.dispose();
+					data.explosions.remove(i);
 				}
-			}
-
-			for (Explosion e : remove) {
-				e.dispose();
-				data.explosions.remove(e);
 			}
 		}
 	}
 
+	private LinkedList<Asteroid> hit = new LinkedList<Asteroid>();
 	private void updateBullets(long msPassed) {
+		hit.clear();
+		
 		if (Input.isTapped() && data.bullets.size() < MAX_BULLETS && data.state != -1) {
 			
 			//create a bullet
@@ -201,28 +200,36 @@ public class AsteroidsLogic implements Logic {
 			data.bullets.add(b);
 		}
 
-		LinkedList<Bullet> remove = new LinkedList<Bullet>();
-		LinkedList<Asteroid> hit = new LinkedList<Asteroid>();
-
-		for (Bullet b : data.bullets) {
-
+		for (int i = 0; i < data.bullets.size(); i++) {
+			Bullet b = data.bullets.get(i);
+			
+			boolean remove = false;
+			
 			//check which bullets hit an asteroid
-			for (Asteroid a : data.asteroids) {
+			for (int j = 0; j < data.asteroids.size(); j++) {
+				Asteroid a = data.asteroids.get(j);
 				if (!b.intersection(a).isEmpty()) {
 					if (!hit.contains(a)) {
 						hit.add(a);
 					}
-					remove.add(b);
+					remove = true;
 				}
 			}
 
 			//Remove any off screen
 			if (b.getSprite() == null) {
-				remove.add(b);
+				remove = true;
+			}
+			
+			if (remove) {
+				data.bullets.remove(b);
+				b.dispose();
+				i--;
 			}
 		}
 
-		for (Asteroid a : hit) {
+		for (int i = 0; i < hit.size(); i++) {
+			Asteroid a = hit.get(i);
 			float dir = 2 * (float)Math.PI * rand.nextFloat();
 			int size = a.getSize() + 1;
 			if (size <= Asteroid.SMALLEST_SIZE) {
@@ -251,12 +258,6 @@ public class AsteroidsLogic implements Logic {
 			//Remove the destroyed asteroid
 			data.asteroids.remove(a);
 			a.dispose();
-		}
-
-		//And the bullets
-		for (Bullet b : remove) {
-			data.bullets.remove(b);
-			b.dispose();
 		}
 	}
 
@@ -367,7 +368,8 @@ public class AsteroidsLogic implements Logic {
 		data.shipY = flip(data.shipY, sHeight, height);
 
 		float minDis = Integer.MAX_VALUE;
-		for (Asteroid a : data.asteroids) {
+		for (int i = 0; i < data.asteroids.size(); i++) {
+			Asteroid a = data.asteroids.get(i);
 			if (!a.intersection(ship).isEmpty()) {
 				//If we touch an asteroid, game over
 				Explosion e = new Explosion(physics, data.shipX, data.shipY, 2, expAnimation);
@@ -438,17 +440,20 @@ public class AsteroidsLogic implements Logic {
 		score = getNewScore();
 		drawScoreBitmap();
 
-		for (Asteroid a : data.asteroids) {
+		for (int i = 0; i < data.asteroids.size(); i++) {
+			Asteroid a = data.asteroids.get(i);
 			a.setSprite(getNewAsteroid());
 			a.setPhysics(physics);
 		}
 
-		for (Bullet b : data.bullets) {
+		for (int i = 0; i < data.bullets.size(); i++) {
+			Bullet b = data.bullets.get(i);
 			b.setSprite(getNewBullet());
 			b.setPhysics(physics);
 		}
 
-		for (Explosion e : data.explosions) {
+		for (int i = 0; i < data.explosions.size(); i++) {
+			Explosion e = data.explosions.get(i);
 			e.setSprite(getNewExplosion());
 			e.setPhysics(physics);
 			e.expAnimation = expAnimation;
