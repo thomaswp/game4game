@@ -3,6 +3,8 @@ package edu.elon.honors.price.graphics;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import edu.elon.honors.price.game.Game;
+
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -107,12 +109,10 @@ public class Graphics {
 	}
 	
 	public static void reset() {
+		Game.debug("Reset");
 		for (int i = 0; i < viewports.size(); i++) {
 			Viewport viewport = viewports.get(i);
-			for (int j = 0; j < viewport.getSprites().size(); j++) {
-				Sprite  s = viewport.getSprites().get(j);
-				s.dispose();
-			}
+			viewport.getSprites().clear();
 		}
 		viewports.clear();
 		viewports.add(Viewport.DefaultViewport);

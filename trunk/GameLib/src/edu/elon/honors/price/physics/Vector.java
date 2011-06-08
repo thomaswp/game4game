@@ -22,6 +22,11 @@ public class Vector implements Serializable{
 	public void setY(float y) {
 		this.y = y;
 	}
+	
+	public void set(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
 
 	public Vector(float x, float y) {
 		this.x = x;
@@ -31,6 +36,10 @@ public class Vector implements Serializable{
 	public void add(Vector v) {
 		this.x += v.getX();
 		this.y += v.getY();
+	}
+	
+	public Vector() {
+		this(0, 0);
 	}
 	
 	public Vector plus(Vector v) {
@@ -60,7 +69,7 @@ public class Vector implements Serializable{
 	}
 	
 	public Vector unitVector() {
-		return this.times(1 / magnitude());
+		return magnitude() == 0 ? new Vector() : this.times(1 / magnitude());
 	}
 	
 	public float angleDegrees() {
@@ -76,6 +85,10 @@ public class Vector implements Serializable{
 			if (x < 0) angle += Math.PI;
 		}
 		return (float)angle;
+	}
+	
+	public Vector copy() {
+		return new Vector(x, y);
 	}
 	
 	public static float dot(Vector v1, Vector v2) {

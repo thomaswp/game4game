@@ -2,6 +2,7 @@ package edu.elon.honors.price.graphics;
 
 import edu.elon.honors.price.game.Game;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -64,7 +65,7 @@ public class BackgroundSprite extends Sprite {
 		} else {
 			height = original.getHeight() * 2;
 		}
-		Bitmap bmp = Bitmap.createBitmap(width, height, original.getConfig());
+		Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
 		Canvas canvas = new Canvas();
 		canvas.setBitmap(bmp);
 		Paint paint = new Paint();
