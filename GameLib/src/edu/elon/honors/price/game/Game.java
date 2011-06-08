@@ -113,6 +113,6 @@ public abstract class Game extends Activity {
 	 * @param text The text to be written.
 	 */
 	public static void debug(String text) {
-		Log.d("Game", "---" + text + "---");
+		Log.d("Game", "---{" + text + "}---");
 	}
 }

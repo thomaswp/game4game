@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import edu.elon.honors.price.game.Game;
+
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,15 +36,21 @@ public final class Input {
 		Released
 	}
 
-	//Is the user touching the screen, have they just tapped it
-	private static boolean touchDown = false, tapped = false;
-	//Last coordinates of a TouchEvent
-	private static float lastTouchX = 0, lastTouchY = 0;
-	//Starting coordinates of a TouchEvent
-	private static float startTouchX = 0, startTouchY = 0;
+
+	private static final boolean NORMALIZE = false;
+	private static final int TOO_CLOSE = 10;
+	private static final int POINTERS = 4;
+	private static final int EVENTS = 30;
 
 	//A list of unprocessed TouchEvents
-	private static ArrayList<TouchEvent> touchEvents = new ArrayList<TouchEvent>(20);
+	private static ArrayList<ArrayList<TouchEvent>> touchEvents = new ArrayList<ArrayList<TouchEvent>>(POINTERS);
+	private static ArrayList<TouchState> touchStates;
+	static {
+		touchStates = new ArrayList<Input.TouchState>(POINTERS);
+		for (int i = 0; i < POINTERS; i++) {
+			touchStates.add(new TouchState());
+		}
+	}
 
 	//A map of Keys and their current KeyState
 	private static HashMap<Integer, KeyStates> keyMap = new HashMap<Integer, Input.KeyStates>();
@@ -51,7 +60,11 @@ public final class Input {
 	 * @return
 	 */
 	public static boolean isTouchDown() {
-		return touchDown;
+		return isTouchDown(0);
+	}
+
+	public static boolean isTouchDown(int pid) {
+		return touchStates.get(pid).touchDown;
 	}
 
 	/**
@@ -59,7 +72,11 @@ public final class Input {
 	 * @return The X Coordinate
 	 */
 	public static float getLastTouchX() {
-		return lastTouchX;
+		return getLastTouchX(0);
+	}
+
+	public static float getLastTouchX(int pid) {
+		return touchStates.get(pid).lastTouchX;
 	}
 
 	/**
@@ -67,7 +84,11 @@ public final class Input {
 	 * @return The Y Coordinate
 	 */
 	public static float getLastTouchY() {
-		return lastTouchY;
+		return getLastTouchY(0);
+	}
+
+	public static float getLastTouchY(int pid) {
+		return touchStates.get(pid).lastTouchY;
 	}
 
 	/**
@@ -75,7 +96,19 @@ public final class Input {
 	 * @return
 	 */
 	public static boolean isTapped() {
-		return tapped;
+		for (int i = 0; i < touchStates.size(); i++) {
+			if (touchStates.get(i).tapped)
+				return true;
+		}
+		return false;
+	}
+
+	public static int getTappedPointer() {
+		for (int i = 0; i < touchStates.size(); i++) {
+			if (touchStates.get(i).tapped)
+				return i;
+		}
+		return -1;
 	}
 
 	/**
@@ -84,7 +117,11 @@ public final class Input {
 	 * @return The X Coordinate
 	 */
 	public static float getStartTouchX() {
-		return startTouchX;
+		return getStartTouchX(0);
+	}
+
+	public static float getStartTouchX(int pid) {
+		return touchStates.get(pid).startTouchX;
 	}
 
 	/**
@@ -93,7 +130,11 @@ public final class Input {
 	 * @return The Y Coordinate
 	 */
 	public static float getStartTouchY() {
-		return startTouchY;
+		return getStartTouchY(0);
+	}
+
+	public static float getStartTouchY(int pid) {
+		return touchStates.get(pid).startTouchY;
 	}
 
 	/**
@@ -101,7 +142,11 @@ public final class Input {
 	 * @return The X distance
 	 */
 	public static float getDistanceTouchX() {
-		return lastTouchX - startTouchX;
+		return getDistanceTouchX(0);
+	}
+
+	public static float getDistanceTouchX(int pid) {
+		return touchStates.get(pid).lastTouchX - touchStates.get(pid).startTouchX;
 	}
 
 	/**
@@ -109,9 +154,12 @@ public final class Input {
 	 * @return The Y distance
 	 */
 	public static float getDistanceTouchY() {
-		return lastTouchY - startTouchY;
+		return getDistanceTouchX(0);
 	}
 
+	public static float getDistanceTouchY(int pid) {
+		return touchStates.get(pid).lastTouchY - touchStates.get(pid).startTouchY;
+	}
 	/**
 	 * Gets the state of the key with the given keycode
 	 * @param keycode The keycode
@@ -211,49 +259,147 @@ public final class Input {
 	 * @return True if the event was successfully handled
 	 */
 	public static boolean onTouch(View v, MotionEvent event) {
+		//dumpEvent(event);
 		synchronized(touchEvents) {
-			//We want to override the last event if it wasn't up or down
-			if (touchEvents.size() > 0) {
-				TouchEvent e = touchEvents.get(0);
-				if (!(e.getAction() == MotionEvent.ACTION_DOWN || 
-						e.getAction() == MotionEvent.ACTION_UP)) {
-					touchEvents.remove(0);
+			synchronized (event) {
+				for (int i = 0; i < event.getPointerCount(); i++) {
+					int pid = event.getPointerId(i);
+
+					if (pid == touchEvents.size()) {
+						touchEvents.add(new ArrayList<Input.TouchEvent>(EVENTS));
+					}
+					if (pid == touchStates.size()) {
+						touchStates.add(new TouchState());
+					}
+
+					ArrayList<Input.TouchEvent> touchEventList = touchEvents.get(pid);
+					
+					boolean added = false;
+					//We want to override the last event if it wasn't up or down
+					if (touchEventList.size() > 0) {
+						TouchEvent e = touchEventList.get(touchEventList.size() - 1);
+						if (e.getAction() == MotionEvent.ACTION_MOVE && event.getAction() == MotionEvent.ACTION_MOVE) {
+							e.set(event, i);
+							added = true;
+						}
+					}
+					if (!added) {
+						//record the TouchEvent, but don't process it until the next frame			
+						touchEventList.add(new TouchEvent(event, i));
+					}
 				}
 			}
-			//record the TouchEvent, but don't process it until the next frame			
-			touchEvents.add(new TouchEvent(event));
 		}
 		return true;
 	}
 
+	private static void dumpEvent(MotionEvent event) {
+		String names[] = { "DOWN" , "UP" , "MOVE" , "CANCEL" , "OUTSIDE" ,
+				"POINTER_DOWN" , "POINTER_UP" , "7?" , "8?" , "9?" };
+		StringBuilder sb = new StringBuilder();
+		int action = event.getAction();
+		int actionCode = action & MotionEvent.ACTION_MASK;
+		sb.append("event ACTION_" ).append(names[actionCode]);
+		if (actionCode == MotionEvent.ACTION_POINTER_DOWN
+				|| actionCode == MotionEvent.ACTION_POINTER_UP) {
+			sb.append("(pid " ).append(
+					action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+			sb.append(")" );
+		}
+		sb.append("[" );
+		for (int i = 0; i < event.getPointerCount(); i++) {
+			sb.append("#" ).append(i);
+			sb.append("(pid " ).append(event.getPointerId(i));
+			sb.append(")=" ).append((int) event.getX(i));
+			sb.append("," ).append((int) event.getY(i));
+			if (i + 1 < event.getPointerCount())
+				sb.append(";" );
+		}
+		sb.append("]" );
+		Log.d("DUMP", sb.toString());
+	}
+
 	private static void handleTouchEvents() {
 		//process the touch event
-
-		if (touchEvents.size() == 0)
-			return;
+		String out = "";
 
 		synchronized (touchEvents) {
-			TouchEvent event = touchEvents.remove(0);
+			for (int i = 0; i < touchEvents.size(); i++) {
 
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				//User just touched the screen
-				touchDown = true;
-				tapped = true;
-				startTouchX = event.getX();
-				startTouchY = event.getY();
-			} else {
-				//User is still touching the screen
-				tapped = false;
+				ArrayList<Input.TouchEvent> touchEventList = touchEvents.get(i);
+
+				if (touchEventList.size() == 0)
+					continue;
+
+				TouchEvent event = touchEventList.get(0);
+				TouchState touchState = touchStates.get(i);
+
+				if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
+					//User just touched the screen
+					touchState.touchDown = true;
+					touchState.tapped = true;
+					touchState.startTouchX = event.getX();
+					touchState.startTouchY = event.getY();
+				} else {
+					//User is still touching the screen
+					touchState.tapped = false;
+				}
+
+				if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP) {
+					//User just lifted
+					touchState.touchDown = false;
+				}
+
+				if (!touchState.tapped && NORMALIZE) {
+					double closestX = Double.MAX_VALUE;
+					int closestXIndex = -1;
+					for (int j = 0; j < touchEvents.size(); j++) {
+						if (touchEvents.get(j).size() > 0 && j != i) {
+							double dis = Math.abs(touchEvents.get(j).get(0).getX() - event.getX());
+							if (dis < closestX) {
+								closestX = dis;
+								closestXIndex = j;
+							}
+						}
+					}
+					if (closestX > TOO_CLOSE) {
+						touchState.lastTouchX =  event.getX();
+					} else {
+						Game.debug(closestX + "");
+					}
+					
+					double closestY = Double.MAX_VALUE;
+					int closestYIndex = -1;
+					for (int j = 0; j < touchEvents.size(); j++) {
+						if (touchEvents.get(j).size() > 0 && j != i) {
+							double dis = Math.abs(touchEvents.get(j).get(0).getY() - event.getY());
+							if (dis < closestY) {
+								closestY = dis;
+								closestYIndex = j;
+							}
+						}
+					}
+					if (closestY > TOO_CLOSE) {
+						touchState.lastTouchY =  event.getY();
+					}
+				} else {
+					touchState.lastTouchX =  event.getX();
+					touchState.lastTouchY =  event.getY();
+				}
+
+				out += i + "-" + touchState + ";";
 			}
-
-			if (event.getAction() == MotionEvent.ACTION_UP) {
-				//User just lifted
-				touchDown = false;
+			for (int i = 0; i < touchEvents.size(); i++) {
+				ArrayList<Input.TouchEvent> touchEventList = touchEvents.get(i);
+				if (touchEventList.size() == 0)
+					continue;
+				if (touchEventList.size() == 1 && touchEventList.get(0).action == MotionEvent.ACTION_MOVE)
+					continue;
+				touchEventList.remove(0);
 			}
-
-			lastTouchX =  event.getX();
-			lastTouchY =  event.getY();
 		}
+
+		//if (out.length() > 0) Game.debug(out);
 	}
 
 	public static void update(long timeElapsed) {
@@ -290,10 +436,27 @@ public final class Input {
 			return action;
 		}
 
-		public TouchEvent(MotionEvent event) {
-			x = event.getX();
-			y = event.getY();
-			action = event.getAction();
+		public TouchEvent(MotionEvent event, int i) {
+			set(event, i);
+		}
+		
+		public void set(MotionEvent event, int i) {
+			x = event.getX(i);
+			y = event.getY(i);
+			action = event.getAction() & MotionEvent.ACTION_MASK;
+			if (event.getPointerId(i) != event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT) {
+				action = MotionEvent.ACTION_MOVE;
+			}
+		}
+	}
+
+	private static class TouchState {
+		public boolean touchDown, tapped;
+		public float startTouchX, startTouchY, lastTouchX, lastTouchY;
+
+		@Override
+		public String toString() {
+			return (touchDown ? (tapped ? "Tapped" : "Down") : "Up") + "{" + lastTouchX + ", " + lastTouchY + "}"; 
 		}
 	}
 }
