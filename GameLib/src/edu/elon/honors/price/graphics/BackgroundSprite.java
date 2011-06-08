@@ -13,8 +13,6 @@ public class BackgroundSprite extends Sprite {
 
 	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
 		super(createViewport(rect), createBitmap(bitmap, rect));
-		setX(rect.left);
-		setY(rect.top);
 		fullRect = rect;
 		this.segmentWidth = bitmap.getWidth();
 		this.segmentHeight = bitmap.getHeight();
@@ -42,6 +40,12 @@ public class BackgroundSprite extends Sprite {
 			this.setOriginY(this.getOriginY() - segmentHeight);
 			spriteRect = getRect();
 		}
+	}
+	
+	@Override
+	public void dispose() {
+		super.dispose();
+		Graphics.getViewports().remove(getViewport());
 	}
 	
 	private static Viewport createViewport(Rect rect) {

@@ -195,6 +195,10 @@ public class Viewport implements Comparable<Viewport> {
 		this.visible = visible;
 	}
 
+	public Viewport() {
+		this(0, 0, STRETCH, STRETCH);
+	}
+	
 	/**
 	 * Initializes the viewport with the given dimensions.
 	 * 
