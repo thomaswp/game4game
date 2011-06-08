@@ -89,7 +89,7 @@ public class GraphicsRenderer implements Renderer {
 		 */
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
 
-		gl.glClearColor(0f, 0f, 0f, 1);
+		gl.glClearColor(0f, 0f, 1f, 1);
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glDisable(GL10.GL_DEPTH_TEST);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -228,6 +228,7 @@ public class GraphicsRenderer implements Renderer {
 								if (clipSet) {
 									float stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
 									float stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
+									gl.glTranslatef(0, -viewport.getHeight() * (stretchY - 1), 0);
 									gl.glScalef(stretchX, stretchY, 0);
 								}
 								
