@@ -81,6 +81,12 @@ public class Graphics {
 	 * @param viewport The viewport.
 	 */
 	public static void addViewport(Viewport viewport) {
+		for (int i = 0; i < viewports.size(); i++) {
+			if (viewport.getZ() < viewports.get(i).getZ()) {
+				viewports.add(i, viewport);
+				return;
+			}
+		}
 		viewports.add(viewport);
 	}
 

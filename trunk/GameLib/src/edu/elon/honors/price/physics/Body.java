@@ -24,6 +24,7 @@ public class Body implements Serializable {
 	
 	protected Vector position;
 	protected Vector velocity;
+	private Vector temp = new Vector();
 
 	protected float rotation;
 	protected float dRotation;
@@ -44,7 +45,7 @@ public class Body implements Serializable {
 	}
 
 	public void setPosition(Vector position) {
-		this.position = position;
+		this.position.set(position);
 	}
 
 	public float getX() {
@@ -68,7 +69,7 @@ public class Body implements Serializable {
 	}
 
 	public void setVelocity(Vector velocity) {
-		this.velocity = velocity;
+		this.velocity.set(velocity);
 	}
 
 	public Sprite getSprite() {
@@ -108,7 +109,9 @@ public class Body implements Serializable {
 	}
 
 	public void setDirectionRadians(float angle) {
-		velocity = Vector.angleVectorRadians(angle).times(velocity.magnitude());
+		float speed = velocity.magnitude();
+		Vector.makeAngleVectorRadians(angle, velocity);
+		velocity.multiply(speed);
 	}
 
 	public float getSpeed() {
@@ -239,7 +242,9 @@ public class Body implements Serializable {
 			}
 		}
 
-		position.add(velocity.times(timeElapsed));
+		temp.set(velocity);
+		temp.multiply(timeElapsed);
+		position.add(temp);
 		rotation += dRotation * timeElapsed;
 
 		doEdgeBehavior();

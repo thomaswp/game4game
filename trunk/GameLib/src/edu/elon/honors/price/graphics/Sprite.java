@@ -42,9 +42,12 @@ public class Sprite implements Comparable<Sprite> {
 	private boolean bitmapModified;
 	
 	private Canvas bitmapCanvas;
+	
+	private RectF rect = new RectF(), mapRect = new RectF();
 
 	//Matrix to transform this sprite to its location, zoom and rotation
-	private Matrix drawMatrix;
+	private Matrix drawMatrix = new Matrix();
+	private boolean resetMatrix = true;
 	//Region of this sprite, not including transparent area
 	private Region collidableRegion;
 	//A path created for the bitmap of the opaque regions
@@ -120,6 +123,7 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setX(float x) {
 		this.x = x;
+		resetMatrix = true;
 	}
 
 	/**
@@ -136,6 +140,7 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setY(float y) {
 		this.y = y;
+		resetMatrix = true;
 	}
 
 	/**
@@ -154,6 +159,7 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setOriginX(float originX) {
 		this.originX = originX;
+		resetMatrix = true;
 	}
 
 	/**
@@ -172,6 +178,7 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setOriginY(float originY) {
 		this.originY = originY;
+		resetMatrix = true;
 	}
 
 	/**
@@ -191,6 +198,8 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setZ(int z) {
 		this.z = z;
+		viewport.removeSprite(this);
+		viewport.addSprite(this);
 	}
 
 	/**
@@ -215,10 +224,9 @@ public class Sprite implements Comparable<Sprite> {
 	 * @return
 	 */
 	public RectF getRect() {
-		RectF r = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
-		RectF r2 = new RectF();
-		getDrawMatrix().mapRect(r2, r);
-		return r2;
+		rect.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		getDrawMatrix().mapRect(mapRect, rect);
+		return mapRect;
 	}
 
 	/**
@@ -289,6 +297,7 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setZoomX(float zoom) {
 		this.zoomX = zoom;
+		resetMatrix = true;
 	}
 	
 	/**
@@ -309,6 +318,7 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public void setZoomY(float zoom) {
 		this.zoomY = zoom;
+		resetMatrix = true;
 	}
 	
 	/**
@@ -321,7 +331,7 @@ public class Sprite implements Comparable<Sprite> {
 		setZoomX(zoom);
 		setZoomY(zoom);
 	}
-
+	
 	/**
 	 * Gets the rotation of this Sprite.
 	 * Rotation ranges from 0 to 360 degrees with 0 being North.
@@ -330,12 +340,7 @@ public class Sprite implements Comparable<Sprite> {
 	public float getRotation() {
 		return rotation;
 	}
-
-	public Matrix getDrawMatrix() {
-		createDrawMatrix();
-		return drawMatrix;
-	}
-
+	
 	/**
 	 * Sets the rotation of this Sprite.
 	 * Rotation ranges from 0 to 360 degrees with 0 being North.
@@ -345,7 +350,16 @@ public class Sprite implements Comparable<Sprite> {
 		this.rotation = rotation % 360;
 		while (this.rotation < 0)
 			this.rotation += 360;
+		resetMatrix = true;
 	}
+
+	public Matrix getDrawMatrix() {
+		if (resetMatrix) {
+			createDrawMatrix();
+		}
+		return drawMatrix;
+	}
+
 
 	/**
 	 * Gets the collidable region for this sprite.
@@ -488,15 +502,21 @@ public class Sprite implements Comparable<Sprite> {
 	}
 
 	private void createDrawMatrix() {
-		drawMatrix = new Matrix();
+		drawMatrix.reset();
 		//center the sprite at the origin
-		drawMatrix.postTranslate(-originX, -originY);
+		if (originX != 0 || originY != 0)
+			drawMatrix.postTranslate(-originX, -originY);
 		//rotate and zoom
-		drawMatrix.postRotate(rotation);
-		drawMatrix.postScale(zoomX, zoomY);
+		if (rotation != 0)
+			drawMatrix.postRotate(rotation);
+		if (zoomX != 1 || zoomY != 1)
+			drawMatrix.postScale(zoomX, zoomY);
 		//then move it to it's position (relative to the Viewport)
-		drawMatrix.postTranslate(viewport.getX() + x, 
-				viewport.getY() + y);
+		if (viewport.getX() != 0 || x != 0 || viewport.getY() != 0 || y != 0) {
+			drawMatrix.postTranslate(viewport.getX() + x, 
+					viewport.getY() + y);
+		}
+		resetMatrix = false;
 	}
 
 	private void createBitmapPath() {

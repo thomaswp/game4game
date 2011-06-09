@@ -1,6 +1,7 @@
 package edu.elon.honors.price.graphics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import android.graphics.Rect;
@@ -12,11 +13,15 @@ public class Viewport implements Comparable<Viewport> {
 	//to fill the drawable area
 	public static final int STRETCH = -1;
 
-	private int x, y, z, width, height;
+	private int z, width, height;
+	private float x, y;
 
 	private float zoomX = 1, zoomY = 1, rotation, originX, originY;
 
-	private boolean visible;
+	private boolean visible, sorted;
+
+	private Rect rect = new Rect();
+	private RectF rectF = new RectF();
 
 	private ArrayList<Sprite> sprites;
 
@@ -26,7 +31,7 @@ public class Viewport implements Comparable<Viewport> {
 	 * Gets the X coordinate of the Viewport
 	 * @return The X coordinate
 	 */
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 
@@ -34,7 +39,7 @@ public class Viewport implements Comparable<Viewport> {
 	 * Sets the X coordinate of the Viewport
 	 * @param x The X coordinate
 	 */
-	public void setX(int x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 
@@ -42,7 +47,7 @@ public class Viewport implements Comparable<Viewport> {
 	 * Gets the Y coordinate of the Viewport
 	 * @return The Y Coordinate
 	 */
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 
@@ -50,7 +55,7 @@ public class Viewport implements Comparable<Viewport> {
 	 * Sets the Y coordinate of the Viewport
 	 * @param y The Y Coordinate
 	 */
-	public void setY(int y) {
+	public void setY(float y) {
 		this.y = y;
 	}
 
@@ -62,6 +67,18 @@ public class Viewport implements Comparable<Viewport> {
 	 */
 	public int getZ() {
 		return z;
+	}
+	
+	/**
+	 * Sets the Z coordinate of the Viewport. This determines
+	 * the drawing order of this Viewport. High Z coordinates
+	 * put the Viewport further on top.
+	 * @param z The Z Coordinate
+	 */
+	public void setZ(int z) {
+		this.z = z;
+		Graphics.getViewports().remove(this);
+		Graphics.addViewport(this);
 	}
 
 	public float getZoomX() {
@@ -104,15 +121,6 @@ public class Viewport implements Comparable<Viewport> {
 		this.originY = originY;
 	}
 
-	/**
-	 * Sets the Z coordinate of the Viewport. This determines
-	 * the drawing order of this Viewport. High Z coordinates
-	 * put the Viewport further on top.
-	 * @param z The Z Coordinate
-	 */
-	public void setZ(int z) {
-		this.z = z;
-	}
 
 	/**
 	 * Gets the width of the Viewport.
@@ -166,9 +174,20 @@ public class Viewport implements Comparable<Viewport> {
 	 */
 	public Rect getRect() {
 		if (!hasRect()) {
-			return new Rect(0, 0, Graphics.getWidth(), Graphics.getHeight());
+			rect.set(0, 0, Graphics.getWidth(), Graphics.getHeight());
+		} else {
+			rect.set((int)x, (int)y, width + (int)x, height + (int)y);
 		}
-		return new Rect(x, y, width + x, height + y);
+		return rect;
+	}
+
+	public RectF getRectF() {
+		if (!hasRect()) {
+			rectF.set(0, 0, Graphics.getWidth(), Graphics.getHeight());
+		} else {
+			rectF.set((int)x, (int)y, width + (int)x, height + (int)y);
+		}
+		return rectF;
 	}
 
 	/**
@@ -195,10 +214,21 @@ public class Viewport implements Comparable<Viewport> {
 		this.visible = visible;
 	}
 
+	public boolean isSorted() {
+		return sorted;
+	}
+
+	public void setSorted(boolean sorted) {
+		this.sorted = sorted;
+		if (sorted) {
+			Collections.sort(sprites);
+		}
+	}
+
 	public Viewport() {
 		this(0, 0, STRETCH, STRETCH);
 	}
-	
+
 	/**
 	 * Initializes the viewport with the given dimensions.
 	 * 
@@ -225,6 +255,14 @@ public class Viewport implements Comparable<Viewport> {
 	 * @param sprite the Sprite
 	 */
 	public void addSprite(Sprite sprite) {
+		if (sorted) {
+			for (int i = 0; i < sprites.size(); i++) {
+				if (sprite.getZ() < sprites.get(i).getZ()) {
+					sprites.add(i, sprite);
+					return;
+				}
+			}
+		}
 		sprites.add(sprite);
 	}
 
@@ -234,6 +272,15 @@ public class Viewport implements Comparable<Viewport> {
 	 */
 	public void removeSprite(Sprite sprite) {
 		sprites.remove(sprite);
+	}
+
+	public boolean isSpriteInBounds(Sprite sprite) {
+		RectF spriteRect = sprite.getRect();
+		RectF viewportRect = getRectF();
+		return !(spriteRect.left > viewportRect.right ||
+				spriteRect.right < viewportRect.left ||
+				spriteRect.top > viewportRect.bottom ||
+				spriteRect.bottom < viewportRect.top);
 	}
 
 	@Override

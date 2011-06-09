@@ -53,7 +53,7 @@ public final class Input {
 	}
 
 	//A map of Keys and their current KeyState
-	private static HashMap<Integer, KeyStates> keyMap = new HashMap<Integer, Input.KeyStates>();
+	private static KeyStates[] keyMap = new KeyStates[100];
 
 	/**
 	 * Returns whether or not the user is touching the screen
@@ -166,8 +166,8 @@ public final class Input {
 	 * @return The state of this key
 	 */
 	public static KeyStates getState(int keycode) {
-		if (keyMap.containsKey(keycode)) {
-			return keyMap.get(keycode);
+		if (keyMap[keycode] != null) {
+			return keyMap[keycode];
 		}
 		return KeyStates.Lifted;
 	}
@@ -240,7 +240,7 @@ public final class Input {
 	 * @param msg The Event Message
 	 */
 	public static void keyUp(int keycode, KeyEvent msg) {
-		keyMap.put(keycode, KeyStates.Released);
+		keyMap[keycode] = KeyStates.Released;
 	}
 
 	/**
@@ -249,7 +249,7 @@ public final class Input {
 	 * @param msg The Event Message
 	 */
 	public static void keyDown(int keycode, KeyEvent msg) {
-		keyMap.put(keycode, KeyStates.Triggered);
+		keyMap[keycode] = KeyStates.Triggered;
 	}
 
 	/**
@@ -404,15 +404,12 @@ public final class Input {
 
 	public static void update(long timeElapsed) {
 
-		Object[] keys = keyMap.keySet().toArray();
-
 		//Get all the released and triggered keys
-		for (int i = 0; i < keys.length; i++) {
-			int key = (Integer)keys[i];
-			if (keyMap.get(key) == KeyStates.Released) {
-				keyMap.put(key, KeyStates.Lifted);
-			} else if (keyMap.get(key) == KeyStates.Triggered) {
-				keyMap.put(key, KeyStates.Held);
+		for (int i = 0; i < keyMap.length; i++) {
+			if (keyMap[i] == KeyStates.Released) {
+				keyMap[i] = KeyStates.Lifted;
+			} else if (keyMap[i] == KeyStates.Triggered) {
+				keyMap[i] = KeyStates.Held;
 			}
 		}
 

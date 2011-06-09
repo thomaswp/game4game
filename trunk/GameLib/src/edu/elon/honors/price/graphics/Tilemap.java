@@ -1,5 +1,9 @@
 package edu.elon.honors.price.graphics;
 
+import java.util.Arrays;
+
+import edu.elon.honors.price.game.Game;
+
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
@@ -17,8 +21,7 @@ public class Tilemap {
 	}
 
 	public void setScrollX(float scrollX) {
-		this.scrollX = scrollX;
-		updateScroll();
+		scroll(scrollX - this.scrollX, 0);
 	}
 
 	public float getScrollY() {
@@ -26,8 +29,7 @@ public class Tilemap {
 	}
 
 	public void setScrollY(float scrollY) {
-		this.scrollY = scrollY;
-		updateScroll();
+		scroll(0, scrollY - this.scrollY);
 	}
 
 	public Rect getDisplayRect() {
@@ -52,12 +54,13 @@ public class Tilemap {
 
 	public Tilemap(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing, 
 			int[][] map, Rect displayRect, int z) {
-		createTiles(tilesBitmap, tileWidth, tileHeight, tileSpacing);
+		this.tiles = createTiles(tilesBitmap, tileWidth, tileHeight, tileSpacing);
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
 		this.map = map;
 		this.displayRect = displayRect;
 		this.viewport = new Viewport(displayRect.left, displayRect.top, displayRect.width(), displayRect.height());
+		this.viewport.setSorted(false);
 		this.viewport.setZ(z);
 		this.rows = map.length;
 		this.columns = map[0].length;
@@ -65,16 +68,22 @@ public class Tilemap {
 	}
 	
 	public void scroll(float x, float y) {
+		boolean updateVisible = (int)(scrollX / tileWidth) != (int)((scrollX + x) / tileWidth) ||
+			(int)(scrollY / tileHeight) != (int)((scrollY + y) / tileHeight) ||
+			(int)((scrollX + viewport.getWidth()) / tileWidth) != (int)((scrollX + viewport.getWidth() + x) / tileWidth) ||
+			(int)((scrollY + viewport.getHeight()) / tileHeight) != (int)((scrollY + viewport.getHeight() + y) / tileHeight);
 		scrollX += x;
 		scrollY += y;
-		updateScroll();
+		updateScroll(updateVisible);
 	}
 	
 	public static int[][] readMap(String csv) {
 		String[] lines = csv.split("\n");
 		int[][] map = new int[lines.length][];
 		for (int i = 0; i < lines.length; i++) {
-			String[] values = lines[i].split(",");
+			String line = lines[i];
+			if (line.endsWith(",")) line += "-1";
+			String[] values = line.split(",");
 			map[i] = new int[values.length];
 			for (int j = 0; j < values.length; j++) {
 				if (values[j].length() > 0)
@@ -83,14 +92,21 @@ public class Tilemap {
 					map[i][j] = -1;
 			}
 		}
+		for (int[] i : map) {
+			Game.debug(Arrays.toString(i));
+		}
 		return map;
 	}
 	
-	private void updateScroll() {
+	private void updateScroll(boolean updateVisible) {
 		for (int i = 0; i < sprites.length; i++) {
 			for (int j = 0; j < sprites[i].length; j++) {
-				sprites[i][j].setOriginX((int)scrollX);
-				sprites[i][j].setOriginY((int)scrollY);
+				if (sprites[i][j] != null) {
+					sprites[i][j].setOriginX((int)scrollX);
+					sprites[i][j].setOriginY((int)scrollY);
+					if (updateVisible)
+						sprites[i][j].setVisible(viewport.isSpriteInBounds(sprites[i][j]));
+				}
 			}
 		}
 	}
@@ -111,7 +127,7 @@ public class Tilemap {
 		}
 	}
 	
-	private void createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
+	public static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
 		if ((tilesBitmap.getWidth() + tileSpacing) % (tileWidth + tileSpacing) != 0) {
 			throw new RuntimeException("Impropper tile width");
 		}
@@ -122,7 +138,7 @@ public class Tilemap {
 		int rowTiles = (tilesBitmap.getWidth() + tileSpacing) / (tileWidth + tileSpacing);
 		int columnTiles = (tilesBitmap.getHeight() + tileSpacing) / (tileHeight + tileSpacing);
 		
-		tiles = new Bitmap[rowTiles * columnTiles];
+		Bitmap[] tiles = new Bitmap[rowTiles * columnTiles];
 		
 		int index = 0;
 		for (int j = 0; j < tilesBitmap.getHeight(); j += tileHeight + tileSpacing) {
@@ -130,7 +146,6 @@ public class Tilemap {
 				tiles[index++] = Bitmap.createBitmap(tilesBitmap, i, j, tileWidth, tileHeight);
 			}
 		}
-		
-		
+		return tiles;
 	}
 }
