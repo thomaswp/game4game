@@ -58,6 +58,10 @@ public final class Data {
 		}
 	}
 	
+	public static String loadString(int id) {
+		return resources.getString(id);
+	}
+	
 	/**
 	 * Saves a serializable class, using the given activity with the given name.
 	 * 

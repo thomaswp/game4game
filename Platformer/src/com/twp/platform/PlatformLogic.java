@@ -10,6 +10,7 @@ import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.BackgroundSprite;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
+import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
@@ -20,6 +21,7 @@ public class PlatformLogic implements Logic {
 
 	Sprite player;
 	BackgroundSprite background;
+	Tilemap tilemap;
 	JoyStick stick;
 	Button button;
 	
@@ -31,11 +33,15 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void initialize() {
-		Bitmap bmp = Data.loadBitmap(R.drawable.tiles);
+		Bitmap bmp = Data.loadBitmap(R.drawable.ocean);
 		background = new BackgroundSprite(bmp, new Rect(0, 0, Graphics.getWidth(), Graphics.getHeight()), -5);
 		//player.centerOrigin();
 		stick = new JoyStick(60, Graphics.getHeight() - 60, 10, 50, Color.BLUE);
 		button = new Button(Graphics.getWidth() - 60, Graphics.getHeight() - 60, 10, 50, Color.RED);
+		
+		int[][] map = Tilemap.readMap(Data.loadString(R.string.map));
+		Rect rect = new Rect(0, 0, Graphics.getWidth(), Graphics.getHeight());
+		tilemap = new Tilemap(Data.loadBitmap(R.drawable.tiles), 48, 48, 3, map, rect, -3);
 
 	}
 
@@ -44,8 +50,10 @@ public class PlatformLogic implements Logic {
 
 		stick.update();
 		Vector p = stick.getPull();
-		p.multiply(3f);
-		background.scroll(p.getX(), p.getY());
+		p.multiply(2f);
+		background.scroll(p.getX(), 0);
+		p.multiply(1.5f);
+		tilemap.scroll(p.getX(), 0);
 		button.update();
 
 	}
