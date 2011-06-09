@@ -107,6 +107,10 @@ public abstract class Game extends Activity {
 		return super.onMenuOpened(featureId, menu);
 	}
 
+	public static void debug(float x) {
+		debug("" + x);
+	}
+	
 	/**
 	 * A method to write specially formatted debug text.
 	 * 

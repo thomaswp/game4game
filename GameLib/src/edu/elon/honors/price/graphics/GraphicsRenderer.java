@@ -19,6 +19,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
+import android.graphics.RectF;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
@@ -27,12 +28,13 @@ public class GraphicsRenderer implements Renderer {
 	private Bitmap fpsBitmap;
 	private Paint paint = new Paint();
 	private Canvas canvas = new Canvas();
-	private int fpsId = -1;
+	private int fpsId = -1, rendered;
 	private Grid fpsGrid;
+	private int[] rTexture = new int[1];
 
 	private Logic logic;
 
-	private HashMap<Integer, Integer> textures = new HashMap<Integer, Integer>();
+	private HashMap<Bitmap, Integer> textures = new HashMap<Bitmap, Integer>();
 
 	private int[] mTextureNameWorkspace;
 	private int[] mCropWorkspace;
@@ -115,12 +117,11 @@ public class GraphicsRenderer implements Renderer {
 	
 	private void flush(GL10 gl) {
 		Game.debug("Flush");
-		textures = new HashMap<Integer, Integer>();
-		int[] texture = new int[1];
+		textures.clear();
 		for (int i = 0; i < resources.size(); i++) {
 			int x = resources.get(i);
-			texture[0] = x;
-			gl.glDeleteTextures(1, texture, 0);
+			rTexture[0] = x;
+			gl.glDeleteTextures(1, rTexture, 0);
 		}
 		for (int i = 0; i < Graphics.getViewports().size(); i++) {
 			Viewport viewport = Graphics.getViewports().get(i);
@@ -161,8 +162,6 @@ public class GraphicsRenderer implements Renderer {
 				
 				ArrayList<Viewport> viewports = Graphics.getViewports();
 
-				//Sort Viewports by Z
-				Collections.sort(viewports);
 				for (int i = 0; i < Graphics.getViewports().size(); i++) {
 					Viewport viewport = Graphics.getViewports().get(i);
 					//Draw visible Viewports
@@ -170,39 +169,42 @@ public class GraphicsRenderer implements Renderer {
 
 						if (viewport.hasRect()) {
 							//If the Viewport isn't the whole drawable area, set the clip
-							gl.glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+							gl.glViewport((int)viewport.getX(), Graphics.getHeight() - (int)viewport.getY() - viewport.getHeight(), viewport.getWidth(), viewport.getHeight());
 							clipSet = true;
 						} else if (clipSet) {
 							gl.glViewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
 							clipSet = false;
 						}
 
-						//Sort the Sprites as well
-						Collections.sort(viewport.getSprites());
 						for (int j = 0; j < viewport.getSprites().size(); j++) {
 							Sprite  sprite = viewport.getSprites().get(j);
 							if (sprite != null && sprite.isVisible()) {
 								//Draw visible Sprites
+								
+								if (!viewport.isSpriteInBounds(sprite)) {
+//									Game.debug(sprite.getRect().toString());
+//									Game.debug(viewport.getRect().toString());
+									continue;
+								}
 
+								Bitmap bmp = sprite.getBitmap();
 								if (sprite.isBitmapModified()) {
-									int hash = sprite.getBitmap().hashCode();
-									if (textures.containsKey(hash)) {
+									if (textures.containsKey(bmp)) {
 										//int rid = textures.get(hash);
 										//int[] texture = {rid};
 										//gl.glDeleteTextures(1, texture, 0);
-										textures.remove(hash);	
+										textures.remove(bmp);	
 										sprite.setBitmapModified(false);
 									}
 								}
 								if (sprite.getTextureId() == -1) {
-									int hash = sprite.getBitmap().hashCode();
-									if (textures.containsKey(hash)) {
-										sprite.setTextureId(textures.get(hash));
+									if (textures.containsKey(bmp)) {
+										sprite.setTextureId(textures.get(bmp));
 									} else {
 										int rid = loadBitmap(gl, sprite.getBitmap());
 										resources.add(rid);
 										sprite.setTextureId(rid);
-										textures.put(hash, rid);
+										textures.put(bmp, rid);
 									}
 								}
 								if (sprite.getGrid() == null) {
@@ -232,15 +234,25 @@ public class GraphicsRenderer implements Renderer {
 									gl.glScalef(stretchX, stretchY, 0);
 								}
 								
-								gl.glTranslatef(sprite.getX(), Graphics.getHeight() + bY - targetHeight + sprite.getOriginY() * 2
-										- sprite.getY(), 0);
-								gl.glRotatef(-sprite.getRotation(), 0, 0, 1);
-								gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 1);
-								gl.glTranslatef(-sprite.getOriginX(), -bY - sprite.getOriginY(), 0);
+								//gl.glTranslatef(sprite.getX(), Graphics.getHeight() + (bY - targetHeight) * sprite.getZoomY() + 
+								float tx = sprite.getX(); 
+								float ty = Graphics.getHeight() + (bY - targetHeight) * 1 +	sprite.getOriginY() * 2	- sprite.getY();
+								if (tx != 0 || ty != 0)
+									gl.glTranslatef(tx, ty, 0);
+								if (sprite.getRotation() != 0)
+									gl.glRotatef(-sprite.getRotation(), 0, 0, 1);
+								if (sprite.getZoomX() != 1 || sprite.getZoomY() != 1)
+									gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 1);
+								tx = -sprite.getOriginX();
+								ty = -bY - sprite.getOriginY();
+								if (tx != 0 || ty != 0)
+									gl.glTranslatef(tx, ty, 0);
 
 								sprite.getGrid().draw(gl, true, false);
 
 								gl.glPopMatrix();
+								
+								rendered++;
 							}
 						}
 					}
@@ -252,8 +264,8 @@ public class GraphicsRenderer implements Renderer {
 				if (Graphics.getFPSBitmapRefresh()) {
 					updateFPSBitmap();
 					if (fpsId > 0) {
-						int[] texture = new int[] { fpsId };
-						gl.glDeleteTextures(1, texture, 0);
+						rTexture[0] = fpsId;
+						gl.glDeleteTextures(1, rTexture, 0);
 					}
 					fpsId = loadBitmap(gl, fpsBitmap);
 				}
@@ -276,9 +288,10 @@ public class GraphicsRenderer implements Renderer {
 		times += System.currentTimeMillis() - time;
 		frame++;
 		if (frame == 60) {
-			Game.debug("" + (times / frame) + ": " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
+			Game.debug("" + (times / frame) + "ms, " + (rendered / frame) + "r: " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
 			frame = 0;
 			times = 0;
+			rendered = 0;
 		}
 	}
 	

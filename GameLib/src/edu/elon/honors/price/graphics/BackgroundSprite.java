@@ -18,13 +18,14 @@ public class BackgroundSprite extends Sprite {
 		this.segmentWidth = bitmap.getWidth();
 		this.segmentHeight = bitmap.getHeight();
 		getViewport().setZ(z);
-		Game.debug(rect.right + "");
+		getViewport().setSorted(false);
 	}
 	
 	public void scroll(float x, float y) {
 		setOriginX(getOriginX() + x);
 		setOriginY(getOriginY() + y);
 		RectF spriteRect = getRect();
+		fullRect = getViewport().getRect();
 		while (spriteRect.left > fullRect.left) {
 			this.setOriginX(this.getOriginX() + segmentWidth);
 			spriteRect = getRect();
@@ -65,6 +66,7 @@ public class BackgroundSprite extends Sprite {
 		} else {
 			height = original.getHeight() * 2;
 		}
+		Game.debug(width+","+height);
 		Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
 		Canvas canvas = new Canvas();
 		canvas.setBitmap(bmp);

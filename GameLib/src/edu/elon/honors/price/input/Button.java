@@ -9,7 +9,7 @@ import edu.elon.honors.price.physics.Vector;
 public class Button {
 	private Viewport viewport;
 	private float radius;
-	private Vector center, touch, dragStart, pull;
+	private Vector center, touch, dragStart, pull, temp;
 	private Sprite outer, top;
 	private int pid = -1;
 	private boolean tapped;
@@ -27,9 +27,11 @@ public class Button {
 	public Button(int x, int y, int z, int radius, int color) {
 		viewport = new Viewport();
 		viewport.setZ(z);
+		viewport.setSorted(false);
 		center = new Vector(x, y);
 		pull = new Vector();
 		touch = new Vector();
+		temp = new Vector();
 		this.radius = radius;
 
 		paint.setColor(color);		
@@ -48,16 +50,17 @@ public class Button {
 		if (Input.isTapped() && pid < 0) {
 			int tapped = Input.getTappedPointer();
 			touch.set(Input.getLastTouchX(tapped), Input.getLastTouchY(tapped));
-			Vector r = touch.minus(center);
-			if (r.magnitude() <= radius) {
-				dragStart = touch.copy();
+			temp.set(touch);
+			temp.subtract(center);
+			if (temp.magnitude() <= radius) {
+				dragStart.set(touch);
 				pid = tapped;
 				this.tapped = true;
 			}
 		}
 		if (pid >= 0 && Input.isTouchDown(pid)) {
 			touch.set(Input.getLastTouchX(pid), Input.getLastTouchY(pid));
-			pull = touch.minus(dragStart);
+			pull = touch.subtract(dragStart);
 			if (pull.magnitude() > radius) {
 				top.setVisible(false);
 			} else {
