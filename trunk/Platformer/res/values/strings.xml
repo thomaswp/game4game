@@ -2,4 +2,7 @@
 <resources>
     <string name="hello">Hello World, Platformer!</string>
     <string name="app_name">Platformer</string>
+    <string name="map">
+    1,2,3\n3,,5
+    </string>
 </resources>
