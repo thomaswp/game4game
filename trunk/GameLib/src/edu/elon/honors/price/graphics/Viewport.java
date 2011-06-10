@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import edu.elon.honors.price.game.Game;
+
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -18,7 +20,7 @@ public class Viewport implements Comparable<Viewport> {
 
 	private float zoomX = 1, zoomY = 1, rotation, originX, originY;
 
-	private boolean visible, sorted;
+	private boolean visible, sorted = true;
 
 	private Rect rect = new Rect();
 	private RectF rectF = new RectF();

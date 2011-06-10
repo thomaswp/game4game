@@ -18,7 +18,7 @@ public class JoyStick {
 
 	public Vector getPull() {
 		temp.set(pull);
-		temp.makeUnitVector();
+		temp.multiply(1 / radius);
 		return temp;
 	}
 
@@ -53,6 +53,7 @@ public class JoyStick {
 			if (temp.magnitude() <= radius) {
 				dragStart.set(touch);
 				pid = tapped;
+				Input.getVibrator().vibrate(40);
 			}
 		}
 		if (pid >= 0 && Input.isTouchDown(pid)) {

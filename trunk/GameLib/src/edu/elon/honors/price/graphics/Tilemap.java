@@ -51,6 +51,10 @@ public class Tilemap {
 	public int getTileHeight() {
 		return tileHeight;
 	}
+	
+	public Sprite[][] getSprites() {
+		return sprites;
+	}
 
 	public Tilemap(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing, 
 			int[][] map, Rect displayRect, int z) {
@@ -102,8 +106,8 @@ public class Tilemap {
 		for (int i = 0; i < sprites.length; i++) {
 			for (int j = 0; j < sprites[i].length; j++) {
 				if (sprites[i][j] != null) {
-					sprites[i][j].setOriginX((int)scrollX);
-					sprites[i][j].setOriginY((int)scrollY);
+					sprites[i][j].setOriginX(scrollX);
+					sprites[i][j].setOriginY(scrollY);
 					if (updateVisible)
 						sprites[i][j].setVisible(viewport.isSpriteInBounds(sprites[i][j]));
 				}
