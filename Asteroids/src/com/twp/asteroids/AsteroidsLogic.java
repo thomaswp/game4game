@@ -1,6 +1,8 @@
 package com.twp.asteroids;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -53,6 +55,7 @@ public class AsteroidsLogic implements Logic {
 	private int nextAnim;
 	private long winTime;
 	private float timeScale = 1;
+	Vector temp = new Vector();
 	
 	private MediaPlayer whir;
 
@@ -290,11 +293,11 @@ public class AsteroidsLogic implements Logic {
 							//Happen once per collision
 							float speed1 = a.getVelocity().magnitude();
 							float speed2 = a2.getVelocity().magnitude();
-							Vector r = a.getPosition().minus(a2.getPosition());
-							float bSpeed = r.magnitude();
-							a.setVelocity(r.times(speed1 / bSpeed));
+							temp.set(a.getPosition()).subtract(a2.getPosition());
+							float bSpeed = temp.magnitude();
+							a.getVelocity().set(temp).multiply(speed1 / bSpeed);
 							a.updateSprite();
-							a2.setVelocity(r.times(-speed2 / bSpeed));
+							a2.getVelocity().set(temp).multiply(-speed2 / bSpeed);
 							a2.updateSprite();
 
 						}
@@ -381,7 +384,8 @@ public class AsteroidsLogic implements Logic {
 				break;
 			}
 
-			float dis = a.getPosition().minus(new Vector(ship.getX(), ship.getY())).magnitude(); 
+			temp.set(a.getPosition());
+			float dis = temp.subtract(new Vector(ship.getX(), ship.getY())).magnitude(); 
 			dis -= new Vector(a.getSprite().getWidth(), a.getSprite().getHeight()).magnitude() / 2;
 			if (dis < minDis) {
 				minDis = dis;
@@ -423,6 +427,7 @@ public class AsteroidsLogic implements Logic {
 		Bitmap bmp = Data.loadBitmap(R.drawable.ship);
 		ship = new Sprite(Viewport.DefaultViewport, bmp);
 		ship.centerOrigin();
+		ship.setZ(20);
 
 		Bitmap sBmp = Data.loadBitmap(R.drawable.thrust);
 		thrust = new Sprite(Viewport.DefaultViewport, sBmp);
@@ -458,6 +463,8 @@ public class AsteroidsLogic implements Logic {
 			e.setPhysics(physics);
 			e.expAnimation = expAnimation;
 		}
+		
+		Game.debug(Arrays.toString(Viewport.DefaultViewport.getSprites().toArray()));
 	}
 
 	private void drawPauseBitmap() {

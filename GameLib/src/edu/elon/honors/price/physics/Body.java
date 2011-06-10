@@ -120,7 +120,7 @@ public class Body implements Serializable {
 
 	public void setSpeed(float speed) {
 		if (velocity.magnitude() == 0)
-			velocity = new Vector(speed, 0);
+			velocity.set(speed, 0);
 		else
 			velocity.multiply(speed / velocity.magnitude());
 	}
@@ -186,6 +186,9 @@ public class Body implements Serializable {
 	public Body(Physics physics, Sprite sprite) {
 		this(physics, sprite.getX(), sprite.getY());
 		this.sprite = sprite;
+		this.setZoomX(sprite.getZoomX());
+		this.setZoomY(sprite.getZoomY());
+		this.setdRotation(sprite.getRotation());
 	}
 
 	public Body(Physics physics, float x, float y) {
@@ -194,7 +197,7 @@ public class Body implements Serializable {
 
 	public Body(Physics physics, Vector position) {
 		this.position = position;
-		this.velocity = new Vector(0, 0);
+		this.velocity = new Vector();
 		this.physics = physics;
 		physics.addBody(this);
 	}

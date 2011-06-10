@@ -6,9 +6,11 @@ import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.GraphicsRenderer;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.GraphicsView;
+import edu.elon.honors.price.input.Input;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
@@ -44,6 +46,7 @@ public abstract class Game extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		Data.setResources(getResources());
 		Audio.setContext(this);
+		Input.setVibrator((Vibrator)getSystemService(VIBRATOR_SERVICE));
 		view = new GraphicsView(this);
 		view.setRenderer(new GraphicsRenderer());
 		this.setContentView(view);
@@ -107,6 +110,10 @@ public abstract class Game extends Activity {
 		return super.onMenuOpened(featureId, menu);
 	}
 
+	public static void debug(Object o) {
+		debug(o.toString());
+	}
+	
 	public static void debug(float x) {
 		debug("" + x);
 	}

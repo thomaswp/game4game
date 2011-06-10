@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import edu.elon.honors.price.game.Game;
 
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -54,6 +55,8 @@ public final class Input {
 
 	//A map of Keys and their current KeyState
 	private static KeyStates[] keyMap = new KeyStates[100];
+	
+	private static Vibrator vibrator;
 
 	/**
 	 * Returns whether or not the user is touching the screen
@@ -230,6 +233,14 @@ public final class Input {
 	 */
 	public static boolean isUp(int keycode) {
 		return isLifted(keycode) || isReleased(keycode);
+	}
+	
+	public static Vibrator getVibrator() {
+		return vibrator;
+	}
+
+	public static void setVibrator(Vibrator vibrator) {
+		Input.vibrator = vibrator;
 	}
 
 	private Input() {}

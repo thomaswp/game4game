@@ -3,7 +3,7 @@ package edu.elon.honors.price.physics;
 import java.io.Serializable;
 
 public class Vector implements Serializable{
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	private float x, y;
 	
@@ -14,6 +14,10 @@ public class Vector implements Serializable{
 	public void setX(float x) {
 		this.x = x;
 	}
+	
+	public void addX(float dx) {
+		this.x += dx;
+	}
 
 	public float getY() {
 		return y;
@@ -22,9 +26,14 @@ public class Vector implements Serializable{
 	public void setY(float y) {
 		this.y = y;
 	}
+	
+	public void addY(float dy) {
+		this.y += dy;
+	}
 
-	public void set(Vector v) {
+	public Vector set(Vector v) {
 		set(v.getX(), v.getY());
+		return this;
 	}
 	
 	public void set(float x, float y) {

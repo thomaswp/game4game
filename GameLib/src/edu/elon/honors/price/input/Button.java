@@ -32,6 +32,7 @@ public class Button {
 		pull = new Vector();
 		touch = new Vector();
 		temp = new Vector();
+		dragStart = new Vector();
 		this.radius = radius;
 
 		paint.setColor(color);		
@@ -56,6 +57,7 @@ public class Button {
 				dragStart.set(touch);
 				pid = tapped;
 				this.tapped = true;
+				Input.getVibrator().vibrate(40);
 			}
 		}
 		if (pid >= 0 && Input.isTouchDown(pid)) {

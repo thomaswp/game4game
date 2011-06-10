@@ -13,11 +13,16 @@ public class AnimatedSprite extends Sprite {
 
 	public void setFrame(int frame) {
 		this.frame = frame;
+		StopAnimation();
 		setBitmap(frames[frame]);
 	}
 
 	public Bitmap[] getFrames() {
 		return frames;
+	}
+	
+	public boolean isAnimated() {
+		return animTime >= 0;
 	}
 	
 	public AnimatedSprite(Viewport viewport, Bitmap[] frames, float x, float y) {
@@ -42,7 +47,8 @@ public class AnimatedSprite extends Sprite {
 	public void update(long timeElapsed) {
 		if (animTime >= 0) {
 			animTime += timeElapsed;
-			setFrame(animStartFrame + ((animTime / animFrameLength) % animNumFrames));
+			frame = animStartFrame + ((animTime / animFrameLength) % animNumFrames);
+			setBitmap(frames[frame]);
 		}
 		super.update(timeElapsed);
 	}

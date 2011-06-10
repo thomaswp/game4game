@@ -49,9 +49,9 @@ public class Sprite implements Comparable<Sprite> {
 	private Matrix drawMatrix = new Matrix();
 	private boolean resetMatrix = true;
 	//Region of this sprite, not including transparent area
-	private Region collidableRegion;
+	private Region collidableRegion = new Region();
 	//A path created for the bitmap of the opaque regions
-	private Path bitmapPath;
+	private Path bitmapPath = new Path();
 
 	/**
 	 * Gets the default Bitmap configuration for Bitmaps created by a Sprite.
@@ -84,7 +84,7 @@ public class Sprite implements Comparable<Sprite> {
 	public void setBitmap(Bitmap bitmap) {
 		this.bitmap = bitmap;
 		//the bitmap has changed, so reset the path
-		bitmapPath = null;
+		bitmapPath.reset();
 		textureId = -1;
 		if (isMutable()) {
 			bitmapCanvas.setBitmap(bitmap);
@@ -103,7 +103,7 @@ public class Sprite implements Comparable<Sprite> {
 	public Canvas getBitmapCanvas() {
 		//If the player gets the canvas, they may alter it
 		//so reset the path
-		bitmapPath = null;
+		bitmapPath.reset();
 		textureId = -1;
 		bitmapModified = true;
 		return bitmapCanvas;
@@ -122,8 +122,9 @@ public class Sprite implements Comparable<Sprite> {
 	 * @param x The X Coordinate
 	 */
 	public void setX(float x) {
+		if (this.x != x)
+			resetMatrix = true;
 		this.x = x;
-		resetMatrix = true;
 	}
 
 	/**
@@ -139,8 +140,9 @@ public class Sprite implements Comparable<Sprite> {
 	 * @param y The Y Coordinate
 	 */
 	public void setY(float y) {
+		if (this.y != y)
+			resetMatrix = true;
 		this.y = y;
-		resetMatrix = true;
 	}
 
 	/**
@@ -158,8 +160,9 @@ public class Sprite implements Comparable<Sprite> {
 	 * @return
 	 */
 	public void setOriginX(float originX) {
+		if (this.originX != originX)
+			resetMatrix = true;
 		this.originX = originX;
-		resetMatrix = true;
 	}
 
 	/**
@@ -177,8 +180,9 @@ public class Sprite implements Comparable<Sprite> {
 	 * @return The Y coordinate
 	 */
 	public void setOriginY(float originY) {
+		if (this.originY != originY)
+			resetMatrix = true;
 		this.originY = originY;
-		resetMatrix = true;
 	}
 
 	/**
@@ -296,8 +300,9 @@ public class Sprite implements Comparable<Sprite> {
 	 * @param zoom The zoom
 	 */
 	public void setZoomX(float zoom) {
+		if (this.zoomX != zoom)
+			resetMatrix = true;
 		this.zoomX = zoom;
-		resetMatrix = true;
 	}
 	
 	/**
@@ -317,8 +322,9 @@ public class Sprite implements Comparable<Sprite> {
 	 * @param zoom The zoom
 	 */
 	public void setZoomY(float zoom) {
+		if (this.zoomY != zoom)
+			resetMatrix = true;
 		this.zoomY = zoom;
-		resetMatrix = true;
 	}
 	
 	/**
@@ -347,10 +353,11 @@ public class Sprite implements Comparable<Sprite> {
 	 * @param rotation The rotation
 	 */
 	public void setRotation(float rotation) {
+		if (this.rotation != rotation % 360)
+			resetMatrix = true;
 		this.rotation = rotation % 360;
 		while (this.rotation < 0)
 			this.rotation += 360;
-		resetMatrix = true;
 	}
 
 	public Matrix getDrawMatrix() {
@@ -455,14 +462,30 @@ public class Sprite implements Comparable<Sprite> {
 	 */
 	public Region intersection(Sprite sprite) {
 		if (sprite.getRect().intersect(getRect())) {
-			Region r = new Region(getCollidableRegion());
-			r.op(sprite.getCollidableRegion(), Op.INTERSECT);
-			return r;
+			collideRegion.set(getCollidableRegion());
+			collideRegion.op(sprite.getCollidableRegion(), Op.INTERSECT);
+			return collideRegion;
 		} else {
 			return new Region();
 		}
 	}
 
+	private Region rectRegion = new Region();
+	private Region collideRegion = new Region();
+	private Rect convertRect = new Rect();
+	public Region intersection(RectF rect) {
+		if (rect.intersect(getRect())) {
+			collideRegion.set(getCollidableRegion());
+			convertRect.set((int)rect.left, (int)rect.top, (int)rect.right, (int)rect.bottom);
+			rectRegion.set(convertRect);
+			collideRegion.op(rectRegion, Op.INTERSECT);
+			return collideRegion;
+		} else {
+			return new Region();
+		}
+	}
+
+	
 	/**
 	 * Centers the origin of this Sprite.
 	 */
@@ -488,6 +511,10 @@ public class Sprite implements Comparable<Sprite> {
 				timeout -= timeElapsed;
 			}
 		}
+	}
+	
+	public String toString() {
+		return "Sprite: {" + x + "," + y + "," + z + "}";
 	}
 
 	/**
@@ -521,7 +548,7 @@ public class Sprite implements Comparable<Sprite> {
 
 	private void createBitmapPath() {
 
-		bitmapPath = new Path();
+		bitmapPath.reset();
 
 		//points = points in the path, checks = accuracy of the path
 		int points = 120, checks = 60;
@@ -586,19 +613,21 @@ public class Sprite implements Comparable<Sprite> {
 		bitmapPath.close();		
 	}
 
+	private Path tempPath = new Path();
 	private Path getPath() {
 		//get the path and transform it by the drawMatrix
-		if (bitmapPath == null) {
+		if (bitmapPath.isEmpty()) {
 			createBitmapPath();
 		}
-		Path path = new Path(bitmapPath);
-		path.transform(getDrawMatrix());
-		return path;
+		tempPath.set(bitmapPath);
+		tempPath.transform(getDrawMatrix());
+		return tempPath;
 	}
 
 	private void createCollidableRegion() {
 		//create a region from the path
-		collidableRegion = new Region();
-		collidableRegion.setPath(getPath(), new Region(viewport.getRect()));
+		collidableRegion.setEmpty();
+		collideRegion.set(viewport.getRect());
+		collidableRegion.setPath(getPath(), collideRegion);
 	}
 }
