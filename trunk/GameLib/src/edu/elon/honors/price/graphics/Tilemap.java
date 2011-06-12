@@ -5,7 +5,11 @@ import java.util.Arrays;
 import edu.elon.honors.price.game.Game;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Paint.Style;
 
 public class Tilemap {
 	private Bitmap[] tiles;
@@ -14,7 +18,11 @@ public class Tilemap {
 	private Viewport viewport;
 	private Sprite[][] sprites;
 	private int rows, columns, tileWidth, tileHeight;
-	float scrollX, scrollY;
+	private float scrollX, scrollY;
+	private boolean visible;
+	
+	private Bitmap gridBitmap;
+	private BackgroundSprite grid;
 	
 	public float getScrollX() {
 		return scrollX;
@@ -55,6 +63,30 @@ public class Tilemap {
 	public Sprite[][] getSprites() {
 		return sprites;
 	}
+	
+	public boolean isShowingGrid() {
+		return grid != null && grid.isVisible();
+	}
+	
+	public void setShowingGrid(boolean showing) {
+		if (showing) {
+			if (grid == null)
+				createGrid();
+			grid.setVisible(true);
+		} else {
+			if (grid != null)
+				grid.setVisible(false);
+		}
+	}
+	
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+		updateScroll(true);
+	}
 
 	public Tilemap(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing, 
 			int[][] map, Rect displayRect, int z) {
@@ -68,6 +100,7 @@ public class Tilemap {
 		this.viewport.setZ(z);
 		this.rows = map.length;
 		this.columns = map[0].length;
+		this.visible = true;
 		generateSprites();
 	}
 	
@@ -109,7 +142,7 @@ public class Tilemap {
 					sprites[i][j].setOriginX(scrollX);
 					sprites[i][j].setOriginY(scrollY);
 					if (updateVisible)
-						sprites[i][j].setVisible(viewport.isSpriteInBounds(sprites[i][j]));
+						sprites[i][j].setVisible(visible && viewport.isSpriteInBounds(sprites[i][j]));
 				}
 			}
 		}
@@ -129,6 +162,19 @@ public class Tilemap {
 				}
 			}
 		}
+	}
+	
+	private void createGrid() {
+		gridBitmap = Bitmap.createBitmap(tileWidth, tileHeight, Sprite.defaultConfig);
+		Canvas c = new Canvas();
+		Paint p = new Paint();
+		p.setColor(Color.argb(200, 200, 200, 200));
+		p.setStyle(Style.STROKE);
+		c.setBitmap(gridBitmap);
+		c.drawRect(0, 0, tileWidth, tileHeight, p);
+		
+		
+		grid = new BackgroundSprite(gridBitmap, displayRect, viewport.getZ());
 	}
 	
 	public static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
