@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Platformer</name>
+	<name>GameData</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -30,16 +30,4 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>GameData_src</name>
-			<type>2</type>
-			<locationURI>_android_GameData_9a5fcadc/src</locationURI>
-		</link>
-		<link>
-			<name>GameLib_src</name>
-			<type>2</type>
-			<locationURI>_android_GameLib_578f9913/src</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

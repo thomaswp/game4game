@@ -1,10 +1,15 @@
 package com.twp.platform;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import edu.elon.honors.price.data.PlatformLayer;
+import edu.elon.honors.price.data.PlatformMap;
+import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
@@ -28,8 +33,9 @@ public class PlatformLogic implements Logic {
 	private static final int BSIZE = 50;
 	private static final int BBORDER = 15;
 
+	PlatformMap map;
 	BackgroundSprite background, sky;
-	Tilemap tilemap;
+	Tilemap[] layers;
 	JoyStick stick;
 	Button button;
 	AnimatedSprite hero;
@@ -48,6 +54,8 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void initialize() {
+		map = new PlatformMap();
+
 		Bitmap bmp = Data.loadBitmap(R.drawable.ocean);
 		startOceanY = Graphics.getHeight() - bmp.getHeight();
 		background = new BackgroundSprite(bmp, new Rect(0, startOceanY, 
@@ -65,18 +73,14 @@ public class PlatformLogic implements Logic {
 				Graphics.getHeight() - BSIZE - BBORDER, BBORDER, 
 				BSIZE, Color.argb(150, 255, 0, 0));
 
-		//int[][] map = Tilemap.readMap(Data.loadString(R.string.map));
-		int[][] map = new int[10][100];
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[i].length; j++) {
-				if (Math.random() > 0.6)
-					map[i][j] = 6*8;//(int)(Math.random() * 64);
-				else
-					map[i][j] = -1;
-			}
+		layers = new Tilemap[map.layers.size()];
+		Tileset tileset = map.tileset;
+		for (int i = 0; i < layers.length; i++) {
+			PlatformLayer layer = map.layers.get(i);
+			layers[i] = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
+					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
+					layer.tiles, Graphics.getRect(), layer.z);
 		}
-		Rect rect = new Rect(0, 0, Graphics.getWidth(), Graphics.getHeight());
-		tilemap = new Tilemap(Data.loadBitmap(R.drawable.tiles), 48, 48, 3, map, rect, -3);
 
 		Bitmap[] frames = Tilemap.createTiles(Data.loadBitmap(R.drawable.hero), 32, 48, 0);
 		hero = new AnimatedSprite(Viewport.DefaultViewport, frames, 48, -48);
@@ -112,71 +116,77 @@ public class PlatformLogic implements Logic {
 		heroBody.getVelocity().setX(stick.getPull().getX() * 0.2f);
 		heroBody.getVelocity().addY(0.01f);
 
-		Sprite[][] sprites = tilemap.getSprites();
 		RectF heroRect = heroBody.getSprite().getRect();
 		Vector heroV = heroBody.getVelocity();
-		
-		if (heroV.getX() != 0) {
-			heroRect.offset(heroV.getX() * timeElapsed, 0);
-			for (int i = 0; i < sprites.length; i++) {
-				for (int j = 0; j < sprites[i].length; j++) {
-					Sprite s = sprites[i][j];
-					if (s != null) {
-						if (s.isVisible()) {
-							if (s.getRect().intersect(heroRect)) {
-								heroRect.offset(-heroV.getX() * timeElapsed, 0);
-								heroV.setX(0);
-								break;
-							}
-						}
 
+		for (int k = 0; k < layers.length; k++) {
+
+			if (!map.layers.get(k).active)
+				continue;
+			
+			Sprite[][] sprites = layers[k].getSprites();
+
+			if (heroV.getX() != 0) {
+				heroRect.offset(heroV.getX() * timeElapsed, 0);
+				for (int i = 0; i < sprites.length; i++) {
+					for (int j = 0; j < sprites[i].length; j++) {
+						Sprite s = sprites[i][j];
+						if (s != null) {
+							if (s.isVisible()) {
+								if (s.getRect().intersect(heroRect)) {
+									heroRect.offset(-heroV.getX() * timeElapsed, 0);
+									heroV.setX(0);
+									break;
+								}
+							}
+
+						}
 					}
 				}
+				heroRect.offset(-heroV.getX() * timeElapsed, 0);
 			}
-			heroRect.offset(-heroV.getX() * timeElapsed, 0);
-		}
-		
-		if (heroV.getY() != 0) {
-			heroRect.offset(0, heroV.getY() * timeElapsed);
-			for (int i = 0; i < sprites.length; i++) {
-				for (int j = 0; j < sprites[i].length; j++) {
-					Sprite s = sprites[i][j];
-					if (s != null) {
-						if (s.isVisible()) {
-							if (s.getRect().intersect(heroRect)) {
-								heroRect.offset(0, -heroV.getY() * timeElapsed);
-								heroV.setY(0);
-								break;
-							}
-						}
 
+			if (heroV.getY() != 0) {
+				heroRect.offset(0, heroV.getY() * timeElapsed);
+				for (int i = 0; i < sprites.length; i++) {
+					for (int j = 0; j < sprites[i].length; j++) {
+						Sprite s = sprites[i][j];
+						if (s != null) {
+							if (s.isVisible()) {
+								if (s.getRect().intersect(heroRect)) {
+									heroRect.offset(0, -heroV.getY() * timeElapsed);
+									heroV.setY(0);
+									break;
+								}
+							}
+
+						}
 					}
 				}
+				heroRect.offset(0, -heroV.getY() * timeElapsed);
 			}
-			heroRect.offset(0, -heroV.getY() * timeElapsed);
-		}
-		
-		if (heroV.getX() != 0 && heroV.getY() != 0) {
-			heroRect.offset(heroV.getX() * timeElapsed, heroV.getY() * timeElapsed);
-			for (int i = 0; i < sprites.length; i++) {
-				for (int j = 0; j < sprites[i].length; j++) {
-					Sprite s = sprites[i][j];
-					if (s != null) {
-						if (s.isVisible()) {
-							if (s.getRect().intersect(heroRect)) {
-								heroRect.offset(-heroV.getX() * timeElapsed, -heroV.getY() * timeElapsed);
-								heroV.clear();
-								break;
-							}
-						}
 
+			if (heroV.getX() != 0 && heroV.getY() != 0) {
+				heroRect.offset(heroV.getX() * timeElapsed, heroV.getY() * timeElapsed);
+				for (int i = 0; i < sprites.length; i++) {
+					for (int j = 0; j < sprites[i].length; j++) {
+						Sprite s = sprites[i][j];
+						if (s != null) {
+							if (s.isVisible()) {
+								if (s.getRect().intersect(heroRect)) {
+									heroRect.offset(-heroV.getX() * timeElapsed, -heroV.getY() * timeElapsed);
+									heroV.clear();
+									break;
+								}
+							}
+
+						}
 					}
 				}
+				heroRect.offset(-heroV.getX() * timeElapsed, -heroV.getY() * timeElapsed);
 			}
-			heroRect.offset(-heroV.getX() * timeElapsed, -heroV.getY() * timeElapsed);
 		}
-		
-		
+
 		heroBody.updatePhysics(timeElapsed);
 
 		p.clear();
@@ -197,11 +207,12 @@ public class PlatformLogic implements Logic {
 
 		heroBody.getPosition().add(p);
 		heroBody.updateSprite();
-		
+
 		p.multiply(-1);
-		
-		tilemap.scroll(p.getX(), p.getY());
-		
+
+		for (int i = 0; i < layers.length; i++)
+			layers[i].scroll(p.getX(), p.getY());
+
 		mapX += p.getX(); mapY += p.getY();
 		mapY = Math.min(0, mapY);
 
