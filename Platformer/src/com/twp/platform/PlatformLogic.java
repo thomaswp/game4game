@@ -1,5 +1,6 @@
 package com.twp.platform;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -54,14 +55,12 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void initialize() {
-		map = new PlatformMap();
-
+		if (map == null) map = new PlatformMap();
+		
 		Bitmap bmp = Data.loadBitmap(R.drawable.ocean);
 		startOceanY = Graphics.getHeight() - bmp.getHeight();
-		background = new BackgroundSprite(bmp, new Rect(0, startOceanY, 
-				Graphics.getWidth(), Graphics.getHeight() + 132), -5);
-		//		background = new BackgroundSprite(bmp, new Rect(0, Graphics.getHeight() - bmp.getHeight(), 
-		//				Graphics.getWidth(), Graphics.getHeight()), -5);
+		background = new BackgroundSprite(bmp, new Rect(0, Graphics.getHeight() - bmp.getHeight(), 
+				Graphics.getWidth(), Graphics.getHeight()), -5);
 
 		bmp = Data.loadBitmap(R.drawable.sky);
 		skyStartY = bmp.getHeight() - Graphics.getHeight();
@@ -80,6 +79,7 @@ public class PlatformLogic implements Logic {
 			layers[i] = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, Graphics.getRect(), layer.z);
+			layers[i].setVisible(i == 0);
 		}
 
 		Bitmap[] frames = Tilemap.createTiles(Data.loadBitmap(R.drawable.hero), 32, 48, 0);
@@ -93,7 +93,7 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void update(long timeElapsed) {
-
+		
 		stick.update();
 		button.update();
 
@@ -123,7 +123,7 @@ public class PlatformLogic implements Logic {
 
 			if (!map.layers.get(k).active)
 				continue;
-			
+
 			Sprite[][] sprites = layers[k].getSprites();
 
 			if (heroV.getX() != 0) {
@@ -241,7 +241,7 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void load(Activity parent) {
-		// TODO Auto-generated method stub
+		map = (PlatformMap) Data.loadObjectPublic("map-final", parent);
 
 	}
 

@@ -14,5 +14,6 @@
             </intent-filter>
         </activity>
 
-    </application>
+    <activity android:name="TextureSelector" android:screenOrientation="landscape"></activity>
+</application>
 </manifest>

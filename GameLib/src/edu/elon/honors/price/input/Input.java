@@ -157,7 +157,7 @@ public final class Input {
 	 * @return The Y distance
 	 */
 	public static float getDistanceTouchY() {
-		return getDistanceTouchX(0);
+		return getDistanceTouchY(0);
 	}
 
 	public static float getDistanceTouchY(int pid) {
@@ -245,6 +245,14 @@ public final class Input {
 
 	private Input() {}
 
+	public static void reset() {
+		touchEvents.clear();
+		for (int i = 0; i < touchStates.size(); i++) {
+			touchStates.set(i, new TouchState());
+		}
+		keyMap = new KeyStates[keyMap.length];
+	}
+	
 	/**
 	 * Records a KeyUp event.
 	 * @param keycode The KeyCode

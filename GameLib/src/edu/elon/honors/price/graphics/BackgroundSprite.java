@@ -13,7 +13,7 @@ public class BackgroundSprite extends Sprite {
 	private int segmentWidth, segmentHeight;
 
 	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
-		this(createBitmap(bitmap, rect), createViewport(rect, z));
+		this(bitmap, createViewport(rect, z));
 	}
 	
 	public BackgroundSprite(Bitmap bitmap, Viewport viewport) {
@@ -71,7 +71,7 @@ public class BackgroundSprite extends Sprite {
 		} else {
 			height = original.getHeight() * 2;
 		}
-		Game.debug(width+","+height);
+		//Game.debug("CB:"+width+","+height);
 		Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
 		Canvas canvas = new Canvas();
 		canvas.setBitmap(bmp);

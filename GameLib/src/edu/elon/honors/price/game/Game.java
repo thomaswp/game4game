@@ -66,8 +66,10 @@ public abstract class Game extends Activity {
 			view.setLogic(null);
 			//save the logic
 			logic.save(this);
+			Input.reset();
 			//reset the Graphics
 			Graphics.reset();
+			Data.clearCache();
 		}
 		
 		Audio.stop();
