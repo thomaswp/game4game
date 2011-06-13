@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import android.graphics.Rect;
 
 public class PlatformMap implements Serializable{
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	private transient Rect rect = new Rect();
 	
@@ -29,8 +29,8 @@ public class PlatformMap implements Serializable{
 	}
 	
 	public PlatformMap() {
-		rows = 5;
-		columns = 50;
+		rows = 8;
+		columns = 30;
 		
 		tileset = new Tileset(R.drawable.tiles, 48, 48);
 		tileset.tileSpacing = 3;
@@ -40,7 +40,7 @@ public class PlatformMap implements Serializable{
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
 				if (Math.random() > 0.6)
-					layer.tiles[i][j] = 6*8;//(int)(Math.random() * 64);
+					layer.tiles[i][j] = (int)(Math.random() * 64);
 				else
 					layer.tiles[i][j] = -1;
 			}

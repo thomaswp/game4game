@@ -110,6 +110,7 @@ public class Tilemap {
 			(int)((scrollY + viewport.getHeight()) / tileHeight) != (int)((scrollY + viewport.getHeight() + y) / tileHeight);
 		scrollX += x;
 		scrollY += y;
+		if (grid != null) grid.scroll(x, y);
 		updateScroll(updateVisible);
 	}
 	
@@ -127,9 +128,6 @@ public class Tilemap {
 				else
 					map[i][j] = -1;
 			}
-		}
-		for (int[] i : map) {
-			Game.debug(Arrays.toString(i));
 		}
 		return map;
 	}
@@ -171,6 +169,7 @@ public class Tilemap {
 		p.setStyle(Style.STROKE);
 		c.setBitmap(gridBitmap);
 		c.drawRect(0, 0, tileWidth, tileHeight, p);
+		c.drawRect(1, 1, tileWidth - 1, tileHeight - 1, p);
 		
 		
 		grid = new BackgroundSprite(gridBitmap, viewport);
@@ -178,10 +177,10 @@ public class Tilemap {
 	
 	public static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
 		if ((tilesBitmap.getWidth() + tileSpacing) % (tileWidth + tileSpacing) != 0) {
-			throw new RuntimeException("Impropper tile width");
+			throw new RuntimeException("Impropper tile width: " + tileWidth + "x + " + tileSpacing + " != " + tilesBitmap.getWidth());
 		}
 		if ((tilesBitmap.getHeight() + tileSpacing) % (tileHeight + tileSpacing) != 0) {
-			throw new RuntimeException("Impropper tile height");
+			throw new RuntimeException("Impropper tile height" + tileHeight + "x + " + tileSpacing + " != " + tilesBitmap.getHeight());
 		}
 		
 		int rowTiles = (tilesBitmap.getWidth() + tileSpacing) / (tileWidth + tileSpacing);

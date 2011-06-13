@@ -1,5 +1,6 @@
 package edu.elon.honors.price.game;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 
 /**
  * A class for saving and loading persistent data as well as
@@ -33,6 +35,10 @@ public final class Data {
 	 */
 	public static void setResources(Resources resources) {
 		Data.resources = resources;
+	}
+	
+	public static void clearCache() {
+		cache.clear();
 	}
 	
 	/**
@@ -71,7 +77,19 @@ public final class Data {
 	 */
 	public static void saveObject(String name, Activity parent, Serializable data) {
 		try {
-			FileOutputStream fos = parent.openFileOutput(name, Context.MODE_PRIVATE);
+			FileOutputStream fos = parent.openFileOutput(name, Context.MODE_WORLD_READABLE);
+			ObjectOutputStream out = new ObjectOutputStream(fos);
+			out.writeObject(data);
+			out.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public static void saveObjectPublic(String name, Activity parent, Serializable data) {
+		try {
+			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), name);
+			FileOutputStream fos = new FileOutputStream(file);
 			ObjectOutputStream out = new ObjectOutputStream(fos);
 			out.writeObject(data);
 			out.close();
@@ -88,8 +106,8 @@ public final class Data {
 	 */
 	public static Object loadObject(String name, Activity parent) {
 		try {
-			FileInputStream fos = parent.openFileInput(name);
-			ObjectInputStream in = new ObjectInputStream(fos);
+			FileInputStream fis = parent.openFileInput(name);
+			ObjectInputStream in = new ObjectInputStream(fis);
 			Object data = in.readObject();
 			in.close();
 			return data;
@@ -99,5 +117,17 @@ public final class Data {
 		}
 	}
 	
-	
+	public static Object loadObjectPublic(String name, Activity parent) {
+		try {
+			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), name);
+			FileInputStream fis = new FileInputStream(file);
+			ObjectInputStream in = new ObjectInputStream(fis);
+			Object data = in.readObject();
+			in.close();
+			return data;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 }

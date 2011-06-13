@@ -159,8 +159,6 @@ public class GraphicsRenderer implements Renderer {
 
 				//Allow us to reset the clip to full if we need to
 				boolean clipSet = false;
-				
-				ArrayList<Viewport> viewports = Graphics.getViewports();
 
 				for (int i = 0; i < Graphics.getViewports().size(); i++) {
 					Viewport viewport = Graphics.getViewports().get(i);
@@ -190,9 +188,6 @@ public class GraphicsRenderer implements Renderer {
 								Bitmap bmp = sprite.getBitmap();
 								if (sprite.isBitmapModified()) {
 									if (textures.containsKey(bmp)) {
-										//int rid = textures.get(hash);
-										//int[] texture = {rid};
-										//gl.glDeleteTextures(1, texture, 0);
 										textures.remove(bmp);	
 										sprite.setBitmapModified(false);
 									}
@@ -218,7 +213,6 @@ public class GraphicsRenderer implements Renderer {
 								while (targetHeight < h) targetHeight *= 2;
 								int bY = targetHeight - h;
 
-								// Draw using verts or VBO verts.
 								gl.glPushMatrix();
 								gl.glLoadIdentity();
 
@@ -227,13 +221,10 @@ public class GraphicsRenderer implements Renderer {
 //								gl.glScalef(viewport.getZoomX(), viewport.getZoomY(), 0);
 //								gl.glTranslatef(-viewport.getOriginX(), -viewport.getOriginY(), 0);
 
-								float stretchX = 1;
-								float stretchY = 1;
 								if (clipSet) {
-									stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
-									stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
-									//gl.glTranslatef(0, -viewport.getHeight() * (stretchY - 1), 0);
-									//gl.glTranslatef(0, -sprite.getHeight() * (stretchY - 1), 0);
+									float stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
+									float stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
+									gl.glTranslatef(0, -Graphics.getHeight() * (stretchY - 1), 0);
 									gl.glScalef(stretchX, stretchY, 0);
 								}
 								
@@ -244,9 +235,7 @@ public class GraphicsRenderer implements Renderer {
 									gl.glTranslatef(tx, ty, 0);
 								if (sprite.getRotation() != 0)
 									gl.glRotatef(-sprite.getRotation(), 0, 0, 1);
-								if (sprite.getZoomX() != 1 || sprite.getZoomY() != 1 || 
-										stretchX != 1 || stretchY != 0)
-									gl.glScalef(sprite.getZoomX() * stretchX, sprite.getZoomY() * stretchY, 1);
+								gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 1);
 								tx = -sprite.getOriginX();
 								ty = -bY - sprite.getOriginY();
 								if (tx != 0 || ty != 0)
@@ -355,6 +344,7 @@ public class GraphicsRenderer implements Renderer {
 			while (targetHeight < height) targetHeight *= 2;
 			if ((width != targetWidth || height != targetHeight)) {
 				
+				//Game.debug(targetWidth + ", " + targetHeight);
 				int[] bmpPixels = new int[targetWidth * targetHeight];
 				bitmap.getPixels(bmpPixels, 0, targetWidth, 0, 0, width, height);
 				for (int i = 0; i < bmpPixels.length; i++) {

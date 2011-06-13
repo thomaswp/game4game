@@ -1,0 +1,6 @@
+6/13/11
+-reworked Viewports to make them work with glViewport
+-explored options for sharing files between apps
+-added a TextureSelector activity to handle texture selection for the platform maker
+-explored passing data between activities
+-looked at persistent data for pause and explicit saves
