@@ -84,8 +84,7 @@ public class Tilemap {
 	}
 
 	public void setVisible(boolean visible) {
-		this.visible = visible;
-		updateScroll(true);
+		viewport.setVisible(visible);
 	}
 
 	public Tilemap(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing, 
@@ -174,7 +173,7 @@ public class Tilemap {
 		c.drawRect(0, 0, tileWidth, tileHeight, p);
 		
 		
-		grid = new BackgroundSprite(gridBitmap, displayRect, viewport.getZ());
+		grid = new BackgroundSprite(gridBitmap, viewport);
 	}
 	
 	public static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
