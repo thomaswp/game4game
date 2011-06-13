@@ -226,11 +226,14 @@ public class GraphicsRenderer implements Renderer {
 //								gl.glRotatef(-viewport.getRotation(), 0, 0, 1);
 //								gl.glScalef(viewport.getZoomX(), viewport.getZoomY(), 0);
 //								gl.glTranslatef(-viewport.getOriginX(), -viewport.getOriginY(), 0);
-								
+
+								float stretchX = 1;
+								float stretchY = 1;
 								if (clipSet) {
-									float stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
-									float stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
-									gl.glTranslatef(0, -viewport.getHeight() * (stretchY - 1), 0);
+									stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
+									stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
+									//gl.glTranslatef(0, -viewport.getHeight() * (stretchY - 1), 0);
+									//gl.glTranslatef(0, -sprite.getHeight() * (stretchY - 1), 0);
 									gl.glScalef(stretchX, stretchY, 0);
 								}
 								
@@ -241,8 +244,9 @@ public class GraphicsRenderer implements Renderer {
 									gl.glTranslatef(tx, ty, 0);
 								if (sprite.getRotation() != 0)
 									gl.glRotatef(-sprite.getRotation(), 0, 0, 1);
-								if (sprite.getZoomX() != 1 || sprite.getZoomY() != 1)
-									gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 1);
+								if (sprite.getZoomX() != 1 || sprite.getZoomY() != 1 || 
+										stretchX != 1 || stretchY != 0)
+									gl.glScalef(sprite.getZoomX() * stretchX, sprite.getZoomY() * stretchY, 1);
 								tx = -sprite.getOriginX();
 								ty = -bY - sprite.getOriginY();
 								if (tx != 0 || ty != 0)

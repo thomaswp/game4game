@@ -13,12 +13,14 @@ public class BackgroundSprite extends Sprite {
 	private int segmentWidth, segmentHeight;
 
 	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
-		super(createViewport(rect), createBitmap(bitmap, rect));
-		fullRect = rect;
+		this(createBitmap(bitmap, rect), createViewport(rect, z));
+	}
+	
+	public BackgroundSprite(Bitmap bitmap, Viewport viewport) {
+		super(viewport, createBitmap(bitmap, viewport.getRect()));
+		fullRect = viewport.getRect();
 		this.segmentWidth = bitmap.getWidth();
 		this.segmentHeight = bitmap.getHeight();
-		getViewport().setZ(z);
-		getViewport().setSorted(false);
 	}
 	
 	public void scroll(float x, float y) {
@@ -50,8 +52,11 @@ public class BackgroundSprite extends Sprite {
 		Graphics.getViewports().remove(getViewport());
 	}
 	
-	private static Viewport createViewport(Rect rect) {
-		return new Viewport(rect.left, rect.top, rect.width(), rect.height());
+	private static Viewport createViewport(Rect rect, int z) {
+		Viewport vp = new Viewport(rect.left, rect.top, rect.width(), rect.height());
+		vp.setSorted(false);
+		vp.setZ(z);
+		return vp;
 	}
 	
 	private static Bitmap createBitmap(Bitmap original, Rect rect) {

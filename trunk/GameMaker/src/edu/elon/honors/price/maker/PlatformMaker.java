@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.Rect;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
@@ -11,7 +12,9 @@ import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Graphics;
+import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
+import edu.elon.honors.price.graphics.Viewport;
 
 public class PlatformMaker implements Logic {
 
@@ -36,6 +39,13 @@ public class PlatformMaker implements Logic {
 			map = new PlatformMap();
 		
 		loadSprites();
+		
+		Viewport vp = new Viewport(100, 100, 200, 200);
+		Sprite s = new Sprite(vp, 50, 50, 100, 100);
+		s.getBitmap().eraseColor(Color.BLUE);
+		Sprite s2 = new Sprite(vp, 0, 0, 800, 800);
+		s2.setZ(-1);
+		s2.getBitmap().eraseColor(Color.WHITE);
 	}
 
 	@Override
@@ -74,7 +84,8 @@ public class PlatformMaker implements Logic {
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, rect, layer.z);
 			tm.setShowingGrid(true);
-			tm.setVisible(i == this.layer);
+			//tm.setVisible(i == this.layer);
+			tm.setVisible(false);
 			tilemaps.add(tm);
 		}
 	}
