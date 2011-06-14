@@ -90,6 +90,7 @@ public abstract class Game extends Activity {
 		debug("Activity Resumed");
 
 		view.getRenderer().setFlush(true);
+		Input.reset();
 		//Load the logic back on resume
 		Logic logic = getNewLogic();
 		view.setLogic(logic);

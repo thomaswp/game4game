@@ -13,20 +13,25 @@ import android.widget.Toast;
 
 public class GameMaker extends Game {
 
+	private static final int REQUEST_CODE = 3;
+
 	private Rect selectionRect = new Rect();
-	
+
 	@Override
 	protected Logic getNewLogic() {
 		final GameMaker gm = this;
 		PlatformMaker pm = new PlatformMaker(new RectHolder() {
-			
+
 			@Override
-			public void newRect(int bitmapId) {
+			public void newRect(int bitmapId, int tileWidth, int tileHeight) {
 				Intent intent = new Intent(gm, TextureSelector.class);
 				intent.putExtra("id", bitmapId);
-				startActivityForResult(intent, 0);
+				intent.putExtra("tileWidth", tileWidth);
+				intent.putExtra("tileHeight", tileHeight);
+				
+				startActivityForResult(intent, REQUEST_CODE);
 			}
-			
+
 			@Override
 			public Rect getRect() {
 				return selectionRect;
@@ -53,7 +58,7 @@ public class GameMaker extends Game {
 				Toast.makeText(this, "Save Failed!", Toast.LENGTH_SHORT).show(); 
 			}
 		} else if (item.getTitle().equals("Load")) {
-			
+
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
@@ -61,9 +66,16 @@ public class GameMaker extends Game {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		selectionRect.set(0, 0, 1, 1);
+		if (resultCode == RESULT_OK) {
+			Game.debug("OK");
+			int left = data.getExtras().getInt("left");
+			int top = data.getExtras().getInt("top");
+			int right = data.getExtras().getInt("right");
+			int bottom = data.getExtras().getInt("bottom");
+			selectionRect.set(left, top, right, bottom);
+		}
 	}
 
-	
-	
+
+
 }

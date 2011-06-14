@@ -229,15 +229,15 @@ public class GraphicsRenderer implements Renderer {
 								}
 								
 								//gl.glTranslatef(sprite.getX(), Graphics.getHeight() + (bY - targetHeight) * sprite.getZoomY() + 
-								float tx = sprite.getX(); 
-								float ty = Graphics.getHeight() + (bY - targetHeight) * 1 +	sprite.getOriginY() * 2	- sprite.getY();
+								float tx = (int)sprite.getX(); 
+								float ty = (int)(Graphics.getHeight() + (bY - targetHeight) * 1 +	sprite.getOriginY() * 2	- sprite.getY());
 								if (tx != 0 || ty != 0)
 									gl.glTranslatef(tx, ty, 0);
 								if (sprite.getRotation() != 0)
 									gl.glRotatef(-sprite.getRotation(), 0, 0, 1);
 								gl.glScalef(sprite.getZoomX(), sprite.getZoomY(), 1);
-								tx = -sprite.getOriginX();
-								ty = -bY - sprite.getOriginY();
+								tx = (int)(-sprite.getOriginX());
+								ty = (int)(-bY - sprite.getOriginY());
 								if (tx != 0 || ty != 0)
 									gl.glTranslatef(tx, ty, 0);
 

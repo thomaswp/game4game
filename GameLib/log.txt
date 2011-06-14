@@ -4,3 +4,7 @@
 -added a TextureSelector activity to handle texture selection for the platform maker
 -explored passing data between activities
 -looked at persistent data for pause and explicit saves
+
+6/14/11
+-finished a texture selector and placer
+-can now create a map and play on it

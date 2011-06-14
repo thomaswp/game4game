@@ -19,7 +19,6 @@ public class Tilemap {
 	private Sprite[][] sprites;
 	private int rows, columns, tileWidth, tileHeight;
 	private float scrollX, scrollY;
-	private boolean visible;
 	
 	private Bitmap gridBitmap;
 	private BackgroundSprite grid;
@@ -80,11 +79,49 @@ public class Tilemap {
 	}
 	
 	public boolean isVisible() {
-		return visible;
+		return viewport.isVisible();
 	}
-
+	
 	public void setVisible(boolean visible) {
 		viewport.setVisible(visible);
+	}
+	
+	public Viewport getViewport() {
+		return viewport;
+	}
+	
+	public int getWidth() {
+		return tileWidth * columns;
+	}
+	
+	public int getHeight() {
+		return tileHeight * rows;
+	}
+	
+	public void setMap(int[][] map) {
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[i].length; j++) {
+				if (this.map[i][j] != map[i][j]) {
+					this.map[i][j] = map[i][j];
+					if (map[i][j] > 0) {
+						if (sprites[i][j] == null) {
+							int id = map[i][j];
+							Sprite s = new Sprite(viewport, tiles[id]);
+							s.setX(j * tileWidth);
+							s.setY(i * tileHeight);
+							s.setOriginX(scrollX);
+							s.setOriginY(scrollY);
+							sprites[i][j] = s;
+						} else {
+							sprites[i][j].setBitmap(tiles[map[i][j]]);
+						}
+					} else {
+						sprites[i][j].dispose();
+						sprites[i][j] = null;
+					}
+				}
+			}
+		}
 	}
 
 	public Tilemap(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing, 
@@ -92,15 +129,14 @@ public class Tilemap {
 		this.tiles = createTiles(tilesBitmap, tileWidth, tileHeight, tileSpacing);
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
-		this.map = map;
 		this.displayRect = displayRect;
 		this.viewport = new Viewport(displayRect.left, displayRect.top, displayRect.width(), displayRect.height());
-		this.viewport.setSorted(false);
 		this.viewport.setZ(z);
 		this.rows = map.length;
 		this.columns = map[0].length;
-		this.visible = true;
-		generateSprites();
+		this.map = new int[rows][columns];
+		this.sprites = new Sprite[rows][columns];
+		setMap(map);
 	}
 	
 	public void scroll(float x, float y) {
@@ -119,14 +155,14 @@ public class Tilemap {
 		int[][] map = new int[lines.length][];
 		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i];
-			if (line.endsWith(",")) line += "-1";
+			if (line.endsWith(",")) line += "0";
 			String[] values = line.split(",");
 			map[i] = new int[values.length];
 			for (int j = 0; j < values.length; j++) {
 				if (values[j].length() > 0)
 					map[i][j] = Integer.parseInt(values[j]);
 				else
-					map[i][j] = -1;
+					map[i][j] = 0;
 			}
 		}
 		return map;
@@ -139,23 +175,7 @@ public class Tilemap {
 					sprites[i][j].setOriginX(scrollX);
 					sprites[i][j].setOriginY(scrollY);
 					if (updateVisible)
-						sprites[i][j].setVisible(visible && viewport.isSpriteInBounds(sprites[i][j]));
-				}
-			}
-		}
-	}
-	
-	private void generateSprites() {
-		this.sprites = new Sprite[rows][columns];
-		for (int i = 0; i < sprites.length; i++) {
-			for (int j = 0; j < sprites[i].length; j++) {
-				if (map[i][j] >= 0) {
-					Sprite s = new Sprite(viewport, tiles[map[i][j]]);
-					s.setX(j * tileWidth);
-					s.setY(i * tileHeight);
-					sprites[i][j] = s;
-				} else {
-					sprites[i][j] = null;
+						sprites[i][j].setVisible(viewport.isSpriteInBounds(sprites[i][j]));
 				}
 			}
 		}
@@ -173,6 +193,7 @@ public class Tilemap {
 		
 		
 		grid = new BackgroundSprite(gridBitmap, viewport);
+		grid.setZ(10);
 	}
 	
 	public static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
