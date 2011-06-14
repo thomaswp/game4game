@@ -5,7 +5,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Environment;
 import edu.elon.honors.price.data.PlatformLayer;
@@ -23,64 +26,126 @@ import edu.elon.honors.price.input.Input;
 public class PlatformMaker implements Logic {
 
 	public static final int MODE_MOVE = 0;
-	
+	public static final int MODE_EDIT = 1;
+
 	private PlatformMap map;
 	private PlatformData data;
 	private ArrayList<Tilemap> tilemaps;
-	private Sprite menu;
+	private Tilemap preview;
+	private Sprite previewMask;
+	private Sprite menu, move, edit, selection;
 	private RectHolder holder;
 	private float startScrollX, startScrollY;
-	
+	private int mode;
+
 	@Override
 	public void setPaused(boolean paused) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public PlatformMaker(RectHolder holder) {
 		this.holder = holder;
+		if (holder.getRect().width() > 0 && holder.getRect().height() > 0) {
+			mode = MODE_EDIT;
+		}
 	}
-	
+
 	@Override
 	public void initialize() {
 		if (map == null)
 			map = new PlatformMap();
 		if (data == null)
 			data = new PlatformData();
-		
+
 		loadSprites();
 	}
 
 	@Override
 	public void update(long timeElapsed) {
-		if (Input.isTapped()) {
-			if (menu.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
-				holder.newRect(map.tileset.bitmapId);
+		selection.setY(mode * 50 + 50);
+		if (menu.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+			if (Input.isTapped()) {
+				holder.newRect(map.tileset.bitmapId, map.tileset.tileWidth, map.tileset.tileHeight);
 			}
+			return;
+		}
+		if (move.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+			if (Input.isTapped()) {
+				mode = MODE_MOVE;
+			}
+			return;
+		}
+		if (edit.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+			if (Input.isTapped()) {
+				if (preview != null) {
+					mode = MODE_EDIT;
+				}
+			}
+			return;
+		}
+		if (Input.isTapped()) {
+
 			startScrollX = data.scrollX;
 			startScrollY = data.scrollY;
-		} else 
-		
-		if (data.mode == MODE_MOVE) {
+		} 
+
+		if (mode == MODE_MOVE) {
 			if (Input.isTouchDown()) {
 				data.scrollX = startScrollX - Input.getDistanceTouchX();
 				data.scrollY = startScrollY - Input.getDistanceTouchY();
 			}
-			Game.debug(data.scrollX + "," + data.scrollY);
 			data.scrollX = (float)Math.max(Math.min(data.scrollX, -Graphics.getWidth() + map.getWidth()), 0);
 			data.scrollY = (float)Math.max(Math.min(data.scrollY, -Graphics.getHeight() + map.getHeight()), 0);
 			for (int i = 0; i < tilemaps.size(); i++) {
 				tilemaps.get(i).setScrollX(data.scrollX);
 				tilemaps.get(i).setScrollY(data.scrollY);
 			}
+			if (preview != null) {
+				preview.setVisible(false);				
+			}
+		} else if (mode == MODE_EDIT) {
+			int tileWidth = map.tileset.tileWidth;
+			int tileHeight = map.tileset.tileHeight;
+			if (preview.isVisible() && !Input.isTouchDown()) {
+				Rect sRect = holder.getRect();
+				int column = (int)(tilemaps.get(data.layer).getScrollX() - preview.getScrollX() + 0.5) / tileWidth;
+				int row = (int)(tilemaps.get(data.layer).getScrollY() - preview.getScrollY() + 0.5) / tileHeight;
+				int[][] tiles = map.layers.get(data.layer).tiles;
+				for (int i = 0; i < sRect.width(); i++) {
+					for (int j = 0; j < sRect.height(); j++) {
+						int r = i + row, c = j + column;
+						if (r < 0 || c < 0 || r >= tiles.length || c >= tiles[i].length)
+							continue;
+
+						tiles[r][c] = (sRect.top + i) * map.tileset.columns + (sRect.left + j);
+					}
+				}
+				tilemaps.get(data.layer).setMap(tiles);
+			}
+			if (Input.isTouchDown()) {
+				float offX = data.scrollX % tileWidth;
+				float offY = data.scrollY % tileHeight;
+				float mX = Input.getLastTouchX() + offX;
+				float mY = Input.getLastTouchY() + offY;
+				mX -= preview.getColumns() * tileWidth / 2;
+				mY -= preview.getRows() * tileHeight / 2;
+				preview.setScrollX(-(int)(mX / tileWidth + 0.5) * tileWidth + offX);
+				preview.setScrollY(-(int)(mY / tileHeight + 0.5) * tileHeight + offY);
+				previewMask.setX(-preview.getScrollX());
+				previewMask.setY(-preview.getScrollY());
+			}
+			preview.setVisible(Input.isTouchDown());
+			previewMask.setVisible(preview.isVisible());
 		}
 	}
 
 	@Override
 	public void save(Activity parent) {
 		Data.saveObject("data", parent, data);
+		Data.saveObject("map", parent, map);
 	}
-	
+
 	public void saveFinal(Activity parent) {
 		Data.saveObjectPublic("map-final", parent, map);
 	}
@@ -90,12 +155,25 @@ public class PlatformMaker implements Logic {
 		data = (PlatformData)Data.loadObject("data", parent);
 		map = (PlatformMap)Data.loadObject("map", parent);
 	}
-	
+
 	private void loadSprites() {
 		Viewport.DefaultViewport.setZ(100);
+
 		menu = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 0, 50, 50);
-		menu.getBitmap().eraseColor(Color.RED);
-		
+		menu.getBitmap().eraseColor(Color.BLUE);
+		move = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 50, 50, 50);
+		move.getBitmap().eraseColor(Color.GREEN);
+		edit = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 100, 50, 50);
+		edit.getBitmap().eraseColor(Color.RED);
+		selection = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, mode * 50 + 50, 50, 50);
+		selection.setZ(10);
+		Paint paint = new Paint();
+		paint.setStyle(Style.STROKE);
+		paint.setColor(Color.WHITE);
+		selection.getBitmapCanvas().drawRect(0, 0, 50, 50, paint);
+		paint.setColor(Color.BLACK);
+		selection.getBitmapCanvas().drawRect(1, 1, 49, 49, paint);
+
 		tilemaps = new ArrayList<Tilemap>(map.layers.size()); 
 		Tileset tileset = map.tileset;
 		Rect rect = new Rect();
@@ -110,18 +188,34 @@ public class PlatformMaker implements Logic {
 			tm.scroll(data.scrollX, data.scrollY);
 			tilemaps.add(tm);
 		}
+
+		if (mode == MODE_EDIT) {
+			Bitmap bmp = Data.loadBitmap(tileset.bitmapId);
+			Rect sRect = holder.getRect();
+			int[][] tiles = new int[sRect.height()][sRect.width()];
+			for (int i = 0; i < tiles.length; i++) {
+				for (int j = 0; j < tiles[i].length; j++) {
+					tiles[i][j] = (sRect.top + i) * tileset.columns + (sRect.left + j); 
+				}
+			}
+			preview = new Tilemap(bmp, tileset.tileWidth, tileset.tileHeight, 
+					tileset.tileSpacing, tiles, rect, 50);
+			preview.setVisible(false);
+			previewMask = new Sprite(preview.getViewport(), 0, 0, preview.getWidth(), preview.getHeight());
+			previewMask.setZ(-20);
+			previewMask.getBitmap().eraseColor(Color.BLACK);
+		}
 	}
 
 	public static abstract class RectHolder {
 		public abstract Rect getRect();
-		public abstract void newRect(int bitmapId);
+		public abstract void newRect(int bitmapId, int tileWidth, int tileHeight);
 	}
-	
+
 	private static class PlatformData implements Serializable {
-		private static final long serialVersionUID = 1L;
-		
+		private static final long serialVersionUID = 2L;
+
 		public int layer = 0;
-		public int mode = 0;
 		public float scrollX, scrollY;
 	}
 }

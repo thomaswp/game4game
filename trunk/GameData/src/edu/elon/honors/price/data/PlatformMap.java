@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import android.graphics.Rect;
 
 public class PlatformMap implements Serializable{
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 6L;
 	
 	private transient Rect rect = new Rect();
 	
@@ -32,29 +32,21 @@ public class PlatformMap implements Serializable{
 		rows = 8;
 		columns = 30;
 		
-		tileset = new Tileset(R.drawable.tiles, 48, 48);
-		tileset.tileSpacing = 3;
+		tileset = new Tileset(R.drawable.tiles, 48, 48, 8, 8);
+		tileset.tileSpacing = 0;
 		
 		layers = new ArrayList<PlatformLayer>();
 		PlatformLayer layer = new PlatformLayer("boxes", rows, columns, 5, true);
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
-				if (Math.random() > 0.6)
-					layer.tiles[i][j] = (int)(Math.random() * 64);
-				else
-					layer.tiles[i][j] = -1;
-			}
-		}
+//		for (int i = 0; i < rows; i++) {
+//			for (int j = 0; j < columns; j++) {
+//				if (Math.random() > 0.6)
+//					layer.tiles[i][j] = (int)(Math.random() * 64);
+//				else
+//					layer.tiles[i][j] = -1;
+//			}
+//		}
 		layers.add(layer);
 		layer = new PlatformLayer("boxes", rows, columns, -1, false);
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
-				if (Math.random() > 0.4)
-					layer.tiles[i][j] = 0;//(int)(Math.random() * 64);
-				else
-					layer.tiles[i][j] = -1;
-			}
-		}
 		layers.add(layer);
 	}
 	
