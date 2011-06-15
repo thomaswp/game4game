@@ -1,9 +1,7 @@
 package edu.elon.honors.price.graphics;
 
-import java.util.Arrays;
-
+import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -181,21 +179,6 @@ public class Tilemap {
 		}
 	}
 	
-	private void createGrid() {
-		gridBitmap = Bitmap.createBitmap(tileWidth, tileHeight, Sprite.defaultConfig);
-		Canvas c = new Canvas();
-		Paint p = new Paint();
-		p.setColor(Color.argb(200, 200, 200, 200));
-		p.setStyle(Style.STROKE);
-		c.setBitmap(gridBitmap);
-		c.drawRect(0, 0, tileWidth, tileHeight, p);
-		c.drawRect(1, 1, tileWidth - 1, tileHeight - 1, p);
-		
-		
-		grid = new BackgroundSprite(gridBitmap, viewport);
-		grid.setZ(10);
-	}
-	
 	public static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
 		if ((tilesBitmap.getWidth() + tileSpacing) % (tileWidth + tileSpacing) != 0) {
 			throw new RuntimeException("Impropper tile width: " + tileWidth + "x + " + tileSpacing + " != " + tilesBitmap.getWidth());
@@ -216,5 +199,29 @@ public class Tilemap {
 			}
 		}
 		return tiles;
+	}
+	
+	
+	private void createGrid() {
+		if (Data.isBitmapRegistered(getGridId())) {
+			gridBitmap = Data.getRegisteredBitmap(getGridId());
+		} else {
+			gridBitmap = Bitmap.createBitmap(tileWidth, tileHeight, Sprite.defaultConfig);
+			Canvas c = new Canvas();
+			Paint p = new Paint();
+			p.setColor(Color.argb(200, 200, 200, 200));
+			p.setStyle(Style.STROKE);
+			c.setBitmap(gridBitmap);
+			c.drawRect(0, 0, tileWidth, tileHeight, p);
+			c.drawRect(1, 1, tileWidth - 1, tileHeight - 1, p);
+			Data.RegisterBitmap(gridBitmap, getGridId());
+		}
+		
+		grid = new BackgroundSprite(gridBitmap, viewport);
+		grid.setZ(10);
+	}
+	
+	private int getGridId() {
+		return this.getClass().hashCode() + tileWidth * (tileHeight + 5);
 	}
 }

@@ -44,9 +44,12 @@ public abstract class Game extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
 		Data.setResources(getResources());
+		Data.clearCache();
 		Audio.setContext(this);
 		Input.setVibrator((Vibrator)getSystemService(VIBRATOR_SERVICE));
+		
 		view = new GraphicsView(this);
 		view.setRenderer(new GraphicsRenderer());
 		this.setContentView(view);
@@ -69,27 +72,18 @@ public abstract class Game extends Activity {
 			Input.reset();
 			//reset the Graphics
 			Graphics.reset();
-			Data.clearCache();
 		}
 		
 		Audio.stop();
 
 		super.onPause();
-		
-		try {
-			//We might as well just finalize because we've saved everything.
-			//This also allows for some uniformity between Pause and Stop calls.
-			finalize();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
 	public void onResume() {
 		debug("Activity Resumed");
 
-		view.getRenderer().setFlush(true);
+		//view.getRenderer().setFlush(true);
 		Input.reset();
 		//Load the logic back on resume
 		Logic logic = getNewLogic();
@@ -102,6 +96,24 @@ public abstract class Game extends Activity {
 		super.onResume();
 	}
 	
+	@Override
+	protected void onDestroy() {
+		Game.debug("Activity Destroyed");
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onStart() {
+		Game.debug("Activity Started");
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop() {
+		Game.debug("Activity Stopped");
+		super.onStop();
+	}
+
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		//Pause the Logic when the menu is opened

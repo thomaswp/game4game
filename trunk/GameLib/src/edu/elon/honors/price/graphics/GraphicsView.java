@@ -91,7 +91,7 @@ public class GraphicsView extends GLSurfaceView {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		Game.debug("Surface Holder Created");
+		Game.debug("Surface Created");
 
 		super.surfaceCreated(holder);
 
@@ -121,7 +121,7 @@ public class GraphicsView extends GLSurfaceView {
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Game.debug("Surface destroyed");
+		Game.debug("Surface Destroyed");
 		//End the thread safely
 		boolean retry = true;
 		thread.interrupt();
