@@ -1,5 +1,6 @@
 package edu.elon.honors.price.graphics;
 
+import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -15,14 +16,14 @@ public class BackgroundSprite extends Sprite {
 	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
 		this(bitmap, createViewport(rect, z));
 	}
-	
+
 	public BackgroundSprite(Bitmap bitmap, Viewport viewport) {
 		super(viewport, createBitmap(bitmap, viewport.getRect()));
 		fullRect = viewport.getRect();
 		this.segmentWidth = bitmap.getWidth();
 		this.segmentHeight = bitmap.getHeight();
 	}
-	
+
 	public void scroll(float x, float y) {
 		setOriginX(getOriginX() + x);
 		setOriginY(getOriginY() + y);
@@ -45,42 +46,48 @@ public class BackgroundSprite extends Sprite {
 			spriteRect = getRect();
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		Graphics.getViewports().remove(getViewport());
 	}
-	
+
 	private static Viewport createViewport(Rect rect, int z) {
 		Viewport vp = new Viewport(rect.left, rect.top, rect.width(), rect.height());
 		vp.setSorted(false);
 		vp.setZ(z);
 		return vp;
 	}
-	
+
 	private static Bitmap createBitmap(Bitmap original, Rect rect) {
-		int width, height;
-		if (original.getWidth() < rect.width()) {
-			width = original.getWidth() * ((rect.width() / original.getWidth()) + 2);
+		int code = original.hashCode() + BackgroundSprite.class.hashCode();
+		if (Data.isBitmapRegistered(code)) {
+			return Data.getRegisteredBitmap(code);
 		} else {
-			width = original.getWidth() * 2;
-		}
-		if (original.getHeight() < rect.height()) {
-			height = original.getHeight() * ((rect.height() / original.getHeight()) + 2);
-		} else {
-			height = original.getHeight() * 2;
-		}
-		//Game.debug("CB:"+width+","+height);
-		Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
-		Canvas canvas = new Canvas();
-		canvas.setBitmap(bmp);
-		Paint paint = new Paint();
-		for (int i = 0; i < width; i += original.getWidth()) {
-			for (int j = 0; j < height; j += original.getHeight()) {
-				canvas.drawBitmap(original, i, j, paint);
+			int width, height;
+			if (original.getWidth() < rect.width()) {
+				width = original.getWidth() * ((rect.width() / original.getWidth()) + 2);
+			} else {
+				width = original.getWidth() * 2;
 			}
+			if (original.getHeight() < rect.height()) {
+				height = original.getHeight() * ((rect.height() / original.getHeight()) + 2);
+			} else {
+				height = original.getHeight() * 2;
+			}
+			//Game.debug("CB:"+width+","+height);
+			Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
+			Canvas canvas = new Canvas();
+			canvas.setBitmap(bmp);
+			Paint paint = new Paint();
+			for (int i = 0; i < width; i += original.getWidth()) {
+				for (int j = 0; j < height; j += original.getHeight()) {
+					canvas.drawBitmap(original, i, j, paint);
+				}
+			}
+			Data.RegisterBitmap(bmp, code);
+			return bmp;
 		}
-		return bmp;
 	}
 }

@@ -115,7 +115,7 @@ public class Graphics {
 	}
 	
 	public static void reset() {
-		Game.debug("Reset");
+		Game.debug("Graphics Reset");
 		for (int i = 0; i < viewports.size(); i++) {
 			Viewport viewport = viewports.get(i);
 			viewport.getSprites().clear();

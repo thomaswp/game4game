@@ -67,7 +67,6 @@ public class GameMaker extends Game {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			Game.debug("OK");
 			int left = data.getExtras().getInt("left");
 			int top = data.getExtras().getInt("top");
 			int right = data.getExtras().getInt("right");

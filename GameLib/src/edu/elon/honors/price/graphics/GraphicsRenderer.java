@@ -112,11 +112,12 @@ public class GraphicsRenderer implements Renderer {
 	 * @param gl
 	 */
 	public void onShutdown(GL10 gl) {
+		Game.debug("Rendere Shut Down");
 		flush(gl);
 	}
 	
 	private void flush(GL10 gl) {
-		Game.debug("Flush");
+		long time = System.currentTimeMillis();
 		textures.clear();
 		for (int i = 0; i < resources.size(); i++) {
 			int x = resources.get(i);
@@ -130,7 +131,9 @@ public class GraphicsRenderer implements Renderer {
 				s.setTextureId(-1);
 			}
 		}
-		System.gc();
+		//System.gc();
+		time = System.currentTimeMillis() - time;
+		Game.debug("Flush: " + textures.size() + "t, " + time + "ms");
 		resources.clear();
 		flush = false;
 	}
@@ -322,7 +325,8 @@ public class GraphicsRenderer implements Renderer {
 	 * 2D texture maps. 
 	 */
 	private int loadBitmap(GL10 gl, Bitmap bitmap) {
-		//Game.debug("Load texture");
+		long time = System.currentTimeMillis();
+		
 		int textureName = -1;
 		if (gl != null) {
 			gl.glGenTextures(1, mTextureNameWorkspace, 0);
@@ -376,7 +380,13 @@ public class GraphicsRenderer implements Renderer {
 			}
 
 		}
-
+		time = System.currentTimeMillis() - time;
+		
+		if (bitmap != fpsBitmap) {
+//			Game.debug("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
+//					+ time + "ms), " + textures.size() + " in cache");
+		}
+		
 		return textureName;
 	}
 }

@@ -40,7 +40,6 @@ public class TextureSelector extends Activity {
 		view = new TSView(this, bitmap, tileWidth, tileHeight, new TSView.Poster() {
 			@Override
 			void post(Rect rect) {
-				Game.debug("post");
 				Intent intent = new Intent();
 				intent.putExtra("left", rect.left);
 				intent.putExtra("top", rect.top);

@@ -112,8 +112,8 @@ public class PlatformMaker implements Logic {
 				int column = (int)(tilemaps.get(data.layer).getScrollX() - preview.getScrollX() + 0.5) / tileWidth;
 				int row = (int)(tilemaps.get(data.layer).getScrollY() - preview.getScrollY() + 0.5) / tileHeight;
 				int[][] tiles = map.layers.get(data.layer).tiles;
-				for (int i = 0; i < sRect.width(); i++) {
-					for (int j = 0; j < sRect.height(); j++) {
+				for (int i = 0; i < sRect.height(); i++) {
+					for (int j = 0; j < sRect.width(); j++) {
 						int r = i + row, c = j + column;
 						if (r < 0 || c < 0 || r >= tiles.length || c >= tiles[i].length)
 							continue;

@@ -37,8 +37,22 @@ public final class Data {
 		Data.resources = resources;
 	}
 	
+	public static boolean isBitmapRegistered(int id) {
+		return cache.containsKey(id);
+	}
+	
+	public static Bitmap getRegisteredBitmap(int id) {
+		if (cache.containsKey(id))
+			return cache.get(id);
+		return null;
+	}
+	
 	public static void clearCache() {
 		cache.clear();
+	}
+	
+	public static void RegisterBitmap(Bitmap bitmap, int id) {
+		cache.put(id, bitmap);
 	}
 	
 	/**
