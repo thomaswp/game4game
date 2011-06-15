@@ -36,8 +36,13 @@ public class TextureSelector extends Activity {
 		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), getIntent().getExtras().getInt("id"));
 		int tileWidth = getIntent().getExtras().getInt("tileWidth");
 		int tileHeight = getIntent().getExtras().getInt("tileHeight");
+		int left = getIntent().getExtras().getInt("left");
+		int top = getIntent().getExtras().getInt("top");
+		int right = getIntent().getExtras().getInt("right");
+		int bottom = getIntent().getExtras().getInt("bottom");
+		Rect r = new Rect(left, top, right, bottom);
 		final TextureSelector me = this;
-		view = new TSView(this, bitmap, tileWidth, tileHeight, new TSView.Poster() {
+		view = new TSView(this, bitmap, r, tileWidth, tileHeight, new TSView.Poster() {
 			@Override
 			void post(Rect rect) {
 				Intent intent = new Intent();
@@ -75,12 +80,13 @@ public class TextureSelector extends Activity {
 			return thread;
 		}
 
-		public TSView(Context context, Bitmap bitmap, int tileWidth, int tileHeight, Poster poster) {
+		public TSView(Context context, Bitmap bitmap, Rect selection, int tileWidth, int tileHeight, Poster poster) {
 			super(context);
 			this.bitmap = bitmap;
 			this.tileWidth = tileWidth;
 			this.tileHeight = tileHeight;
 			this.poster = poster;
+			this.selection = selection;
 			holder = getHolder();
 			holder.addCallback(this);
 

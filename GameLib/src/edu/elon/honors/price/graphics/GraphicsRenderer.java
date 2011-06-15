@@ -31,6 +31,7 @@ public class GraphicsRenderer implements Renderer {
 	private int fpsId = -1, rendered;
 	private Grid fpsGrid;
 	private int[] rTexture = new int[1];
+	private int lastBGC;
 
 	private Logic logic;
 
@@ -155,7 +156,12 @@ public class GraphicsRenderer implements Renderer {
 		if (logic != null) {
 			synchronized(logic) {
 				//Game.debug("Draw");
-
+				if (Graphics.getBackgroundColor() != lastBGC) {
+					int color = Graphics.getBackgroundColor();
+					gl.glClearColor(Color.red(color), Color.green(color), Color.blue(color), Color.alpha(color));
+					lastBGC = color;
+				}
+				
 				gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);	
 				gl.glMatrixMode(GL10.GL_MODELVIEW);
 				Grid.beginDrawing(gl, true, false);

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import android.graphics.Rect;
 
 public class PlatformMap implements Serializable{
-	private static final long serialVersionUID = 6L;
+	private static final long serialVersionUID = 8L;
 	
 	private transient Rect rect = new Rect();
 	
@@ -36,7 +36,11 @@ public class PlatformMap implements Serializable{
 		tileset.tileSpacing = 0;
 		
 		layers = new ArrayList<PlatformLayer>();
-		PlatformLayer layer = new PlatformLayer("boxes", rows, columns, 5, true);
+		PlatformLayer layer = new PlatformLayer("background", rows, columns, false);
+		layers.add(layer);
+		layer = new PlatformLayer("l1", rows, columns, true);
+		layers.add(layer);
+		layer = new PlatformLayer("l2", rows, columns, false);
 //		for (int i = 0; i < rows; i++) {
 //			for (int j = 0; j < columns; j++) {
 //				if (Math.random() > 0.6)
@@ -45,8 +49,6 @@ public class PlatformMap implements Serializable{
 //					layer.tiles[i][j] = -1;
 //			}
 //		}
-		layers.add(layer);
-		layer = new PlatformLayer("boxes", rows, columns, -1, false);
 		layers.add(layer);
 	}
 	
