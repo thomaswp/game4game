@@ -23,6 +23,15 @@ public class Graphics {
 	private static int fpsGame;
 	private static boolean showFPS;
 	private static boolean fpsBitmapRefresh;
+	private static int backgroundColor;
+	
+	public static int getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public static void setBackgroundColor(int backgroundColor) {
+		Graphics.backgroundColor = backgroundColor;
+	}
 
 	public static boolean getFPSBitmapRefresh() {
 		return fpsBitmapRefresh;

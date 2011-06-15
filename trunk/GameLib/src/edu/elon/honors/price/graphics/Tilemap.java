@@ -114,8 +114,10 @@ public class Tilemap {
 							sprites[i][j].setBitmap(tiles[map[i][j]]);
 						}
 					} else {
-						sprites[i][j].dispose();
-						sprites[i][j] = null;
+						if (sprites[i][j] != null) {
+							sprites[i][j].dispose();
+							sprites[i][j] = null;
+						}
 					}
 				}
 			}

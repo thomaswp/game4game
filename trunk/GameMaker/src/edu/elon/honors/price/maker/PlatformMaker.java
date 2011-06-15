@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
@@ -21,6 +23,7 @@ import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
+import edu.elon.honors.price.helper.Helper;
 import edu.elon.honors.price.input.Input;
 
 public class PlatformMaker implements Logic {
@@ -28,15 +31,22 @@ public class PlatformMaker implements Logic {
 	public static final int MODE_MOVE = 0;
 	public static final int MODE_EDIT = 1;
 
+	public static final float DARK = 0.6f;
+	public static final float TRANS = 0.5f;
+
+
 	private PlatformMap map;
 	private PlatformData data;
 	private ArrayList<Tilemap> tilemaps;
 	private Tilemap preview;
 	private Sprite previewMask;
-	private Sprite menu, move, edit, selection;
+	private Sprite menu, move, edit, selection, layerUp, layerDown;
+	private Sprite borderRight;
 	private RectHolder holder;
 	private float startScrollX, startScrollY;
 	private int mode;
+	private int hold = 500;
+	private boolean scrolling;
 
 	@Override
 	public void setPaused(boolean paused) {
@@ -49,6 +59,7 @@ public class PlatformMaker implements Logic {
 		if (holder.getRect().width() > 0 && holder.getRect().height() > 0) {
 			mode = MODE_EDIT;
 		}
+		Graphics.setBackgroundColor(Color.WHITE);
 	}
 
 	@Override
@@ -64,39 +75,87 @@ public class PlatformMaker implements Logic {
 	@Override
 	public void update(long timeElapsed) {
 		selection.setY(mode * 50 + 50);
-		if (menu.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
-			if (Input.isTapped()) {
-				holder.newRect(map.tileset.bitmapId, map.tileset.tileWidth, map.tileset.tileHeight);
+
+		if (hold > 0) {
+			hold -= timeElapsed;
+		} else {
+			if (menu.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+				if (Input.isTapped()) {
+					holder.newRect(map.tileset.bitmapId, map.tileset.tileWidth, map.tileset.tileHeight);
+				}
+				return;
 			}
-			return;
-		}
-		if (move.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
-			if (Input.isTapped()) {
-				mode = MODE_MOVE;
+			if (move.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+				if (Input.isTapped()) {
+					mode = MODE_MOVE;
+				}
+				return;
 			}
-			return;
-		}
-		if (edit.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+			if (edit.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+				if (Input.isTapped()) {
+					if (preview != null) {
+						mode = MODE_EDIT;
+					}
+				}
+				return;
+			}
+			int changeLayer = 0;
 			if (Input.isTapped()) {
-				if (preview != null) {
-					mode = MODE_EDIT;
+				if (layerUp.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+					changeLayer = 1;
+				} else if (layerDown.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+					changeLayer = -1;
 				}
 			}
-			return;
+			if (changeLayer != 0) {
+				if (changeLayer > 0 && data.layer < map.layers.size() - 1) {
+					darken(tilemaps.get(data.layer));
+					data.layer++;
+					opace(tilemaps.get(data.layer));
+					drawChangeLayer();
+				} else if (changeLayer < 0 && data.layer > 0) {
+					transluce(tilemaps.get(data.layer));
+					data.layer--;
+					lighten(tilemaps.get(data.layer));
+					drawChangeLayer();
+				}
+				changeLayer = 0;
+				return;
+			}
 		}
-		if (Input.isTapped()) {
 
+		if (Input.isTapped()) {
 			startScrollX = data.scrollX;
 			startScrollY = data.scrollY;
+			scrolling = true;
 		} 
 
 		if (mode == MODE_MOVE) {
 			if (Input.isTouchDown()) {
-				data.scrollX = startScrollX - Input.getDistanceTouchX();
-				data.scrollY = startScrollY - Input.getDistanceTouchY();
+				if (scrolling) {
+					data.scrollX = startScrollX - Input.getDistanceTouchX();
+					data.scrollY = startScrollY - Input.getDistanceTouchY();
+
+				}
+			} else {
+				scrolling = false;
 			}
-			data.scrollX = (float)Math.max(Math.min(data.scrollX, -Graphics.getWidth() + map.getWidth()), 0);
-			data.scrollY = (float)Math.max(Math.min(data.scrollY, -Graphics.getHeight() + map.getHeight()), 0);
+			float maxX = -Graphics.getWidth() + map.getWidth() + menu.getWidth();
+			if (data.scrollX > maxX) {
+				startScrollX -= data.scrollX - maxX;
+				data.scrollX = maxX;
+			} else if (data.scrollX < 0) {
+				startScrollX -= data.scrollX;
+				data.scrollX = 0;
+			}
+			float maxY = -Graphics.getHeight() + map.getHeight();
+			if (data.scrollY > maxY) {	
+				startScrollY -= data.scrollY - maxY;
+				data.scrollY = maxY;
+			} else if (data.scrollY < 0) {
+				startScrollY -= data.scrollY;
+				data.scrollY = 0;
+			}
 			for (int i = 0; i < tilemaps.size(); i++) {
 				tilemaps.get(i).setScrollX(data.scrollX);
 				tilemaps.get(i).setScrollY(data.scrollY);
@@ -123,7 +182,7 @@ public class PlatformMaker implements Logic {
 				}
 				tilemaps.get(data.layer).setMap(tiles);
 			}
-			if (Input.isTouchDown()) {
+			if (Input.isTouchDown() && Input.getLastTouchX() < menu.getX()) {
 				float offX = data.scrollX % tileWidth;
 				float offY = data.scrollY % tileHeight;
 				float mX = Input.getLastTouchX() + offX;
@@ -134,10 +193,14 @@ public class PlatformMaker implements Logic {
 				preview.setScrollY(-(int)(mY / tileHeight + 0.5) * tileHeight + offY);
 				previewMask.setX(-preview.getScrollX());
 				previewMask.setY(-preview.getScrollY());
+				preview.setVisible(true);
+			} else {
+				preview.setVisible(false);
 			}
-			preview.setVisible(Input.isTouchDown());
 			previewMask.setVisible(preview.isVisible());
 		}
+		
+		borderRight.setOriginX(-map.getWidth() + data.scrollX);
 	}
 
 	@Override
@@ -156,17 +219,35 @@ public class PlatformMaker implements Logic {
 		map = (PlatformMap)Data.loadObject("map", parent);
 	}
 
+	public void loadFinal(Activity parent) {
+		map = (PlatformMap)Data.loadObjectPublic("map-final", parent);
+		Graphics.reset();
+		loadSprites();
+	}
+
 	private void loadSprites() {
 		Viewport.DefaultViewport.setZ(100);
 
 		menu = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 0, 50, 50);
 		menu.getBitmap().eraseColor(Color.BLUE);
+		Helper.drawCenteredText(menu, "Select", Color.BLACK, 16);
 		move = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 50, 50, 50);
 		move.getBitmap().eraseColor(Color.GREEN);
+		Helper.drawCenteredText(move, "Move", Color.BLACK, 16);
 		edit = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 100, 50, 50);
 		edit.getBitmap().eraseColor(Color.RED);
 		selection = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, mode * 50 + 50, 50, 50);
+		Helper.drawCenteredText(edit, "Edit", Color.BLACK, 16);
 		selection.setZ(10);
+
+		layerUp = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, Graphics.getHeight() - 100, 50, 50);
+		layerDown = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, Graphics.getHeight() - 50, 50, 50);
+		drawChangeLayer();
+
+		borderRight = new Sprite(Viewport.DefaultViewport, 0, 0, (int)menu.getWidth(), Graphics.getHeight());
+		borderRight.getBitmap().eraseColor(Color.GRAY);
+		borderRight.setZ(-10);
+
 		Paint paint = new Paint();
 		paint.setStyle(Style.STROKE);
 		paint.setColor(Color.WHITE);
@@ -182,10 +263,14 @@ public class PlatformMaker implements Logic {
 			PlatformLayer layer = map.layers.get(i);
 			Tilemap tm = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
-					layer.tiles, rect, layer.z);
+					layer.tiles, rect, i);
 			tm.setShowingGrid(true);
-			tm.setVisible(i == data.layer);
 			tm.scroll(data.scrollX, data.scrollY);
+			if (i < data.layer) {
+				darken(tm);
+			} else if (i > data.layer) {
+				transluce(tm);
+			}
 			tilemaps.add(tm);
 		}
 
@@ -207,15 +292,81 @@ public class PlatformMaker implements Logic {
 		}
 	}
 
+	private void drawChangeLayer() {
+		layerUp.getBitmap().eraseColor(Color.LTGRAY);
+		String luText = (data.layer == map.layers.size() - 1) ? "-" : "" + (data.layer + 1);
+		Helper.drawCenteredText(layerUp, luText, Color.BLACK, 20);
+		layerDown.getBitmap().eraseColor(Color.DKGRAY);
+		String ldText = (data.layer == 0) ? "-" : "" + (data.layer - 1);
+		Helper.drawCenteredText(layerDown, ldText, Color.BLACK, 20);
+	}
+
+	private void darken(Tilemap tilemap) {
+		float[] mat = new float[] {
+				DARK, 0, 0, 0, 0,
+				0, DARK, 0, 0, 0,
+				0, 0, DARK, 0, 0,
+				0, 0, 0, 1, 0
+		};
+		applyMatrix(tilemap, mat);
+	}
+
+	private void lighten(Tilemap tilemap) {
+		float[] mat = new float[] {
+				1 / DARK, 0, 0, 0, 0,
+				0, 1 / DARK, 0, 0, 0,
+				0, 0, 1 / DARK, 0, 0,
+				0, 0, 0, 1, 0
+		};
+		applyMatrix(tilemap, mat);
+	}
+
+	private void transluce(Tilemap tilemap) {
+		float[] mat = new float[] {
+				1, 0, 0, 0, 0,
+				0, 1, 0, 0, 0,
+				0, 0, 1, 0, 0,
+				0, 0, 0, TRANS, 0
+		};
+		applyMatrix(tilemap, mat);
+	}
+
+	private void opace(Tilemap tilemap) {
+		float[] mat = new float[] {
+				1, 0, 0, 0, 0,
+				0, 1, 0, 0, 0,
+				0, 0, 1, 0, 0,
+				0, 0, 0, 1 / TRANS, 0
+		};
+		applyMatrix(tilemap, mat);
+	}
+
+	private void applyMatrix(Tilemap tilemap, float[] mat) {
+		ColorMatrix cm = new ColorMatrix(mat);
+		Sprite[][] sprites = tilemap.getSprites();
+		Paint paint = new Paint();
+		paint.setColorFilter(new ColorMatrixColorFilter(cm));
+		for (int i = 0; i < sprites.length; i++) {
+			for (int j = 0; j < sprites[i].length; j++) {
+				if (sprites[i][j] != null) {
+					Bitmap bmp = sprites[i][j].getBitmap();
+					Bitmap newBmp = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), Sprite.getDefaultConfig());
+					sprites[i][j].setBitmap(newBmp);
+					sprites[i][j].getBitmapCanvas().drawBitmap(bmp, 0, 0, paint);
+				}
+			}
+		}
+	}
+
 	public static abstract class RectHolder {
 		public abstract Rect getRect();
 		public abstract void newRect(int bitmapId, int tileWidth, int tileHeight);
 	}
 
 	private static class PlatformData implements Serializable {
-		private static final long serialVersionUID = 2L;
+		private static final long serialVersionUID = 3L;
 
-		public int layer = 0;
+		public int layer = 1;
 		public float scrollX, scrollY;
 	}
 }

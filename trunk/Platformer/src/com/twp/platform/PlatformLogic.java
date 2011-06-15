@@ -78,8 +78,7 @@ public class PlatformLogic implements Logic {
 			PlatformLayer layer = map.layers.get(i);
 			layers[i] = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
-					layer.tiles, Graphics.getRect(), layer.z);
-			layers[i].setVisible(i == 0);
+					layer.tiles, Graphics.getRect(), i * 2);
 		}
 
 		Bitmap[] frames = Tilemap.createTiles(Data.loadBitmap(R.drawable.hero), 32, 48, 0);
@@ -89,6 +88,8 @@ public class PlatformLogic implements Logic {
 		hero.setZoom(0.9f);
 		physics = new Physics();
 		heroBody = new Body(physics, hero);
+		
+		Viewport.DefaultViewport.setZ(3);
 	}
 
 	@Override
