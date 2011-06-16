@@ -93,7 +93,7 @@ public class PhysicsLogic implements Logic {
 	
 	private void createBall() {
 		BodyDef balldef = new BodyDef();
-        balldef.type = BodyType.StaticBody;
+        balldef.type = BodyType.DynamicBody;
         float x = Input.getLastTouchX() / 10;
         float y = Input.getLastTouchY() / 10;
         balldef.position.set(x, y);
@@ -125,7 +125,7 @@ public class PhysicsLogic implements Logic {
 			sprites.get(i).setY(balls.get(i).getPosition().y * SCALE);
 		}
 		pSprite.setX(pBody.getPosition().x * SCALE);
-		pSprite.setY(pBody.getPosition().y * SCALE + pSprite.getWidth());
+		pSprite.setY(pBody.getPosition().y * SCALE + pSprite.getHeight());
 		pSprite.setRotation(pBody.getAngle() * 180 / 3.1415f);
 		
 		bmpSprite.setX(pSprite.getX());

@@ -42,6 +42,9 @@ public class Sprite implements Comparable<Sprite> {
 	private Grid grid;
 	private boolean bitmapModified;
 	
+	private int color = Color.WHITE;
+	private float opacity = 1;
+	
 	private Canvas bitmapCanvas;
 	
 	private RectF rect = new RectF(), mapRect = new RectF();
@@ -108,6 +111,22 @@ public class Sprite implements Comparable<Sprite> {
 		textureId = -1;
 		bitmapModified = true;
 		return bitmapCanvas;
+	}
+
+	public int getColor() {
+		return color;
+	}
+
+	public void setColor(int color) {
+		this.color = color;
+	}
+
+	public float getOpacity() {
+		return opacity;
+	}
+
+	public void setOpacity(float opacity) {
+		this.opacity = Math.min(Math.max(opacity, 0), 1);
 	}
 
 	/**

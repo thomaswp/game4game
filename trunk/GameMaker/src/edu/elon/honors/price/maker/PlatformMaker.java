@@ -15,6 +15,7 @@ import android.graphics.Rect;
 import android.os.Environment;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
+import edu.elon.honors.price.data.ResourceProvider;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
@@ -31,7 +32,7 @@ public class PlatformMaker implements Logic {
 	public static final int MODE_MOVE = 0;
 	public static final int MODE_EDIT = 1;
 
-	public static final float DARK = 0.6f;
+	public static final int DARK = Color.argb(255, 150, 150, 150);
 	public static final float TRANS = 0.5f;
 
 
@@ -109,14 +110,14 @@ public class PlatformMaker implements Logic {
 			}
 			if (changeLayer != 0) {
 				if (changeLayer > 0 && data.layer < map.layers.size() - 1) {
-					darken(tilemaps.get(data.layer));
+					tilemaps.get(data.layer).setColor(DARK);
 					data.layer++;
-					opace(tilemaps.get(data.layer));
+					tilemaps.get(data.layer).setOpacity(1);
 					drawChangeLayer();
 				} else if (changeLayer < 0 && data.layer > 0) {
-					transluce(tilemaps.get(data.layer));
+					tilemaps.get(data.layer).setOpacity(TRANS);
 					data.layer--;
-					lighten(tilemaps.get(data.layer));
+					tilemaps.get(data.layer).setColor(Color.WHITE);
 					drawChangeLayer();
 				}
 				changeLayer = 0;
@@ -218,7 +219,7 @@ public class PlatformMaker implements Logic {
 		data = (PlatformData)Data.loadObject("data", parent);
 		map = (PlatformMap)Data.loadObject("map", parent);
 	}
-
+ 
 	public void loadFinal(Activity parent) {
 		map = (PlatformMap)Data.loadObjectPublic("map-final", parent);
 		Graphics.reset();
@@ -267,9 +268,9 @@ public class PlatformMaker implements Logic {
 			tm.setShowingGrid(true);
 			tm.scroll(data.scrollX, data.scrollY);
 			if (i < data.layer) {
-				darken(tm);
+				tm.setColor(DARK);
 			} else if (i > data.layer) {
-				transluce(tm);
+				tm.setOpacity(TRANS);
 			}
 			tilemaps.add(tm);
 		}
@@ -301,62 +302,62 @@ public class PlatformMaker implements Logic {
 		Helper.drawCenteredText(layerDown, ldText, Color.BLACK, 20);
 	}
 
-	private void darken(Tilemap tilemap) {
-		float[] mat = new float[] {
-				DARK, 0, 0, 0, 0,
-				0, DARK, 0, 0, 0,
-				0, 0, DARK, 0, 0,
-				0, 0, 0, 1, 0
-		};
-		applyMatrix(tilemap, mat);
-	}
-
-	private void lighten(Tilemap tilemap) {
-		float[] mat = new float[] {
-				1 / DARK, 0, 0, 0, 0,
-				0, 1 / DARK, 0, 0, 0,
-				0, 0, 1 / DARK, 0, 0,
-				0, 0, 0, 1, 0
-		};
-		applyMatrix(tilemap, mat);
-	}
-
-	private void transluce(Tilemap tilemap) {
-		float[] mat = new float[] {
-				1, 0, 0, 0, 0,
-				0, 1, 0, 0, 0,
-				0, 0, 1, 0, 0,
-				0, 0, 0, TRANS, 0
-		};
-		applyMatrix(tilemap, mat);
-	}
-
-	private void opace(Tilemap tilemap) {
-		float[] mat = new float[] {
-				1, 0, 0, 0, 0,
-				0, 1, 0, 0, 0,
-				0, 0, 1, 0, 0,
-				0, 0, 0, 1 / TRANS, 0
-		};
-		applyMatrix(tilemap, mat);
-	}
-
-	private void applyMatrix(Tilemap tilemap, float[] mat) {
-		ColorMatrix cm = new ColorMatrix(mat);
-		Sprite[][] sprites = tilemap.getSprites();
-		Paint paint = new Paint();
-		paint.setColorFilter(new ColorMatrixColorFilter(cm));
-		for (int i = 0; i < sprites.length; i++) {
-			for (int j = 0; j < sprites[i].length; j++) {
-				if (sprites[i][j] != null) {
-					Bitmap bmp = sprites[i][j].getBitmap();
-					Bitmap newBmp = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), Sprite.getDefaultConfig());
-					sprites[i][j].setBitmap(newBmp);
-					sprites[i][j].getBitmapCanvas().drawBitmap(bmp, 0, 0, paint);
-				}
-			}
-		}
-	}
+//	private void darken(Tilemap tilemap) {
+//		float[] mat = new float[] {
+//				DARK, 0, 0, 0, 0,
+//				0, DARK, 0, 0, 0,
+//				0, 0, DARK, 0, 0,
+//				0, 0, 0, 1, 0
+//		};
+//		applyMatrix(tilemap, mat);
+//	}
+//
+//	private void lighten(Tilemap tilemap) {
+//		float[] mat = new float[] {
+//				1 / DARK, 0, 0, 0, 0,
+//				0, 1 / DARK, 0, 0, 0,
+//				0, 0, 1 / DARK, 0, 0,
+//				0, 0, 0, 1, 0
+//		};
+//		applyMatrix(tilemap, mat);
+//	}
+//
+//	private void transluce(Tilemap tilemap) {
+//		float[] mat = new float[] {
+//				1, 0, 0, 0, 0,
+//				0, 1, 0, 0, 0,
+//				0, 0, 1, 0, 0,
+//				0, 0, 0, TRANS, 0
+//		};
+//		applyMatrix(tilemap, mat);
+//	}
+//
+//	private void opace(Tilemap tilemap) {
+//		float[] mat = new float[] {
+//				1, 0, 0, 0, 0,
+//				0, 1, 0, 0, 0,
+//				0, 0, 1, 0, 0,
+//				0, 0, 0, 1 / TRANS, 0
+//		};
+//		applyMatrix(tilemap, mat);
+//	}
+//
+//	private void applyMatrix(Tilemap tilemap, float[] mat) {
+//		ColorMatrix cm = new ColorMatrix(mat);
+//		Sprite[][] sprites = tilemap.getSprites();
+//		Paint paint = new Paint();
+//		paint.setColorFilter(new ColorMatrixColorFilter(cm));
+//		for (int i = 0; i < sprites.length; i++) {
+//			for (int j = 0; j < sprites[i].length; j++) {
+//				if (sprites[i][j] != null) {
+//					Bitmap bmp = sprites[i][j].getBitmap();
+//					Bitmap newBmp = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), Sprite.getDefaultConfig());
+//					sprites[i][j].setBitmap(newBmp);
+//					sprites[i][j].getBitmapCanvas().drawBitmap(bmp, 0, 0, paint);
+//				}
+//			}
+//		}
+//	}
 
 	public static abstract class RectHolder {
 		public abstract Rect getRect();

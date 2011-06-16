@@ -44,6 +44,8 @@ public class GraphicsRenderer implements Renderer {
 	
 	private boolean flush;
 	
+	private float lastR = 1, lastG = 1, lastB = 1, lastA = 1;
+	
 	public void setFlush(boolean flush) {
 		this.flush = flush;
 	}
@@ -182,6 +184,9 @@ public class GraphicsRenderer implements Renderer {
 							gl.glViewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
 							clipSet = false;
 						}
+						
+						int vColor = viewport.getColor();
+						float vOpacity = viewport.getOpacity();
 
 						for (int j = 0; j < viewport.getSprites().size(); j++) {
 							Sprite  sprite = viewport.getSprites().get(j);
@@ -250,6 +255,17 @@ public class GraphicsRenderer implements Renderer {
 								if (tx != 0 || ty != 0)
 									gl.glTranslatef(tx, ty, 0);
 
+								int sColor = sprite.getColor();
+								float r = Color.red(sColor) / 255f * Color.red(vColor) / 255f;
+								float g = Color.green(sColor) / 255f * Color.green(vColor) / 255f;
+								float b = Color.blue(sColor) / 255f * Color.blue(vColor) / 255f;
+								float a = Color.alpha(sColor) * sprite.getOpacity() / 255f * 
+										Color.alpha(vColor) * vOpacity / 255f;
+								if (r != lastR || g != lastG || b != lastB || a != lastA) {
+									gl.glColor4f(r, g, b, a);
+									lastR = r; lastG = g; lastB = b; lastA = a; 
+								}
+								
 								sprite.getGrid().draw(gl, true, false);
 
 								gl.glPopMatrix();
@@ -346,7 +362,7 @@ public class GraphicsRenderer implements Renderer {
 			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_CLAMP_TO_EDGE);
 			gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
 
-			gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+			gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE); //was GL10.GL_REPLACE
 
 			int width = bitmap.getWidth(), height = bitmap.getHeight();
 			int targetWidth = 1, targetHeight = 1;
