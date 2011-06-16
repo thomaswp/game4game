@@ -17,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Sprite;
@@ -25,11 +26,14 @@ import edu.elon.honors.price.input.Input;
 
 public class PhysicsLogic implements Logic {
 
+	float SCALE = 10;
+	
 	World world;
 	ArrayList<Body> balls = new ArrayList<Body>();
 	ArrayList<Sprite> sprites = new ArrayList<Sprite>();
 	Body pBody;
 	Sprite pSprite;
+	Sprite bmpSprite;
 	
 	@Override
 	public void setPaused(boolean paused) {
@@ -47,32 +51,41 @@ public class PhysicsLogic implements Logic {
         groundShapeDef.setAsBox((float) 50.0, (float) 10.0);
         groundBody.createFixture(groundShapeDef, 1);
         
-        Vector2[] points = new Vector2[4];
-        points[0] = new Vector2(5, 0);
-        points[1] = new Vector2(10, 10);
-        points[2] = new Vector2(2, 10);
-        points[3] = new Vector2(0, 6);
+        bmpSprite = new Sprite(Viewport.DefaultViewport, Data.loadBitmap(R.drawable.rock));
+        float[] xs = new float[8]; float[] ys = new float[8];
+        int pts = bmpSprite.convexHull(xs, ys);
+        bmpSprite.setOriginY(bmpSprite.getHeight());
+        
+        Vector2[] points = new Vector2[pts];
+        int pi = points.length - 1;
+        for (int i = 0; i < 8; i++) {
+        	if (xs[i] >= 0) {
+        		points[pi] = new Vector2(xs[i] / SCALE, ys[i] / SCALE);
+        		pi--;
+        	}
+        }
         PolygonShape poly = new PolygonShape();
         poly.set(points);
         BodyDef polyDef = new BodyDef();
         polyDef.type = BodyType.DynamicBody;
         polyDef.position.set(new Vector2(10, 50));
-        polyDef.fixedRotation = true;
+        //polyDef.fixedRotation = true;
         pBody = world.createBody(polyDef);
         pBody.createFixture(poly, 1);
-        pBody.applyAngularImpulse(1000);
+        pBody.applyAngularImpulse(100);
         
-        pSprite = new Sprite(Viewport.DefaultViewport, 100, 0, 100, 100);
+        pSprite = new Sprite(Viewport.DefaultViewport, 100, 0, 
+        		bmpSprite.getBitmap().getWidth(), bmpSprite.getBitmap().getHeight());
         Path path = new Path();
         for (int i = 0; i < points.length; i++) {
         	if (i == 0)
-        		path.moveTo(points[i].x * 10, points[i].y * 10);
+        		path.moveTo(points[i].x * SCALE, points[i].y * SCALE);
         	else
-        		path.lineTo(points[i].x * 10, points[i].y * 10);
+        		path.lineTo(points[i].x * SCALE, points[i].y * SCALE);
         }
         path.close();
         Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.argb(150, 255, 255, 255));
         paint.setStyle(Style.FILL);
         pSprite.getBitmapCanvas().drawPath(path, paint);
         pSprite.setOriginY(pSprite.getWidth());
@@ -80,7 +93,7 @@ public class PhysicsLogic implements Logic {
 	
 	private void createBall() {
 		BodyDef balldef = new BodyDef();
-        balldef.type = BodyType.DynamicBody;
+        balldef.type = BodyType.StaticBody;
         float x = Input.getLastTouchX() / 10;
         float y = Input.getLastTouchY() / 10;
         balldef.position.set(x, y);
@@ -108,12 +121,16 @@ public class PhysicsLogic implements Logic {
 		}
 		world.step(timeElapsed / 1000.0f, 6, 2);
 		for (int i = 0; i < sprites.size(); i++) {
-			sprites.get(i).setX(balls.get(i).getPosition().x * 10);
-			sprites.get(i).setY(balls.get(i).getPosition().y * 10);
+			sprites.get(i).setX(balls.get(i).getPosition().x * SCALE);
+			sprites.get(i).setY(balls.get(i).getPosition().y * SCALE);
 		}
-		pSprite.setX(pBody.getPosition().x * 10);
-		pSprite.setY(pBody.getPosition().y * 10 + pSprite.getWidth());
+		pSprite.setX(pBody.getPosition().x * SCALE);
+		pSprite.setY(pBody.getPosition().y * SCALE + pSprite.getWidth());
 		pSprite.setRotation(pBody.getAngle() * 180 / 3.1415f);
+		
+		bmpSprite.setX(pSprite.getX());
+		bmpSprite.setY(pSprite.getY());
+		bmpSprite.setRotation(pSprite.getRotation());
 	}
 
 	@Override
