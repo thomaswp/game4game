@@ -57,6 +57,22 @@ public class Tilemap {
 		return tileHeight;
 	}
 	
+	public int getColor() {
+		return viewport.getColor();
+	}
+
+	public void setColor(int color) {
+		viewport.setColor(color);
+	}
+
+	public float getOpacity() {
+		return viewport.getOpacity();
+	}
+
+	public void setOpacity(float opacity) {
+		viewport.setOpacity(opacity);
+	}
+
 	public Sprite[][] getSprites() {
 		return sprites;
 	}

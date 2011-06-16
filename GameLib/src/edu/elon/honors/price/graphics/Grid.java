@@ -27,6 +27,8 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
+import edu.elon.honors.price.game.Game;
+
 /**
  * A 2D rectangular mesh. Can be drawn textured or untextured.
  * This version is modified from the original Grid.java (found in
@@ -227,6 +229,7 @@ class Grid {
             
             if (useColor) {
                 gl.glColorPointer(4, mCoordinateType, 0, mColorBuffer);
+                
             }
     
             gl.glDrawElements(GL10.GL_TRIANGLES, mIndexCount,

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -112,6 +113,19 @@ public final class Data {
 		}
 	}
 	
+//	public static void saveObjectPublic(String name, Activity parent, Serializable data) {
+//		try {
+//			URI uri = URI.create("content://edu.elon.honors.price.data/" + name);
+//			File file = new File(uri);
+//			FileOutputStream fos = new FileOutputStream(file);
+//			ObjectOutputStream out = new ObjectOutputStream(fos);
+//			out.writeObject(data);
+//			out.close();
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
+//	}
+	
 	/**
 	 * Loads a serializable class, using the given activity with the given name.
 	 * 
@@ -144,4 +158,19 @@ public final class Data {
 			return null;
 		}
 	}
+	
+//	public static Object loadObjectPublic(String name, Activity parent) {
+//		try {
+//			URI uri = URI.create("content:///edu.elon.honors.price.data/" + name);
+//			File file = new File(uri);
+//			FileInputStream fis = new FileInputStream(file);
+//			ObjectInputStream in = new ObjectInputStream(fis);
+//			Object data = in.readObject();
+//			in.close();
+//			return data;
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//			return null;
+//		}
+//	}
 }

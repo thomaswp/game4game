@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import edu.elon.honors.price.game.Game;
 
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -25,6 +26,9 @@ public class Viewport implements Comparable<Viewport> {
 	private Rect rect = new Rect();
 	private RectF rectF = new RectF();
 
+	private int color = Color.WHITE;
+	private float opacity = 1;
+	
 	private ArrayList<Sprite> sprites;
 
 	public static Viewport DefaultViewport = new Viewport(0, 0, STRETCH, STRETCH);
@@ -81,6 +85,22 @@ public class Viewport implements Comparable<Viewport> {
 		this.z = z;
 		Graphics.getViewports().remove(this);
 		Graphics.addViewport(this);
+	}
+
+	public int getColor() {
+		return color;
+	}
+
+	public void setColor(int color) {
+		this.color = color;
+	}
+
+	public float getOpacity() {
+		return opacity;
+	}
+
+	public void setOpacity(float opacity) {
+		this.opacity = Math.min(Math.max(opacity, 0), 1);
 	}
 
 	public float getZoomX() {
