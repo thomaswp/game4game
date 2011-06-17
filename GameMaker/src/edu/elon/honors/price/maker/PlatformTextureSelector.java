@@ -23,7 +23,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 
-public class TextureSelector extends Activity {
+public class PlatformTextureSelector extends Activity {
 
 	TSView view;
 
@@ -41,7 +41,7 @@ public class TextureSelector extends Activity {
 		int right = getIntent().getExtras().getInt("right");
 		int bottom = getIntent().getExtras().getInt("bottom");
 		Rect r = new Rect(left, top, right, bottom);
-		final TextureSelector me = this;
+		final PlatformTextureSelector me = this;
 		view = new TSView(this, bitmap, r, tileWidth, tileHeight, new TSView.Poster() {
 			@Override
 			void post(Rect rect) {

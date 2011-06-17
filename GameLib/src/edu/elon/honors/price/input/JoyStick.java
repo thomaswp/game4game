@@ -23,6 +23,7 @@ public class JoyStick {
 	}
 
 	public JoyStick(int x, int y, int z, int radius, int color) {
+		Input.setMultiTouch(true);
 		viewport = new Viewport();
 		viewport.setZ(z);
 		viewport.setSorted(false);
