@@ -41,5 +41,15 @@
 			<type>2</type>
 			<locationURI>_android_GameLib_578f9913/src</locationURI>
 		</link>
+		<link>
+			<name>PhysicsLib_src</name>
+			<type>2</type>
+			<locationURI>_android_PhysicsLib_2870a6de/src</locationURI>
+		</link>
+		<link>
+			<name>Platformer_src</name>
+			<type>2</type>
+			<locationURI>_android_Platformer_ecd70080/src</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

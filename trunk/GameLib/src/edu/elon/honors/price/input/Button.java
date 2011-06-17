@@ -25,6 +25,8 @@ public class Button {
 	}
 	
 	public Button(int x, int y, int z, int radius, int color) {
+		Input.setMultiTouch(true);
+		
 		viewport = new Viewport();
 		viewport.setZ(z);
 		viewport.setSorted(false);

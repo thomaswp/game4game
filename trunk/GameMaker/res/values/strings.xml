@@ -2,4 +2,6 @@
 <resources>
     <string name="hello">Hello World, GameMaker!</string>
     <string name="app_name">GameMaker</string>
+    <string name="newgame">New Game</string>
+    <string name="select">Select a map:</string>
 </resources>

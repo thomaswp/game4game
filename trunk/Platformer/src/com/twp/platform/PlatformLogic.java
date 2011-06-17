@@ -47,10 +47,16 @@ public class PlatformLogic implements Logic {
 	private float mapX, mapY, bgX, bgY, skyScroll;
 	private int skyStartY, startOceanY;
 
+	private String mapName;
+	
 	@Override
 	public void setPaused(boolean paused) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public PlatformLogic(String mapName) {
+		this.mapName = mapName;
 	}
 
 	@Override
@@ -242,7 +248,7 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void load(Activity parent) {
-		map = (PlatformMap) Data.loadObjectPublic("map-final", parent);
+		map = (PlatformMap) Data.loadObjectPublic(mapName, parent);
 
 	}
 

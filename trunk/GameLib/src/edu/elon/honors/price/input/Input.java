@@ -43,6 +43,8 @@ public final class Input {
 	private static final int POINTERS = 4;
 	private static final int EVENTS = 30;
 
+	private static boolean multiTouch;
+	
 	//A list of unprocessed TouchEvents
 	private static ArrayList<ArrayList<TouchEvent>> touchEvents = new ArrayList<ArrayList<TouchEvent>>(POINTERS);
 	private static ArrayList<TouchState> touchStates;
@@ -57,6 +59,14 @@ public final class Input {
 	private static KeyStates[] keyMap = new KeyStates[100];
 	
 	private static Vibrator vibrator;
+
+	public static boolean isMultiTouch() {
+		return multiTouch;
+	}
+
+	public static void setMultiTouch(boolean multiTouch) {
+		Input.multiTouch = multiTouch;
+	}
 
 	/**
 	 * Returns whether or not the user is touching the screen
@@ -99,9 +109,13 @@ public final class Input {
 	 * @return
 	 */
 	public static boolean isTapped() {
-		for (int i = 0; i < touchStates.size(); i++) {
-			if (touchStates.get(i).tapped)
-				return true;
+		if (multiTouch) {
+			for (int i = 0; i < touchStates.size(); i++) {
+				if (touchStates.get(i).tapped)
+					return true;
+			}
+		} else {
+			return touchStates.get(0).tapped;
 		}
 		return false;
 	}
