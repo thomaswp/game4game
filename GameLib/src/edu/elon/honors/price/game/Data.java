@@ -91,28 +91,18 @@ public final class Data {
 	 * @param parent The Activity to use for the saving.
 	 * @param data The serializable class to save.
 	 */
-	public static void saveObject(String name, Activity parent, Serializable data) {
+	public static boolean saveObject(String name, Activity parent, Serializable data) {
 		try {
 			FileOutputStream fos = parent.openFileOutput(name, Context.MODE_WORLD_WRITEABLE);
 			ObjectOutputStream out = new ObjectOutputStream(fos);
 			out.writeObject(data);
 			out.close();
+			return true;
 		} catch (IOException ex) {
 			ex.printStackTrace();
+			return false;
 		}
 	}
-	
-//	public static void saveObjectPublic(String name, Activity parent, Serializable data) {
-//		try {
-//			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), name);
-//			FileOutputStream fos = new FileOutputStream(file);
-//			ObjectOutputStream out = new ObjectOutputStream(fos);
-//			out.writeObject(data);
-//			out.close();
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
-//	}
 	
 	/**
 	 * Loads a serializable class, using the given activity with the given name.
@@ -121,6 +111,13 @@ public final class Data {
 	 * @param parent The Activity to use for the loading.
 	 */
 	public static Object loadObject(String name, Activity parent) {
+		String[] files = parent.fileList();
+		boolean found = false;
+		for (int i = 0; i < files.length; i++)
+			found |= files[i].equals(name);
+		if (!found)
+			return null;
+		
 		try {
 			FileInputStream fis = parent.openFileInput(name);
 			ObjectInputStream in = new ObjectInputStream(fis);

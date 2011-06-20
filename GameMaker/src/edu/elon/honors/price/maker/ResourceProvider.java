@@ -28,7 +28,7 @@ public class ResourceProvider extends ContentProvider {
 
 	@Override
 	public ParcelFileDescriptor openFile(Uri u, String mode) throws FileNotFoundException {
-		Game.debug(u.toString());
+		//Game.debug(u.toString());
 		URI uri = URI.create("file:///data/data/edu.elon.honors.price.maker/files/" + u.getLastPathSegment());
 		File file = new File(uri);
 		return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);

@@ -32,22 +32,26 @@ public class PlatformMakerLogic implements Logic {
 	public static final int MODE_EDIT = 1;
 	public static final int MODE_DRAW = 2;
 
-	public static final int DARK = Color.argb(255, 150, 150, 150);
-	public static final float TRANS = 0.5f;
+	private static final int DARK = Color.argb(255, 150, 150, 150);
+	private static final float TRANS = 0.5f;
+	
+	public static final String MAP = "_map";
+	public static final String DATA = "_data";
+	
 
 
 	private PlatformMap map;
 	private PlatformData data;
 	private ArrayList<Tilemap> tilemaps;
 	private Tilemap preview;
-	private Sprite previewMask;
-	private Sprite menu, move, edit, draw, selection, cancel, layerUp, layerDown, undo, redo, undoMask, redoMask;
+	private Sprite previewMask, undoMask, redoMask, borderRight;
+	private Sprite menu, move, edit, draw, selection, cancel, layerUp, layerDown, undo, redo;
 	private Sprite[] buttons;
-	private Sprite borderRight;
 	private RectHolder holder;
 	private float startScrollX, startScrollY;
 	private int hold = 500;
 	private boolean scrolling, menuTap;
+	private String mapName;
 
 	@Override
 	public void setPaused(boolean paused) {
@@ -55,18 +59,14 @@ public class PlatformMakerLogic implements Logic {
 
 	}
 
-	public PlatformMakerLogic(RectHolder holder) {
+	public PlatformMakerLogic(String mapName, RectHolder holder) {
+		this.mapName = mapName;
 		this.holder = holder;
 	}
 
 	@Override
 	public void initialize() {
 		Graphics.setBackgroundColor(Color.WHITE);
-		
-		if (map == null)
-			map = new PlatformMap();
-		if (data == null)
-			data = new PlatformData();
 
 		loadSprites();
 
@@ -268,26 +268,39 @@ public class PlatformMakerLogic implements Logic {
 
 	@Override
 	public void save(Activity parent) {
-		Data.saveObject("data", parent, data);
-		Data.saveObject("map", parent, map);
+		Data.saveObject(mapName + DATA, parent, data);
+		Data.saveObject(mapName + MAP, parent, map);
 	}
 
 	public void saveFinal(Activity parent) {
-		Data.saveObject("map-final", parent, map);
+		if (!Data.saveObject(GameMaker.PREFIX + mapName, parent, map))
+			throw new RuntimeException("Save Failed");
 	}
 
 	@Override
 	public void load(Activity parent) {
-		data = (PlatformData)Data.loadObject("data", parent);
-		map = (PlatformMap)Data.loadObject("map", parent);
+		data = (PlatformData)Data.loadObject(mapName + DATA, parent);
+		map = (PlatformMap)Data.loadObject(mapName + MAP, parent);
+		
+		if (map == null) {
+			map = (PlatformMap)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+		}		
+		if (data == null) {
+			data = new PlatformData();
+		}
 	}
 
 	public void loadFinal(Activity parent) {
-		map = (PlatformMap)Data.loadObjectPublic("map-final", parent);
-		data = new PlatformData();
-		save(parent);
-		Graphics.reset();
-		loadSprites();
+		PlatformMap map = (PlatformMap)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+		if (map != null) {
+			this.map = map;
+			data = new PlatformData();
+			save(parent);
+			Graphics.reset();
+			loadSprites();
+		} else {
+			throw new RuntimeException("Load Failed!");
+		}
 	}
 
 	private void draw() {
@@ -311,7 +324,6 @@ public class PlatformMakerLogic implements Logic {
 	}
 	
 	private void redoAction() {
-		Game.debug("Redo");
 		data.editIndex++;
 		Action action = data.actions.get(data.editIndex);
 		int[][] tiles = map.layers.get(action.layer).tiles;
@@ -330,7 +342,6 @@ public class PlatformMakerLogic implements Logic {
 	}
 	
 	private void undoAction() {
-		Game.debug("Undo");
 		Action action = data.actions.get(data.editIndex);
 		int[][] tiles = map.layers.get(action.layer).tiles;
 		int[][] oldTiles = action.previous;
