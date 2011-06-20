@@ -105,7 +105,7 @@ public class GraphicsView extends GLSurfaceView {
 		thread = new Thread(new Runnable() {
 			public void run() {
 				//Wait for the surface to be created
-				while (Graphics.getWidth() == 0);
+				while (Graphics.getWidth() == 0 || Graphics.getHeight() == 0);
 				synchronized (logic) {
 					//initialize the game Logic
 					logic.initialize();

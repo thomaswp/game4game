@@ -7,12 +7,17 @@
 <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" android:text="@string/select"/>
-<ScrollView android:layout_width="match_parent" android:layout_height="100dip" android:id="@+id/scrollView1" >
-    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout1" android:orientation="vertical">
-        <Button android:text="Button" android:id="@+id/button1" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-        <Button android:text="Button" android:id="@+id/button2" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
-        <Button android:text="Button" android:id="@+id/button3" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+<ScrollView android:layout_width="match_parent" android:id="@+id/scrollView1" android:layout_height="220dip">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/linearLayout1" android:orientation="vertical">
     </LinearLayout>
 </ScrollView>
-<Button android:text="@string/newgame" android:layout_width="wrap_content" android:id="@+id/button4" android:layout_height="wrap_content"></Button>
+<LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout2">
+    <Button android:layout_height="wrap_content" android:text="@string/edit" android:id="@+id/buttonEdit" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/play" android:id="@+id/buttonPlay" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/newgame" android:id="@+id/buttonNewGame" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/delete" android:id="@+id/buttonDelete" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/copy" android:id="@+id/buttonCopy" android:layout_width="100dip"></Button>
+</LinearLayout>
+<LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout3">
+</LinearLayout>
 </LinearLayout>

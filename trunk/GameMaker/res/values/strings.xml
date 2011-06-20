@@ -4,4 +4,8 @@
     <string name="app_name">GameMaker</string>
     <string name="newgame">New Game</string>
     <string name="select">Select a map:</string>
+    <string name="play">Play</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>
