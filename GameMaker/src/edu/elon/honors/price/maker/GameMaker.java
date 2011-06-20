@@ -7,6 +7,7 @@ import java.util.Arrays;
 import com.badlogic.gdx.utils.Array;
 import com.twp.platform.Platformer;
 
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformMap;
 import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
@@ -128,7 +129,7 @@ public class GameMaker extends Activity {
 				exists |= files[i].equals(name); 
 		} while (exists);
 		
-		Data.saveObject(name, this, new PlatformMap());
+		Data.saveObject(name, this, new PlatformGame());
 		
 		loadMaps();
 	}

@@ -79,14 +79,14 @@ public class PlatformLogicGDX implements Logic {
 				Graphics.getHeight() - BSIZE - BBORDER, BBORDER, 
 				BSIZE, Color.argb(150, 255, 0, 0));
 
-		layers = new Tilemap[map.layers.size()];
-		Tileset tileset = map.tileset;
-		for (int i = 0; i < layers.length; i++) {
-			PlatformLayer layer = map.layers.get(i);
-			layers[i] = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
-					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
-					layer.tiles, Graphics.getRect(), i * 2);
-		}
+//		layers = new Tilemap[map.layers.size()];
+//		Tileset tileset = map.tileset;
+//		for (int i = 0; i < layers.length; i++) {
+//			PlatformLayer layer = map.layers.get(i);
+//			layers[i] = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
+//					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
+//					layer.tiles, Graphics.getRect(), i * 2);
+//		}
 
 		Bitmap[] frames = Tilemap.createTiles(Data.loadBitmap(R.drawable.hero), 32, 48, 0);
 		hero = new AnimatedSprite(Viewport.DefaultViewport, frames, 48, -48);
@@ -119,7 +119,7 @@ public class PlatformLogicGDX implements Logic {
 		heroBody.createFixture(heroFix);
 		
 		for (int k = 0; k < layers.length; k++) {
-			if (!map.layers.get(k).active)
+			if (!map.layers[k].active)
 				continue;
 			
 			Sprite[][] sprites = layers[k].getSprites();

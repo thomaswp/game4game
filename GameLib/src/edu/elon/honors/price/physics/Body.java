@@ -227,8 +227,8 @@ public class Body implements Serializable {
 
 	public void updateSprite() {
 		if (sprite != null) {
-			sprite.setX(position.getX());
-			sprite.setY(position.getY());
+			sprite.setX(position.getX() + physics.getSpriteOffset().getX());
+			sprite.setY(position.getY() + physics.getSpriteOffset().getY());
 			sprite.setRotation(rotation);
 			sprite.setZoomX(zoomX);
 			sprite.setZoomY(zoomY);
