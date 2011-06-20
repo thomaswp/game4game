@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Environment;
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
 import edu.elon.honors.price.data.Tileset;
@@ -40,6 +41,7 @@ public class PlatformMakerLogic implements Logic {
 	
 
 
+	private PlatformGame game;
 	private PlatformMap map;
 	private PlatformData data;
 	private ArrayList<Tilemap> tilemaps;
@@ -87,7 +89,7 @@ public class PlatformMakerLogic implements Logic {
 		} else {
 			if (touchingSprite(menu)) {
 				if (Input.isTapped()) {
-					holder.newRect(map.tileset.bitmapId, map.tileset.tileWidth, map.tileset.tileHeight);
+					holder.newRect(getTileset().bitmapId, getTileset().tileWidth, getTileset().tileHeight);
 					return;
 				}
 			}
@@ -122,7 +124,7 @@ public class PlatformMakerLogic implements Logic {
 				}
 			}
 			if (changeLayer != 0) {
-				if (changeLayer > 0 && data.layer < map.layers.size() - 1) {
+				if (changeLayer > 0 && data.layer < map.layers.length - 1) {
 					tilemaps.get(data.layer).setColor(DARK);
 					data.layer++;
 					tilemaps.get(data.layer).setOpacity(1);
@@ -186,7 +188,7 @@ public class PlatformMakerLogic implements Logic {
 			} else {
 				scrolling = false;
 			}
-			float maxX = -Graphics.getWidth() + map.getWidth() + menu.getWidth();
+			float maxX = -Graphics.getWidth() + game.getMapWidth(map) + menu.getWidth();
 			if (data.scrollX > maxX) {
 				startScrollX -= data.scrollX - maxX;
 				data.scrollX = maxX;
@@ -194,7 +196,7 @@ public class PlatformMakerLogic implements Logic {
 				startScrollX -= data.scrollX;
 				data.scrollX = 0;
 			}
-			float maxY = -Graphics.getHeight() + map.getHeight();
+			float maxY = -Graphics.getHeight() + game.getMapHeight(map);
 			if (data.scrollY > maxY) {	
 				startScrollY -= data.scrollY - maxY;
 				data.scrollY = maxY;
@@ -211,8 +213,8 @@ public class PlatformMakerLogic implements Logic {
 			}
 			cancel.setVisible(false);
 		} else if (data.mode == MODE_EDIT || data.mode == MODE_DRAW) {
-			int tileWidth = map.tileset.tileWidth;
-			int tileHeight = map.tileset.tileHeight;
+			int tileWidth = getTileset().tileWidth;
+			int tileHeight = getTileset().tileHeight;
 			
 			if (preview.isVisible() && !Input.isTouchDown()) {
 				if (!cancel.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY()))
@@ -263,37 +265,43 @@ public class PlatformMakerLogic implements Logic {
 			previewMask.setVisible(preview.isVisible());
 		}
 
-		borderRight.setOriginX(-map.getWidth() + data.scrollX);
+		borderRight.setOriginX(-game.getMapWidth(map) + data.scrollX);
 	}
 
 	@Override
 	public void save(Activity parent) {
 		Data.saveObject(mapName + DATA, parent, data);
-		Data.saveObject(mapName + MAP, parent, map);
+		Data.saveObject(mapName + MAP, parent, game);
 	}
 
 	public void saveFinal(Activity parent) {
-		if (!Data.saveObject(GameMaker.PREFIX + mapName, parent, map))
+		if (!Data.saveObject(GameMaker.PREFIX + mapName, parent, game))
 			throw new RuntimeException("Save Failed");
 	}
 
 	@Override
 	public void load(Activity parent) {
 		data = (PlatformData)Data.loadObject(mapName + DATA, parent);
-		map = (PlatformMap)Data.loadObject(mapName + MAP, parent);
+		game = (PlatformGame)Data.loadObject(mapName + MAP, parent);
 		
-		if (map == null) {
-			map = (PlatformMap)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+		if (game == null) {
+			game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+			if (game == null) {
+				game = new PlatformGame();
+			}
 		}		
 		if (data == null) {
 			data = new PlatformData();
 		}
+		
+		map = game.maps.get(game.startMapId);
 	}
 
 	public void loadFinal(Activity parent) {
-		PlatformMap map = (PlatformMap)Data.loadObject(GameMaker.PREFIX + mapName, parent);
-		if (map != null) {
-			this.map = map;
+		PlatformGame game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+		if (game != null) {
+			this.game = game;
+			map = game.maps.get(game.startMapId);
 			data = new PlatformData();
 			save(parent);
 			Graphics.reset();
@@ -302,10 +310,14 @@ public class PlatformMakerLogic implements Logic {
 			throw new RuntimeException("Load Failed!");
 		}
 	}
+	
+	private Tileset getTileset() {
+		return game.getMapTileset(map);
+	}
 
 	private void draw() {
-		int tileWidth = map.tileset.tileWidth;
-		int tileHeight = map.tileset.tileHeight;
+		int tileWidth = getTileset().tileWidth;
+		int tileHeight = getTileset().tileHeight;
 		Rect sRect = holder.getRect();
 		int column = (int)(tilemaps.get(data.layer).getScrollX() - preview.getScrollX() + 0.5) / tileWidth;
 		int row = (int)(tilemaps.get(data.layer).getScrollY() - preview.getScrollY() + 0.5) / tileHeight;
@@ -326,7 +338,7 @@ public class PlatformMakerLogic implements Logic {
 	private void redoAction() {
 		data.editIndex++;
 		Action action = data.actions.get(data.editIndex);
-		int[][] tiles = map.layers.get(action.layer).tiles;
+		int[][] tiles = map.layers[action.layer].tiles;
 		int[][] oldTiles = new int[action.rows][action.cols];
 		for (int i = 0; i < action.rows; i++) {
 			for (int j = 0; j < action.cols; j++) {
@@ -334,7 +346,7 @@ public class PlatformMakerLogic implements Logic {
 				if (r < 0 || c < 0 || r >= tiles.length || c >= tiles[i].length)
 					continue;
 				oldTiles[i][j] = tiles[r][c];
-				tiles[r][c] = (action.srcRow + i) * map.tileset.columns + (action.srcCol + j);
+				tiles[r][c] = (action.srcRow + i) * getTileset().columns + (action.srcCol + j);
 			}
 		}
 		tilemaps.get(action.layer).setMap(tiles);
@@ -343,7 +355,7 @@ public class PlatformMakerLogic implements Logic {
 	
 	private void undoAction() {
 		Action action = data.actions.get(data.editIndex);
-		int[][] tiles = map.layers.get(action.layer).tiles;
+		int[][] tiles = map.layers[action.layer].tiles;
 		int[][] oldTiles = action.previous;
 		for (int i = 0; i < action.rows; i++) {
 			for (int j = 0; j < action.cols; j++) {
@@ -414,12 +426,12 @@ public class PlatformMakerLogic implements Logic {
 
 		buttons = new Sprite[] {menu, move, edit, draw, selection, layerUp, layerDown, undo, redo, undoMask, redoMask};
 		
-		tilemaps = new ArrayList<Tilemap>(map.layers.size()); 
-		Tileset tileset = map.tileset;
+		tilemaps = new ArrayList<Tilemap>(map.layers.length); 
+		Tileset tileset = getTileset();
 		Rect rect = new Rect();
 		rect.set(0, 0, Graphics.getWidth(), Graphics.getHeight());
-		for (int i = 0; i < map.layers.size(); i++) {
-			PlatformLayer layer = map.layers.get(i);
+		for (int i = 0; i < map.layers.length; i++) {
+			PlatformLayer layer = map.layers[i];
 			Tilemap tm = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, rect, i);
@@ -453,7 +465,7 @@ public class PlatformMakerLogic implements Logic {
 
 	private void drawChangeLayer() {
 		layerUp.getBitmap().eraseColor(Color.LTGRAY);
-		String luText = (data.layer == map.layers.size() - 1) ? "-" : "" + (data.layer + 1);
+		String luText = (data.layer == map.layers.length - 1) ? "-" : "" + (data.layer + 1);
 		Helper.drawCenteredText(layerUp, luText, Color.BLACK, 20);
 		layerDown.getBitmap().eraseColor(Color.DKGRAY);
 		String ldText = (data.layer == 0) ? "-" : "" + (data.layer - 1);

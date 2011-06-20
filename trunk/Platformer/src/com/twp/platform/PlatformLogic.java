@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
 import edu.elon.honors.price.data.Tileset;
@@ -29,18 +31,21 @@ import edu.elon.honors.price.physics.Vector;
 
 public class PlatformLogic implements Logic {
 
+	public static final float GRAVITY = 0.01f;
+	
 	private static final int BORDER = 150;
-	private static final int FRAME = 150;
 	private static final int BSIZE = 50;
 	private static final int BBORDER = 15;
 
 	PlatformMap map;
+	PlatformGame game;
+	ArrayList<PlatformBody> actors = new ArrayList<PlatformBody>();
 	BackgroundSprite background, sky;
 	Tilemap[] layers;
 	JoyStick stick;
 	Button button;
 	AnimatedSprite hero;
-	Body heroBody;
+	PlatformBody heroBody;
 	Physics physics;
 	Vector p = new Vector();
 
@@ -61,7 +66,8 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void initialize() {
-		if (map == null) map = new PlatformMap();
+		if (game == null) game = new PlatformGame();
+		map = game.maps.get(game.startMapId);
 		
 		Bitmap bmp = Data.loadBitmap(R.drawable.ocean);
 		startOceanY = Graphics.getHeight() - bmp.getHeight();
@@ -78,22 +84,39 @@ public class PlatformLogic implements Logic {
 				Graphics.getHeight() - BSIZE - BBORDER, BBORDER, 
 				BSIZE, Color.argb(150, 255, 0, 0));
 
-		layers = new Tilemap[map.layers.size()];
-		Tileset tileset = map.tileset;
+		layers = new Tilemap[map.layers.length];
+		Tileset tileset = game.getMapTileset(map);
 		for (int i = 0; i < layers.length; i++) {
-			PlatformLayer layer = map.layers.get(i);
+			PlatformLayer layer = map.layers[i];
 			layers[i] = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, Graphics.getRect(), i * 2);
 		}
 
-		Bitmap[] frames = Tilemap.createTiles(Data.loadBitmap(R.drawable.hero), 32, 48, 0);
-		hero = new AnimatedSprite(Viewport.DefaultViewport, frames, 48, -48);
+		PlatformActor heroActor = new PlatformActor();
+		heroActor.imageId = R.drawable.hero;
+		heroActor.speed = 0;
+		
+		physics = new Physics();
+		heroBody = new PlatformBody(Viewport.DefaultViewport, physics, heroActor, 48, -48, layers, map);
+		hero = heroBody.getSprite();
 		hero.centerOrigin();
 		hero.setFrame(8);
 		hero.setZoom(0.9f);
-		physics = new Physics();
-		heroBody = new Body(physics, hero);
+		
+		PlatformLayer actorLayer = map.actorLayer;
+		for (int i = 0; i < actorLayer.rows; i++) {
+			for (int j = 0; j < actorLayer.columns; j++) {
+				int actorId = actorLayer.tiles[i][j];
+				if (actorId > 0) {
+					float x = j * game.getMapTileset(map).tileWidth;
+					float y = i * game.getMapTileset(map).tileHeight;
+					PlatformBody actor = new PlatformBody(Viewport.DefaultViewport, physics,
+							game.actors[actorId], x, y, layers, map);
+					actors.add(actor);
+				}
+			}
+		}
 		
 		Viewport.DefaultViewport.setZ(3);
 	}
@@ -103,118 +126,41 @@ public class PlatformLogic implements Logic {
 		
 		stick.update();
 		button.update();
-
-		Vector pull = stick.getPull();
-		int frame = hero.getFrame();
-		if (pull.getX() > 0 && (frame / 4 != 2 || !hero.isAnimated())) {
-			hero.Animate(FRAME, 8, 4);
-		} else if (pull.getX() < 0 && (frame / 4 != 1 || !hero.isAnimated())) {
-			hero.Animate(FRAME, 4, 4);
-		}
-		if (hero.isAnimated()) {
-			if (pull.getX() == 0) {
-				hero.setFrame(frame - frame % 4);
-			}
+		
+		for (int i = 0; i < actors.size(); i++) {
+			actors.get(i).update(timeElapsed);
 		}
 
 		if (button.isTapped()) {// && Math.abs(heroBody.getVelocity().getY()) < 0.02f) {
 			heroBody.getVelocity().setY(-0.3f);
 		}
 		heroBody.getVelocity().setX(stick.getPull().getX() * 0.2f);
-		heroBody.getVelocity().addY(0.01f);
 
-		RectF heroRect = heroBody.getSprite().getRect();
-		Vector heroV = heroBody.getVelocity();
-
-		for (int k = 0; k < layers.length; k++) {
-
-			if (!map.layers.get(k).active)
-				continue;
-
-			Sprite[][] sprites = layers[k].getSprites();
-
-			if (heroV.getX() != 0) {
-				heroRect.offset(heroV.getX() * timeElapsed, 0);
-				for (int i = 0; i < sprites.length; i++) {
-					for (int j = 0; j < sprites[i].length; j++) {
-						Sprite s = sprites[i][j];
-						if (s != null) {
-							if (s.isVisible()) {
-								if (s.getRect().intersect(heroRect)) {
-									heroRect.offset(-heroV.getX() * timeElapsed, 0);
-									heroV.setX(0);
-									break;
-								}
-							}
-
-						}
-					}
-				}
-				heroRect.offset(-heroV.getX() * timeElapsed, 0);
-			}
-
-			if (heroV.getY() != 0) {
-				heroRect.offset(0, heroV.getY() * timeElapsed);
-				for (int i = 0; i < sprites.length; i++) {
-					for (int j = 0; j < sprites[i].length; j++) {
-						Sprite s = sprites[i][j];
-						if (s != null) {
-							if (s.isVisible()) {
-								if (s.getRect().intersect(heroRect)) {
-									heroRect.offset(0, -heroV.getY() * timeElapsed);
-									heroV.setY(0);
-									break;
-								}
-							}
-
-						}
-					}
-				}
-				heroRect.offset(0, -heroV.getY() * timeElapsed);
-			}
-
-			if (heroV.getX() != 0 && heroV.getY() != 0) {
-				heroRect.offset(heroV.getX() * timeElapsed, heroV.getY() * timeElapsed);
-				for (int i = 0; i < sprites.length; i++) {
-					for (int j = 0; j < sprites[i].length; j++) {
-						Sprite s = sprites[i][j];
-						if (s != null) {
-							if (s.isVisible()) {
-								if (s.getRect().intersect(heroRect)) {
-									heroRect.offset(-heroV.getX() * timeElapsed, -heroV.getY() * timeElapsed);
-									heroV.clear();
-									break;
-								}
-							}
-
-						}
-					}
-				}
-				heroRect.offset(-heroV.getX() * timeElapsed, -heroV.getY() * timeElapsed);
-			}
-		}
-
-		heroBody.updatePhysics(timeElapsed);
+		heroBody.update(timeElapsed);
 
 		p.clear();
 
-		if (heroBody.getX() < BORDER) {
-			p.setX(BORDER - heroBody.getX());
+		if (hero.getX() < BORDER) {
+			p.setX(BORDER - hero.getX());
 		}
-		if (heroBody.getX() > Graphics.getWidth() - BORDER) {
-			p.setX((Graphics.getWidth() - BORDER) - heroBody.getX());
+		if (hero.getX() > Graphics.getWidth() - BORDER) {
+			p.setX((Graphics.getWidth() - BORDER) - hero.getX());
 		}
-		if (heroBody.getY() < BORDER) {
-			p.setY(BORDER - heroBody.getY());
+		if (hero.getY() < BORDER) {
+			p.setY(BORDER - hero.getY());
 		}
-		if (heroBody.getY() > Graphics.getHeight() - BORDER) {
+		if (hero.getY() > Graphics.getHeight() - BORDER) {
 			if (bgY < 0)
-				p.setY((Graphics.getHeight() - BORDER) - heroBody.getY());
+				p.setY((Graphics.getHeight() - BORDER) - hero.getY());
 		}
 
-		heroBody.getPosition().add(p);
+		physics.getSpriteOffset().add(p);
+		
 		heroBody.updateSprite();
-
+		for (int i = 0; i < actors.size(); i++) {
+			actors.get(i).updateSprite();
+		}
+		
 		p.multiply(-1);
 
 		for (int i = 0; i < layers.length; i++)
@@ -248,7 +194,7 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void load(Activity parent) {
-		map = (PlatformMap) Data.loadObjectPublic(mapName, parent);
+		game = (PlatformGame) Data.loadObjectPublic(mapName, parent);
 
 	}
 

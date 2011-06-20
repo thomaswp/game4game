@@ -7,7 +7,11 @@ public class Platformer extends Game {
 
 	@Override
 	protected Logic getNewLogic() {
-		String map = getIntent().getExtras().getString("map");
+		String map = null;
+		if (getIntent() != null && getIntent().getExtras() != null)
+			map = getIntent().getExtras().getString("map");
+		else
+			map = "final-Map_1";
 		return new PlatformLogic(map);
 	}
 
