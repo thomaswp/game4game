@@ -56,6 +56,8 @@ public class Sprite implements Comparable<Sprite> {
 	private Region collidableRegion = new Region();
 	//A path created for the bitmap of the opaque regions
 	private Path bitmapPath = new Path();
+	
+	private int flashStartColor, flashColor, flashDuration, flashFrame;
 
 	/**
 	 * Gets the default Bitmap configuration for Bitmaps created by a Sprite.
@@ -531,6 +533,38 @@ public class Sprite implements Comparable<Sprite> {
 				timeout -= timeElapsed;
 			}
 		}
+		
+		if (flashFrame < flashDuration) {
+			float perc = flashFrame * 1.0f / flashDuration;
+			
+			int c1 = flashStartColor;
+			int c2 = flashColor;
+			if (perc < 0.5f) {
+				perc *= 2;
+			} else {
+				perc = (1 - perc) * 2;
+			}
+		
+			
+			this.color = Color.argb(
+					(int)(Color.alpha(c1) * (1 - perc) + Color.alpha(c2) * perc), 
+					(int)(Color.red(c1) * (1 - perc) + Color.red(c2) * perc), 
+					(int)(Color.green(c1) * (1 - perc) + Color.green(c2) * perc), 
+					(int)(Color.blue(c1) * (1 - perc) + Color.blue(c2) * perc));
+			
+			flashFrame += timeElapsed;
+			
+			if (flashFrame >= flashDuration) {
+				this.color = flashStartColor;
+			}
+		}
+	}
+	
+	public void flash(int color, int duration) {
+		this.flashStartColor = this.color;
+		this.flashColor = color;
+		this.flashDuration = duration;
+		this.flashFrame = 0;
 	}
 	
 	public String toString() {

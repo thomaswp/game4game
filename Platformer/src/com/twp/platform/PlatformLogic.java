@@ -12,6 +12,7 @@ import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
+import edu.elon.honors.price.data.R;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
@@ -32,7 +33,7 @@ import edu.elon.honors.price.physics.Vector;
 public class PlatformLogic implements Logic {
 
 	public static final float GRAVITY = 0.01f;
-	
+
 	private static final int BORDER = 150;
 	private static final int BSIZE = 50;
 	private static final int BBORDER = 15;
@@ -53,13 +54,13 @@ public class PlatformLogic implements Logic {
 	private int skyStartY, startOceanY;
 
 	private String mapName;
-	
+
 	@Override
 	public void setPaused(boolean paused) {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public PlatformLogic(String mapName) {
 		this.mapName = mapName;
 	}
@@ -68,7 +69,7 @@ public class PlatformLogic implements Logic {
 	public void initialize() {
 		if (game == null) game = new PlatformGame();
 		map = game.maps.get(game.startMapId);
-		
+
 		Bitmap bmp = Data.loadBitmap(R.drawable.ocean);
 		startOceanY = Graphics.getHeight() - bmp.getHeight();
 		background = new BackgroundSprite(bmp, new Rect(0, Graphics.getHeight() - bmp.getHeight(), 
@@ -95,9 +96,13 @@ public class PlatformLogic implements Logic {
 
 		PlatformActor heroActor = new PlatformActor();
 		heroActor.imageId = R.drawable.hero;
-		heroActor.speed = 0;
 		heroActor.jumpVelocity = 0.3f;
-		
+		heroActor.stunDuration = 600;
+		heroActor.speed = 0.2f;
+		heroActor.actorContactBehaviors[PlatformActor.BELOW] = PlatformActor.BEHAVIOR_JUMP;
+		heroActor.actorContactBehaviors[PlatformActor.RIGHT] = PlatformActor.BEHAVIOR_STUN;
+		heroActor.actorContactBehaviors[PlatformActor.LEFT] = PlatformActor.BEHAVIOR_STUN;
+
 		physics = new Physics();
 		heroBody = new PlatformBody(Viewport.DefaultViewport, physics, heroActor, 
 				48, -48, layers, map, true, actors);
@@ -106,7 +111,7 @@ public class PlatformLogic implements Logic {
 		hero.setFrame(8);
 		hero.setZoom(0.9f);
 		actors.add(heroBody);
-		
+
 		PlatformLayer actorLayer = map.actorLayer;
 		for (int i = 0; i < actorLayer.rows; i++) {
 			for (int j = 0; j < actorLayer.columns; j++) {
@@ -120,25 +125,29 @@ public class PlatformLogic implements Logic {
 				}
 			}
 		}
-		
+
 		Viewport.DefaultViewport.setZ(3);
 	}
 
 	@Override
 	public void update(long timeElapsed) {
-		
+
 		stick.update();
 		button.update();
-		
 
 
-		if (button.isTapped()) {// && Math.abs(heroBody.getVelocity().getY()) < 0.02f) {
-			heroBody.getVelocity().setY(-0.3f);
+		if (!heroBody.isStunned()) {
+			if (button.isTapped()) {
+				heroBody.getVelocity().setY(-0.3f);
+			}
+			heroBody.getVelocity().setX(stick.getPull().getX() * 0.2f);
 		}
-		heroBody.getVelocity().setX(stick.getPull().getX() * 0.2f);
-		
+
 		for (int i = 0; i < actors.size(); i++) {
 			actors.get(i).update(timeElapsed);
+		}
+		for (int i = 0; i < actors.size(); i++) {
+			actors.get(i).updateEvents();
 		}
 
 		p.clear();
@@ -158,11 +167,11 @@ public class PlatformLogic implements Logic {
 		}
 
 		physics.getSpriteOffset().add(p);
-		
+
 		for (int i = 0; i < actors.size(); i++) {
 			actors.get(i).updateSprite();
 		}
-		
+
 		p.multiply(-1);
 
 		for (int i = 0; i < layers.length; i++)

@@ -28,6 +28,29 @@ public class PlatformGame implements Serializable {
 		
 		actors = new PlatformActor[START_SIZE];
 		actors[1] = new PlatformActor();
+		PlatformActor ghost = actors[1];
+		ghost.imageId = R.drawable.ghost;
+		ghost.speed = 0.1f;
+		ghost.jumpVelocity = 0.2f;
+		ghost.edgeBehavior = PlatformActor.BEHAVIOR_TURN;
+		ghost.wallBehavior = PlatformActor.BEHAVIOR_JUMP_TURN;
+		ghost.actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
+				PlatformActor.BEHAVIOR_NONE, PlatformActor.BEHAVIOR_TURN, PlatformActor.BEHAVIOR_TURN};
+		ghost.heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
+		
+		actors[2] = new PlatformActor();
+		actors[2].imageId = R.drawable.vamp;
+		actors[2].speed = 0.1f;
+		actors[2].edgeBehavior = PlatformActor.BEHAVIOR_TURN;
+		actors[2].wallBehavior = PlatformActor.BEHAVIOR_TURN;
+		actors[2].actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
+				PlatformActor.BEHAVIOR_NONE, PlatformActor.BEHAVIOR_TURN, PlatformActor.BEHAVIOR_TURN};
+		actors[2].heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
+		
+		maps.get(0).actorLayer.tiles[0][0] = 1;
+		maps.get(0).actorLayer.tiles[1][2] = 1;
+		maps.get(0).actorLayer.tiles[3][3] = 2;
+		maps.get(0).actorLayer.tiles[2][5] = 2;
 	}
 	
 	public Tileset getMapTileset(PlatformMap map) {
