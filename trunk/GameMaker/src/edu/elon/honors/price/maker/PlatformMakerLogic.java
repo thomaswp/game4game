@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Environment;
+import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
@@ -33,13 +34,11 @@ public class PlatformMakerLogic implements Logic {
 	public static final int MODE_EDIT = 1;
 	public static final int MODE_DRAW = 2;
 
-	private static final int DARK = Color.argb(255, 150, 150, 150);
-	private static final float TRANS = 0.5f;
-	
 	public static final String MAP = "_map";
 	public static final String DATA = "_data";
 	
-
+	private static final int DARK = Color.argb(255, 150, 150, 150);
+	private static final float TRANS = 0.5f;
 
 	private PlatformGame game;
 	private PlatformMap map;
@@ -54,6 +53,8 @@ public class PlatformMakerLogic implements Logic {
 	private int hold = 500;
 	private boolean scrolling, menuTap;
 	private String mapName;
+	private Viewport actorViewport;
+	private Sprite[][] actors;
 
 	@Override
 	public void setPaused(boolean paused) {
@@ -266,6 +267,14 @@ public class PlatformMakerLogic implements Logic {
 		}
 
 		borderRight.setOriginX(-game.getMapWidth(map) + data.scrollX);
+		for (int i = 0; i < actors.length; i++) {
+			for (int j = 0; j < actors[i].length; j++) {
+				if (actors[i][j] != null) {
+					actors[i][j].setOriginX(data.scrollX);
+					actors[i][j].setOriginY(data.scrollY);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -376,6 +385,22 @@ public class PlatformMakerLogic implements Logic {
 	
 	private void loadSprites() {
 		Viewport.DefaultViewport.setZ(100);
+		
+		actorViewport = new Viewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
+		actorViewport.setOpacity(TRANS);
+		actors = new Sprite[map.rows][map.columns];
+		for (int i = 0; i < actors.length; i++) {
+			for (int j = 0; j < actors[i].length; j++) {
+				if (map.actorLayer.tiles[i][j] > 0) {
+					PlatformActor actor = game.actors[map.actorLayer.tiles[i][j]];
+					Bitmap bmp = Data.loadBitmap(actor.imageId);
+					bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+					actors[i][j] = new Sprite(actorViewport, bmp); 
+					actors[i][j].setX(j * getTileset().tileWidth);
+					actors[i][j].setY(i * getTileset().tileHeight);
+				}
+			}
+		}
 
 		menu = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 0, 50, 50);
 		menu.getBitmap().eraseColor(Color.BLUE);
