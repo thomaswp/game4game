@@ -96,13 +96,16 @@ public class PlatformLogic implements Logic {
 		PlatformActor heroActor = new PlatformActor();
 		heroActor.imageId = R.drawable.hero;
 		heroActor.speed = 0;
+		heroActor.jumpVelocity = 0.3f;
 		
 		physics = new Physics();
-		heroBody = new PlatformBody(Viewport.DefaultViewport, physics, heroActor, 48, -48, layers, map);
+		heroBody = new PlatformBody(Viewport.DefaultViewport, physics, heroActor, 
+				48, -48, layers, map, true, actors);
 		hero = heroBody.getSprite();
 		hero.centerOrigin();
 		hero.setFrame(8);
 		hero.setZoom(0.9f);
+		actors.add(heroBody);
 		
 		PlatformLayer actorLayer = map.actorLayer;
 		for (int i = 0; i < actorLayer.rows; i++) {
@@ -112,7 +115,7 @@ public class PlatformLogic implements Logic {
 					float x = j * game.getMapTileset(map).tileWidth;
 					float y = i * game.getMapTileset(map).tileHeight;
 					PlatformBody actor = new PlatformBody(Viewport.DefaultViewport, physics,
-							game.actors[actorId], x, y, layers, map);
+							game.actors[actorId], x, y, layers, map, false, actors);
 					actors.add(actor);
 				}
 			}
@@ -127,16 +130,16 @@ public class PlatformLogic implements Logic {
 		stick.update();
 		button.update();
 		
-		for (int i = 0; i < actors.size(); i++) {
-			actors.get(i).update(timeElapsed);
-		}
+
 
 		if (button.isTapped()) {// && Math.abs(heroBody.getVelocity().getY()) < 0.02f) {
 			heroBody.getVelocity().setY(-0.3f);
 		}
 		heroBody.getVelocity().setX(stick.getPull().getX() * 0.2f);
-
-		heroBody.update(timeElapsed);
+		
+		for (int i = 0; i < actors.size(); i++) {
+			actors.get(i).update(timeElapsed);
+		}
 
 		p.clear();
 
@@ -156,7 +159,6 @@ public class PlatformLogic implements Logic {
 
 		physics.getSpriteOffset().add(p);
 		
-		heroBody.updateSprite();
 		for (int i = 0; i < actors.size(); i++) {
 			actors.get(i).updateSprite();
 		}
