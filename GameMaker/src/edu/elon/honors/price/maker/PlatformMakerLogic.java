@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -36,7 +37,7 @@ public class PlatformMakerLogic implements Logic {
 
 	public static final String MAP = "_map";
 	public static final String DATA = "_data";
-	
+
 	private static final int DARK = Color.argb(255, 150, 150, 150);
 	private static final float TRANS = 0.5f;
 
@@ -44,8 +45,9 @@ public class PlatformMakerLogic implements Logic {
 	private PlatformMap map;
 	private PlatformData data;
 	private ArrayList<Tilemap> tilemaps;
-	private Tilemap preview;
-	private Sprite previewMask, undoMask, redoMask, borderRight;
+	private Tilemap texturePreview;
+	private Sprite actorPreview;
+	private Sprite texturePreviewMask, undoMask, redoMask, borderRight;
 	private Sprite menu, move, edit, draw, selection, cancel, layerUp, layerDown, undo, redo;
 	private Sprite[] buttons;
 	private RectHolder rectHolder;
@@ -75,24 +77,147 @@ public class PlatformMakerLogic implements Logic {
 
 		loadSprites();
 
-		if (preview == null)
-			data.mode = MODE_MOVE;
-		else if (data.mode == MODE_MOVE)
-			data.mode = MODE_EDIT;
+		if (data.actorLayer) {
+			if (actorHolder.getActorId() < 0)
+				data.mode = MODE_MOVE;
+			else if (data.mode == MODE_MOVE)
+				data.mode = MODE_EDIT;
+		} else {
+			if (texturePreview == null)
+				data.mode = MODE_MOVE;
+			else if (data.mode == MODE_MOVE)
+				data.mode = MODE_EDIT;
+		}
+
 	}
 
 	@Override
 	public void update(long timeElapsed) {
+
+		updateButtons(timeElapsed);
+
+		if (Input.isTapped() && Input.getLastTouchX() < menu.getX() &&
+				(Input.getLastTouchY() < undo.getY() || Input.getLastTouchX() < undo.getX()))
+			menuTap = false;
+
+		if (menuTap) {
+			if (Input.isTapped())
+				hold = 1;
+		} else {
+
+			if (Input.isTapped()) {
+				startScrollX = data.scrollX;
+				startScrollY = data.scrollY;
+				scrolling = true;
+			}
+
+			if (data.mode == MODE_MOVE) {
+				updateMove();
+			} else if (data.mode == MODE_EDIT || data.mode == MODE_DRAW) {
+				if (data.actorLayer)
+					updateEditActor();
+				else
+					updateEditTexture();
+			}
+		}
+
+
+		if (!menuTap) {
+			for (int i = 0; i < buttons.length; i++) {
+				if (buttons[i] != null) {
+					buttons[i].setOpacity(Input.isTouchDown() ? 0.2f : 1f);
+				}
+			}
+		}
+
+		actorViewport.setOpacity(data.actorLayer ? 1 : TRANS);
+		for (int i = 0; i < tilemaps.size(); i++) {
+			Tilemap tilemap = tilemaps.get(i);
+			tilemap.setColor((data.actorLayer || i < data.layer) ? DARK : Color.WHITE);
+			tilemap.setOpacity(i > data.layer ? TRANS : 1);
+			if (i == map.layers.length - 1) {
+				if (data.actorLayer) {
+					tilemap.setShowingGrid(true);
+					tilemap.getGrid().setOpacity(TRANS);
+				} else {
+					tilemap.setShowingGrid(i == data.layer);
+					tilemap.getGrid().setOpacity(1);
+				}
+			} else {
+				tilemap.setShowingGrid(i == data.layer);
+			}
+
+		}
+
 		selection.setY(data.mode * 50 + 50);
+
 		undoMask.setVisible(!(data.editIndex  >= 0));
 		redoMask.setVisible(!(data.editIndex < data.actions.size() - 1));
-		
+
+		borderRight.setOriginX(-game.getMapWidth(map) + data.scrollX);
+
+		actorViewport.setX(-data.scrollX);
+		actorViewport.setY(-data.scrollY);
+	}
+
+	@Override
+	public void save(Activity parent) {
+		Data.saveObject(mapName + DATA, parent, data);
+		Data.saveObject(mapName + MAP, parent, game);
+	}
+
+	public void saveFinal(Activity parent) {
+		if (!Data.saveObject(GameMaker.PREFIX + mapName, parent, game))
+			throw new RuntimeException("Save Failed");
+	}
+
+	@Override
+	public void load(Activity parent) {
+		data = (PlatformData)Data.loadObject(mapName + DATA, parent);
+		game = (PlatformGame)Data.loadObject(mapName + MAP, parent);
+
+		if (game == null) {
+			game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+			if (game == null) {
+				game = new PlatformGame();
+			}
+		}		
+		if (data == null) {
+			data = new PlatformData();
+		}
+
+		map = game.maps.get(game.startMapId);
+	}
+
+	public void loadFinal(Activity parent) {
+		PlatformGame game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+		if (game != null) {
+			this.game = game;
+			map = game.maps.get(game.startMapId);
+			data = new PlatformData();
+			save(parent);
+			Graphics.reset();
+			loadSprites();
+		} else {
+			throw new RuntimeException("Load Failed!");
+		}
+	}
+
+	private Tileset getTileset() {
+		return game.getMapTileset(map);
+	}
+
+	private void updateButtons(long timeElapsed) {
 		if (hold > 0) {
 			hold -= timeElapsed;
 		} else {
 			if (touchingSprite(menu)) {
 				if (Input.isTapped()) {
-					rectHolder.newRect(getTileset().bitmapId, getTileset().tileWidth, getTileset().tileHeight);
+					if (data.actorLayer) {
+						actorHolder.newActor(game);
+					} else {
+						rectHolder.newRect(getTileset().bitmapId, getTileset().tileWidth, getTileset().tileHeight);
+					}
 					return;
 				}
 			}
@@ -104,7 +229,8 @@ public class PlatformMakerLogic implements Logic {
 			}
 			if (touchingSprite(edit)) {
 				if (Input.isTapped()) {
-					if (preview != null) {
+					if ((data.actorLayer && actorPreview != null) || 
+							(!data.actorLayer && texturePreview != null)) {
 						data.mode = MODE_EDIT;
 					}
 					menuTap = true;
@@ -112,7 +238,8 @@ public class PlatformMakerLogic implements Logic {
 			}
 			if (touchingSprite(draw)) {
 				if (Input.isTapped()) {
-					if (preview != null) {
+					if ((data.actorLayer && actorPreview != null) || 
+							(!data.actorLayer && texturePreview != null)) {
 						data.mode = MODE_DRAW;
 					}
 					menuTap = true;
@@ -132,11 +259,15 @@ public class PlatformMakerLogic implements Logic {
 						data.layer++;
 					} else {
 						data.actorLayer = true;
+						if (actorHolder.getActorId() < 0)
+							data.mode = MODE_MOVE;
 					}
 				} else {
 					if (data.layer > 0) {
 						if (data.actorLayer) {
 							data.actorLayer = false;
+							if (rectHolder.getRect().isEmpty())
+								data.mode = MODE_MOVE;
 						} else {
 							data.layer--;
 						}
@@ -163,186 +294,165 @@ public class PlatformMakerLogic implements Logic {
 				}
 			}
 		}
-
-		actorViewport.setOpacity(data.actorLayer ? 1 : TRANS);
-		for (int i = 0; i < tilemaps.size(); i++) {
-			Tilemap tilemap = tilemaps.get(i);
-			tilemap.setColor(i < data.layer ? DARK : Color.WHITE);
-			tilemap.setOpacity(i > data.layer ? TRANS : 1);
-		}
-		
-		if (Input.isTapped() && Input.getLastTouchX() < menu.getX() &&
-				(Input.getLastTouchY() < undo.getY() || Input.getLastTouchX() < undo.getX()))
-			menuTap = false;
-		
-		if (menuTap) {
-			if (Input.isTapped())
-				hold = 1;
-			return;
-		}
-
-		
-		for (int i = 0; i < buttons.length; i++) {
-			if (buttons[i] != null) {
-				buttons[i].setOpacity(Input.isTouchDown() ? 0.2f : 1f);
-			}
-		}
-		
-		if (Input.isTapped()) {
-			startScrollX = data.scrollX;
-			startScrollY = data.scrollY;
-			scrolling = true;
-		}
-
-		if (data.mode == MODE_MOVE) {
-			if (Input.isTouchDown()) {
-				if (scrolling) {
-					data.scrollX = startScrollX - Input.getDistanceTouchX();
-					data.scrollY = startScrollY - Input.getDistanceTouchY();
-
-				}
-			} else {
-				scrolling = false;
-			}
-			float maxX = -Graphics.getWidth() + game.getMapWidth(map) + menu.getWidth();
-			if (data.scrollX > maxX) {
-				startScrollX -= data.scrollX - maxX;
-				data.scrollX = maxX;
-			} else if (data.scrollX < 0) {
-				startScrollX -= data.scrollX;
-				data.scrollX = 0;
-			}
-			float maxY = -Graphics.getHeight() + game.getMapHeight(map);
-			if (data.scrollY > maxY) {	
-				startScrollY -= data.scrollY - maxY;
-				data.scrollY = maxY;
-			} else if (data.scrollY < 0) {
-				startScrollY -= data.scrollY;
-				data.scrollY = 0;
-			}
-			for (int i = 0; i < tilemaps.size(); i++) {
-				tilemaps.get(i).setScrollX(data.scrollX);
-				tilemaps.get(i).setScrollY(data.scrollY);
-			}
-			if (preview != null) {
-				preview.setVisible(false);
-			}
-			cancel.setVisible(false);
-		} else if (data.mode == MODE_EDIT || data.mode == MODE_DRAW) {
-			int tileWidth = getTileset().tileWidth;
-			int tileHeight = getTileset().tileHeight;
-			
-			if (preview.isVisible() && !Input.isTouchDown()) {
-				if (!cancel.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY()))
-					draw();
-			}
-			if (Input.isTouchDown()) {
-				float offX = data.scrollX % tileWidth;
-				float offY = data.scrollY % tileHeight;
-				float mX = Input.getLastTouchX() + offX;
-				float mY = Input.getLastTouchY() + offY;
-				mX -= preview.getColumns() * tileWidth / 2;
-				mY -= preview.getRows() * tileHeight / 2;
-				preview.setScrollX(-(int)(mX / tileWidth + 0.5) * tileWidth + offX);
-				preview.setScrollY(-(int)(mY / tileHeight + 0.5) * tileHeight + offY);
-				previewMask.setX(-preview.getScrollX());
-				previewMask.setY(-preview.getScrollY());
-				preview.setVisible(true);
-
-				if (data.mode == MODE_EDIT) {
-					if (Input.isTapped()) {
-						cancel.setVisible(true);
-						if (Input.getLastTouchY() < Graphics.getHeight() / 2) {
-							cancel.setY(Graphics.getHeight() - cancel.getHeight());
-						} else {
-							cancel.setY(0);
-						}
-						if (Input.getLastTouchX() < Graphics.getWidth() / 2) {
-							cancel.setX(Graphics.getWidth() - cancel.getWidth());
-						} else {
-							cancel.setX(0);
-						}
-					}
-					preview.setVisible(!cancel.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY()));
-					if (preview.isVisible()) {
-						cancel.setColor(Color.argb(150, 150, 150, 150));
-					} else {
-						cancel.setColor(Color.argb(255, 255, 0, 0));
-					}
-				}
-
-				if (data.mode == MODE_DRAW) {
-					draw();
-				}
-			} else {
-				preview.setVisible(false);
-				cancel.setVisible(false);
-			}
-			previewMask.setVisible(preview.isVisible());
-		}
-		
-		borderRight.setOriginX(-game.getMapWidth(map) + data.scrollX);
-		actorViewport.setX(-data.scrollX);
-		actorViewport.setY(-data.scrollY);
 	}
 
-	@Override
-	public void save(Activity parent) {
-		Data.saveObject(mapName + DATA, parent, data);
-		Data.saveObject(mapName + MAP, parent, game);
-	}
+	private void updateMove() {
+		if (Input.isTouchDown()) {
+			if (scrolling) {
+				data.scrollX = startScrollX - Input.getDistanceTouchX();
+				data.scrollY = startScrollY - Input.getDistanceTouchY();
 
-	public void saveFinal(Activity parent) {
-		if (!Data.saveObject(GameMaker.PREFIX + mapName, parent, game))
-			throw new RuntimeException("Save Failed");
-	}
-
-	@Override
-	public void load(Activity parent) {
-		data = (PlatformData)Data.loadObject(mapName + DATA, parent);
-		game = (PlatformGame)Data.loadObject(mapName + MAP, parent);
-		
-		if (game == null) {
-			game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
-			if (game == null) {
-				game = new PlatformGame();
 			}
-		}		
-		if (data == null) {
-			data = new PlatformData();
-		}
-		
-		map = game.maps.get(game.startMapId);
-	}
-
-	public void loadFinal(Activity parent) {
-		PlatformGame game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
-		if (game != null) {
-			this.game = game;
-			map = game.maps.get(game.startMapId);
-			data = new PlatformData();
-			save(parent);
-			Graphics.reset();
-			loadSprites();
 		} else {
-			throw new RuntimeException("Load Failed!");
+			scrolling = false;
 		}
-	}
-	
-	private Tileset getTileset() {
-		return game.getMapTileset(map);
+		float maxX = -Graphics.getWidth() + game.getMapWidth(map) + menu.getWidth();
+		if (data.scrollX > maxX) {
+			startScrollX -= data.scrollX - maxX;
+			data.scrollX = maxX;
+		} else if (data.scrollX < 0) {
+			startScrollX -= data.scrollX;
+			data.scrollX = 0;
+		}
+		float maxY = -Graphics.getHeight() + game.getMapHeight(map);
+		if (data.scrollY > maxY) {	
+			startScrollY -= data.scrollY - maxY;
+			data.scrollY = maxY;
+		} else if (data.scrollY < 0) {
+			startScrollY -= data.scrollY;
+			data.scrollY = 0;
+		}
+		for (int i = 0; i < tilemaps.size(); i++) {
+			tilemaps.get(i).setScrollX((int)data.scrollX);
+			tilemaps.get(i).setScrollY((int)data.scrollY);
+		}
+		if (texturePreview != null) {
+			texturePreview.setVisible(false);
+		}
+		if (actorPreview != null) {
+			actorPreview.setVisible(false);
+		}
+		cancel.setVisible(false);
 	}
 
-	private void draw() {
+	private void updateEditTexture() {
+		int tileWidth = getTileset().tileWidth;
+		int tileHeight = getTileset().tileHeight;
+
+		if (texturePreview.isVisible() && !Input.isTouchDown()) {
+			if (!cancel.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY()))
+				drawTexture();
+		}
+		if (Input.isTouchDown()) {
+			float offX = data.scrollX % tileWidth;
+			float offY = data.scrollY % tileHeight;
+			float mX = Input.getLastTouchX() + offX;
+			float mY = Input.getLastTouchY() + offY;
+			mX -= texturePreview.getColumns() * tileWidth / 2;
+			mY -= texturePreview.getRows() * tileHeight / 2;
+			texturePreview.setScrollX(-(int)(mX / tileWidth + 0.5) * tileWidth + offX);
+			texturePreview.setScrollY(-(int)(mY / tileHeight + 0.5) * tileHeight + offY);
+			texturePreviewMask.setX(-texturePreview.getScrollX());
+			texturePreviewMask.setY(-texturePreview.getScrollY());
+			texturePreview.setVisible(true);
+
+			if (data.mode == MODE_EDIT) {
+				if (Input.isTapped()) {
+					cancel.setVisible(true);
+					if (Input.getLastTouchY() < Graphics.getHeight() / 2) {
+						cancel.setY(Graphics.getHeight() - cancel.getHeight());
+					} else {
+						cancel.setY(0);
+					}
+					if (Input.getLastTouchX() < Graphics.getWidth() / 2) {
+						cancel.setX(Graphics.getWidth() - cancel.getWidth());
+					} else {
+						cancel.setX(0);
+					}
+				}
+				texturePreview.setVisible(!cancel.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY()));
+				if (texturePreview.isVisible()) {
+					cancel.setColor(Color.argb(150, 150, 150, 150));
+				} else {
+					cancel.setColor(Color.argb(255, 255, 0, 0));
+				}
+			}
+
+			if (data.mode == MODE_DRAW) {
+				drawTexture();
+			}
+		} else {
+			texturePreview.setVisible(false);
+			cancel.setVisible(false);
+		}
+		texturePreviewMask.setVisible(texturePreview.isVisible());
+	}
+
+	private void updateEditActor() {
+		int tileWidth = getTileset().tileWidth;
+		int tileHeight = getTileset().tileHeight;
+
+		if (actorPreview.isVisible() && !Input.isTouchDown()) {
+			if (!cancel.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY()))
+				drawActor();
+		}
+		if (Input.isTouchDown()) {
+			int x = (int)((data.scrollX + Input.getLastTouchX() - actorPreview.getWidth() / 2) / tileWidth) * tileWidth;
+			int y = (int)((data.scrollY + Input.getLastTouchY() - actorPreview.getHeight() / 2) / tileHeight) * tileHeight;
+			actorPreview.setX(x);
+			actorPreview.setY(y);
+			actorPreview.setVisible(true);
+
+			if (data.mode == MODE_EDIT) {
+				if (Input.isTapped()) {
+					cancel.setVisible(true);
+					if (Input.getLastTouchY() < Graphics.getHeight() / 2) {
+						cancel.setY(Graphics.getHeight() - cancel.getHeight());
+					} else {
+						cancel.setY(0);
+					}
+					if (Input.getLastTouchX() < Graphics.getWidth() / 2) {
+						cancel.setX(Graphics.getWidth() - cancel.getWidth());
+					} else {
+						cancel.setX(0);
+					}
+				}
+				actorPreview.setVisible(!cancel.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY()));
+				if (actorPreview.isVisible()) {
+					cancel.setColor(Color.argb(150, 150, 150, 150));
+				} else {
+					cancel.setColor(Color.argb(255, 255, 0, 0));
+				}
+			}
+
+			if (data.mode == MODE_DRAW) {
+				drawActor();
+			}
+		} else {
+			actorPreview.setVisible(false);
+			cancel.setVisible(false);
+		}
+	}
+
+	private void drawActor() {
+		int tileWidth = getTileset().tileWidth;
+		int tileHeight = getTileset().tileHeight;
+		int column = (int)(actorPreview.getX() / tileWidth + 0.5);
+		int row = (int) (actorPreview.getY() / tileHeight + 0.5);
+		Action action = new Action(data.layer, null, row, column, actorHolder.getActorId());
+		doAction(action);
+	}
+
+	private void drawTexture() {
 		int tileWidth = getTileset().tileWidth;
 		int tileHeight = getTileset().tileHeight;
 		Rect sRect = rectHolder.getRect();
-		int column = (int)(tilemaps.get(data.layer).getScrollX() - preview.getScrollX() + 0.5) / tileWidth;
-		int row = (int)(tilemaps.get(data.layer).getScrollY() - preview.getScrollY() + 0.5) / tileHeight;
-		Action action = new Action(data.layer, sRect, row, column);
+		int column = (int)(tilemaps.get(data.layer).getScrollX() - texturePreview.getScrollX() + 0.5) / tileWidth;
+		int row = (int)(tilemaps.get(data.layer).getScrollY() - texturePreview.getScrollY() + 0.5) / tileHeight;
+		Action action = new Action(data.layer, sRect, row, column, 0);
 		doAction(action);
 	}
-	
+
 	private void doAction(Action action) {
 		while (data.actions.size() > data.editIndex + 1)
 			data.actions.remove(data.actions.size() - 1);
@@ -352,62 +462,86 @@ public class PlatformMakerLogic implements Logic {
 		data.actions.add(action);
 		redoAction();
 	}
-	
+
 	private void redoAction() {
 		data.editIndex++;
 		Action action = data.actions.get(data.editIndex);
-		int[][] tiles = map.layers[action.layer].tiles;
-		int[][] oldTiles = new int[action.rows][action.cols];
-		for (int i = 0; i < action.rows; i++) {
-			for (int j = 0; j < action.cols; j++) {
-				int r = i + action.destRow, c = j + action.destCol;
-				if (r < 0 || c < 0 || r >= tiles.length || c >= tiles[i].length)
-					continue;
-				oldTiles[i][j] = tiles[r][c];
-				tiles[r][c] = (action.srcRow + i) * getTileset().columns + (action.srcCol + j);
+		if (action.rows > 0) {
+			int[][] tiles = map.layers[action.layer].tiles;
+			int[][] oldTiles = new int[action.rows][action.cols];
+			for (int i = 0; i < action.rows; i++) {
+				for (int j = 0; j < action.cols; j++) {
+					int r = i + action.destRow, c = j + action.destCol;
+					if (r < 0 || c < 0 || r >= tiles.length || c >= tiles[i].length)
+						continue;
+					oldTiles[i][j] = tiles[r][c];
+					tiles[r][c] = (action.srcRow + i) * getTileset().columns + (action.srcCol + j);
+				}
+			}
+			tilemaps.get(action.layer).setMap(tiles);
+			action.previous = oldTiles;
+		} else {
+			int[][] tiles = map.actorLayer.tiles;
+			action.previousId = tiles[action.destRow][action.destCol];
+			if (action.previousId != action.actorId) {
+				drawActor(action.destRow, action.destCol, action.actorId);
 			}
 		}
-		tilemaps.get(action.layer).setMap(tiles);
-		action.previous = oldTiles;
 	}
-	
+
 	private void undoAction() {
 		Action action = data.actions.get(data.editIndex);
-		int[][] tiles = map.layers[action.layer].tiles;
-		int[][] oldTiles = action.previous;
-		for (int i = 0; i < action.rows; i++) {
-			for (int j = 0; j < action.cols; j++) {
-				int r = i + action.destRow, c = j + action.destCol;
-				if (r < 0 || c < 0 || r >= tiles.length || c >= tiles[i].length)
-					continue;
-				tiles[r][c] = oldTiles[i][j];
+		if (action.rows > 0) {
+			int[][] tiles = map.layers[action.layer].tiles;
+			int[][] oldTiles = action.previous;
+			for (int i = 0; i < action.rows; i++) {
+				for (int j = 0; j < action.cols; j++) {
+					int r = i + action.destRow, c = j + action.destCol;
+					if (r < 0 || c < 0 || r >= tiles.length || c >= tiles[i].length)
+						continue;
+					tiles[r][c] = oldTiles[i][j];
+				}
+			}
+			tilemaps.get(action.layer).setMap(tiles);
+		} else {
+			if (action.previousId != action.actorId) {
+				drawActor(action.destRow, action.destCol, action.previousId);
 			}
 		}
-		tilemaps.get(action.layer).setMap(tiles);
 		data.editIndex--;
 	}
-	
+
 
 	private boolean touchingSprite(Sprite sprite) {
 		return sprite.getRect().contains(Input.getLastTouchX(), Input.getLastTouchY());
 	}
-	
+
+	private void drawActor(int row, int column, int newId) {
+		if (actors[row][column] != null) {
+			actors[row][column].dispose();
+		}
+		if (newId > 0) {
+			PlatformActor actor = game.actors[newId];
+			Bitmap bmp = Data.loadBitmap(actor.imageId);
+			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+			actors[row][column] = new Sprite(actorViewport, bmp); 
+			actors[row][column].setX(column * getTileset().tileWidth);
+			actors[row][column].setY(row * getTileset().tileHeight);
+		}
+		map.actorLayer.tiles[row][column] = newId;
+	}
+
+
 	private void loadSprites() {
 		Viewport.DefaultViewport.setZ(100);
-		
-		actorViewport = new Viewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
+
+		actorViewport = new Viewport(-data.scrollX, -data.scrollY, map.columns * getTileset().tileWidth, map.rows * getTileset().tileHeight);
 		actorViewport.setOpacity(TRANS);
+		actorViewport.setZ(10);
 		actors = new Sprite[map.rows][map.columns];
 		for (int i = 0; i < actors.length; i++) {
 			for (int j = 0; j < actors[i].length; j++) {
-				if (map.actorLayer.tiles[i][j] > 0) {
-					PlatformActor actor = game.actors[map.actorLayer.tiles[i][j]];
-					Bitmap bmp = Data.loadBitmap(actor.imageId);
-					bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
-					actors[i][j] = new Sprite(actorViewport, bmp); 
-					actors[i][j].setX(j * getTileset().tileWidth);
-					actors[i][j].setY(i * getTileset().tileHeight);
-				}
+				drawActor(i, j, map.actorLayer.tiles[i][j]);
 			}
 		}
 
@@ -459,7 +593,7 @@ public class PlatformMakerLogic implements Logic {
 		selection.getBitmapCanvas().drawRect(1, 1, 49, 49, paint);
 
 		buttons = new Sprite[] {menu, move, edit, draw, selection, layerUp, layerDown, undo, redo, undoMask, redoMask};
-		
+
 		tilemaps = new ArrayList<Tilemap>(map.layers.length); 
 		Tileset tileset = getTileset();
 		Rect rect = new Rect();
@@ -488,12 +622,32 @@ public class PlatformMakerLogic implements Logic {
 					tiles[i][j] = (sRect.top + i) * tileset.columns + (sRect.left + j); 
 				}
 			}
-			preview = new Tilemap(bmp, tileset.tileWidth, tileset.tileHeight, 
+			texturePreview = new Tilemap(bmp, tileset.tileWidth, tileset.tileHeight, 
 					tileset.tileSpacing, tiles, rect, 50);
-			preview.setVisible(false);
-			previewMask = new Sprite(preview.getViewport(), 0, 0, preview.getWidth(), preview.getHeight());
-			previewMask.setZ(-20);
-			previewMask.getBitmap().eraseColor(Color.BLACK);
+			texturePreview.setVisible(false);
+			texturePreviewMask = new Sprite(texturePreview.getViewport(), 0, 0, texturePreview.getWidth(), texturePreview.getHeight());
+			texturePreviewMask.setZ(-20);
+			texturePreviewMask.getBitmap().eraseColor(Color.BLACK);
+		}
+
+		if (actorHolder.getActorId() >= 0) {
+			int id = actorHolder.getActorId();
+			Bitmap mask;
+			if (id > 0) {
+				Bitmap actorBmp = Data.loadBitmap(game.actors[id].imageId);
+				mask = Bitmap.createBitmap(actorBmp.getWidth() / 4, actorBmp.getHeight() / 4, Sprite.getDefaultConfig());
+				mask.eraseColor(Color.BLACK);
+				Canvas canvas = new Canvas();
+				canvas.setBitmap(mask);
+				paint.setColor(Color.WHITE);
+				canvas.drawBitmap(actorBmp, 0, 0, paint);
+			} else {
+				mask = Bitmap.createBitmap(getTileset().tileWidth, getTileset().tileHeight, Sprite.getDefaultConfig());
+				mask.eraseColor(Color.BLACK);
+			}
+			actorPreview = new Sprite(actorViewport, mask);
+			actorPreview.setZ(10);
+			actorPreview.setVisible(false);
 		}
 	}
 
@@ -511,40 +665,44 @@ public class PlatformMakerLogic implements Logic {
 		public abstract Rect getRect();
 		public abstract void newRect(int bitmapId, int tileWidth, int tileHeight);
 	}
-	
+
 	public static abstract class ActorHolder {
 		public abstract int getActorId();
 		public abstract void newActor(PlatformGame game);
 	}
-	
+
 	private static class Action implements Serializable {
-		private static final long serialVersionUID = 1L;
-		
+		private static final long serialVersionUID = 2L;
+
 		public int layer;
-		public int destRow, destCol, srcRow, srcCol, rows, cols;
+		public int destRow, destCol, srcRow, srcCol, rows, cols, actorId, previousId;
 		public int[][] previous;
-		
-		public Action(int layer, Rect srcRect, int destRow, int destCol) {
+
+		public Action(int layer, Rect srcRect, int destRow, int destCol, int actorId) {
 			this.layer = layer;
-			this.srcRow = srcRect.top;
-			this.srcCol = srcRect.left;
-			this.rows = srcRect.height();
-			this.cols = srcRect.width();
+			if (srcRect != null) {
+				this.srcRow = srcRect.top;
+				this.srcCol = srcRect.left;
+				this.rows = srcRect.height();
+				this.cols = srcRect.width();
+			}
 			this.destRow = destRow;
 			this.destCol = destCol;
+			this.actorId = actorId;
 		}
-		
+
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof Action) {
 				Action a = (Action)o;
 				return a.layer == layer &&
-					a.destRow == destRow &&
-					a.destCol == destCol &&
-					a.srcRow == srcRow &&
-					a.srcCol == srcCol &&
-					a.rows == rows &&
-					a.cols == cols;
+				a.destRow == destRow &&
+				a.destCol == destCol &&
+				a.srcRow == srcRow &&
+				a.srcCol == srcCol &&
+				a.rows == rows &&
+				a.cols == cols &&
+				a.actorId == actorId;
 			}
 			return false;
 		}

@@ -20,12 +20,16 @@ public class PlatformMaker extends Game {
 	private static final int REQUEST_CODE_ACTOR = 1;
 
 	private Rect selectionRect = new Rect();
-	private int actorId = 0;
+	private int actorId = -1;
 	private boolean isSelecting;
-	private String mapFinal;
+	private String gameFinal;
+	
+	public String getGameName() {
+		return gameFinal.substring(GameMaker.PREFIX.length());
+	}
 
 	public void onCreate(Bundle savedInstanceState) {
-		this.mapFinal = getIntent().getExtras().getString("map");
+		this.gameFinal = getIntent().getExtras().getString("map");
 		super.onCreate(savedInstanceState);
 	}
 
@@ -72,11 +76,17 @@ public class PlatformMaker extends Game {
 
 				Intent intent = new Intent(gm, PlatformActorSelector.class);
 				int[] ids = new int[game.actors.length];
-				for (int i = 0; i < ids.length; i++) {
+				for (int i = 1; i < ids.length; i++) {
 					ids[i] = game.actors[i].imageId;
+				}
+				String[] names = new String[ids.length];
+				for (int i = 1; i < ids.length; i++) {
+					names[i] = game.actors[i].name;
+					if (names[i] == null) names[i] = "";
 				}
 				intent.putExtra("ids", ids);
 				intent.putExtra("id", actorId);
+				intent.putExtra("names", names);
 
 				startActivityForResult(intent, REQUEST_CODE_ACTOR);
 			}
@@ -87,14 +97,14 @@ public class PlatformMaker extends Game {
 			}
 		};
 
-		String mapString = mapFinal.substring(GameMaker.PREFIX.length());
 
-		PlatformMakerLogic pm = new PlatformMakerLogic(mapString, rectHolder, actorHolder);
+		PlatformMakerLogic pm = new PlatformMakerLogic(getGameName(), rectHolder, actorHolder);
 		return pm;
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add("Database");
 		menu.add("Save");
 		menu.add("Load");
 		menu.add("Test");
@@ -103,7 +113,11 @@ public class PlatformMaker extends Game {
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		if (item.getTitle().equals("Save")) {
+		if (item.getTitle().equals("Database")) {
+			Intent intent = new Intent(this, PlatformDatabase.class);
+			intent.putExtra("game", getGameName());
+			startActivity(intent);
+		} else if (item.getTitle().equals("Save")) {
 			try {
 				((PlatformMakerLogic)view.getLogic()).saveFinal(this);
 				Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
@@ -121,7 +135,7 @@ public class PlatformMaker extends Game {
 			}
 		} else if (item.getTitle().equals("Test")) {
 			Intent intent = new Intent(this, Platformer.class);
-			intent.putExtra("map", mapFinal);
+			intent.putExtra("map", gameFinal);
 			startActivity(intent);
 		}
 		return super.onMenuItemSelected(featureId, item);
@@ -140,8 +154,8 @@ public class PlatformMaker extends Game {
 			} else if (requestCode == REQUEST_CODE_ACTOR) {
 				actorId = data.getExtras().getInt("id");
 			}
-			isSelecting = false;
 		}
+		isSelecting = false;
 	}
 
 

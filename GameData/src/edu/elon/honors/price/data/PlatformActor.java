@@ -18,7 +18,8 @@ public class PlatformActor implements Serializable {
 	public static final int BELOW = 1;
 	public static final int LEFT = 2;
 	public static final int RIGHT = 3;
-	
+
+	public String name = "";
 	public int imageId;
 	public float speed;
 	public float jumpVelocity;

@@ -8,7 +8,6 @@ import android.graphics.Rect;
 public class PlatformGame implements Serializable {
 	private static final long serialVersionUID = 2L;
 	
-	private static final int START_SIZE = 10;
 	
 	private transient Rect mapRect = new Rect();
 	
@@ -23,10 +22,10 @@ public class PlatformGame implements Serializable {
 		maps.add(new PlatformMap());
 		startMapId = 0;
 		
-		tilesets = new Tileset[START_SIZE];
+		tilesets = new Tileset[1];
 		tilesets[0] = new Tileset(R.drawable.tiles, 48, 48, 8, 8);
 		
-		actors = new PlatformActor[START_SIZE];
+		actors = new PlatformActor[10];
 		actors[1] = new PlatformActor();
 		PlatformActor ghost = actors[1];
 		ghost.imageId = R.drawable.ghost;
@@ -37,6 +36,7 @@ public class PlatformGame implements Serializable {
 		ghost.actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
 				PlatformActor.BEHAVIOR_NONE, PlatformActor.BEHAVIOR_TURN, PlatformActor.BEHAVIOR_TURN};
 		ghost.heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
+		ghost.name = "Ghost";
 		
 		actors[2] = new PlatformActor();
 		actors[2].imageId = R.drawable.vamp;
@@ -46,11 +46,8 @@ public class PlatformGame implements Serializable {
 		actors[2].actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
 				PlatformActor.BEHAVIOR_NONE, PlatformActor.BEHAVIOR_TURN, PlatformActor.BEHAVIOR_TURN};
 		actors[2].heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
-		
-		maps.get(0).actorLayer.tiles[0][0] = 1;
-		maps.get(0).actorLayer.tiles[1][2] = 1;
-		maps.get(0).actorLayer.tiles[3][3] = 2;
-		maps.get(0).actorLayer.tiles[2][5] = 2;
+		actors[2].name = "Vampire!";
+		for (int i = 3; i < actors.length; i++) actors[i] = actors[1];
 	}
 	
 	public Tileset getMapTileset(PlatformMap map) {

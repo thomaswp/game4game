@@ -21,6 +21,10 @@ public class Tilemap {
 	private Bitmap gridBitmap;
 	private BackgroundSprite grid;
 	
+	public BackgroundSprite getGrid() {
+		return grid;
+	}
+	
 	public float getScrollX() {
 		return scrollX;
 	}

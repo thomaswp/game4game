@@ -111,7 +111,7 @@ public class Graphics {
 		for (int i = 0; i < viewports.size(); i++) {
 			Viewport viewport = viewports.get(i);
 			if (viewport != null) {
-				viewport.upadte(timeElapsed);
+				viewport.update(timeElapsed);
 			}
 		}
 		updateFPSGame();
