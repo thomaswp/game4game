@@ -69,7 +69,8 @@ public class PlatformBody {
 	public PlatformBody(Viewport viewport, Physics physics, PlatformActor actor, float startX, float startY, 
 			Tilemap[] layers, PlatformMap map, boolean isHero, ArrayList<PlatformBody> actors) {
 		this.actor = actor;
-		Bitmap[] frames = Tilemap.createTiles(Data.loadBitmap(actor.imageId), 32, 48, 0); 
+		Bitmap bitmap = Data.loadBitmap(actor.imageId);
+		Bitmap[] frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / 4, bitmap.getHeight() / 4, 0); 
 		for (Bitmap bmp : frames) {
 			Canvas c = new Canvas();
 			c.setBitmap(bmp);

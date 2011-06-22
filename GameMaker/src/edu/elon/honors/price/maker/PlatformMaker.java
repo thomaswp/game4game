@@ -2,8 +2,10 @@ package edu.elon.honors.price.maker;
 
 import com.twp.platform.Platformer;
 
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
+import edu.elon.honors.price.maker.PlatformMakerLogic.ActorHolder;
 import edu.elon.honors.price.maker.PlatformMakerLogic.RectHolder;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -14,9 +16,11 @@ import android.widget.Toast;
 
 public class PlatformMaker extends Game {
 
-	private static final int REQUEST_CODE = 3;
+	private static final int REQUEST_CODE_TEXTURE = 0;
+	private static final int REQUEST_CODE_ACTOR = 1;
 
 	private Rect selectionRect = new Rect();
+	private int actorId = 0;
 	private boolean isSelecting;
 	private String mapFinal;
 
@@ -29,8 +33,7 @@ public class PlatformMaker extends Game {
 	protected Logic getNewLogic() {
 
 		final PlatformMaker gm = this;
-		PlatformMakerLogic pm = new PlatformMakerLogic(mapFinal.substring(GameMaker.PREFIX.length()),
-				new RectHolder() {
+		RectHolder rectHolder = new RectHolder() {
 
 			@Override
 			public void newRect(int bitmapId, int tileWidth, int tileHeight) {
@@ -49,14 +52,44 @@ public class PlatformMaker extends Game {
 				intent.putExtra("right", rect.right);
 				intent.putExtra("bottom", rect.bottom);
 
-				startActivityForResult(intent, REQUEST_CODE);
+				startActivityForResult(intent, REQUEST_CODE_TEXTURE);
 			}
 
 			@Override
 			public Rect getRect() {
 				return selectionRect;
 			}
-		});
+		};
+
+		ActorHolder actorHolder = new ActorHolder() {
+
+			@Override
+			public void newActor(PlatformGame game) {
+				if (isSelecting) {
+					return;
+				}
+				isSelecting = true;
+
+				Intent intent = new Intent(gm, PlatformActorSelector.class);
+				int[] ids = new int[game.actors.length];
+				for (int i = 0; i < ids.length; i++) {
+					ids[i] = game.actors[i].imageId;
+				}
+				intent.putExtra("ids", ids);
+				intent.putExtra("id", actorId);
+
+				startActivityForResult(intent, REQUEST_CODE_ACTOR);
+			}
+
+			@Override
+			public int getActorId() {
+				return actorId;
+			}
+		};
+
+		String mapString = mapFinal.substring(GameMaker.PREFIX.length());
+
+		PlatformMakerLogic pm = new PlatformMakerLogic(mapString, rectHolder, actorHolder);
 		return pm;
 	}
 
@@ -98,11 +131,15 @@ public class PlatformMaker extends Game {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			int left = data.getExtras().getInt("left");
-			int top = data.getExtras().getInt("top");
-			int right = data.getExtras().getInt("right");
-			int bottom = data.getExtras().getInt("bottom");
-			selectionRect.set(left, top, right, bottom);
+			if (requestCode == REQUEST_CODE_TEXTURE) {
+				int left = data.getExtras().getInt("left");
+				int top = data.getExtras().getInt("top");
+				int right = data.getExtras().getInt("right");
+				int bottom = data.getExtras().getInt("bottom");
+				selectionRect.set(left, top, right, bottom);
+			} else if (requestCode == REQUEST_CODE_ACTOR) {
+				actorId = data.getExtras().getInt("id");
+			}
 			isSelecting = false;
 		}
 	}
