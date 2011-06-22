@@ -259,7 +259,7 @@ public class Viewport implements Comparable<Viewport> {
 	 * @param width The width
 	 * @param height The height
 	 */
-	public Viewport(int x, int y, int width, int height) {
+	public Viewport(float x, float y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -313,7 +313,7 @@ public class Viewport implements Comparable<Viewport> {
 	/**
 	 * Updates this Viewport and each Sprite in it
 	 */
-	public void upadte(long timeElapsed) {
+	public void update(long timeElapsed) {
 		for (int i = 0; i < sprites.size(); i++) {
 			Sprite sprite = sprites.get(i);
 			if (sprite.isDisposed()) {

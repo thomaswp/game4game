@@ -47,6 +47,8 @@ public class Sprite implements Comparable<Sprite> {
 	
 	private Canvas bitmapCanvas;
 	
+	private float lastViewportX, lastViewportY;
+	
 	private RectF rect = new RectF(), mapRect = new RectF();
 
 	//Matrix to transform this sprite to its location, zoom and rotation
@@ -383,6 +385,12 @@ public class Sprite implements Comparable<Sprite> {
 	}
 
 	public Matrix getDrawMatrix() {
+		if (lastViewportX != viewport.getX() ||
+				lastViewportY != viewport.getY()) {
+			lastViewportX = viewport.getX();
+			lastViewportY = viewport.getY();
+			resetMatrix = true;
+		}
 		if (resetMatrix) {
 			createDrawMatrix();
 		}

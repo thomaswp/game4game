@@ -2,6 +2,8 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.graphics.Graphics;
+import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.input.Input;
 import android.app.Activity;
 import android.content.Context;
@@ -35,14 +37,20 @@ public class PlatformActorSelector extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		int[] ids = getIntent().getExtras().getIntArray("ids");
+		String[] names = getIntent().getExtras().getStringArray("names");
 		int id = getIntent().getExtras().getInt("id");
 		Bitmap[] bitmaps = new Bitmap[ids.length];
-		for (int i = 0; i < ids.length; i++) {
-			bitmaps[i] = Data.loadBitmap(ids[i]);
+		bitmaps[0] = Bitmap.createBitmap(32 * 2, 48 * 2, Sprite.getDefaultConfig());
+		bitmaps[0].eraseColor(Color.RED);
+
+		for (int i = 1; i < ids.length; i++) {
+			Bitmap source = Data.loadBitmap(ids[i]);
+			bitmaps[i] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
+			bitmaps[i] = Bitmap.createScaledBitmap(bitmaps[i], bitmaps[i].getWidth() * 2, bitmaps[i].getHeight() * 2, false);
 		}
 
 		final PlatformActorSelector me = this;
-		view = new ASView(this, bitmaps, id, new ASView.Poster() {
+		view = new ASView(this, bitmaps, names, id, new ASView.Poster() {
 			@Override
 			void post(int id) {
 				Intent intent = new Intent();
@@ -59,34 +67,39 @@ public class PlatformActorSelector extends Activity {
 
 	private static class ASView extends SurfaceView implements SurfaceHolder.Callback{
 
+		private static int BORDER = 150;
+
 		private Bitmap[] bitmaps;
+		private String[] names;
+		private Rect[] bitmapRects;
 		private int height, width;
 		private SurfaceHolder holder;
 		private Paint paint = new Paint();
 		private Thread thread;
 		private long lastTime;
-		private float startBitmapY;
+		private float startScrollY;
+		private float scrollY;
 		private boolean move;
 		private int id = 0;
-		private RectF okRect;
+		private RectF okRect, drawRect = new RectF();
 		private Poster poster;
-		
+
 		public Thread getThread() {
 			return thread;
 		}
 
-		public ASView(Context context, Bitmap[] bitmaps, int id, Poster poster) {
+		public ASView(Context context, Bitmap[] bitmaps, String[] names, int id, Poster poster) {
 			super(context);
 			this.bitmaps = bitmaps;
 			this.id = id;
 			this.poster = poster;
+			this.names = names;
 			holder = getHolder();
 			holder.addCallback(this);
 
 			setOnTouchListener(new OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					//Link it to Input
 					return Input.onTouch(v, event);
 				}
 			});
@@ -102,6 +115,8 @@ public class PlatformActorSelector extends Activity {
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
+			createRects();
+
 			thread = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -136,63 +151,99 @@ public class PlatformActorSelector extends Activity {
 			Canvas canvas = holder.lockCanvas(null);
 			try {
 				canvas.drawColor(Color.WHITE);
-//				canvas.drawBitmap(bitmap, bitmapX, bitmapY, paint);
-//				paint.setStyle(Style.STROKE);
-//				paint.setStrokeWidth(2);
-//				paint.setColor(Color.GRAY);
-//				
-//				drawRect.set(selection.left * tileWidth, selection.top * tileHeight + (int)bitmapY, 
-//						selection.right * tileWidth, selection.bottom * tileHeight + (int)bitmapY);
-//				canvas.drawRect(drawRect, paint);
-//				
-//				paint.setColor(Color.GREEN);
-//				paint.setStyle(Style.FILL);
+
+
+				paint.setStyle(Style.STROKE);
+				paint.setStrokeWidth(1);
+				for (int i = 0; i < bitmapRects.length; i++) {
+					paint.setColor(Color.WHITE);
+					canvas.drawBitmap(bitmaps[i], bitmapRects[i].left, bitmapRects[i].top - scrollY, paint);
+					paint.setColor(Color.argb(100, 0, 0, 0));
+					canvas.drawRect(bitmapRects[i], paint);
+				}
+
+				if (id >= 0) {
+					paint.setStrokeWidth(2);
+					paint.setColor(Color.argb(255, 0, 0, 255));
+					drawRect.set(bitmapRects[id]);
+					drawRect.offset(0, -scrollY);
+					canvas.drawRect(drawRect, paint);
+
+				}
+
+				paint.setColor(Color.GREEN);
+				paint.setStyle(Style.FILL);
 				canvas.drawRect(okRect, paint);
+
+				if (id >= 0) {
+					String text = id == 0 ? "Clear" : names[id];
+					paint.setColor(Color.BLACK);
+					paint.setTextSize(30);
+					paint.setAntiAlias(true);
+					paint.setStyle(Style.FILL);
+					float size = paint.measureText(text);
+					canvas.drawText(text, width - size - 10, height - 10, paint);
+				}
+
 			} finally {
 				holder.unlockCanvasAndPost(canvas);
 			}
 		}
 
-		private void update() {
-//			long timeElapsed = System.currentTimeMillis() - lastTime;
-//			lastTime += timeElapsed;
-//			Input.update(timeElapsed);
-//
-//			if (Input.isTapped()) {
-//				if (okRect.contains(Input.getLastTouchX(), Input.getLastTouchY())) {
-//					poster.post(selection);
-//					return;
-//				}
-//				startBitmapY = bitmapY;
-//				move = Input.getLastTouchX() > bitmap.getWidth();
-//				if (!move) {
-//					startSelectX = Input.getLastTouchX();
-//					startSelectY = Input.getLastTouchY() - bitmapY;
-//				}
-//			}
-//
-//			if (Input.isTouchDown()) {
-//				if (move) {
-//					bitmapY = startBitmapY + Input.getDistanceTouchY();
-//					if (bitmapY > 0) {
-//						startBitmapY -= bitmapY;
-//						bitmapY = 0;
-//					}
-//					if (bitmapY < height - bitmap.getHeight()) {
-//						startBitmapY -= (bitmapY - (height - bitmap.getHeight()));
-//						bitmapY = height - bitmap.getHeight();
-//					}
-//				} else {
-//					float x = Input.getLastTouchX(), y = Input.getLastTouchY() - bitmapY;
-//					float left = Math.min(startSelectX, x), right = Math.max(startSelectX, x);
-//					float top = Math.min(startSelectY, y), bottom = Math.max(startSelectY, y);
-//					selection.set((int)(left / tileWidth), (int)(top / tileHeight), 
-//							(int)(right / tileWidth) + 1, (int)(bottom / tileHeight) + 1);
-//					selection.right = Math.min(selection.right, bitmap.getWidth() / tileWidth);
-//				}
-//			}
+		private void createRects() {
+			bitmapRects = new Rect[bitmaps.length];
+			int x = 0, y = 0, maxHeight = 0;
+			for (int i = 0; i < bitmaps.length; i++) {
+				Bitmap bmp = bitmaps[i];
+				if (x + bmp.getWidth() + BORDER >= Graphics.getWidth() && x != 0) {
+					x = 0;
+					y += maxHeight;
+					maxHeight = 0;
+				}
+				bitmapRects[i] = new Rect(x, y, x + bmp.getWidth(), y + bmp.getHeight());
+				maxHeight = Math.max(maxHeight, bmp.getHeight());
+				x += bmp.getWidth();
+			}
 		}
-		
+
+		private void update() {
+			long timeElapsed = System.currentTimeMillis() - lastTime;
+			lastTime += timeElapsed;
+			Input.update(timeElapsed);
+
+			if (Input.isTapped()) {
+				if (okRect.contains(Input.getLastTouchX(), Input.getLastTouchY())) {
+					poster.post(id);
+					return;
+				}
+				move = Input.getLastTouchX() > Graphics.getWidth() - BORDER;
+				startScrollY = scrollY;
+				if (!move) {
+					for (int i = 0; i < bitmapRects.length; i++) {
+						if (bitmapRects[i].contains((int)Input.getLastTouchX(), 
+								(int)(Input.getLastTouchY() + scrollY))) {
+							id = i;
+						}
+					}
+				}
+			}
+
+			if (Input.isTouchDown()) {
+				if (move) {
+					scrollY = startScrollY - Input.getDistanceTouchY();
+					if (scrollY < 0) {
+						startScrollY -= scrollY;
+						scrollY = 0;
+					}
+					int bot = Math.max(bitmapRects[bitmapRects.length - 1].bottom, height);
+					if (scrollY > bot - height) {
+						startScrollY -= (scrollY - (bot - height));
+						scrollY = bot - height;
+					}
+				}
+			}
+		}
+
 		public static abstract class Poster {
 			abstract void post(int id);
 		}
