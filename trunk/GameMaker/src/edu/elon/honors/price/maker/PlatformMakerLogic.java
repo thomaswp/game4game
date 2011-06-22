@@ -48,13 +48,14 @@ public class PlatformMakerLogic implements Logic {
 	private Sprite previewMask, undoMask, redoMask, borderRight;
 	private Sprite menu, move, edit, draw, selection, cancel, layerUp, layerDown, undo, redo;
 	private Sprite[] buttons;
-	private RectHolder holder;
+	private RectHolder rectHolder;
 	private float startScrollX, startScrollY;
 	private int hold = 500;
 	private boolean scrolling, menuTap;
 	private String mapName;
 	private Viewport actorViewport;
 	private Sprite[][] actors;
+	private ActorHolder actorHolder;
 
 	@Override
 	public void setPaused(boolean paused) {
@@ -62,9 +63,10 @@ public class PlatformMakerLogic implements Logic {
 
 	}
 
-	public PlatformMakerLogic(String mapName, RectHolder holder) {
+	public PlatformMakerLogic(String mapName, RectHolder holder, ActorHolder actorHolder) {
 		this.mapName = mapName;
-		this.holder = holder;
+		this.rectHolder = holder;
+		this.actorHolder = actorHolder;
 	}
 
 	@Override
@@ -90,7 +92,7 @@ public class PlatformMakerLogic implements Logic {
 		} else {
 			if (touchingSprite(menu)) {
 				if (Input.isTapped()) {
-					holder.newRect(getTileset().bitmapId, getTileset().tileWidth, getTileset().tileHeight);
+					rectHolder.newRect(getTileset().bitmapId, getTileset().tileWidth, getTileset().tileHeight);
 					return;
 				}
 			}
@@ -125,17 +127,22 @@ public class PlatformMakerLogic implements Logic {
 				}
 			}
 			if (changeLayer != 0) {
-				if (changeLayer > 0 && data.layer < map.layers.length - 1) {
-					tilemaps.get(data.layer).setColor(DARK);
-					data.layer++;
-					tilemaps.get(data.layer).setOpacity(1);
-					drawChangeLayer();
-				} else if (changeLayer < 0 && data.layer > 0) {
-					tilemaps.get(data.layer).setOpacity(TRANS);
-					data.layer--;
-					tilemaps.get(data.layer).setColor(Color.WHITE);
-					drawChangeLayer();
+				if (changeLayer > 0) {
+					if (data.layer < map.layers.length - 1) {
+						data.layer++;
+					} else {
+						data.actorLayer = true;
+					}
+				} else {
+					if (data.layer > 0) {
+						if (data.actorLayer) {
+							data.actorLayer = false;
+						} else {
+							data.layer--;
+						}
+					}
 				}
+				drawChangeLayer();
 				changeLayer = 0;
 				menuTap = true;
 			}
@@ -156,6 +163,14 @@ public class PlatformMakerLogic implements Logic {
 				}
 			}
 		}
+
+		actorViewport.setOpacity(data.actorLayer ? 1 : TRANS);
+		for (int i = 0; i < tilemaps.size(); i++) {
+			Tilemap tilemap = tilemaps.get(i);
+			tilemap.setColor(i < data.layer ? DARK : Color.WHITE);
+			tilemap.setOpacity(i > data.layer ? TRANS : 1);
+		}
+		
 		if (Input.isTapped() && Input.getLastTouchX() < menu.getX() &&
 				(Input.getLastTouchY() < undo.getY() || Input.getLastTouchX() < undo.getX()))
 			menuTap = false;
@@ -265,16 +280,10 @@ public class PlatformMakerLogic implements Logic {
 			}
 			previewMask.setVisible(preview.isVisible());
 		}
-
+		
 		borderRight.setOriginX(-game.getMapWidth(map) + data.scrollX);
-		for (int i = 0; i < actors.length; i++) {
-			for (int j = 0; j < actors[i].length; j++) {
-				if (actors[i][j] != null) {
-					actors[i][j].setOriginX(data.scrollX);
-					actors[i][j].setOriginY(data.scrollY);
-				}
-			}
-		}
+		actorViewport.setX(-data.scrollX);
+		actorViewport.setY(-data.scrollY);
 	}
 
 	@Override
@@ -327,7 +336,7 @@ public class PlatformMakerLogic implements Logic {
 	private void draw() {
 		int tileWidth = getTileset().tileWidth;
 		int tileHeight = getTileset().tileHeight;
-		Rect sRect = holder.getRect();
+		Rect sRect = rectHolder.getRect();
 		int column = (int)(tilemaps.get(data.layer).getScrollX() - preview.getScrollX() + 0.5) / tileWidth;
 		int row = (int)(tilemaps.get(data.layer).getScrollY() - preview.getScrollY() + 0.5) / tileHeight;
 		Action action = new Action(data.layer, sRect, row, column);
@@ -470,9 +479,9 @@ public class PlatformMakerLogic implements Logic {
 			tilemaps.add(tm);
 		}
 
-		if (!holder.getRect().isEmpty()) {
+		if (!rectHolder.getRect().isEmpty()) {
 			Bitmap bmp = Data.loadBitmap(tileset.bitmapId);
-			Rect sRect = holder.getRect();
+			Rect sRect = rectHolder.getRect();
 			int[][] tiles = new int[sRect.height()][sRect.width()];
 			for (int i = 0; i < tiles.length; i++) {
 				for (int j = 0; j < tiles[i].length; j++) {
@@ -490,7 +499,8 @@ public class PlatformMakerLogic implements Logic {
 
 	private void drawChangeLayer() {
 		layerUp.getBitmap().eraseColor(Color.LTGRAY);
-		String luText = (data.layer == map.layers.length - 1) ? "-" : "" + (data.layer + 1);
+		String luText = (data.layer == map.layers.length - 1) ? "A" : "" + (data.layer + 1);
+		if (data.actorLayer) luText = "-";
 		Helper.drawCenteredText(layerUp, luText, Color.BLACK, 20);
 		layerDown.getBitmap().eraseColor(Color.DKGRAY);
 		String ldText = (data.layer == 0) ? "-" : "" + (data.layer - 1);
@@ -500,6 +510,11 @@ public class PlatformMakerLogic implements Logic {
 	public static abstract class RectHolder {
 		public abstract Rect getRect();
 		public abstract void newRect(int bitmapId, int tileWidth, int tileHeight);
+	}
+	
+	public static abstract class ActorHolder {
+		public abstract int getActorId();
+		public abstract void newActor(PlatformGame game);
 	}
 	
 	private static class Action implements Serializable {
@@ -542,5 +557,6 @@ public class PlatformMakerLogic implements Logic {
 		public int editIndex = -1;
 		public int layer = 1, mode = MODE_MOVE;
 		public float scrollX, scrollY;
+		public boolean actorLayer;
 	}
 }
