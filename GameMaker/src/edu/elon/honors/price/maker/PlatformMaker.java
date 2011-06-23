@@ -40,14 +40,14 @@ public class PlatformMaker extends Game {
 		RectHolder rectHolder = new RectHolder() {
 
 			@Override
-			public void newRect(int bitmapId, int tileWidth, int tileHeight) {
+			public void newRect(String bitmapName, int tileWidth, int tileHeight) {
 				if (isSelecting) {
 					return;
 				}
 				isSelecting = true;
 
 				Intent intent = new Intent(gm, PlatformTextureSelector.class);
-				intent.putExtra("id", bitmapId);
+				intent.putExtra("id", bitmapName);
 				intent.putExtra("tileWidth", tileWidth);
 				intent.putExtra("tileHeight", tileHeight);
 				Rect rect = this.getRect();
@@ -75,9 +75,9 @@ public class PlatformMaker extends Game {
 				isSelecting = true;
 
 				Intent intent = new Intent(gm, PlatformActorSelector.class);
-				int[] ids = new int[game.actors.length];
+				String[] ids = new String[game.actors.length];
 				for (int i = 1; i < ids.length; i++) {
-					ids[i] = game.actors[i].imageId;
+					ids[i] = game.actors[i].imageName;
 				}
 				String[] names = new String[ids.length];
 				for (int i = 1; i < ids.length; i++) {
@@ -119,7 +119,7 @@ public class PlatformMaker extends Game {
 			startActivity(intent);
 		} else if (item.getTitle().equals("Save")) {
 			try {
-				((PlatformMakerLogic)view.getLogic()).saveFinal(this);
+				((PlatformMakerLogic)view.getLogic()).saveFinal();
 				Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -127,7 +127,7 @@ public class PlatformMaker extends Game {
 			}
 		} else if (item.getTitle().equals("Load")) {
 			try {
-				((PlatformMakerLogic)view.getLogic()).loadFinal(this);
+				((PlatformMakerLogic)view.getLogic()).loadFinal();
 				Toast.makeText(this, "Load Successful!", Toast.LENGTH_SHORT).show(); 
 			} catch (Exception ex) {
 				ex.printStackTrace();

@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 import android.app.Activity;
@@ -33,7 +34,7 @@ public class PlatformTextureSelector extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), getIntent().getExtras().getInt("id"));
+		Bitmap bitmap = Data.loadTileset(getIntent().getExtras().getString("id"));
 		int tileWidth = getIntent().getExtras().getInt("tileWidth");
 		int tileHeight = getIntent().getExtras().getInt("tileHeight");
 		int left = getIntent().getExtras().getInt("left");

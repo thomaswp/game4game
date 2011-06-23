@@ -1,17 +1,19 @@
 package edu.elon.honors.price.maker;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.badlogic.gdx.utils.Array;
 import com.twp.platform.Platformer;
 
+import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformMap;
-import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 
 import android.app.Activity;
@@ -26,6 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -37,9 +40,9 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
 public class GameMaker extends Activity {
-	
+
 	public static final String PREFIX = "final-";
-	
+
 	private String selectedMap;
 
 	@Override
@@ -47,35 +50,51 @@ public class GameMaker extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
+
 		setContentView(R.layout.main);
-		
-		ContentResolver cr = getContentResolver();
-		try {
-			AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, "graphics/actors/ghost.png"), "r");
-			Game.debug(afd.getDeclaredLength());
-			InputStream is = afd.createInputStream();
-			Bitmap bmp = BitmapFactory.decodeStream(is);
-			Game.debug(bmp.getWidth());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		
+
+		createDirs();
+
 		loadMaps();
 		loadButtons();
-		
+
 		super.onCreate(savedInstanceState);
 	}
-	
+
+	private void createDirs() {
+		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+			try {
+				ArrayList<String> dirs = new ArrayList<String>();
+				dirs.add(Data.ACTORS_DIR);
+				dirs.add(Data.TILESETS_DIR);
+				
+				for (int i = 0; i < dirs.size(); i++) {
+					File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + dirs.get(i));
+					if (!file.exists()) {
+						file.mkdirs();
+					}
+				}
+			} catch (Exception ex) { 
+				Game.debug("Could not create resource directory on SD Card");
+				ex.printStackTrace(); 
+			}
+		} else {
+			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
+				Game.debug("SD Card is Read Only");
+			} else {
+				Game.debug("No SD Card detected");
+			}
+		}
+	}
+
 	private void loadMaps() {
 		LinearLayout layout = (LinearLayout)findViewById(R.id.linearLayout1);
 		layout.removeAllViews();
 		RadioGroup group = new RadioGroup(this);
 		layout.addView(group);
-		
+
 		selectedMap = null;
-				
+
 		String[] files = fileList();
 		for (String file : files) {
 			if (file.indexOf(PREFIX) == 0) {
@@ -100,35 +119,35 @@ public class GameMaker extends Activity {
 			}
 		}
 	}
-	
+
 	private void loadButtons() {
 		Button newGame = (Button)findViewById(R.id.buttonNewGame);
 		Button edit = (Button)findViewById(R.id.buttonEdit);
 		Button play = (Button)findViewById(R.id.buttonPlay);
 		Button delete = (Button)findViewById(R.id.buttonDelete);
 		Button copy = (Button)findViewById(R.id.buttonCopy);
-		
+
 		edit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				edit();
 			}
 		});
-		
+
 		play.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				play();
 			}
 		});
-		
+
 		delete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				delete();
 			}
 		});
-		
+
 		newGame.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -136,7 +155,7 @@ public class GameMaker extends Activity {
 			}
 		});
 	}
-	
+
 	private void newGame() {
 		String[] files = fileList();
 		int n = 0;
@@ -148,35 +167,35 @@ public class GameMaker extends Activity {
 			for (int i = 0; i < files.length; i++) 
 				exists |= files[i].equals(name); 
 		} while (exists);
-		
-		Data.saveObject(name, this, new PlatformGame());
-		
+
+		Data.saveGame(name, this, new PlatformGame());
+
 		loadMaps();
 	}
-	
+
 	private void delete() {
 		if (selectedMap != null) {
 			new AlertDialog.Builder(this)
-	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle("Delete?")
-	        .setMessage("Confirm Delete")
-	        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setTitle("Delete?")
+			.setMessage("Confirm Delete")
+			.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
 
-	            @Override
-	            public void onClick(DialogInterface dialog, int which) {
-	                  deleteFile(selectedMap);
-	                  String name = selectedMap.substring(PREFIX.length());
-	                  deleteFile(name + PlatformMakerLogic.DATA);
-	                  deleteFile(name + PlatformMakerLogic.MAP);
-	                  loadMaps();
-	            }
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					deleteFile(selectedMap);
+					String name = selectedMap.substring(PREFIX.length());
+					deleteFile(name + PlatformMakerLogic.DATA);
+					deleteFile(name + PlatformMakerLogic.MAP);
+					loadMaps();
+				}
 
-	        })
-	        .setNegativeButton("Cancel", null)
-	        .show();
+			})
+			.setNegativeButton("Cancel", null)
+			.show();
 		}
 	}
-	
+
 	private void edit() {
 		if (selectedMap != null) {
 			Intent intent = new Intent(this, PlatformMaker.class);
@@ -184,7 +203,7 @@ public class GameMaker extends Activity {
 			startActivity(intent);
 		}
 	}
-	
+
 	private void play() {
 		if (selectedMap != null) {
 			Intent intent = new Intent(this, Platformer.class);

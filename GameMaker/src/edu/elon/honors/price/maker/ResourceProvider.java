@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.game.Game;
 
 import android.content.ContentProvider;
@@ -29,8 +30,6 @@ import android.util.Log;
 
 public class ResourceProvider extends ContentProvider {
 
-	public static final String GRAPHICS = "graphics";
-
 	@Override
 	public ParcelFileDescriptor openFile(Uri u, String mode) throws FileNotFoundException {
 		URI uri = URI.create("file:///data/data/edu.elon.honors.price.maker/files/" + u.getLastPathSegment());
@@ -39,10 +38,13 @@ public class ResourceProvider extends ContentProvider {
 	}
 
 	@Override
-	public AssetFileDescriptor openAssetFile(Uri u, String mode) throws FileNotFoundException {
+	public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
+		if (!uri.getPathSegments().contains(Data.GRAPHICS_DIR))
+			return super.openAssetFile(uri, mode);
+		
 		AssetManager am = getContext().getAssets();
 		try {
-			AssetFileDescriptor afd = am.openFd(u.getPath().substring(1));
+			AssetFileDescriptor afd = am.openFd(uri.getPath().substring(1));
 			return afd;
 		} catch (Exception ex) {
 			throw new FileNotFoundException(ex.getMessage());

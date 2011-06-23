@@ -8,13 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
 import edu.elon.honors.price.data.R;
 import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.AnimatedSprite;
@@ -53,16 +53,18 @@ public class PlatformLogic implements Logic {
 	private float mapX, mapY, bgX, bgY, skyScroll;
 	private int skyStartY, startOceanY;
 
+	private boolean paused;
+	
 	private String mapName;
 
 	@Override
 	public void setPaused(boolean paused) {
-		// TODO Auto-generated method stub
-
+		paused = true;
 	}
 
 	public PlatformLogic(String mapName) {
 		this.mapName = mapName;
+		paused = true;
 	}
 
 	@Override
@@ -70,12 +72,12 @@ public class PlatformLogic implements Logic {
 		if (game == null) game = new PlatformGame();
 		map = game.maps.get(game.startMapId);
 
-		Bitmap bmp = Data.loadBitmap(R.drawable.ocean);
+		Bitmap bmp = Game.loadBitmap(R.drawable.ocean);
 		startOceanY = Graphics.getHeight() - bmp.getHeight();
 		background = new BackgroundSprite(bmp, new Rect(0, Graphics.getHeight() - bmp.getHeight(), 
 				Graphics.getWidth(), Graphics.getHeight()), -5);
 
-		bmp = Data.loadBitmap(R.drawable.sky);
+		bmp = Game.loadBitmap(R.drawable.sky);
 		skyStartY = bmp.getHeight() - Graphics.getHeight();
 		sky = new BackgroundSprite(bmp, new Rect(0, skyStartY, Graphics.getWidth(), skyStartY + Graphics.getHeight()), -5);
 
@@ -89,13 +91,13 @@ public class PlatformLogic implements Logic {
 		Tileset tileset = game.getMapTileset(map);
 		for (int i = 0; i < layers.length; i++) {
 			PlatformLayer layer = map.layers[i];
-			layers[i] = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
+			layers[i] = new Tilemap(Data.loadTileset(tileset.bitmapName), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, Graphics.getRect(), i * 2);
 		}
 
 		PlatformActor heroActor = new PlatformActor();
-		heroActor.imageId = R.drawable.hero;
+		heroActor.imageName = "002-Fighter02.png";
 		heroActor.jumpVelocity = 0.3f;
 		heroActor.stunDuration = 600;
 		heroActor.speed = 0.2f;
@@ -127,11 +129,19 @@ public class PlatformLogic implements Logic {
 		}
 
 		Viewport.DefaultViewport.setZ(3);
+		
+		update(1);
 	}
 
 	@Override
 	public void update(long timeElapsed) {
 
+		if (Input.isTapped()) paused = false;
+		if (paused) {
+			updateScroll();
+			return;
+		}
+		
 		stick.update();
 		button.update();
 
@@ -149,7 +159,22 @@ public class PlatformLogic implements Logic {
 		for (int i = 0; i < actors.size(); i++) {
 			actors.get(i).updateEvents();
 		}
+		
+		updateScroll();
+	}
 
+	@Override
+	public void save() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void load() {
+		game = (PlatformGame) Data.loadGame(mapName, Game.getCurrentGame());
+	}
+
+	private void updateScroll() {
 		p.clear();
 
 		if (hero.getX() < BORDER) {
@@ -192,21 +217,5 @@ public class PlatformLogic implements Logic {
 		float scroll = Math.min(0, sky.getViewport().getY() + bgY);
 		sky.scroll(p.getX(), scroll - skyScroll);
 		skyScroll = scroll;
-
-
-
 	}
-
-	@Override
-	public void save(Activity parent) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void load(Activity parent) {
-		game = (PlatformGame) Data.loadObjectPublic(mapName, parent);
-
-	}
-
 }

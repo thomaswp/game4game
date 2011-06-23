@@ -1,6 +1,6 @@
 package edu.elon.honors.price.graphics;
 
-import edu.elon.honors.price.game.Data;
+import edu.elon.honors.price.game.Cache;
 import edu.elon.honors.price.game.Game;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -225,8 +225,8 @@ public class Tilemap {
 	
 	
 	private void createGrid() {
-		if (Data.isBitmapRegistered(getGridId())) {
-			gridBitmap = Data.getRegisteredBitmap(getGridId());
+		if (Cache.isBitmapRegistered(getGridId())) {
+			gridBitmap = Cache.getRegisteredBitmap(getGridId());
 		} else {
 			gridBitmap = Bitmap.createBitmap(tileWidth, tileHeight, Sprite.defaultConfig);
 			Canvas c = new Canvas();
@@ -236,7 +236,7 @@ public class Tilemap {
 			c.setBitmap(gridBitmap);
 			c.drawRect(0, 0, tileWidth, tileHeight, p);
 			c.drawRect(1, 1, tileWidth - 1, tileHeight - 1, p);
-			Data.RegisterBitmap(gridBitmap, getGridId());
+			Cache.RegisterBitmap(getGridId(), gridBitmap);
 		}
 		
 		grid = new BackgroundSprite(gridBitmap, viewport);

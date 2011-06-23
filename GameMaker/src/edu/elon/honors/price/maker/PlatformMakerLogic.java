@@ -14,12 +14,12 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Environment;
+import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
 import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Graphics;
@@ -161,23 +161,23 @@ public class PlatformMakerLogic implements Logic {
 	}
 
 	@Override
-	public void save(Activity parent) {
-		Data.saveObject(mapName + DATA, parent, data);
-		Data.saveObject(mapName + MAP, parent, game);
+	public void save() {
+		Game.saveObject(mapName + DATA, data);
+		Game.saveObject(mapName + MAP, game);
 	}
 
-	public void saveFinal(Activity parent) {
-		if (!Data.saveObject(GameMaker.PREFIX + mapName, parent, game))
+	public void saveFinal() {
+		if (!Game.saveObject(GameMaker.PREFIX + mapName, game))
 			throw new RuntimeException("Save Failed");
 	}
 
 	@Override
-	public void load(Activity parent) {
-		data = (PlatformData)Data.loadObject(mapName + DATA, parent);
-		game = (PlatformGame)Data.loadObject(mapName + MAP, parent);
+	public void load() {
+		data = (PlatformData)Game.loadObject(mapName + DATA);
+		game = (PlatformGame)Game.loadObject(mapName + MAP);
 
 		if (game == null) {
-			game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+			game = (PlatformGame)Game.loadObject(GameMaker.PREFIX + mapName);
 			if (game == null) {
 				game = new PlatformGame();
 			}
@@ -189,13 +189,13 @@ public class PlatformMakerLogic implements Logic {
 		map = game.maps.get(game.startMapId);
 	}
 
-	public void loadFinal(Activity parent) {
-		PlatformGame game = (PlatformGame)Data.loadObject(GameMaker.PREFIX + mapName, parent);
+	public void loadFinal() {
+		PlatformGame game = (PlatformGame)Game.loadObject(GameMaker.PREFIX + mapName);
 		if (game != null) {
 			this.game = game;
 			map = game.maps.get(game.startMapId);
 			data = new PlatformData();
-			save(parent);
+			save();
 			Graphics.reset();
 			loadSprites();
 		} else {
@@ -216,7 +216,7 @@ public class PlatformMakerLogic implements Logic {
 					if (data.actorLayer) {
 						actorHolder.newActor(game);
 					} else {
-						rectHolder.newRect(getTileset().bitmapId, getTileset().tileWidth, getTileset().tileHeight);
+						rectHolder.newRect(getTileset().bitmapName, getTileset().tileWidth, getTileset().tileHeight);
 					}
 					return;
 				}
@@ -522,7 +522,7 @@ public class PlatformMakerLogic implements Logic {
 		}
 		if (newId > 0) {
 			PlatformActor actor = game.actors[newId];
-			Bitmap bmp = Data.loadBitmap(actor.imageId);
+			Bitmap bmp = Data.loadActor(actor.imageName);
 			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
 			actors[row][column] = new Sprite(actorViewport, bmp); 
 			actors[row][column].setX(column * getTileset().tileWidth);
@@ -600,7 +600,7 @@ public class PlatformMakerLogic implements Logic {
 		rect.set(0, 0, Graphics.getWidth(), Graphics.getHeight());
 		for (int i = 0; i < map.layers.length; i++) {
 			PlatformLayer layer = map.layers[i];
-			Tilemap tm = new Tilemap(Data.loadBitmap(tileset.bitmapId), 
+			Tilemap tm = new Tilemap(Data.loadTileset(tileset.bitmapName), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, rect, i);
 			tm.setShowingGrid(true);
@@ -614,7 +614,7 @@ public class PlatformMakerLogic implements Logic {
 		}
 
 		if (!rectHolder.getRect().isEmpty()) {
-			Bitmap bmp = Data.loadBitmap(tileset.bitmapId);
+			Bitmap bmp = Data.loadTileset(tileset.bitmapName);
 			Rect sRect = rectHolder.getRect();
 			int[][] tiles = new int[sRect.height()][sRect.width()];
 			for (int i = 0; i < tiles.length; i++) {
@@ -634,7 +634,7 @@ public class PlatformMakerLogic implements Logic {
 			int id = actorHolder.getActorId();
 			Bitmap mask;
 			if (id > 0) {
-				Bitmap actorBmp = Data.loadBitmap(game.actors[id].imageId);
+				Bitmap actorBmp = Data.loadActor(game.actors[id].imageName);
 				mask = Bitmap.createBitmap(actorBmp.getWidth() / 4, actorBmp.getHeight() / 4, Sprite.getDefaultConfig());
 				mask.eraseColor(Color.BLACK);
 				Canvas canvas = new Canvas();
@@ -663,7 +663,7 @@ public class PlatformMakerLogic implements Logic {
 
 	public static abstract class RectHolder {
 		public abstract Rect getRect();
-		public abstract void newRect(int bitmapId, int tileWidth, int tileHeight);
+		public abstract void newRect(String bitmapName, int tileWidth, int tileHeight);
 	}
 
 	public static abstract class ActorHolder {

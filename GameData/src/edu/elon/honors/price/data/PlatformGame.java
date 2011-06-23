@@ -23,12 +23,12 @@ public class PlatformGame implements Serializable {
 		startMapId = 0;
 		
 		tilesets = new Tileset[1];
-		tilesets[0] = new Tileset(R.drawable.tiles, 48, 48, 8, 8);
+		tilesets[0] = new Tileset("tiles.png", 48, 48, 8, 8);
 		
 		actors = new PlatformActor[10];
 		actors[1] = new PlatformActor();
 		PlatformActor ghost = actors[1];
-		ghost.imageId = R.drawable.ghost;
+		ghost.imageName = "ghost.png";
 		ghost.speed = 0.1f;
 		ghost.jumpVelocity = 0.2f;
 		ghost.edgeBehavior = PlatformActor.BEHAVIOR_TURN;
@@ -39,7 +39,7 @@ public class PlatformGame implements Serializable {
 		ghost.name = "Ghost";
 		
 		actors[2] = new PlatformActor();
-		actors[2].imageId = R.drawable.vamp;
+		actors[2].imageName = "vamp.png";
 		actors[2].speed = 0.1f;
 		actors[2].edgeBehavior = PlatformActor.BEHAVIOR_TURN;
 		actors[2].wallBehavior = PlatformActor.BEHAVIOR_TURN;
