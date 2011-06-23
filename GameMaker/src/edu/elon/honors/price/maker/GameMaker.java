@@ -2,6 +2,8 @@ package edu.elon.honors.price.maker;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import com.badlogic.gdx.utils.Array;
@@ -14,9 +16,15 @@ import edu.elon.honors.price.game.Game;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,6 +49,18 @@ public class GameMaker extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		setContentView(R.layout.main);
+		
+		ContentResolver cr = getContentResolver();
+		try {
+			AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, "graphics/actors/ghost.png"), "r");
+			Game.debug(afd.getDeclaredLength());
+			InputStream is = afd.createInputStream();
+			Bitmap bmp = BitmapFactory.decodeStream(is);
+			Game.debug(bmp.getWidth());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
 		
 		loadMaps();
 		loadButtons();
