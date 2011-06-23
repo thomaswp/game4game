@@ -115,10 +115,10 @@ public final class Data {
 		boolean found = false;
 		for (int i = 0; i < files.length; i++)
 			found |= files[i].equals(name);
-		if (!found) {
-			throw new RuntimeException("Cannnot find file '" + name + "'");
-		}
 		try {
+			if (!found) {
+				throw new RuntimeException("Cannnot find file '" + name + "'");
+			}
 			FileInputStream fis = parent.openFileInput(name);
 			ObjectInputStream in = new ObjectInputStream(fis);
 			Object data = in.readObject();
