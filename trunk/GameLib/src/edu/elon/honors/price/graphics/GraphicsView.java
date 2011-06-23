@@ -110,6 +110,7 @@ public class GraphicsView extends GLSurfaceView {
 					//initialize the game Logic
 					logic.initialize();
 				}
+				while (renderer.getFramesRendered() == 0);
 				//Update Loop
 				doLoop(surfaceHolder);
 			}

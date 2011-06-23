@@ -13,6 +13,6 @@ public interface Logic {
 	public void setPaused(boolean paused);
 	public void initialize();
 	public void update(long timeElapsed);
-	public void save(Activity parent);
-	public void load(Activity parent);
+	public void save();
+	public void load();
 }

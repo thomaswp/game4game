@@ -32,6 +32,7 @@ public class GraphicsRenderer implements Renderer {
 	private Grid fpsGrid;
 	private int[] rTexture = new int[1];
 	private int lastBGC;
+	private int framesRendered = 0;
 
 	private Logic logic;
 
@@ -45,6 +46,10 @@ public class GraphicsRenderer implements Renderer {
 	private boolean flush;
 	
 	private float lastR = 1, lastG = 1, lastB = 1, lastA = 1;
+	
+	public int getFramesRendered() {
+		return framesRendered;
+	}
 	
 	public void setFlush(boolean flush) {
 		this.flush = flush;
@@ -311,6 +316,8 @@ public class GraphicsRenderer implements Renderer {
 			times = 0;
 			rendered = 0;
 		}
+		
+		framesRendered++;
 	}
 	
 	private void updateFPSBitmap() {

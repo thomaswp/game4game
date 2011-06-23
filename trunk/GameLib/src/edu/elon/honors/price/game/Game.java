@@ -1,6 +1,13 @@
 package edu.elon.honors.price.game;
 
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import edu.elon.honors.price.audio.Audio;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.GraphicsRenderer;
@@ -9,6 +16,9 @@ import edu.elon.honors.price.graphics.GraphicsView;
 import edu.elon.honors.price.input.Input;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -16,14 +26,6 @@ import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 
-/**
- * TODO:
- * Functions-
- * Sprite operations:
- * -squash
- * -spin
- * -score
- */
 
 /**
  * An abstract class which defines some helpful methods for Activities using
@@ -35,6 +37,11 @@ import android.view.WindowManager;
 public abstract class Game extends Activity {
 
 	protected GraphicsView view;
+	private static Game currentGame;
+	
+	public static Game getCurrentGame() {
+		return currentGame;
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,8 +52,7 @@ public abstract class Game extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
-		Data.setResources(getResources());
-		Data.clearCache();
+		Cache.clearCache();
 		Audio.setContext(this);
 		Input.setVibrator((Vibrator)getSystemService(VIBRATOR_SERVICE));
 		
@@ -68,7 +74,7 @@ public abstract class Game extends Activity {
 			//clear the Graphics View's Logic
 			view.setLogic(null);
 			//save the logic
-			logic.save(this);
+			logic.save();
 			Input.reset();
 			//reset the Graphics
 			Graphics.reset();
@@ -83,14 +89,14 @@ public abstract class Game extends Activity {
 	public void onResume() {
 		debug("Activity Resumed");
 
-		//view.getRenderer().setFlush(true);
+		currentGame = this;
 		Input.reset();
 		//Load the logic back on resume
 		Logic logic = getNewLogic();
 		view.setLogic(logic);
 		
 		synchronized (logic) {
-			logic.load(this);
+			logic.load();
 		}
 
 		super.onResume();
@@ -124,7 +130,75 @@ public abstract class Game extends Activity {
 		
 		return super.onMenuOpened(featureId, menu);
 	}
-
+	
+	public static Bitmap loadBitmap(int id) {
+		try {
+			if (Cache.isBitmapRegistered(id)) {
+				//Game.debug("Cache: " + id);
+				return Cache.getRegisteredBitmap(id);
+			}
+			else {
+				//Game.debug("Load New: " + id);
+				Bitmap bmp = BitmapFactory.decodeResource(currentGame.getResources(), id);
+				Cache.RegisterBitmap(id, bmp);
+				return bmp;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static String loadString(int id) {
+		return getCurrentGame().getResources().getString(id);
+	}
+	
+	/**
+	 * Saves a serializable class, using the given activity with the given name.
+	 * 
+	 * @param name The name of the saved file. Used to load the data later.
+	 * @param parent The Activity to use for the saving.
+	 * @param data The serializable class to save.
+	 */
+	public static boolean saveObject(String name, Serializable data) {
+		try {
+			FileOutputStream fos = currentGame.openFileOutput(name, Context.MODE_WORLD_WRITEABLE);
+			ObjectOutputStream out = new ObjectOutputStream(fos);
+			out.writeObject(data);
+			out.close();
+			return true;
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * Loads a serializable class, using the given activity with the given name.
+	 * 
+	 * @param name The name of the file to be loaded.
+	 * @param parent The Activity to use for the loading.
+	 */
+	public static Object loadObject(String name) {
+		String[] files = currentGame.fileList();
+		boolean found = false;
+		for (int i = 0; i < files.length; i++)
+			found |= files[i].equals(name);
+		try {
+			if (!found) {
+				throw new RuntimeException("Cannnot find file '" + name + "'");
+			}
+			FileInputStream fis = currentGame.openFileInput(name);
+			ObjectInputStream in = new ObjectInputStream(fis);
+			Object data = in.readObject();
+			in.close();
+			return data;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
 	public static void debug(Object o) {
 		debug(o.toString());
 	}

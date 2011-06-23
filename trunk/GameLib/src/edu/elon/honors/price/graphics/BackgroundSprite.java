@@ -1,6 +1,6 @@
 package edu.elon.honors.price.graphics;
 
-import edu.elon.honors.price.game.Data;
+import edu.elon.honors.price.game.Cache;
 import edu.elon.honors.price.game.Game;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -62,9 +62,11 @@ public class BackgroundSprite extends Sprite {
 
 	private static Bitmap createBitmap(Bitmap original, Rect rect) {
 		int code = original.hashCode() + BackgroundSprite.class.hashCode();
-		if (Data.isBitmapRegistered(code)) {
-			return Data.getRegisteredBitmap(code);
+		if (Cache.isBitmapRegistered(code)) {
+			//Game.debug("Cache: " + code);
+			return Cache.getRegisteredBitmap(code);
 		} else {
+			//Game.debug("Load New: " + code);
 			int width, height;
 			if (original.getWidth() < rect.width()) {
 				width = original.getWidth() * ((rect.width() / original.getWidth()) + 2);
@@ -76,7 +78,6 @@ public class BackgroundSprite extends Sprite {
 			} else {
 				height = original.getHeight() * 2;
 			}
-			//Game.debug("CB:"+width+","+height);
 			Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
 			Canvas canvas = new Canvas();
 			canvas.setBitmap(bmp);
@@ -86,7 +87,7 @@ public class BackgroundSprite extends Sprite {
 					canvas.drawBitmap(original, i, j, paint);
 				}
 			}
-			Data.RegisterBitmap(bmp, code);
+			Cache.RegisterBitmap(code, bmp);
 			return bmp;
 		}
 	}

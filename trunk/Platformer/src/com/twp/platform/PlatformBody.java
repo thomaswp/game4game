@@ -9,14 +9,15 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.data.PlatformMap;
-import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
+import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.physics.Body;
 import edu.elon.honors.price.physics.Physics;
 import edu.elon.honors.price.physics.Vector;
@@ -69,7 +70,7 @@ public class PlatformBody {
 	public PlatformBody(Viewport viewport, Physics physics, PlatformActor actor, float startX, float startY, 
 			Tilemap[] layers, PlatformMap map, boolean isHero, ArrayList<PlatformBody> actors) {
 		this.actor = actor;
-		Bitmap bitmap = Data.loadBitmap(actor.imageId);
+		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Bitmap[] frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / 4, bitmap.getHeight() / 4, 0); 
 		for (Bitmap bmp : frames) {
 			Canvas c = new Canvas();
@@ -307,6 +308,9 @@ public class PlatformBody {
 			else {
 				float dir = Math.signum(this.getSprite().getRect().left - cause.getSprite().getRect().left);
 				velocity.setX(actor.speed * dir / 1.5f);
+			}
+			if (isHero) {
+				Input.getVibrator().vibrate(actor.stunDuration / 2);
 			}
 			break;
 		case PlatformActor.BEHAVIOR_DIE:

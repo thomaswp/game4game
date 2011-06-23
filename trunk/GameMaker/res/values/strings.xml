@@ -9,4 +9,7 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="actorName">Actor Name</string>
+    <string name="actors">Actors</string>
+    <string name="reset">Reset</string>
+    <string name="resize">Resize Group</string>
 </resources>

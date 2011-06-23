@@ -1,6 +1,6 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.game.Data;
+import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
@@ -36,7 +36,7 @@ public class PlatformActorSelector extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		int[] ids = getIntent().getExtras().getIntArray("ids");
+		String[] ids = getIntent().getExtras().getStringArray("ids");
 		String[] names = getIntent().getExtras().getStringArray("names");
 		int id = getIntent().getExtras().getInt("id");
 		Bitmap[] bitmaps = new Bitmap[ids.length];
@@ -44,7 +44,7 @@ public class PlatformActorSelector extends Activity {
 		bitmaps[0].eraseColor(Color.RED);
 
 		for (int i = 1; i < ids.length; i++) {
-			Bitmap source = Data.loadBitmap(ids[i]);
+			Bitmap source = Data.loadActor(ids[i]);
 			bitmaps[i] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
 			bitmaps[i] = Bitmap.createScaledBitmap(bitmaps[i], bitmaps[i].getWidth() * 2, bitmaps[i].getHeight() * 2, false);
 		}
