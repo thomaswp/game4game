@@ -108,6 +108,7 @@ public class PlatformDatabase extends PlatformDatabaseActivity {
 	private void createRadioButtons() {
 		radioGroup.removeAllViews();
 		imageView.setImageBitmap(null);
+		selectedIndex = -1;
 		for (int i = 1; i < game.actors.length; i++) {
 			RadioButton button = new RadioButton(this);
 			button.setText(game.actors[i].name);

@@ -2,8 +2,11 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 
-public class PlatformActor implements Serializable {
+public class PlatformActor implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
+	
+	public final static float MAX_SPEED = 0.3f;
+	public final static float MAX_JUMP = 0.5f;
 	
 	public final static int BEHAVIOR_NONE = 0;
 	public final static int BEHAVIOR_STOP = 1;
@@ -28,4 +31,17 @@ public class PlatformActor implements Serializable {
 	public int stunDuration;
 	public int[] actorContactBehaviors = new int[4];
 	public int[] heroContactBehaviors = new int[4];
+	
+	@Override
+	public PlatformActor clone() {
+		try {
+			PlatformActor a = (PlatformActor)super.clone();
+			a.actorContactBehaviors = actorContactBehaviors.clone();
+			a.heroContactBehaviors = heroContactBehaviors.clone();
+			return a;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 }
