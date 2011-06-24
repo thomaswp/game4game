@@ -8,8 +8,13 @@
     <string name="copy">Copy</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
-    <string name="actorName">Actor Name</string>
+    <string name="actorName">Name:</string>
     <string name="actors">Actors</string>
     <string name="reset">Reset</string>
     <string name="resize">Resize Group</string>
+    <string name="ok">Ok</string>
+    <string name="actorImage">Image:</string>
+    <string name="speed">Speed:</string>
+    <string name="editActor">Edit Actor</string>
+    <string name="jumpSpeed">Jump Speed</string>
 </resources>

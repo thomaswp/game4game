@@ -54,7 +54,7 @@ public class GameMaker extends Activity {
 		setContentView(R.layout.main);
 
 		createDirs();
-
+		
 		loadMaps();
 		loadButtons();
 
