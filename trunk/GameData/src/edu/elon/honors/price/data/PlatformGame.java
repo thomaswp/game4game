@@ -25,7 +25,7 @@ public class PlatformGame implements Serializable {
 		tilesets = new Tileset[1];
 		tilesets[0] = new Tileset("tiles.png", 48, 48, 8, 8);
 		
-		actors = new PlatformActor[10];
+		actors = new PlatformActor[3];
 		actors[1] = new PlatformActor();
 		PlatformActor ghost = actors[1];
 		ghost.imageName = "ghost.png";
@@ -47,7 +47,6 @@ public class PlatformGame implements Serializable {
 				PlatformActor.BEHAVIOR_NONE, PlatformActor.BEHAVIOR_TURN, PlatformActor.BEHAVIOR_TURN};
 		actors[2].heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
 		actors[2].name = "Vampire!";
-		for (int i = 3; i < actors.length; i++) actors[i] = actors[1];
 	}
 	
 	public Tileset getMapTileset(PlatformMap map) {

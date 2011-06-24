@@ -23,6 +23,7 @@
     	<activity android:name="PlatformTextureSelector" android:screenOrientation="landscape"></activity>
     	<activity android:name="PlatformActorSelector" android:screenOrientation="landscape"></activity>
     	<activity android:name="PlatformDatabase" android:screenOrientation="landscape"></activity>
+    	<activity android:name="PlatformEditActor" android:screenOrientation="landscape"></activity>
     	
     	<activity android:name="com.twp.platform.Platformer"
                   android:label="@string/app_name" android:screenOrientation="landscape">

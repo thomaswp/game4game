@@ -11,11 +11,14 @@
                 </RadioGroup>
             </LinearLayout>
         </ScrollView>
-        <LinearLayout android:id="@+id/linearLayout3" android:layout_width="wrap_content" android:orientation="vertical" android:layout_height="wrap_content">
+        <LinearLayout android:id="@+id/linearLayout3" android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="wrap_content">
             <Button android:text="@string/edit" android:id="@+id/buttonEditActor" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
             <Button android:text="@string/reset" android:id="@+id/buttonResetActor" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
-            <Button android:text="@string/resize" android:id="@+id/buttonResizeActors" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
-            <ImageView android:layout_width="wrap_content" android:src="@drawable/icon" android:layout_height="wrap_content" android:id="@+id/imageViewSelectedActor"></ImageView>
+            <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_width="match_parent">
+                <Button android:text="@string/resize" android:layout_height="wrap_content" android:id="@+id/buttonResizeActors" android:layout_width="wrap_content"></Button>
+                <EditText android:layout_weight="1" android:layout_height="wrap_content" android:inputType="number" android:layout_width="match_parent" android:id="@+id/editTextResize" android:visibility="invisible" android:maxLength="2"></EditText>
+            </LinearLayout>
+            <ImageView android:src="@drawable/icon" android:id="@+id/imageViewSelectedActor" android:layout_width="150dip" android:layout_height="150dip"></ImageView>
         </LinearLayout>
     </LinearLayout>
     

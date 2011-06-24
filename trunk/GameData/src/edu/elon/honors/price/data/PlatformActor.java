@@ -20,7 +20,7 @@ public class PlatformActor implements Serializable {
 	public static final int RIGHT = 3;
 
 	public String name = "";
-	public String imageName;
+	public String imageName = "ghost.png";
 	public float speed;
 	public float jumpVelocity;
 	public int edgeBehavior;

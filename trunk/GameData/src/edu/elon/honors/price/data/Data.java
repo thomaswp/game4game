@@ -35,9 +35,9 @@ public final class Data {
 
 	public final static Uri CONTENT_URI = Uri.parse("content://edu.elon.honors.price.maker/");
 	public final static String SD_FOLDER = "Game Maker/";
-	public final static String GRAPHICS_DIR = "graphics";
-	public final static String ACTORS_DIR = GRAPHICS_DIR + "/actors/";
-	public final static String TILESETS_DIR = GRAPHICS_DIR + "/tilesets/";
+	public final static String GRAPHICS = "graphics";
+	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
+	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	
 	private static Bitmap loadBitmap(String id, Context parent) {
 		try {
@@ -73,6 +73,9 @@ public final class Data {
 	
 	public static ArrayList<String> getResources(String dir, Context parent) {
 		ArrayList<String> files = new ArrayList<String>();
+		
+		if (dir.endsWith("/"))
+			dir = dir.substring(0, dir.length() - 1);
 		
 		try {
 			String[] assets = parent.getAssets().list(dir);

@@ -39,7 +39,7 @@ public class ResourceProvider extends ContentProvider {
 
 	@Override
 	public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
-		if (!uri.getPathSegments().contains(Data.GRAPHICS_DIR))
+		if (!uri.getPathSegments().contains(Data.GRAPHICS))
 			return super.openAssetFile(uri, mode);
 		
 		AssetManager am = getContext().getAssets();
