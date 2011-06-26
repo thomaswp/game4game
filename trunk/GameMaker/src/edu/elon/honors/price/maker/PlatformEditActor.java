@@ -12,8 +12,11 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -21,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -66,6 +70,18 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 		Game.debug(Arrays.toString(actor.actorContactBehaviors));
 
 		actorName.setText(actor.name);
+		
+		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
+		scroll.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (actorName.hasFocus()) {
+					actorName.clearFocus();
+				}
+				return false;
+			}
+		});
 
 		final ArrayList<String> imageNames = Data.getResources(Data.ACTORS_DIR, this);
 		ImageAdapter spinnerAdapter = new ImageAdapter(this,
