@@ -1,33 +1,47 @@
 package edu.elon.honors.price.maker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.game.Game;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ImageView.ScaleType;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class PlatformActorsPage extends PlatformDatabasePage{
-	private int selectedIndex = -1;
-	private ImageView imageView;
-	private RadioGroup radioGroup; 
+	private ListView actorsView;
 	private EditText editSize;
 	
-	public PlatformActorsPage(PlatformDatabase parent, int viewId) {
-		super(parent, viewId);
+	public PlatformActorsPage(PlatformDatabase parent, int viewId, String name) {
+		super(parent, viewId, name);
 	}
 	
 	@Override
 	public void onCreate() {
-		imageView = (ImageView)findViewById(R.id.imageViewSelectedActor);
-		imageView.setScaleType(ScaleType.CENTER);
-		radioGroup = (RadioGroup)findViewById(R.id.radioGroupActors);
+		actorsView = (ListView)findViewById(R.id.listViewActors);
 		editSize = (EditText)findViewById(R.id.editTextResize);
 
 		createButtonEvents();
@@ -38,19 +52,15 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 		createRadioButtons();
 	}
 	
-
-	@Override
-	public void onPause() {	}
-	
 	private void createButtonEvents() {
 
 		Button editButton = (Button)findViewById(R.id.buttonEditActor);
 		editButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (selectedIndex >= 0) {
+				if (getSelectedId() >= 0) {
 					Intent intent = new Intent(parent, PlatformEditActor.class);
-					intent.putExtra("id", selectedIndex);
+					intent.putExtra("id", getSelectedId());
 					intent.putExtra("game", parent.gameName);
 					parent.startActivity(intent);
 				}
@@ -61,10 +71,10 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 		reset.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				getGame().actors[selectedIndex] = new PlatformActor();
-				RadioButton button = (RadioButton)radioGroup.getChildAt(selectedIndex - 1);
-				button.setText(getGame().actors[selectedIndex].name);
-				loadSelectedBitmap();
+				int id = getSelectedId();
+				getGame().actors[id] = new PlatformActor();
+				View row = actorsView.getChildAt(id - 1);
+				setRow(row, getGame().actors[id], parent);
 			}
 		});
 
@@ -74,7 +84,7 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 			public void onClick(View v) {
 				Button me = (Button)v;
 				if (editSize.getVisibility() == View.VISIBLE) {
-					editSize.setVisibility(View.INVISIBLE);
+					editSize.setVisibility(View.GONE);
 					me.setText(R.string.resize);
 					int newSize = Integer.parseInt(editSize.getText().toString()) + 1;
 					if (newSize != getGame().actors.length) {
@@ -98,32 +108,45 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 		});
 	}
 
-	private void createRadioButtons() {
-		radioGroup.removeAllViews();
-		imageView.setImageBitmap(null);
-		selectedIndex = -1;
-		for (int i = 1; i < getGame().actors.length; i++) {
-			RadioButton button = new RadioButton(parent);
-			button.setText(getGame().actors[i].name);
-			button.setTag(i);
-
-			final int index = i;
-			button.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					selectedIndex = index;
-					loadSelectedBitmap();
-				}
-			});
-
-			radioGroup.addView(button);
-		}
+	private void createRadioButtons() {		
+		PlatformActor[] actors = new PlatformActor[getGame().actors.length - 1];
+		for (int i = 0; i < actors.length; i++) actors[i] = getGame().actors[i+1];
+		actorsView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		//actorsView.setAdapter(new ArrayAdapter<PlatformActor>(parent, android.R.layout.simple_list_item_1, actors));
+		actorsView.setAdapter(new ImageAdapter(parent, R.layout.imageadapterrow, actors));
 	}
-
-	private void loadSelectedBitmap() {
-		String imageName = getGame().actors[selectedIndex].imageName;
-		Bitmap bmp = Data.loadActor(imageName, parent);
+	
+	private static void setRow(View row, PlatformActor actor, Context context) {
+		TextView label=(TextView)row.findViewById(R.id.weekofday);
+		label.setText(actor.name);
+		label.setTextSize(20);
+		ImageView icon=(ImageView)row.findViewById(R.id.icon);
+		Bitmap bmp = Data.loadActor(actor.imageName, context);
 		bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
-		imageView.setImageBitmap(bmp);
+		icon.setImageBitmap(bmp);
+	}
+	
+	private static class ImageAdapter extends ArrayAdapter<PlatformActor> {
+		
+		public ImageAdapter(Context context, int textViewResourceId, PlatformActor[] actors) {
+			super(context, textViewResourceId, actors);
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
+			View row=inflater.inflate(R.layout.imageadapterrow, parent, false);
+			setRow(row, getItem(position), getContext());
+			return row;
+		}		
+	}
+	
+	private int getSelectedId() {
+		for (int i = 0; i < actorsView.getChildCount(); i++) {
+			if (((Checkable)actorsView.getChildAt(i)).isChecked()) {
+				return i + 1;
+			}
+		}
+		return -1;
 	}
 }

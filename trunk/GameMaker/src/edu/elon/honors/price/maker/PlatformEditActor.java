@@ -234,7 +234,9 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			return getDropDownView(position, convertView, parent);
+			View v = getDropDownView(position, convertView, parent);
+			v.findViewById(R.id.checkedTextView1).setVisibility(View.GONE);
+			return v;
 		}
 	}
 }

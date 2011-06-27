@@ -9,6 +9,8 @@ import edu.elon.honors.price.data.PlatformGame;
 
 public class PlatformDatabaseActivity extends Activity {
 	
+	public static final String TEMP = "_TEMP";
+	
 	protected PlatformGame game;
 	protected String gameName;
 	
@@ -26,13 +28,22 @@ public class PlatformDatabaseActivity extends Activity {
 	
 	@Override
 	public void onResume() {
-		game = (PlatformGame)Data.loadGame(gameName + PlatformMakerLogic.MAP, this);
+		game = (PlatformGame)Data.loadGame(getTempFile(), this);
 		super.onResume();
 	}
 	
 	@Override
 	public void onPause() {
-		Data.saveGame(gameName + PlatformMakerLogic.MAP, this, game);
+		Data.saveGame(getTempFile(), this, game);
 		super.onPause();
 	}
+	
+	protected String getTempFile() {
+		return getGameFile() + TEMP;
+	}
+	
+	protected String getGameFile() {
+		return gameName + PlatformMakerLogic.MAP;
+	}
+	
 }
