@@ -1,4 +1,4 @@
-package com.tokudu.begemot.widgets;
+package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.game.Game;
 import android.R;
