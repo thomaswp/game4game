@@ -23,8 +23,8 @@ public class PlatformDatabase extends PlatformDatabaseActivity {
 		Data.saveGame(getTempFile(), this, game);
 
 		pages = new PlatformDatabasePage[] { 
-				new PlatformActorsPage(this, R.layout.platformactorselector, "Actors1"),
-				new PlatformActorsPage(this, R.layout.platformactorselector, "Actors2") 
+				new PlatformActorsPage(this),
+				new PlatformHeroPage(this) 
 			};
 		
 		
@@ -44,7 +44,9 @@ public class PlatformDatabase extends PlatformDatabaseActivity {
 	
 	@Override
 	public void onPause() {
-		//pages[selectedPage].onPause();
+		if (selectedPage > 0) {
+			pages[selectedPage].onPause();
+		}
 		super.onPause();
 	}
 	
@@ -57,6 +59,9 @@ public class PlatformDatabase extends PlatformDatabaseActivity {
 		ok.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (selectedPage > 0) {
+					pages[selectedPage].onPause();
+				}
 				Data.saveGame(getGameFile(), me, game);
 				finish();
 			}
@@ -88,14 +93,14 @@ public class PlatformDatabase extends PlatformDatabaseActivity {
 	
 	private void selectPage(int page) {
 		if (selectedPage > 0) {
-			//pages[selectedPage].onPause();
+			pages[selectedPage].onPause();
 		}
 		selectedPage = page;
 
 		RelativeLayout host = (RelativeLayout)findViewById(R.id.relativeLayoutHost);
 		host.removeAllViews();
 		LayoutInflater inflator = getLayoutInflater();
-		inflator.inflate(pages[page].viewId, host);
+		inflator.inflate(pages[page].getViewId(), host);
 		
 		pages[page].onCreate();
 		

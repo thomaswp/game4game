@@ -20,7 +20,7 @@ public class Platformer extends Game {
 		else
 			map = "final-Map_1";
 		
-		return new PlatformLogic(map);
+		return new PlatformLogicGDX(map);
 	}
 
 }

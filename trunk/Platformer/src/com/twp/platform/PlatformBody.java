@@ -270,7 +270,7 @@ public class PlatformBody {
 		this.actors.remove(this);
 	}
 
-	private void doBehavior(int behavior, Vector oldVelocity, PlatformBody cause) {
+	public void doBehavior(int behavior, Vector oldVelocity, PlatformBody cause) {
 		//		if (lastBehavior < BEHAVIOR_REST)
 		//			return;
 		lastBehavior = 0;

@@ -34,9 +34,20 @@ import android.widget.TextView;
 public class PlatformActorsPage extends PlatformDatabasePage{
 	private ListView actorsView;
 	private EditText editSize;
+
+	@Override
+	public int getViewId() {
+		return R.layout.platformactorselector;
+	}
+
+
+	@Override
+	public String getName() {
+		return "Actors";
+	}
 	
-	public PlatformActorsPage(PlatformDatabase parent, int viewId, String name) {
-		super(parent, viewId, name);
+	public PlatformActorsPage(PlatformDatabase parent) {
+		super(parent);
 	}
 	
 	@Override

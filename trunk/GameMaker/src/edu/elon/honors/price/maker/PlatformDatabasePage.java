@@ -6,25 +6,17 @@ import android.view.View;
 public abstract class PlatformDatabasePage {
 	
 	protected PlatformDatabase parent;
-	protected int viewId;
-	protected String name;
-	
+
+	public abstract int getViewId();
+	public abstract String getName();
 	public abstract void onCreate();
 	public abstract void onResume();
-
-	public int getViewId() {
-		return viewId;
-	}
 	
-	public String getName() {
-		return name;
-	}
-	
-	public PlatformDatabasePage(PlatformDatabase parent, int viewId, String name) {
+	public PlatformDatabasePage(PlatformDatabase parent) {
 		this.parent = parent;
-		this.viewId = viewId;
-		this.name = name;
 	}
+	
+	protected void onPause() { }
 	
 	protected PlatformGame getGame() {
 		return parent.game;

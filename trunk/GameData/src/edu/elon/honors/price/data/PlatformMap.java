@@ -21,6 +21,7 @@ public class PlatformMap implements Serializable{
 		tilesetId = 0;
 		
 		actorLayer = new PlatformLayer("actors", rows, columns, true);
+		actorLayer.tiles[0][0] = -1;
 		
 		layers = new PlatformLayer[3];
 		PlatformLayer layer = new PlatformLayer("background", rows, columns, false);
