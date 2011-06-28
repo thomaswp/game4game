@@ -140,9 +140,9 @@ public class PlatformLogic implements Logic {
 
 		if (!heroBody.isStunned()) {
 			if (button.isTapped()) {
-				heroBody.getVelocity().setY(-0.3f);
+				heroBody.doBehavior(PlatformActor.BEHAVIOR_JUMP, heroBody.getVelocity(), null);
 			}
-			heroBody.getVelocity().setX(stick.getPull().getX() * 0.2f);
+			heroBody.getVelocity().setX(game.hero.speed * stick.getPull().getX());
 		}
 
 		for (int i = 0; i < actors.size(); i++) {

@@ -17,7 +17,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
-import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Sprite;
@@ -51,7 +50,7 @@ public class PhysicsLogic implements Logic {
         groundShapeDef.setAsBox((float) 50.0, (float) 10.0);
         groundBody.createFixture(groundShapeDef, 1);
         
-        bmpSprite = new Sprite(Viewport.DefaultViewport, Data.loadBitmap(R.drawable.rock));
+        bmpSprite = new Sprite(Viewport.DefaultViewport, Game.loadBitmap(R.drawable.rock));
         float[] xs = new float[8]; float[] ys = new float[8];
         int pts = bmpSprite.convexHull(xs, ys);
         bmpSprite.setOriginY(bmpSprite.getHeight());
@@ -134,13 +133,13 @@ public class PhysicsLogic implements Logic {
 	}
 
 	@Override
-	public void save(Activity parent) {
+	public void save() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void load(Activity parent) {
+	public void load() {
 		// TODO Auto-generated method stub
 		
 	}

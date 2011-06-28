@@ -31,7 +31,7 @@ import android.widget.TextView;
 
 public class PlatformEditActor extends PlatformDatabaseActivity {
 
-	private static int SPEEDS = 10;
+	public static int SPEEDS = 10;
 
 	private int actorId;
 	private PlatformActor actor;
@@ -64,11 +64,6 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 		
 		actor = game.actors[actorId].clone();
 		
-		Game.debug(actor.wallBehavior);
-		Game.debug(actor.edgeBehavior);
-		Game.debug(Arrays.toString(actor.heroContactBehaviors));
-		Game.debug(Arrays.toString(actor.actorContactBehaviors));
-
 		actorName.setText(actor.name);
 		
 		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
@@ -106,6 +101,26 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 				"Touches the hero",
 				"Touches another actor"
 		}));
+
+
+		directionSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_text, new String[] {
+				"Above this actor",
+				"Below this actor",
+				"Left of this actor",
+				"Right of this actor",
+		}));
+
+		
+		behaviorSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_text, new String[] {
+				"Nothing",
+				"Stop",
+				"Turn around",
+				"Jump",
+				"Jump and turn",
+				"Toggle Start/Stop",
+				"Become stunned",
+				"Die"
+		}));
 		
 		eventSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
@@ -130,14 +145,8 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 			public void onNothingSelected(AdapterView<?> arg0) {
 				directionSpinner.setVisibility(View.INVISIBLE);
 			}
-		});
-
-		directionSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_text, new String[] {
-				"Above this actor",
-				"Below this actor",
-				"Left of this actor",
-				"Right of this actor",
-		}));
+		});		
+		
 		directionSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
@@ -149,6 +158,7 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 				switch (event) {
 					case 2: select = actor.heroContactBehaviors[dirIndex]; break;
 					case 3: select = actor.actorContactBehaviors[dirIndex]; break;
+					default: return;
 				}
 				forceSelect = true;
 				behaviorSpinner.setSelection(select);
@@ -160,17 +170,6 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 				directionSpinner.setVisibility(View.INVISIBLE);
 			}
 		});
-		
-		behaviorSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_text, new String[] {
-				"Nothing",
-				"Stop",
-				"Turn around",
-				"Jump",
-				"Jump and turn",
-				"Toggle Start/Stop",
-				"Become stunned",
-				"Die"
-		}));
 		
 		behaviorSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
@@ -194,6 +193,10 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 				directionSpinner.setVisibility(View.INVISIBLE);
 			}
 		});
+		
+
+		directionSpinner.setSelection(0);
+		eventSpinner.setSelection(0);
 
 		okButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -208,7 +211,7 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 		});
 	}
 
-	private static class ImageAdapter extends ArrayAdapter<String> {
+	public static class ImageAdapter extends ArrayAdapter<String> {
 
 
 		public ImageAdapter(Context context, int textViewResourceId,

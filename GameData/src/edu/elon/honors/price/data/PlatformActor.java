@@ -31,6 +31,8 @@ public class PlatformActor implements Serializable, Cloneable {
 	public int stunDuration;
 	public int[] actorContactBehaviors = new int[4];
 	public int[] heroContactBehaviors = new int[4];
+	public boolean animated = true;
+	public boolean fixedRotation = true;
 	
 	@Override
 	public PlatformActor clone() {
