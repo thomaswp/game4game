@@ -58,6 +58,7 @@ public class PlatformMakerLogic implements Logic {
 	private Viewport actorViewport;
 	private Sprite[][] actors;
 	private ActorHolder actorHolder;
+	private Sprite hero;
 
 	@Override
 	public void setPaused(boolean paused) {
@@ -78,7 +79,7 @@ public class PlatformMakerLogic implements Logic {
 		loadSprites();
 
 		if (data.actorLayer) {
-			if (actorHolder.getActorId() < 0)
+			if (actorHolder.getActorId() < -1)
 				data.mode = MODE_MOVE;
 			else if (data.mode == MODE_MOVE)
 				data.mode = MODE_EDIT;
@@ -439,6 +440,7 @@ public class PlatformMakerLogic implements Logic {
 		int tileHeight = getTileset().tileHeight;
 		int column = (int)(actorPreview.getX() / tileWidth + 0.5);
 		int row = (int) (actorPreview.getY() / tileHeight + 0.5);
+		if (map.actorLayer.tiles[row][column] == -1) return;
 		Action action = new Action(data.layer, null, row, column, actorHolder.getActorId());
 		doAction(action);
 	}
@@ -484,6 +486,17 @@ public class PlatformMakerLogic implements Logic {
 			int[][] tiles = map.actorLayer.tiles;
 			action.previousId = tiles[action.destRow][action.destCol];
 			if (action.previousId != action.actorId) {
+				if (action.actorId == -1) {
+					for (int i = 0; i < map.rows; i++) {
+						for (int j = 0; j < map.columns; j++) {
+							if (map.actorLayer.tiles[i][j] == -1) {
+								action.previousHeroRow = i;
+								action.previousHeroCol = j;
+								drawActor(i, j, 0);
+							}
+						}
+					}
+				}
 				drawActor(action.destRow, action.destCol, action.actorId);
 			}
 		}
@@ -506,6 +519,9 @@ public class PlatformMakerLogic implements Logic {
 		} else {
 			if (action.previousId != action.actorId) {
 				drawActor(action.destRow, action.destCol, action.previousId);
+				if (action.actorId == -1) {
+					drawActor(action.previousHeroRow, action.previousHeroCol, -1);
+				}
 			}
 		}
 		data.editIndex--;
@@ -520,8 +536,8 @@ public class PlatformMakerLogic implements Logic {
 		if (actors[row][column] != null) {
 			actors[row][column].dispose();
 		}
-		if (newId > 0) {
-			PlatformActor actor = game.actors[newId];
+		if (newId != 0) {
+			PlatformActor actor = newId > 0 ? game.actors[newId] : game.hero;
 			Bitmap bmp = Data.loadActor(actor.imageName);
 			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
 			actors[row][column] = new Sprite(actorViewport, bmp); 
@@ -544,6 +560,14 @@ public class PlatformMakerLogic implements Logic {
 				drawActor(i, j, map.actorLayer.tiles[i][j]);
 			}
 		}
+//		Bitmap heroBitmap = Data.loadActor(game.hero.imageName);
+//		Sprite hero = new Sprite(actorViewport,
+//				map.heroStartColumn * getTileset().tileWidth,
+//				map.heroStartRow * getTileset().tileHeight, 
+//				heroBitmap.getWidth(), heroBitmap.getHeight());
+//		hero.getBitmap().eraseColor(Color.BLUE);
+//		Paint paint = new Paint();
+//		hero.getBitmapCanvas().drawBitmap(heroBitmap, 0, 0, paint);
 
 		menu = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 0, 50, 50);
 		menu.getBitmap().eraseColor(Color.BLUE);
@@ -630,11 +654,12 @@ public class PlatformMakerLogic implements Logic {
 			texturePreviewMask.getBitmap().eraseColor(Color.BLACK);
 		}
 
-		if (actorHolder.getActorId() >= 0) {
+		if (actorHolder.getActorId() >= -1) {
 			int id = actorHolder.getActorId();
 			Bitmap mask;
-			if (id > 0) {
-				Bitmap actorBmp = Data.loadActor(game.actors[id].imageName);
+			if (id != 0) {
+				PlatformActor actor = id > 0 ? game.actors[id] : game.hero; 
+				Bitmap actorBmp = Data.loadActor(actor.imageName);
 				mask = Bitmap.createBitmap(actorBmp.getWidth() / 4, actorBmp.getHeight() / 4, Sprite.getDefaultConfig());
 				mask.eraseColor(Color.BLACK);
 				Canvas canvas = new Canvas();
@@ -675,7 +700,8 @@ public class PlatformMakerLogic implements Logic {
 		private static final long serialVersionUID = 2L;
 
 		public int layer;
-		public int destRow, destCol, srcRow, srcCol, rows, cols, actorId, previousId;
+		public int destRow, destCol, srcRow, srcCol, rows, cols, actorId, previousId,
+			previousHeroRow, previousHeroCol;
 		public int[][] previous;
 
 		public Action(int layer, Rect srcRect, int destRow, int destCol, int actorId) {
@@ -702,7 +728,9 @@ public class PlatformMakerLogic implements Logic {
 				a.srcCol == srcCol &&
 				a.rows == rows &&
 				a.cols == cols &&
-				a.actorId == actorId;
+				a.actorId == actorId &&
+				a.previousHeroRow == previousHeroRow &&
+				a.previousHeroCol == previousHeroCol;
 			}
 			return false;
 		}

@@ -34,7 +34,7 @@ public class PlatformLogic implements Logic {
 
 	public static final float GRAVITY = 0.01f;
 
-	private static final int BORDER = 150;
+	private static final int BORDER = 130;
 	private static final int BSIZE = 50;
 	private static final int BBORDER = 15;
 
@@ -96,23 +96,7 @@ public class PlatformLogic implements Logic {
 					layer.tiles, Graphics.getRect(), i * 2);
 		}
 
-		PlatformActor heroActor = new PlatformActor();
-		heroActor.imageName = "002-Fighter02.png";
-		heroActor.jumpVelocity = 0.3f;
-		heroActor.stunDuration = 600;
-		heroActor.speed = 0.2f;
-		heroActor.actorContactBehaviors[PlatformActor.BELOW] = PlatformActor.BEHAVIOR_JUMP;
-		heroActor.actorContactBehaviors[PlatformActor.RIGHT] = PlatformActor.BEHAVIOR_STUN;
-		heroActor.actorContactBehaviors[PlatformActor.LEFT] = PlatformActor.BEHAVIOR_STUN;
-
 		physics = new Physics();
-		heroBody = new PlatformBody(Viewport.DefaultViewport, physics, heroActor, 
-				48, -48, layers, map, true, actors);
-		hero = heroBody.getSprite();
-		hero.centerOrigin();
-		hero.setFrame(8);
-		hero.setZoom(0.9f);
-		actors.add(heroBody);
 
 		PlatformLayer actorLayer = map.actorLayer;
 		for (int i = 0; i < actorLayer.rows; i++) {
@@ -124,6 +108,14 @@ public class PlatformLogic implements Logic {
 					PlatformBody actor = new PlatformBody(Viewport.DefaultViewport, physics,
 							game.actors[actorId], x, y, layers, map, false, actors);
 					actors.add(actor);
+				} else if (actorId == -1) {
+					heroBody = new PlatformBody(Viewport.DefaultViewport, physics, game.hero, 
+							j * tileset.tileWidth,
+							i * tileset.tileHeight, 
+							layers, map, true, actors);
+					hero = heroBody.getSprite();
+					hero.setZoom(0.9f);
+					actors.add(heroBody);
 				}
 			}
 		}
@@ -177,18 +169,19 @@ public class PlatformLogic implements Logic {
 	private void updateScroll() {
 		p.clear();
 
-		if (hero.getX() < BORDER) {
-			p.setX(BORDER - hero.getX());
+		RectF heroRect = hero.getRect();
+		if (heroRect.left < BORDER) {
+			p.setX(BORDER - heroRect.left);
 		}
-		if (hero.getX() > Graphics.getWidth() - BORDER) {
-			p.setX((Graphics.getWidth() - BORDER) - hero.getX());
+		if (heroRect.right > Graphics.getWidth() - BORDER) {
+			p.setX((Graphics.getWidth() - BORDER) - heroRect.right);
 		}
-		if (hero.getY() < BORDER) {
-			p.setY(BORDER - hero.getY());
+		if (heroRect.top < BORDER) {
+			p.setY(BORDER - heroRect.top);
 		}
-		if (hero.getY() > Graphics.getHeight() - BORDER) {
+		if (heroRect.bottom > Graphics.getHeight() - BORDER) {
 			if (bgY < 0)
-				p.setY((Graphics.getHeight() - BORDER) - hero.getY());
+				p.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
 		}
 
 		physics.getSpriteOffset().add(p);

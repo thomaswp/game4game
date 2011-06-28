@@ -16,6 +16,7 @@ public class PlatformGame implements Serializable {
 	
 	public Tileset[] tilesets;
 	public PlatformActor[] actors;
+	public PlatformHero hero;
 	
 	public PlatformGame() {
 		maps = new ArrayList<PlatformMap>();
@@ -38,15 +39,25 @@ public class PlatformGame implements Serializable {
 		ghost.heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
 		ghost.name = "Ghost";
 		
-		actors[2] = new PlatformActor();
-		actors[2].imageName = "vamp.png";
-		actors[2].speed = 0.1f;
-		actors[2].edgeBehavior = PlatformActor.BEHAVIOR_TURN;
-		actors[2].wallBehavior = PlatformActor.BEHAVIOR_TURN;
-		actors[2].actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
+		PlatformActor vlad = new PlatformActor();
+		vlad.imageName = "vamp.png";
+		vlad.speed = 0.1f;
+		vlad.edgeBehavior = PlatformActor.BEHAVIOR_TURN;
+		vlad.wallBehavior = PlatformActor.BEHAVIOR_TURN;
+		vlad.actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
 				PlatformActor.BEHAVIOR_NONE, PlatformActor.BEHAVIOR_TURN, PlatformActor.BEHAVIOR_TURN};
-		actors[2].heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
-		actors[2].name = "Vampire!";
+		vlad.heroContactBehaviors[PlatformActor.ABOVE] = PlatformActor.BEHAVIOR_DIE;
+		vlad.name = "Vampire!";
+		actors[2] = vlad;
+		
+		hero = new PlatformHero();
+		hero.speed = 0.2f;
+		hero.jumpVelocity = 0.3f;
+		hero.stunDuration = 600;
+		hero.imageName = "hero.png";
+		hero.actorContactBehaviors[PlatformActor.BELOW] = PlatformActor.BEHAVIOR_JUMP;
+		hero.actorContactBehaviors[PlatformActor.LEFT] = PlatformActor.BEHAVIOR_STUN;
+		hero.actorContactBehaviors[PlatformActor.RIGHT] = PlatformActor.BEHAVIOR_STUN;
 	}
 	
 	public Tileset getMapTileset(PlatformMap map) {

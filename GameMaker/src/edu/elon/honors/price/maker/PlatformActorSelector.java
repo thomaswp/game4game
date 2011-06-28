@@ -38,15 +38,22 @@ public class PlatformActorSelector extends Activity {
 
 		String[] ids = getIntent().getExtras().getStringArray("ids");
 		String[] names = getIntent().getExtras().getStringArray("names");
+		
 		int id = getIntent().getExtras().getInt("id");
-		Bitmap[] bitmaps = new Bitmap[ids.length];
+		if (id == -1) id = 1; else if (id != 0) id++;
+			
+		Bitmap[] bitmaps = new Bitmap[ids.length+1];
 		bitmaps[0] = Bitmap.createBitmap(32 * 2, 48 * 2, Sprite.getDefaultConfig());
 		bitmaps[0].eraseColor(Color.RED);
+	
+		Bitmap actorStart = Bitmap.createBitmap(32 * 2, 48 * 2, Sprite.getDefaultConfig());
+		actorStart.eraseColor(Color.GREEN);
+		bitmaps[1] = actorStart;
 
 		for (int i = 1; i < ids.length; i++) {
 			Bitmap source = Data.loadActor(ids[i]);
-			bitmaps[i] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
-			bitmaps[i] = Bitmap.createScaledBitmap(bitmaps[i], bitmaps[i].getWidth() * 2, bitmaps[i].getHeight() * 2, false);
+			bitmaps[i+1] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
+			bitmaps[i+1] = Bitmap.createScaledBitmap(bitmaps[i+1], bitmaps[i+1].getWidth() * 2, bitmaps[i+1].getHeight() * 2, false);
 		}
 
 		final PlatformActorSelector me = this;
@@ -54,6 +61,7 @@ public class PlatformActorSelector extends Activity {
 			@Override
 			void post(int id) {
 				Intent intent = new Intent();
+				if (id == 1) id = -1; else if (id != 0) id--;
 				intent.putExtra("id", id);
 				view.getThread().interrupt();
 				me.setResult(RESULT_OK, intent);
@@ -176,7 +184,7 @@ public class PlatformActorSelector extends Activity {
 				canvas.drawRect(okRect, paint);
 
 				if (id >= 0) {
-					String text = id == 0 ? "Clear" : names[id];
+					String text = id == 0 ? "Clear" : id == 1 ? "Hero Start" :names[id-1];
 					paint.setColor(Color.BLACK);
 					paint.setTextSize(30);
 					paint.setAntiAlias(true);
