@@ -2,10 +2,15 @@ package com.twp.platform;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactFilter;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -59,6 +64,13 @@ public class PlatformLogicGDX implements Logic {
 	private World world;
 	private PlatformBodyGDX heroBody;
 	private Vector offset;
+	private Vector2 temp = new Vector2();
+
+	private ArrayList<PlatformBodyGDX> toRemove = new ArrayList<PlatformBodyGDX>();
+	private ArrayList<ActorAddable> toAdd = new ArrayList<ActorAddable>();
+	private ArrayList<QueuedContact> contacts = new ArrayList<PlatformLogicGDX.QueuedContact>();
+
+	private HashMap<Fixture, PlatformBodyGDX> fixtureMap = new HashMap<Fixture, PlatformBodyGDX>();
 
 	private float mapX, mapY, bgX, bgY, skyScroll;
 	private int skyStartY, startOceanY;
@@ -177,35 +189,85 @@ public class PlatformLogicGDX implements Logic {
 				}
 			}
 		}
-		
+
 		PlatformLayer actorLayer = map.actorLayer;
 		for (int i = 0; i < actorLayer.rows; i++) {
 			for (int j = 0; j < actorLayer.columns; j++) {
+				float x = j * game.getMapTileset(map).tileWidth;
+				float y = i * game.getMapTileset(map).tileHeight;
 				if (i == 0 && j == 0) {
 					PlatformActor rock = new PlatformActor();
 					rock.animated = false;
 					rock.fixedRotation = false;
 					rock.imageName = "rock.png";
-					PlatformBodyGDX actor = new PlatformBodyGDX(Viewport.DefaultViewport, world,
-							rock, 60, 0, 0.9f, layers, map, false, actors);
-					actors.add(actor);
+					rock.zoom = 0.6f;
+					rock.name = "Rock";
+					//addActor(rock, 60, 0);
+				}
+				if (i == 4 && j == 18) {
+					PlatformActor dude = new PlatformActor();
+					dude.imageName = "blank.png";
+					dude.zoom = 3f;
+					dude.animated = false;
+					dude.name = "Dude";
+					final PlatformBodyGDX actor = addActor(dude, x, y);
+					final float rx = x;
+					ContactFilter filter = new ContactFilter() {
+
+						@Override
+						public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
+							if (!(fixtureMap.containsKey(fixtureA) && fixtureMap.containsKey(fixtureB)))
+								return true;
+
+							PlatformBodyGDX bodyA = fixtureMap.get(fixtureA);
+							PlatformBodyGDX bodyB = fixtureMap.get(fixtureB);
+
+							return PlatformBodyGDX.collides(bodyA, bodyB);
+						}
+					};
+					world.setContactFilter(filter);
+					ContactListener listener = new ContactListener() {
+
+						@Override
+						public void endContact(Contact contact) {
+
+						}
+
+						@Override
+						public void beginContact(Contact contact) {
+							Vector2 normal = contact.getWorldManifold().getNormal();							
+							contacts.add(new QueuedContact(contact.getFixtureA(), contact.getFixtureB(), normal));
+
+							if (PlatformBodyGDX.contactBetween(contact, heroBody, actor)) {
+								if (!toRemove.contains(actor) && actors.contains(actor)) {
+									toRemove.add(actor);
+									PlatformActor critter = new PlatformActor();
+									critter.zoom = 1.3f;
+									critter.imageName = "critter.png";
+									critter.collidesWithActors = false;
+									critter.name = "Critter";
+									for (int i = 0; i < 5; i++) {
+										toAdd.add(new ActorAddable(critter, rx + (int)(Math.random() * 40), (int)(Math.random() * 10)));
+									}
+								}
+							}
+						}
+					};
+					world.setContactListener(listener);
 				}
 				int actorId = actorLayer.tiles[i][j];
 				if (actorId > 0) {
-					float x = j * game.getMapTileset(map).tileWidth;
-					float y = i * game.getMapTileset(map).tileHeight;
-					PlatformBodyGDX actor = new PlatformBodyGDX(Viewport.DefaultViewport, world,
-							game.actors[actorId], x, y, 0.9f, layers, map, false, actors);
-					actors.add(actor);
+					addActor(game.actors[actorId], x, y);
 				} else if (actorId == -1) {
 					game.hero.animated = true;
 					game.hero.fixedRotation = true;
-					heroBody = new PlatformBodyGDX(Viewport.DefaultViewport, world, game.hero, 
+					game.hero.collidesWithActors = true;
+					game.hero.zoom = 0.9f;
+					game.hero.name = "Hero";
+					heroBody = addActor(game.hero, 
 							j * tileset.tileWidth,
-							i * tileset.tileHeight, 
-							0.9f, layers, map, true, actors);
+							i * tileset.tileHeight, true);
 					hero = heroBody.getSprite();
-					actors.add(heroBody);
 				}
 			}
 		}
@@ -227,7 +289,7 @@ public class PlatformLogicGDX implements Logic {
 
 		if (!heroBody.isStunned()) {
 			if (button.isTapped()) {
-				heroBody.setVelocity(heroBody.getVelocity().x, -7);
+				heroBody.setVelocity(heroBody.getVelocity().x, -6.5f);
 			}
 
 			heroBody.setVelocity(stick.getPull().getX() * 3.5f, heroBody.getVelocity().y);
@@ -241,6 +303,19 @@ public class PlatformLogicGDX implements Logic {
 		//		}
 
 		world.step(timeElapsed / 1000.0f, 6, 6);
+		
+		for (int i = 0; i < contacts.size(); i++) {
+			doContact(contacts.get(i));
+		}
+		contacts.clear();
+		for (int i = 0; i < toRemove.size(); i++) {
+			removeActor(toRemove.get(i));
+		}
+		toRemove.clear();
+		for (int i = 0; i < toAdd.size(); i++) {
+			addActor(toAdd.get(i));
+		}
+		toAdd.clear();
 
 		updateScroll();
 	}
@@ -300,5 +375,108 @@ public class PlatformLogicGDX implements Logic {
 		float scroll = Math.min(0, sky.getViewport().getY() + bgY);
 		sky.scroll(p.getX(), scroll - skyScroll);
 		skyScroll = scroll;
+	}
+
+	private PlatformBodyGDX addActor(ActorAddable actor) {
+		return addActor(actor.actor, actor.startX, actor.startY);
+	}
+
+	private PlatformBodyGDX addActor(PlatformActor actor, float startX, float startY) {
+		return addActor(actor, startX, startY, false);
+	}
+
+	private PlatformBodyGDX addActor(PlatformActor actor, float startX, float startY, boolean isHero) {
+		PlatformBodyGDX body = new PlatformBodyGDX(Viewport.DefaultViewport, world, actor, 
+				startX, startY, isHero, actors);
+		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
+			fixtureMap.put(body.getBody().getFixtureList().get(i), body);
+		}
+		return body;
+	}
+
+	private void removeActor(PlatformBodyGDX body) {
+		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
+			fixtureMap.remove(body.getBody().getFixtureList().get(i));
+		}
+		body.dispose();
+	}
+
+	private void doContact(QueuedContact contact) {
+		doContact(contact, false);
+	}
+
+	private void doContact(QueuedContact contact, boolean anti) {
+		Fixture fixtureA = anti ? contact.fixtureB : contact.fixtureA;
+		Fixture fixtureB = anti ? contact.fixtureA : contact.fixtureB;
+
+		float nx = contact.normal.x;
+		float ny = contact.normal.y;
+		if (anti) {
+			nx *= -1;
+			ny *= -1;
+		}
+
+		if (fixtureMap.containsKey(fixtureA)) {
+
+			PlatformBodyGDX bodyA = fixtureMap.get(fixtureA);
+
+			if (fixtureMap.containsKey(fixtureB)) {
+				PlatformBodyGDX bodyB = fixtureMap.get(fixtureB);
+				int dir;
+				if (Math.abs(nx) > Math.abs(ny)) {
+					if (nx > 0) {
+						Game.debug(bodyA.getActor().name + ": Right");
+						dir = PlatformActor.RIGHT;
+					} else {
+						Game.debug(bodyA.getActor().name + ": Left");
+						dir = PlatformActor.LEFT;
+					}
+				} else {
+					if (ny > 0) {
+						Game.debug(bodyA.getActor().name + ": Below");
+						dir = PlatformActor.BELOW;
+					} else {
+						Game.debug(bodyA.getActor().name + ": Above");
+						dir = PlatformActor.ABOVE;
+					}
+				}
+				
+				int[] behaviors = bodyB.isHero() ? bodyA.getActor().heroContactBehaviors : 
+					bodyA.getActor().actorContactBehaviors;				
+				bodyA.doBehavior(behaviors[dir], bodyB);
+			} else {
+				if (Math.abs(nx) * 2 > Math.abs(ny)) {
+					Game.debug(bodyA.getActor().name + ": Wall");
+					Game.debug(nx + ", " + ny);
+					bodyA.doBehavior(bodyA.getActor().wallBehavior, null);
+				}
+			}
+		}
+
+		if (!anti) {
+			doContact(contact, true);
+		}
+	}
+
+	private static class ActorAddable {
+		public PlatformActor actor;
+		public float startX, startY;
+
+		public ActorAddable(PlatformActor actor, float startX, float startY) {
+			this.actor = actor;
+			this.startX = startX;
+			this.startY = startY;
+		}
+	}
+
+	private static class QueuedContact {
+		public Fixture fixtureA, fixtureB;
+		public Vector2 normal;
+
+		public QueuedContact(Fixture fixtureA, Fixture fixtureB, Vector2 normal) {
+			this.fixtureA = fixtureA;
+			this.fixtureB = fixtureB;
+			this.normal = normal;
+		}
 	}
 }

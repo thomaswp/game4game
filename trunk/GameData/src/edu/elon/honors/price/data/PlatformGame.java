@@ -30,8 +30,8 @@ public class PlatformGame implements Serializable {
 		actors[1] = new PlatformActor();
 		PlatformActor ghost = actors[1];
 		ghost.imageName = "ghost.png";
-		ghost.speed = 0.1f;
-		ghost.jumpVelocity = 0.2f;
+		ghost.speed = 1.5f;
+		ghost.jumpVelocity = 4f;
 		ghost.edgeBehavior = PlatformActor.BEHAVIOR_TURN;
 		ghost.wallBehavior = PlatformActor.BEHAVIOR_JUMP_TURN;
 		ghost.actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
@@ -41,7 +41,7 @@ public class PlatformGame implements Serializable {
 		
 		PlatformActor vlad = new PlatformActor();
 		vlad.imageName = "vamp.png";
-		vlad.speed = 0.1f;
+		vlad.speed = 1f;
 		vlad.edgeBehavior = PlatformActor.BEHAVIOR_TURN;
 		vlad.wallBehavior = PlatformActor.BEHAVIOR_TURN;
 		vlad.actorContactBehaviors = new int[] {PlatformActor.BEHAVIOR_NONE, 
@@ -51,8 +51,8 @@ public class PlatformGame implements Serializable {
 		actors[2] = vlad;
 		
 		hero = new PlatformHero();
-		hero.speed = 0.2f;
-		hero.jumpVelocity = 0.3f;
+		hero.speed = 3.5f;
+		hero.jumpVelocity = 6f;
 		hero.stunDuration = 600;
 		hero.imageName = "hero.png";
 		hero.actorContactBehaviors[PlatformActor.BELOW] = PlatformActor.BEHAVIOR_JUMP;

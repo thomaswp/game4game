@@ -449,8 +449,8 @@ public class PlatformMakerLogic implements Logic {
 		int tileWidth = getTileset().tileWidth;
 		int tileHeight = getTileset().tileHeight;
 		Rect sRect = rectHolder.getRect();
-		int column = (int)(tilemaps.get(data.layer).getScrollX() - texturePreview.getScrollX() + 0.5) / tileWidth;
-		int row = (int)(tilemaps.get(data.layer).getScrollY() - texturePreview.getScrollY() + 0.5) / tileHeight;
+		int column = (int)((tilemaps.get(data.layer).getScrollX() - texturePreview.getScrollX()) / tileWidth + 0.5f);
+		int row = (int)((tilemaps.get(data.layer).getScrollY() - texturePreview.getScrollY()) / tileHeight + 0.5f);
 		Action action = new Action(data.layer, sRect, row, column, 0);
 		doAction(action);
 	}
