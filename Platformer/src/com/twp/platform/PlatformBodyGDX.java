@@ -6,12 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -39,26 +42,29 @@ public class PlatformBodyGDX {
 	private Body body;
 	private AnimatedSprite sprite;
 	private PlatformActor actor;
-	private Tilemap[] layers;
-	private PlatformMap map;
-	private RectF rect = new RectF();
-	private Vector temp = new Vector();
-	private boolean grounded;
 	private boolean isHero;
 	private ArrayList<PlatformBodyGDX> actors;
-	private int lastDir;
-	private int lastBehavior;
-	private RectF lastRect = new RectF();
-	private boolean collideX, collideY, collideBoth, edge;
+	private int directionX = 1;
+	private boolean stopped;
+	private int lastBehaviorTime;
 	private int stun;
 	private World world;
+	private Vector2 lastVelocity = new Vector2();
 
 	public boolean isStunned() {
 		return stun > 0;
 	}
+	
+	public boolean isHero() {
+		return isHero;
+	}
 
 	public Body getBody() {
 		return body;
+	}
+
+	public PlatformActor getActor() {
+		return actor;
 	}
 
 	public Vector2 getVelocity() {
@@ -67,6 +73,14 @@ public class PlatformBodyGDX {
 
 	public void setVelocity(float vx, float vy) {
 		body.setLinearVelocity(vx, vy);
+	}
+
+	public void setVelocityX(float vx) {
+		setVelocity(vx, getVelocity().y);
+	}
+
+	public void setVelocityY(float vy) {
+		setVelocity(getVelocity().x, vy);
 	}
 
 	public Vector2 getPosition() {
@@ -81,30 +95,28 @@ public class PlatformBodyGDX {
 		return sprite;
 	}
 
-	public PlatformBodyGDX(Viewport viewport, World world, PlatformActor actor, float startX, float startY, float zoom,
-			Tilemap[] layers, PlatformMap map, boolean isHero, ArrayList<PlatformBodyGDX> actors) {
+	public PlatformBodyGDX(Viewport viewport, World world, PlatformActor actor, float startX, float startY,
+			boolean isHero, ArrayList<PlatformBodyGDX> actors) {
 		this.actor = actor;
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Bitmap[] frames;
 		if (actor.animated) {
 			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / 4, bitmap.getHeight() / 4, 0); 
-			for (Bitmap bmp : frames) {
-				Canvas c = new Canvas();
-				c.setBitmap(bmp);
-				Paint p = new Paint();
-				p.setStyle(Style.STROKE);
-				p.setColor(Color.BLACK);
-				//c.drawCircle(bmp.getHeight() / 2, bmp.getHeight() / 2, bmp.getHeight() / 2, p);
-				c.drawRect(new Rect(0, 0, bmp.getWidth() - 1, bmp.getHeight() - 1), p);
-			}
 		} else {
-			frames = new Bitmap[] { bitmap };
+			frames = new Bitmap[] { bitmap.copy(bitmap.getConfig(), true) };
+		}
+		for (Bitmap bmp : frames) {
+			Canvas c = new Canvas();
+			c.setBitmap(bmp);
+			Paint p = new Paint();
+			p.setStyle(Style.STROKE);
+			p.setColor(Color.BLACK);
+			c.drawOval(new RectF(0, 0, bmp.getWidth(), bmp.getHeight()), p);
+			//c.drawRect(new Rect(0, 0, bmp.getWidth() - 1, bmp.getHeight() - 1), p);
 		}
 		this.sprite = new AnimatedSprite(viewport, frames, startX, startY);
 		this.sprite.centerOrigin();
-		this.sprite.setZoom(zoom);
-		this.layers = layers;
-		this.map = map;
+		this.sprite.setZoom(actor.zoom);
 		this.isHero = isHero;
 		this.actors = actors;
 		this.world = world;
@@ -125,12 +137,13 @@ public class PlatformBodyGDX {
 				actorShape.setPosition(new Vector2(0, i * (sprite.getHeight() - sprite.getWidth()) / 2 / SCALE));
 			}
 			actorFix.shape = actorShape;
-			actorFix.friction = 0;
+			actorFix.friction = actor.fixedRotation ? 0 : 1;
 			actorFix.restitution = 0;
 			actorFix.density = 1;
 			body.createFixture(actorFix);
 		}
-
+		
+		actors.add(this);
 	}
 
 	public static Vector2 spriteToVect(Sprite sprite, Vector offset) {
@@ -141,21 +154,33 @@ public class PlatformBodyGDX {
 	}
 
 	public void update(long timeElapsed, Vector offset) {
+		lastBehaviorTime += timeElapsed;
+		stun -= timeElapsed;
+		
+		if (isHero) {
+			directionX = (int)Math.signum(getVelocity().x);
+			stopped = Math.abs(directionX) < 0.001f; 
+		}
+		
 		if (actor.animated && stun <= 0) {
 			int frame = sprite.getFrame();
-			if (getVelocity().x > 0 && (frame / 4 != 2 || !sprite.isAnimated())) {
+			if (directionX > 0 && (frame / 4 != 2 || !sprite.isAnimated())) {
 				sprite.Animate(FRAME, 8, 4);
-			} else if (getVelocity().x < 0 && (frame / 4 != 1 || !sprite.isAnimated())) {
+			} else if (directionX < 0 && (frame / 4 != 1 || !sprite.isAnimated())) {
 				sprite.Animate(FRAME, 4, 4);
 			}
 			if (sprite.isAnimated()) {
-				if (getVelocity().x == 0) {
+				if (stopped) {
 					sprite.setFrame(frame - frame % 4);
 				}
 			}
 		}
+		
+		if (!isHero)
+			setVelocityX(stopped ? 0 : directionX * actor.speed);
 
 		updateSprite(offset);
+		lastVelocity.set(getVelocity());
 	}
 
 	public static void setSpritePosition(Sprite sprite, Body body, Vector offset) {
@@ -176,52 +201,64 @@ public class PlatformBodyGDX {
 		this.actors.remove(this);
 	}
 
-	public void doBehavior(int behavior, Vector oldVelocity, PlatformBodyGDX cause) {
-		//		if (lastBehavior < BEHAVIOR_REST)
-		//			return;
-		//		lastBehavior = 0;
-		//
-		//		Vector velocity = body.getVelocity();
-		//		switch (behavior) {
-		//		case PlatformActor.BEHAVIOR_STOP:
-		//			velocity.setX(0);
-		//			break;
-		//		case PlatformActor.BEHAVIOR_JUMP_TURN:
-		//			velocity.setY(-actor.jumpVelocity);
-		//		case PlatformActor.BEHAVIOR_TURN:
-		//			velocity.setX(-Math.signum(oldVelocity.getX()) * actor.speed);
-		//			break;
-		//		case PlatformActor.BEHAVIOR_JUMP:
-		//			velocity.setY(-actor.jumpVelocity);
-		//			break;
-		//		case PlatformActor.BEHAVIOR_START_STOP:
-		//			if (velocity.getX() == 0) {
-		//				if (lastDir == 0) {
-		//					velocity.setX(actor.speed);
-		//				} else {
-		//					velocity.setX(actor.speed * lastDir);
-		//				}
-		//			} else {
-		//				velocity.setX(0);
-		//			}
-		//			break;
-		//		case PlatformActor.BEHAVIOR_STUN:
-		//			stun = actor.stunDuration;
-		//			velocity.setY(-actor.jumpVelocity / 1.5f);
-		//			sprite.flash(Color.RED, actor.stunDuration);
-		//			if (cause == null)
-		//				velocity.setX(actor.speed * -getFacingDirectionX() / 1.5f);
-		//			else {
-		//				float dir = Math.signum(this.getSprite().getRect().left - cause.getSprite().getRect().left);
-		//				velocity.setX(actor.speed * dir / 1.5f);
-		//			}
-		//			if (isHero) {
-		//				Input.getVibrator().vibrate(actor.stunDuration / 2);
-		//			}
-		//			break;
-		//		case PlatformActor.BEHAVIOR_DIE:
-		//			dispose();
-		//			break;
-		//		}	
+	public void doBehavior(int behavior, PlatformBodyGDX cause) {
+		if (lastBehaviorTime < BEHAVIOR_REST)
+			return;
+		lastBehaviorTime = 0;
+
+		switch (behavior) {
+		case PlatformActor.BEHAVIOR_STOP:
+			stopped = true;
+			break;
+		case PlatformActor.BEHAVIOR_JUMP_TURN:
+			setVelocityY(-actor.jumpVelocity);
+		case PlatformActor.BEHAVIOR_TURN:
+			directionX *= -1;
+			break;
+		case PlatformActor.BEHAVIOR_JUMP:
+			setVelocityY(-actor.jumpVelocity);
+			break;
+		case PlatformActor.BEHAVIOR_START_STOP:
+			stopped = !stopped;
+			break;
+		case PlatformActor.BEHAVIOR_STUN:
+			stun = actor.stunDuration;
+			setVelocityY(-actor.jumpVelocity / 1.5f);
+			sprite.flash(Color.RED, actor.stunDuration);
+			if (cause == null)
+				directionX *= -1;
+			else {
+				directionX = (int)Math.signum(this.getSprite().getRect().left - cause.getSprite().getRect().left);
+			}
+			stopped = false;
+			if (isHero) {
+				Input.getVibrator().vibrate(actor.stunDuration / 2);
+			}
+			break;
+		case PlatformActor.BEHAVIOR_DIE:
+			dispose();
+			break;
+		}	
+	}
+
+	public static boolean contactBetween(Contact contact, PlatformBodyGDX body1, PlatformBodyGDX body2) {
+		ArrayList<Fixture> fixtures1 = body1.getBody().getFixtureList(), 
+		fixtures2 = body2.getBody().getFixtureList();
+		Fixture fixtureA = contact.getFixtureA(), fixtureB = contact.getFixtureB();
+		return ((fixtures1.contains(fixtureA) && fixtures2.contains(fixtureB)) ||
+				(fixtures2.contains(fixtureA) && fixtures1.contains(fixtureB)));
+	}
+
+	public static boolean collides(PlatformBodyGDX body1, PlatformBodyGDX body2) {
+		return collidesOneWay(body1, body2) && collidesOneWay(body2, body1);
+	}
+
+	private static boolean collidesOneWay(PlatformBodyGDX body1, PlatformBodyGDX body2) {
+		PlatformActor actor1 = body1.getActor();
+		if (body2.isHero) {
+			return actor1.collidesWithHero;
+		} else {
+			return actor1.collidesWithActors;
+		}
 	}
 }
