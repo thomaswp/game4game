@@ -6,7 +6,16 @@ import java.util.ArrayList;
 public class PlatformEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	public ArrayList<Action> actions = new ArrayList<PlatformEvent.Action>();
+	public ArrayList<Action> actions;
+	
+	public PlatformEvent(ArrayList<Action> actions) {
+		this.actions = actions;
+	}
+	
+	public PlatformEvent(Action action) {
+		this(new ArrayList<Action>());
+		actions.add(action);
+	}
 
 	public static class Action implements Serializable {
 		private static final long serialVersionUID = 1L;
@@ -46,6 +55,11 @@ public class PlatformEvent implements Serializable {
 		public float getFloat() { return getFloat(0); }
 		public float getFloat(int index) {
 			return (Float)params[index];
+		}
+		
+		public Parameters getParameters() { return getParameters(0); }
+		public Parameters getParameters(int index) {
+			return (Parameters)params[index];
 		}
 	}
 }

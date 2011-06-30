@@ -58,7 +58,6 @@ public class PlatformMakerLogic implements Logic {
 	private Viewport actorViewport;
 	private Sprite[][] actors;
 	private ActorHolder actorHolder;
-	private Sprite hero;
 
 	@Override
 	public void setPaused(boolean paused) {
@@ -483,13 +482,12 @@ public class PlatformMakerLogic implements Logic {
 			tilemaps.get(action.layer).setMap(tiles);
 			action.previous = oldTiles;
 		} else {
-			int[][] tiles = map.actorLayer.tiles;
-			action.previousId = tiles[action.destRow][action.destCol];
+			action.previousId = map.getActorType(action.destRow, action.destCol);
 			if (action.previousId != action.actorId) {
 				if (action.actorId == -1) {
 					for (int i = 0; i < map.rows; i++) {
 						for (int j = 0; j < map.columns; j++) {
-							if (map.actorLayer.tiles[i][j] == -1) {
+							if (map.getActorType(i, j) == -1) {
 								action.previousHeroRow = i;
 								action.previousHeroCol = j;
 								drawActor(i, j, 0);
@@ -533,18 +531,34 @@ public class PlatformMakerLogic implements Logic {
 	}
 
 	private void drawActor(int row, int column, int newId) {
+		int instance = map.setActor(row, column, newId);
 		if (actors[row][column] != null) {
 			actors[row][column].dispose();
 		}
 		if (newId != 0) {
-			PlatformActor actor = newId > 0 ? game.actors[newId] : game.hero;
+			int type = map.getActorType(row, column);
+			PlatformActor actor = type > 0 ? game.actors[type] : game.hero;
 			Bitmap bmp = Data.loadActor(actor.imageName);
 			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+			
+			String text = "" + instance;
+			Canvas canvas = new Canvas();
+			canvas.setBitmap(bmp);
+			Paint paint = new Paint();
+			paint.setColor(Color.WHITE);
+			paint.setStyle(Style.FILL);
+			paint.setTextSize(12);
+			paint.setAntiAlias(true);
+			canvas.drawRect(0, bmp.getHeight() - paint.getTextSize(), 
+					paint.measureText(text), bmp.getHeight(), paint);
+			paint.setColor(Color.BLACK);
+			paint.setStyle(Style.STROKE);
+			canvas.drawText(text, 0, bmp.getHeight(), paint);
+			
 			actors[row][column] = new Sprite(actorViewport, bmp); 
 			actors[row][column].setX(column * getTileset().tileWidth);
 			actors[row][column].setY(row * getTileset().tileHeight);
 		}
-		map.actorLayer.tiles[row][column] = newId;
 	}
 
 
@@ -557,17 +571,9 @@ public class PlatformMakerLogic implements Logic {
 		actors = new Sprite[map.rows][map.columns];
 		for (int i = 0; i < actors.length; i++) {
 			for (int j = 0; j < actors[i].length; j++) {
-				drawActor(i, j, map.actorLayer.tiles[i][j]);
+				drawActor(i, j, map.getActorType(i, j));
 			}
 		}
-//		Bitmap heroBitmap = Data.loadActor(game.hero.imageName);
-//		Sprite hero = new Sprite(actorViewport,
-//				map.heroStartColumn * getTileset().tileWidth,
-//				map.heroStartRow * getTileset().tileHeight, 
-//				heroBitmap.getWidth(), heroBitmap.getHeight());
-//		hero.getBitmap().eraseColor(Color.BLUE);
-//		Paint paint = new Paint();
-//		hero.getBitmapCanvas().drawBitmap(heroBitmap, 0, 0, paint);
 
 		menu = new Sprite(Viewport.DefaultViewport, Graphics.getWidth() - 50, 0, 50, 50);
 		menu.getBitmap().eraseColor(Color.BLUE);

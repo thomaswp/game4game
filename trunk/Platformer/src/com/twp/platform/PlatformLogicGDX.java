@@ -23,6 +23,10 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.PlatformActorInstance;
+import edu.elon.honors.price.data.PlatformEvent;
+import edu.elon.honors.price.data.PlatformEvent.Action;
+import edu.elon.honors.price.data.PlatformEvent.Parameters;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
@@ -73,6 +77,8 @@ public class PlatformLogicGDX implements Logic {
 	private HashMap<Fixture, PlatformBodyGDX> actorMap = new HashMap<Fixture, PlatformBodyGDX>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
+	private Interpreter interpreter;
+	
 	private float mapX, mapY, bgX, bgY, skyScroll;
 	private int skyStartY, startOceanY;
 
@@ -85,8 +91,9 @@ public class PlatformLogicGDX implements Logic {
 		paused = true;
 	}
 
-	public PlatformLogicGDX(String mapName) {
+	public PlatformLogicGDX(String mapName, Game host) {
 		this.mapName = mapName;
+		this.interpreter = new Interpreter(this);
 		paused = true;
 	}
 
@@ -206,7 +213,7 @@ public class PlatformLogicGDX implements Logic {
 					rock.imageName = "rock.png";
 					rock.zoom = 0.6f;
 					rock.name = "Rock";
-					addActor(rock, 60, 0);
+					//addActor(rock, 60, 0);
 				}
 				if (i == 4 && j == 18) {
 					PlatformActor dude = new PlatformActor();
@@ -214,7 +221,7 @@ public class PlatformLogicGDX implements Logic {
 					dude.zoom = 3f;
 					dude.animated = false;
 					dude.name = "Dude";
-					final PlatformBodyGDX actor = addActor(dude, x, y);
+					final PlatformBodyGDX actor = addActor(dude, -1, x, y);
 					final float rx = x;
 					ContactFilter filter = new ContactFilter() {
 
@@ -260,18 +267,28 @@ public class PlatformLogicGDX implements Logic {
 					};
 					world.setContactListener(listener);
 				}
-				int actorId = actorLayer.tiles[i][j];
-				if (actorId > 0) {
-					addActor(game.actors[actorId], x, y);
-				} else if (actorId == -1) {
-					game.hero.actorContactBehaviors = new int[4];
-					game.hero.zoom = 0.9f;
-					game.hero.name = "Hero";
-					heroBody = addActor(game.hero, 
-							j * tileset.tileWidth,
-							i * tileset.tileHeight, true);
-					hero = heroBody.getSprite();
+				
+				int instanceId = actorLayer.tiles[i][j];
+				if (instanceId > 0) {
+					PlatformActorInstance instance = this.map.actors.get(instanceId);
+					int actorId = instance.actorType;
+					if (actorId > 0) {
+						addActor(game.actors[actorId], instanceId, x, y);
+					} else if (actorId == -1) {
+						game.hero.actorContactBehaviors = new int[4];
+						game.hero.zoom = 0.9f;
+						game.hero.name = "Hero";
+						Parameters params = new Parameters(new Object[] {0, "Hello"}); 
+						Action action = new Action(Interpreter.ID_DEBUG_BOX, params);
+						game.hero.wallEvent = new PlatformEvent(action);
+						heroBody = addActor(game.hero, 
+								instanceId,
+								j * tileset.tileWidth,
+								i * tileset.tileHeight, true);
+						hero = heroBody.getSprite();
+					}
 				}
+				
 			}
 		}
 	}
@@ -320,6 +337,8 @@ public class PlatformLogicGDX implements Logic {
 		}
 		toAdd.clear();
 
+		interpreter.update();
+		
 		updateScroll();
 	}
 
@@ -381,15 +400,15 @@ public class PlatformLogicGDX implements Logic {
 	}
 
 	private PlatformBodyGDX addActor(ActorAddable actor) {
-		return addActor(actor.actor, actor.startX, actor.startY);
+		return addActor(actor.actor, -1, actor.startX, actor.startY);
 	}
 
-	private PlatformBodyGDX addActor(PlatformActor actor, float startX, float startY) {
-		return addActor(actor, startX, startY, false);
+	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY) {
+		return addActor(actor, id, startX, startY, false);
 	}
 
-	private PlatformBodyGDX addActor(PlatformActor actor, float startX, float startY, boolean isHero) {
-		PlatformBodyGDX body = new PlatformBodyGDX(Viewport.DefaultViewport, world, actor, 
+	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY, boolean isHero) {
+		PlatformBodyGDX body = new PlatformBodyGDX(Viewport.DefaultViewport, world, actor, id,
 				startX, startY, isHero, actors);
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			actorMap.put(body.getBody().getFixtureList().get(i), body);
@@ -426,18 +445,18 @@ public class PlatformLogicGDX implements Logic {
 				int dir;
 				if (Math.abs(nx) > Math.abs(ny)) {
 					if (nx > 0) {
-						Game.debug(bodyA.getActor().name + ": Right");
+						//Game.debug(bodyA.getActor().name + ": Right");
 						dir = PlatformActor.RIGHT;
 					} else {
-						Game.debug(bodyA.getActor().name + ": Left");
+						//Game.debug(bodyA.getActor().name + ": Left");
 						dir = PlatformActor.LEFT;
 					}
 				} else {
 					if (ny > 0) {
-						Game.debug(bodyA.getActor().name + ": Below");
+						//Game.debug(bodyA.getActor().name + ": Below");
 						dir = PlatformActor.BELOW;
 					} else {
-						Game.debug(bodyA.getActor().name + ": Above");
+						//Game.debug(bodyA.getActor().name + ": Above");
 						dir = PlatformActor.ABOVE;
 					}
 				}
@@ -454,10 +473,11 @@ public class PlatformLogicGDX implements Logic {
 				float ny = rectB.centerY() - rectA.centerY();
 
 				if (Math.abs(nx) > Math.abs(ny)) {
-					Game.debug(bodyA.getActor().name + ": Wall");
+					//Game.debug(bodyA.getActor().name + ": Wall");
 					bodyA.doBehavior(bodyA.getActor().wallBehavior, null);
+					interpreter.doEvent(bodyA.getActor().wallEvent);
 				}
-				Game.debug(nx + ", " + ny);
+				//Game.debug(nx + ", " + ny);
 			}
 
 		}

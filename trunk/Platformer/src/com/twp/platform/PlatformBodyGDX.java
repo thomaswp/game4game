@@ -23,6 +23,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.PlatformActorInstance;
 import edu.elon.honors.price.data.PlatformMap;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
@@ -42,6 +43,7 @@ public class PlatformBodyGDX {
 	private Body body;
 	private AnimatedSprite sprite;
 	private PlatformActor actor;
+	private int id;
 	private boolean isHero;
 	private ArrayList<PlatformBodyGDX> actors;
 	private int directionX = 1;
@@ -95,8 +97,9 @@ public class PlatformBodyGDX {
 		return sprite;
 	}
 
-	public PlatformBodyGDX(Viewport viewport, World world, PlatformActor actor, float startX, float startY,
-			boolean isHero, ArrayList<PlatformBodyGDX> actors) {
+	public PlatformBodyGDX(Viewport viewport, World world, PlatformActor actor, int id, 
+			float startX, float startY,	boolean isHero, ArrayList<PlatformBodyGDX> actors) {
+		this.id = id;
 		this.actor = actor;
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Bitmap[] frames;
