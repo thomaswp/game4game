@@ -224,6 +224,7 @@ public class PlatformBodyGDX {
 		case PlatformActor.BEHAVIOR_STUN:
 			stun = actor.stunDuration;
 			setVelocityY(-actor.jumpVelocity / 1.5f);
+			sprite.setColor(Color.WHITE);
 			sprite.flash(Color.RED, actor.stunDuration);
 			if (cause == null)
 				directionX *= -1;
