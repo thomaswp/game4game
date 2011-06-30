@@ -70,7 +70,8 @@ public class PlatformLogicGDX implements Logic {
 	private ArrayList<ActorAddable> toAdd = new ArrayList<ActorAddable>();
 	private ArrayList<QueuedContact> contacts = new ArrayList<PlatformLogicGDX.QueuedContact>();
 
-	private HashMap<Fixture, PlatformBodyGDX> fixtureMap = new HashMap<Fixture, PlatformBodyGDX>();
+	private HashMap<Fixture, PlatformBodyGDX> actorMap = new HashMap<Fixture, PlatformBodyGDX>();
+	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
 	private float mapX, mapY, bgX, bgY, skyScroll;
 	private int skyStartY, startOceanY;
@@ -185,6 +186,9 @@ public class PlatformLogicGDX implements Logic {
 							tileShape.setAsBox(width / 2, height / 2);
 						}
 						tileBody.createFixture(tileShape, 1);
+						for (int l = 0; l < tileBody.getFixtureList().size(); l++) {
+							levelMap.put(tileBody.getFixtureList().get(l), s);
+						}
 					}
 				}
 			}
@@ -202,7 +206,7 @@ public class PlatformLogicGDX implements Logic {
 					rock.imageName = "rock.png";
 					rock.zoom = 0.6f;
 					rock.name = "Rock";
-					//addActor(rock, 60, 0);
+					addActor(rock, 60, 0);
 				}
 				if (i == 4 && j == 18) {
 					PlatformActor dude = new PlatformActor();
@@ -216,11 +220,11 @@ public class PlatformLogicGDX implements Logic {
 
 						@Override
 						public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-							if (!(fixtureMap.containsKey(fixtureA) && fixtureMap.containsKey(fixtureB)))
+							if (!(actorMap.containsKey(fixtureA) && actorMap.containsKey(fixtureB)))
 								return true;
 
-							PlatformBodyGDX bodyA = fixtureMap.get(fixtureA);
-							PlatformBodyGDX bodyB = fixtureMap.get(fixtureB);
+							PlatformBodyGDX bodyA = actorMap.get(fixtureA);
+							PlatformBodyGDX bodyB = actorMap.get(fixtureB);
 
 							return PlatformBodyGDX.collides(bodyA, bodyB);
 						}
@@ -234,10 +238,11 @@ public class PlatformLogicGDX implements Logic {
 						}
 
 						@Override
-						public void beginContact(Contact contact) {
-							Vector2 normal = contact.getWorldManifold().getNormal();							
-							contacts.add(new QueuedContact(contact.getFixtureA(), contact.getFixtureB(), normal));
-
+						public void beginContact(Contact contact) {		
+							if (contact.isTouching()) {
+								contacts.add(new QueuedContact(contact.getFixtureA(), contact.getFixtureB()));
+							}
+								
 							if (PlatformBodyGDX.contactBetween(contact, heroBody, actor)) {
 								if (!toRemove.contains(actor) && actors.contains(actor)) {
 									toRemove.add(actor);
@@ -303,7 +308,7 @@ public class PlatformLogicGDX implements Logic {
 		//		}
 
 		world.step(timeElapsed / 1000.0f, 6, 6);
-		
+
 		for (int i = 0; i < contacts.size(); i++) {
 			doContact(contacts.get(i));
 		}
@@ -389,14 +394,14 @@ public class PlatformLogicGDX implements Logic {
 		PlatformBodyGDX body = new PlatformBodyGDX(Viewport.DefaultViewport, world, actor, 
 				startX, startY, isHero, actors);
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
-			fixtureMap.put(body.getBody().getFixtureList().get(i), body);
+			actorMap.put(body.getBody().getFixtureList().get(i), body);
 		}
 		return body;
 	}
 
 	private void removeActor(PlatformBodyGDX body) {
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
-			fixtureMap.remove(body.getBody().getFixtureList().get(i));
+			actorMap.remove(body.getBody().getFixtureList().get(i));
 		}
 		body.dispose();
 	}
@@ -409,19 +414,17 @@ public class PlatformLogicGDX implements Logic {
 		Fixture fixtureA = anti ? contact.fixtureB : contact.fixtureA;
 		Fixture fixtureB = anti ? contact.fixtureA : contact.fixtureB;
 
-		float nx = contact.normal.x;
-		float ny = contact.normal.y;
-		if (anti) {
-			nx *= -1;
-			ny *= -1;
-		}
+		if (actorMap.containsKey(fixtureA)) {
 
-		if (fixtureMap.containsKey(fixtureA)) {
+			PlatformBodyGDX bodyA = actorMap.get(fixtureA);
 
-			PlatformBodyGDX bodyA = fixtureMap.get(fixtureA);
+			if (actorMap.containsKey(fixtureB)) {
+				PlatformBodyGDX bodyB = actorMap.get(fixtureB);
+				RectF rectA = bodyA.getSprite().getRect();
+				RectF rectB = bodyB.getSprite().getRect();
+				float nx = rectB.centerX() - rectA.centerX();
+				float ny = rectB.centerY() - rectA.centerY();
 
-			if (fixtureMap.containsKey(fixtureB)) {
-				PlatformBodyGDX bodyB = fixtureMap.get(fixtureB);
 				int dir;
 				if (Math.abs(nx) > Math.abs(ny)) {
 					if (nx > 0) {
@@ -440,17 +443,25 @@ public class PlatformLogicGDX implements Logic {
 						dir = PlatformActor.ABOVE;
 					}
 				}
-				
+
 				int[] behaviors = bodyB.isHero() ? bodyA.getActor().heroContactBehaviors : 
 					bodyA.getActor().actorContactBehaviors;				
 				bodyA.doBehavior(behaviors[dir], bodyB);
-			} else {
-				if (Math.abs(nx) * 2 > Math.abs(ny)) {
+			} else if (levelMap.containsKey(fixtureB)) {
+				Sprite spriteB = levelMap.get(fixtureB);
+
+				RectF rectA = bodyA.getSprite().getRect();
+				RectF rectB = spriteB.getRect();
+				float nx = rectB.centerX() - rectA.centerX();
+				float ny = rectB.centerY() - rectA.centerY();
+
+				if (Math.abs(nx) > Math.abs(ny)) {
 					Game.debug(bodyA.getActor().name + ": Wall");
-					Game.debug(nx + ", " + ny);
 					bodyA.doBehavior(bodyA.getActor().wallBehavior, null);
 				}
+				Game.debug(nx + ", " + ny);
 			}
+
 		}
 
 		if (!anti) {
@@ -471,12 +482,10 @@ public class PlatformLogicGDX implements Logic {
 
 	private static class QueuedContact {
 		public Fixture fixtureA, fixtureB;
-		public Vector2 normal;
 
-		public QueuedContact(Fixture fixtureA, Fixture fixtureB, Vector2 normal) {
+		public QueuedContact(Fixture fixtureA, Fixture fixtureB) {
 			this.fixtureA = fixtureA;
 			this.fixtureB = fixtureB;
-			this.normal = normal;
 		}
 	}
 }
