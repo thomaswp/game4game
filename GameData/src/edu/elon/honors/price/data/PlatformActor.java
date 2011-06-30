@@ -36,6 +36,7 @@ public class PlatformActor implements Serializable, Cloneable {
 	public float zoom = 1;
 	public boolean collidesWithActors = true;
 	public boolean collidesWithHero = true;
+	public PlatformEvent wallEvent;
 	
 	@Override
 	public PlatformActor clone() {

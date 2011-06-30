@@ -16,15 +16,20 @@ import edu.elon.honors.price.graphics.GraphicsView;
 import edu.elon.honors.price.input.Input;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 
 /**
@@ -36,31 +41,36 @@ import android.view.WindowManager;
  */
 public abstract class Game extends Activity {
 
-	protected GraphicsView view;
 	private static Game currentGame;
-	
+
+	protected GraphicsView view;
+	protected Handler alertHandler = new Handler(), toastHandler = new Handler();
+	protected boolean alertShowing;
+	protected String nextMessage;
+	protected int toastOffset;
+
 	public static Game getCurrentGame() {
 		return currentGame;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		debug("Activity Created");
-		
+
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		Cache.clearCache();
 		Audio.setContext(this);
 		Input.setVibrator((Vibrator)getSystemService(VIBRATOR_SERVICE));
-		
+
 		view = new GraphicsView(this);
 		view.setRenderer(new GraphicsRenderer());
 		this.setContentView(view);
 	}
-	
+
 	//Game Activities need to gave a logic and GraphicsView
 	protected abstract Logic getNewLogic();
 
@@ -69,7 +79,7 @@ public abstract class Game extends Activity {
 		debug("Activity Paused");
 
 		Logic logic = view.getLogic();
-		
+
 		synchronized(logic) {
 			//clear the Graphics View's Logic
 			view.setLogic(null);
@@ -79,7 +89,7 @@ public abstract class Game extends Activity {
 			//reset the Graphics
 			Graphics.reset();
 		}
-		
+
 		Audio.stop();
 
 		super.onPause();
@@ -94,14 +104,14 @@ public abstract class Game extends Activity {
 		//Load the logic back on resume
 		Logic logic = getNewLogic();
 		view.setLogic(logic);
-		
+
 		synchronized (logic) {
 			logic.load();
 		}
 
 		super.onResume();
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		Game.debug("Activity Destroyed");
@@ -127,10 +137,10 @@ public abstract class Game extends Activity {
 		if (logic != null)
 			logic.setPaused(true);
 		view.getRenderer().setFlush(true);
-		
+
 		return super.onMenuOpened(featureId, menu);
 	}
-	
+
 	public static Bitmap loadBitmap(int id) {
 		try {
 			if (Cache.isBitmapRegistered(id)) {
@@ -148,11 +158,11 @@ public abstract class Game extends Activity {
 			return null;
 		}
 	}
-	
+
 	public static String loadString(int id) {
 		return getCurrentGame().getResources().getString(id);
 	}
-	
+
 	/**
 	 * Saves a serializable class, using the given activity with the given name.
 	 * 
@@ -172,7 +182,7 @@ public abstract class Game extends Activity {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Loads a serializable class, using the given activity with the given name.
 	 * 
@@ -198,15 +208,15 @@ public abstract class Game extends Activity {
 			return null;
 		}
 	}
-	
+
 	public static void debug(Object o) {
 		debug(o.toString());
 	}
-	
+
 	public static void debug(float x) {
 		debug("" + x);
 	}
-	
+
 	/**
 	 * A method to write specially formatted debug text.
 	 * 
@@ -214,5 +224,52 @@ public abstract class Game extends Activity {
 	 */
 	public static void debug(String text) {
 		Log.d("Game", "---{" + text + "}---");
+	}
+
+	public void showAlert(String message) {
+		final Logic logic = view.getLogic();
+		final String m = message;
+		
+		alertHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (alertShowing) {
+					nextMessage = m;
+					return;
+				}
+				alertShowing = true;
+				synchronized (logic) {
+					view.setLogic(null);
+					AlertDialog alert = new AlertDialog.Builder(Game.getCurrentGame()).create();
+					alert.setTitle("Debug");
+					alert.setMessage(m);
+					alert.show();
+					alert.setOnDismissListener(new OnDismissListener() {
+						@Override
+						public void onDismiss(DialogInterface dialog) {
+							view.setLogic(logic);
+							logic.setPaused(true);
+							alertShowing = false;
+							if (nextMessage != null) {
+								showAlert(nextMessage);
+								nextMessage = null;
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	
+	public void showToast(String message) {
+		final String m = message;
+		toastHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Game.debug("TOAST");
+				Toast toast = Toast.makeText(currentGame, m, Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		});
 	}
 }
