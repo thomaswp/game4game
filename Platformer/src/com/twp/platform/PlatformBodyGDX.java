@@ -176,7 +176,7 @@ public class PlatformBodyGDX {
 			}
 		}
 		
-		if (!isHero)
+		if (!isHero && actor.speed > 0)
 			setVelocityX(stopped ? 0 : directionX * actor.speed);
 
 		updateSprite(offset);

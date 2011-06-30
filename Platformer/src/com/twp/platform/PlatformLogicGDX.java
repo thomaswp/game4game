@@ -264,9 +264,7 @@ public class PlatformLogicGDX implements Logic {
 				if (actorId > 0) {
 					addActor(game.actors[actorId], x, y);
 				} else if (actorId == -1) {
-					game.hero.animated = true;
-					game.hero.fixedRotation = true;
-					game.hero.collidesWithActors = true;
+					game.hero.actorContactBehaviors = new int[4];
 					game.hero.zoom = 0.9f;
 					game.hero.name = "Hero";
 					heroBody = addActor(game.hero, 
