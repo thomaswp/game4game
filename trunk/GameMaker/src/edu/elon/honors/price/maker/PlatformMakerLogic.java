@@ -439,7 +439,7 @@ public class PlatformMakerLogic implements Logic {
 		int tileHeight = getTileset().tileHeight;
 		int column = (int)(actorPreview.getX() / tileWidth + 0.5);
 		int row = (int) (actorPreview.getY() / tileHeight + 0.5);
-		if (map.actorLayer.tiles[row][column] == -1) return;
+		if (map.getActorType(row, column) == -1) return;
 		Action action = new Action(data.layer, null, row, column, actorHolder.getActorId());
 		doAction(action);
 	}
@@ -482,8 +482,8 @@ public class PlatformMakerLogic implements Logic {
 			tilemaps.get(action.layer).setMap(tiles);
 			action.previous = oldTiles;
 		} else {
-			action.previousId = map.getActorType(action.destRow, action.destCol);
-			if (action.previousId != action.actorId) {
+			action.previousInstance = map.actorLayer.tiles[action.destRow][action.destCol];
+			if (map.getActorType(action.destRow, action.destCol) != action.actorId) {
 				if (action.actorId == -1) {
 					for (int i = 0; i < map.rows; i++) {
 						for (int j = 0; j < map.columns; j++) {
@@ -515,11 +515,11 @@ public class PlatformMakerLogic implements Logic {
 			}
 			tilemaps.get(action.layer).setMap(tiles);
 		} else {
-			if (action.previousId != action.actorId) {
-				drawActor(action.destRow, action.destCol, action.previousId);
-				if (action.actorId == -1) {
-					drawActor(action.previousHeroRow, action.previousHeroCol, -1);
-				}
+			if (action.actorId > 0) map.actors.remove(map.actors.size() - 1);
+			map.actorLayer.tiles[action.destRow][action.destCol] = action.previousInstance;
+			drawActor(action.destRow, action.destCol, map.getActorType(action.destRow, action.destCol));
+			if (action.actorId == -1) {
+				drawActor(action.previousHeroRow, action.previousHeroCol, -1);
 			}
 		}
 		data.editIndex--;
@@ -706,7 +706,7 @@ public class PlatformMakerLogic implements Logic {
 		private static final long serialVersionUID = 2L;
 
 		public int layer;
-		public int destRow, destCol, srcRow, srcCol, rows, cols, actorId, previousId,
+		public int destRow, destCol, srcRow, srcCol, rows, cols, actorId, previousInstance,
 			previousHeroRow, previousHeroCol;
 		public int[][] previous;
 

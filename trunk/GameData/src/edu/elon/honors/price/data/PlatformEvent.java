@@ -42,6 +42,11 @@ public class PlatformEvent implements Serializable {
 			return params.length;
 		}
 		
+		public boolean getBoolean() { return getBoolean(0); }
+		public boolean getBoolean(int index) {
+			return (Boolean)params[index];
+		}
+		
 		public String getString() { return getString(0); }
 		public String getString(int index) {
 			return (String)params[index];

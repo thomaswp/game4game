@@ -52,6 +52,9 @@ public class PlatformMap implements Serializable{
 			}
 			actorLayer.tiles[row][column] = 0;
 			return 0;
+		} else if (type == -1 && actors.size() > 1) {
+			actorLayer.tiles[row][column] = 1;
+			return 1;
 		} else {
 			int oldId = actorLayer.tiles[row][column];
 			if (oldId > 0 && actors.get(oldId).actorType == type) return oldId;

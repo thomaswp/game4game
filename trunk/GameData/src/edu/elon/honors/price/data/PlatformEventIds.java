@@ -13,8 +13,9 @@ public class PlatformEventIds {
 	 * P0: Specific | Range
 	 * P1: Id/(Start Range, End Range)
 	 * P2: Set | Add | Subtract | Multiply | Divide | Mod
-	 * P3: Value | Variable | Random
-	 * P4: Value/Id/(Lower Bound, Upper Bound)
+	 * P3: Value | Variable | Random | Actor
+	 * P4: Value/Id/(Lower Bound, Upper Bound)/Id
+	 * P5: .../(X | Y)
 	 */
 	public static final int ID_SET_VARIABLE = 1;
 	

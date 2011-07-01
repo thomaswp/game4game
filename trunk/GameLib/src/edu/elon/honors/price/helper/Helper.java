@@ -19,6 +19,7 @@ public class Helper {
 		textViewport = new Viewport(0, 0, -1, -1);
 		textViewport.setZ(Integer.MAX_VALUE); 
 		textPaint = new Paint();
+		textPaint.setAntiAlias(true);
 	}
 	public static void popupText(Physics physics, String text, Vector pos, int color, float size, int timeout) {
 		textPaint.setColor(color);
