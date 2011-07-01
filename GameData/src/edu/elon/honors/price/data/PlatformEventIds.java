@@ -28,6 +28,15 @@ public class PlatformEventIds {
 	 * P5: Left | Right
 	 */
 	public static final int ID_CREATE_ACTOR = 2;
+	/**
+	 * P0: Id
+	 * P1: ValueX | VariableX
+	 * P2: Value/Id 
+	 * P3: ValueY | VariableY
+	 * P4: Value/Id
+	 * P5: Left | Right | Retain
+	 */
+	public static final int ID_MOVE_ACTOR = 4;
 	
 	/**
 	 * P0: Text | Switch | Variable

@@ -12,6 +12,7 @@ public class PlatformMap implements Serializable{
 	public PlatformLayer[] layers;
 	public PlatformLayer actorLayer;
 	public ArrayList<PlatformActorInstance> actors; 
+	public ArrayList<PlatformEvent> events;
 	public int rows, columns;
 	
 	public PlatformMap() {
@@ -22,6 +23,8 @@ public class PlatformMap implements Serializable{
 		tilesetId = 0;
 		
 		actorLayer = new PlatformLayer("actors", rows, columns, false);
+		
+		events = new ArrayList<PlatformEvent>();
 		
 		actors = new ArrayList<PlatformActorInstance>();
 		actors.add(null);

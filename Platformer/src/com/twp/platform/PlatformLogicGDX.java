@@ -26,7 +26,10 @@ import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.data.PlatformActorInstance;
 import edu.elon.honors.price.data.PlatformEvent;
 import edu.elon.honors.price.data.PlatformEvent.Action;
+import edu.elon.honors.price.data.PlatformEvent.ActorTrigger;
 import edu.elon.honors.price.data.PlatformEvent.Parameters;
+import edu.elon.honors.price.data.PlatformEvent.SwitchTrigger;
+import edu.elon.honors.price.data.PlatformEvent.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.PlatformLayer;
 import edu.elon.honors.price.data.PlatformMap;
@@ -68,7 +71,6 @@ public class PlatformLogicGDX implements Logic {
 	private World world;
 	private PlatformBodyGDX heroBody;
 	private Vector offset;
-	private Vector2 temp = new Vector2();
 
 	private ArrayList<PlatformBodyGDX> toRemove = new ArrayList<PlatformBodyGDX>();
 	private ArrayList<ActorAddable> toAdd = new ArrayList<ActorAddable>();
@@ -78,7 +80,7 @@ public class PlatformLogicGDX implements Logic {
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
 	private Interpreter interpreter;
-	
+
 	private float mapX, mapY, bgX, bgY, skyScroll;
 	private int skyStartY, startOceanY;
 
@@ -89,11 +91,11 @@ public class PlatformLogicGDX implements Logic {
 	public PlatformGame getGame() {
 		return game;
 	}
-	
+
 	public PlatformMap getMap() {
 		return map;
 	}
-	
+
 	@Override
 	public void setPaused(boolean paused) {
 		paused = true;
@@ -127,6 +129,8 @@ public class PlatformLogicGDX implements Logic {
 
 		offset = new Vector();
 
+		while (actors.size() < map.actors.size()) actors.add(null);
+
 		initPhysics();
 
 
@@ -137,6 +141,51 @@ public class PlatformLogicGDX implements Logic {
 
 	private void initPhysics() {
 		world = new World(new Vector2(0, 10f), true);
+		
+		ContactFilter filter = new ContactFilter() {
+
+			@Override
+			public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
+				if (!(actorMap.containsKey(fixtureA) && actorMap.containsKey(fixtureB)))
+					return true;
+
+				PlatformBodyGDX bodyA = actorMap.get(fixtureA);
+				PlatformBodyGDX bodyB = actorMap.get(fixtureB);
+
+				return PlatformBodyGDX.collides(bodyA, bodyB);
+			}
+		};
+		world.setContactFilter(filter);
+		
+		ContactListener listener = new ContactListener() {
+
+			@Override
+			public void endContact(Contact contact) {
+				doEndContact(contact.getFixtureA(), contact.getFixtureB());
+			}
+
+			@Override
+			public void beginContact(Contact contact) {		
+				if (contact.isTouching()) {
+					contacts.add(new QueuedContact(contact.getFixtureA(), contact.getFixtureB()));
+				}
+
+//				if (PlatformBodyGDX.contactBetween(contact, heroBody, actor)) {
+//					if (!toRemove.contains(actor) && actors.contains(actor)) {
+//						toRemove.add(actor);
+//						PlatformActor critter = new PlatformActor();
+//						critter.zoom = 1.3f;
+//						critter.imageName = "critter.png";
+//						critter.collidesWithActors = false;
+//						critter.name = "Critter";
+//						for (int i = 0; i < 5; i++) {
+//							toAdd.add(new ActorAddable(critter, rx + (int)(Math.random() * 40), (int)(Math.random() * 10)));
+//						}
+//					}
+//				}
+			}
+		};
+		world.setContactListener(listener);
 
 		layers = new Tilemap[map.layers.length];
 		Tileset tileset = game.getMapTileset(map);
@@ -212,8 +261,8 @@ public class PlatformLogicGDX implements Logic {
 		PlatformLayer actorLayer = map.actorLayer;
 		for (int i = 0; i < actorLayer.rows; i++) {
 			for (int j = 0; j < actorLayer.columns; j++) {
-				float x = j * game.getMapTileset(map).tileWidth;
-				float y = i * game.getMapTileset(map).tileHeight;
+				float x = (j + 0.5f) * game.getMapTileset(map).tileWidth;
+				float y = (i + 0.5f) * game.getMapTileset(map).tileHeight;
 				if (i == 0 && j == 0) {
 					PlatformActor rock = new PlatformActor();
 					rock.animated = false;
@@ -221,7 +270,7 @@ public class PlatformLogicGDX implements Logic {
 					rock.imageName = "rock.png";
 					rock.zoom = 0.6f;
 					rock.name = "Rock";
-					//addActor(rock, 60, 0);
+					addActor(rock, -1, 60, 0);
 				}
 				if (i == 4 && j == 18) {
 					PlatformActor dude = new PlatformActor();
@@ -229,53 +278,26 @@ public class PlatformLogicGDX implements Logic {
 					dude.zoom = 3f;
 					dude.animated = false;
 					dude.name = "Dude";
-					final PlatformBodyGDX actor = addActor(dude, -1, x, y);
-					final float rx = x;
-					ContactFilter filter = new ContactFilter() {
-
-						@Override
-						public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-							if (!(actorMap.containsKey(fixtureA) && actorMap.containsKey(fixtureB)))
-								return true;
-
-							PlatformBodyGDX bodyA = actorMap.get(fixtureA);
-							PlatformBodyGDX bodyB = actorMap.get(fixtureB);
-
-							return PlatformBodyGDX.collides(bodyA, bodyB);
-						}
-					};
-					world.setContactFilter(filter);
-					ContactListener listener = new ContactListener() {
-
-						@Override
-						public void endContact(Contact contact) {
-
-						}
-
-						@Override
-						public void beginContact(Contact contact) {		
-							if (contact.isTouching()) {
-								contacts.add(new QueuedContact(contact.getFixtureA(), contact.getFixtureB()));
-							}
-								
-							if (PlatformBodyGDX.contactBetween(contact, heroBody, actor)) {
-								if (!toRemove.contains(actor) && actors.contains(actor)) {
-									toRemove.add(actor);
-									PlatformActor critter = new PlatformActor();
-									critter.zoom = 1.3f;
-									critter.imageName = "critter.png";
-									critter.collidesWithActors = false;
-									critter.name = "Critter";
-									for (int i = 0; i < 5; i++) {
-										toAdd.add(new ActorAddable(critter, rx + (int)(Math.random() * 40), (int)(Math.random() * 10)));
-									}
-								}
-							}
-						}
-					};
-					world.setContactListener(listener);
+					dude.heroContactBehaviors[PlatformActor.LEFT] = PlatformActor.BEHAVIOR_DIE;
+					PlatformActor critter = new PlatformActor();
+					critter.imageName = "critter.png";
+					critter.zoom = 1.5f;
+					critter.speed = 1;
+					critter.name = "Critter";
+					game.actors[2] = critter;
+					PlatformBodyGDX dudeBody = addActor(dude, -1, x, y);
+					ArrayList<Action> actions = new ArrayList<Action>();
+					Parameters params;
+					params = new Parameters(new Object[] {0, 0, 0, 3, 1, 0});
+					actions.add(new Action(Action.ID_SET_VARIABLE, params));
+					params = new Parameters(new Object[] {2, 1, 0, 0, 0, 1}); 
+					actions.add(new Action(Interpreter.ID_CREATE_ACTOR, params));
+					ActorTrigger trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
+					PlatformEvent event = new PlatformEvent(actions);
+					event.actorTriggers.add(trigger);
+					map.events.add(event);
 				}
-				
+
 				int instanceId = actorLayer.tiles[i][j];
 				if (instanceId > 0) {
 					PlatformActorInstance instance = this.map.actors.get(instanceId);
@@ -286,17 +308,14 @@ public class PlatformLogicGDX implements Logic {
 						game.hero.actorContactBehaviors = new int[4];
 						game.hero.zoom = 0.9f;
 						game.hero.name = "Hero";
-						Parameters params = new Parameters(new Object[] {0, "Hello"}); 
-						Action action = new Action(Interpreter.ID_DEBUG_BOX, params);
-						game.hero.wallEvent = new PlatformEvent(action);
 						heroBody = addActor(game.hero, 
 								instanceId,
-								j * tileset.tileWidth,
-								i * tileset.tileHeight, 1, true);
+								x,
+								y, 1, true);
 						hero = heroBody.getSprite();
 					}
 				}
-				
+
 			}
 		}
 	}
@@ -324,18 +343,22 @@ public class PlatformLogicGDX implements Logic {
 		}
 
 		for (int i = 0; i < actors.size(); i++) {
-			actors.get(i).update(timeElapsed, offset);
+			if (actors.get(i) != null) {
+				actors.get(i).update(timeElapsed, offset);
+			}
 		}
-		//		for (int i = 0; i < actors.size(); i++) {
-		//			actors.get(i).updateEvents();
-		//		}
 
 		world.step(timeElapsed / 1000.0f, 6, 6);
 
+		
 		for (int i = 0; i < contacts.size(); i++) {
 			doContact(contacts.get(i));
 		}
 		contacts.clear();
+		
+		checkTriggers();
+		checkBehaviors();
+		
 		for (int i = 0; i < toRemove.size(); i++) {
 			removeActor(toRemove.get(i));
 		}
@@ -346,7 +369,7 @@ public class PlatformLogicGDX implements Logic {
 		toAdd.clear();
 
 		interpreter.update();
-		
+
 		updateScroll();
 	}
 
@@ -360,18 +383,97 @@ public class PlatformLogicGDX implements Logic {
 	public void load() {
 		game = (PlatformGame) Data.loadGame(mapName, Game.getCurrentGame());
 	}
-	
+
 	public PlatformBodyGDX getBodyFromId(int id) {
-		for (int i = 0; i < actors.size(); i++) {
-			if (actors.get(i).getId() == id)
-				return actors.get(i);
-		}
-		
-		return null;
+		return actors.get(id);
 	}
-	
+
 	public void queueActor(ActorAddable actor) {
 		toAdd.add(actor);
+	}
+
+	public  PlatformBodyGDX addActor(ActorAddable actor) {
+		return addActor(actor.actor, -1, actor.startX, actor.startY, actor.startDir);
+	}
+
+	private void checkTriggers() {
+		for (int i = 0; i < map.events.size(); i++) {
+			PlatformEvent event = map.events.get(i);
+			boolean triggered = false;
+
+			for (int j = 0; j < event.switchTriggers.size(); j++) {
+				SwitchTrigger trigger = event.switchTriggers.get(j);
+				triggered |= Globals.getSwitches()[trigger.switchId] == trigger.value; 
+			}
+
+			for (int j = 0; j < event.variableTriggers.size(); j++) {
+				VariableTrigger trigger = event.variableTriggers.get(j);
+
+				int value1 = Globals.getVariables()[trigger.variableId];
+				int value2 = trigger.with == VariableTrigger.WITH_VALUE ? trigger.valueOrId :
+					Globals.getVariables()[trigger.valueOrId];
+
+				boolean result = false;
+				switch (trigger.test) {
+				case VariableTrigger.TEST_EQUALS: result = value1 == value2; break;
+				case VariableTrigger.TEST_NOT_EQUALS: result = value1 != value2; break;
+				case VariableTrigger.TEST_GT: result = value1 > value2; break;
+				case VariableTrigger.TEST_LT: result = value1 < value2; break;
+				case VariableTrigger.TEST_GEQ: result = value1 >= value2; break;
+				case VariableTrigger.TEST_LEQ: result = value1 <= value2; break;
+				}
+				
+				triggered |= result;
+			}
+			
+			for (int j = 0; j < event.actorTriggers.size(); j++) {
+				ActorTrigger trigger = event.actorTriggers.get(j);
+				
+				for (int k = 0; k < actors.size(); k++) {
+					PlatformBodyGDX actor = actors.get(k);
+					
+					if (actor == null) continue;
+					if (trigger.forInstance && k != trigger.id) continue;
+					if (!trigger.forInstance && actor.getActor() != game.actors[trigger.id]) continue;
+					
+					if (trigger.action == ActorTrigger.ACTION_COLLIDES_HERO) {
+						for (int l = 0; l < actor.getCollidedActors().size(); l++) {
+							 triggered |= actor.getCollidedActors().get(l).isHero();
+						}
+					}
+					if (trigger.action == ActorTrigger.ACTION_COLLIDES_ACTOR) {
+						triggered |= actor.getCollidedActors().size() > 0;
+					}
+					if (trigger.action == ActorTrigger.ACTION_COLLIDES_WALL) {
+						triggered |= actor.isCollidedWall();
+					}
+				}
+			}
+			
+			if (triggered) {
+				Game.debug("TRIGGER");
+				interpreter.doEvent(event);
+			}
+		}
+	}
+	
+	private void checkBehaviors() {
+		for (int i = 0; i < actors.size(); i++) {
+			PlatformBodyGDX bodyA = actors.get(i);
+			if (bodyA != null) {
+				for (int j = 0; j < bodyA.getCollidedActors().size(); j++) {
+					PlatformBodyGDX bodyB = bodyA.getCollidedActors().get(j);
+					
+					int dir = PlatformBodyGDX.getCollisionDirection(bodyA, bodyB);
+					int[] behaviors = bodyB.isHero() ? bodyA.getActor().heroContactBehaviors : 
+						bodyA.getActor().actorContactBehaviors;				
+					bodyA.doBehavior(behaviors[dir], bodyB);
+				}
+				if (bodyA.isCollidedWall()) {
+					bodyA.doBehavior(bodyA.getActor().wallBehavior, null);
+				}
+			}
+		}
 	}
 
 	private void updateScroll() {
@@ -395,7 +497,9 @@ public class PlatformLogicGDX implements Logic {
 		offset.add(p);
 
 		for (int i = 0; i < actors.size(); i++) {
-			actors.get(i).updateSprite(offset);
+			if (actors.get(i) != null) {
+				actors.get(i).updateSprite(offset);
+			}
 		}
 
 		p.multiply(-1);
@@ -420,22 +524,24 @@ public class PlatformLogicGDX implements Logic {
 		skyScroll = scroll;
 	}
 
-	public  PlatformBodyGDX addActor(ActorAddable actor) {
-		return addActor(actor.actor, -1, actor.startX, actor.startY, actor.startDir);
-	}
-
 	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY) {
 		return addActor(actor, id, startX, startY, 1, false);
 	}
-	
+
 	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY, int startDir) {
 		return addActor(actor, id, startX, startY, startDir, false);
 	}
 
 	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY, 
 			int startDir, boolean isHero) {
+		if (id < 0) {
+			id = actors.size();
+			actors.add(null);
+		}
 		PlatformBodyGDX body = new PlatformBodyGDX(Viewport.DefaultViewport, world, actor, id,
 				startX, startY, startDir, isHero, actors);
+		actors.set(id, body);
+
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			actorMap.put(body.getBody().getFixtureList().get(i), body);
 		}
@@ -463,33 +569,10 @@ public class PlatformLogicGDX implements Logic {
 
 			if (actorMap.containsKey(fixtureB)) {
 				PlatformBodyGDX bodyB = actorMap.get(fixtureB);
-				RectF rectA = bodyA.getSprite().getRect();
-				RectF rectB = bodyB.getSprite().getRect();
-				float nx = rectB.centerX() - rectA.centerX();
-				float ny = rectB.centerY() - rectA.centerY();
-
-				int dir;
-				if (Math.abs(nx) > Math.abs(ny)) {
-					if (nx > 0) {
-						//Game.debug(bodyA.getActor().name + ": Right");
-						dir = PlatformActor.RIGHT;
-					} else {
-						//Game.debug(bodyA.getActor().name + ": Left");
-						dir = PlatformActor.LEFT;
-					}
-				} else {
-					if (ny > 0) {
-						//Game.debug(bodyA.getActor().name + ": Below");
-						dir = PlatformActor.BELOW;
-					} else {
-						//Game.debug(bodyA.getActor().name + ": Above");
-						dir = PlatformActor.ABOVE;
-					}
+				if (!bodyA.getTouchingActors().contains(bodyB)) {
+					bodyA.getCollidedActors().add(bodyB);
+					bodyA.getTouchingActors().add(bodyB);
 				}
-
-				int[] behaviors = bodyB.isHero() ? bodyA.getActor().heroContactBehaviors : 
-					bodyA.getActor().actorContactBehaviors;				
-				bodyA.doBehavior(behaviors[dir], bodyB);
 			} else if (levelMap.containsKey(fixtureB)) {
 				Sprite spriteB = levelMap.get(fixtureB);
 
@@ -499,17 +582,37 @@ public class PlatformLogicGDX implements Logic {
 				float ny = rectB.centerY() - rectA.centerY();
 
 				if (Math.abs(nx) > Math.abs(ny)) {
-					//Game.debug(bodyA.getActor().name + ": Wall");
-					bodyA.doBehavior(bodyA.getActor().wallBehavior, null);
-					interpreter.doEvent(bodyA.getActor().wallEvent);
+					if (!bodyA.getTouchingWalls().contains(fixtureB)) {
+						bodyA.setCollidedWall(true);
+						bodyA.getTouchingWalls().add(fixtureB);
+					}
 				}
-				//Game.debug(nx + ", " + ny);
 			}
 
 		}
 
 		if (!anti) {
 			doContact(contact, true);
+		}
+	}
+	
+	private void doEndContact(Fixture fixtureA, Fixture fixtureB) {
+		doEndContact(fixtureA, fixtureB, false);
+	}
+	
+	private void doEndContact(Fixture fixtureA, Fixture fixtureB, boolean anti) {
+		if (actorMap.containsKey(fixtureA)) {
+			PlatformBodyGDX bodyA = actorMap.get(fixtureA);
+			if (actorMap.containsKey(fixtureB)) {
+				PlatformBodyGDX bodyB = actorMap.get(fixtureB);
+				bodyA.getTouchingActors().remove(bodyB);
+			} else if (levelMap.containsKey(fixtureB)) {
+				if (bodyA.getTouchingWalls().contains(fixtureB))
+					bodyA.getTouchingWalls().remove(fixtureB);
+			}
+		}
+		if (!anti) {
+			doEndContact(fixtureB, fixtureA, true);
 		}
 	}
 
@@ -521,7 +624,7 @@ public class PlatformLogicGDX implements Logic {
 		public ActorAddable(PlatformActor actor, float startX, float startY) {
 			this(actor, startX, startY, 1);
 		}
-		
+
 		public ActorAddable(PlatformActor actor, float startX, float startY, int startDir) {
 			this.actor = actor;
 			this.startX = startX;

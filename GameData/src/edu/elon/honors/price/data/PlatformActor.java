@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class PlatformActor implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 	
-	public final static float MAX_SPEED = 0.3f;
-	public final static float MAX_JUMP = 0.5f;
+	public final static float MAX_SPEED = 5f;
+	public final static float MAX_JUMP = 8f;
 	
 	public final static int BEHAVIOR_NONE = 0;
 	public final static int BEHAVIOR_STOP = 1;
@@ -36,7 +36,6 @@ public class PlatformActor implements Serializable, Cloneable {
 	public float zoom = 1;
 	public boolean collidesWithActors = true;
 	public boolean collidesWithHero = true;
-	public PlatformEvent wallEvent;
 	
 	@Override
 	public PlatformActor clone() {

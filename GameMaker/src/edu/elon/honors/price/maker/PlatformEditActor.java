@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class PlatformEditActor extends PlatformDatabaseActivity {
+public class PlatformEditActor extends PlatformActivity {
 
 	public static int SPEEDS = 10;
 
@@ -62,7 +63,7 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 	public void onResume() {
 		super.onResume();
 		
-		actor = game.actors[actorId].clone();
+		actor = game.actors[actorId];
 		
 		actorName.setText(actor.name);
 		
@@ -206,6 +207,11 @@ public class PlatformEditActor extends PlatformDatabaseActivity {
 				actor.speed = speed.getProgress() / speedScale;
 				actor.jumpVelocity = jump.getProgress() / jumpScale;
 				game.actors[actorId] = actor;
+				
+				Intent intent = new Intent();
+				intent.putExtra("game", game);
+				setResult(RESULT_OK, intent);
+				
 				finish();
 			}
 		});

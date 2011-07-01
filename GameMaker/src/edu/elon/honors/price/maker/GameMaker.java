@@ -186,7 +186,6 @@ public class GameMaker extends Activity {
 					deleteFile(selectedMap);
 					String name = selectedMap.substring(PREFIX.length());
 					deleteFile(name + PlatformMakerLogic.DATA);
-					deleteFile(name + PlatformMakerLogic.MAP);
 					loadMaps();
 				}
 
