@@ -52,6 +52,7 @@ public class PlatformBodyGDX {
 	private int stun;
 	private World world;
 	private Vector2 lastVelocity = new Vector2();
+	private Vector scaledPosition = new Vector();
 
 	public boolean isStunned() {
 		return stun > 0;
@@ -59,6 +60,10 @@ public class PlatformBodyGDX {
 	
 	public boolean isHero() {
 		return isHero;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 	public Body getBody() {
@@ -88,6 +93,12 @@ public class PlatformBodyGDX {
 	public Vector2 getPosition() {
 		return body.getPosition();
 	}
+	
+	public Vector getScaledPosition() {
+		scaledPosition.set(body.getPosition().x * SCALE, 
+				body.getPosition().y * SCALE);
+		return scaledPosition;
+	}
 
 	public int getFacingDirectionX() {
 		return (sprite.getFrame() / 4) == 1 ? -1 : 1;
@@ -98,9 +109,10 @@ public class PlatformBodyGDX {
 	}
 
 	public PlatformBodyGDX(Viewport viewport, World world, PlatformActor actor, int id, 
-			float startX, float startY,	boolean isHero, ArrayList<PlatformBodyGDX> actors) {
+			float startX, float startY, int startDir, boolean isHero, ArrayList<PlatformBodyGDX> actors) {
 		this.id = id;
 		this.actor = actor;
+		this.directionX = startDir;
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Bitmap[] frames;
 		if (actor.animated) {

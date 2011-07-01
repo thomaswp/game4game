@@ -86,6 +86,14 @@ public class PlatformLogicGDX implements Logic {
 
 	private String mapName;
 
+	public PlatformGame getGame() {
+		return game;
+	}
+	
+	public PlatformMap getMap() {
+		return map;
+	}
+	
 	@Override
 	public void setPaused(boolean paused) {
 		paused = true;
@@ -284,7 +292,7 @@ public class PlatformLogicGDX implements Logic {
 						heroBody = addActor(game.hero, 
 								instanceId,
 								j * tileset.tileWidth,
-								i * tileset.tileHeight, true);
+								i * tileset.tileHeight, 1, true);
 						hero = heroBody.getSprite();
 					}
 				}
@@ -352,6 +360,19 @@ public class PlatformLogicGDX implements Logic {
 	public void load() {
 		game = (PlatformGame) Data.loadGame(mapName, Game.getCurrentGame());
 	}
+	
+	public PlatformBodyGDX getBodyFromId(int id) {
+		for (int i = 0; i < actors.size(); i++) {
+			if (actors.get(i).getId() == id)
+				return actors.get(i);
+		}
+		
+		return null;
+	}
+	
+	public void queueActor(ActorAddable actor) {
+		toAdd.add(actor);
+	}
 
 	private void updateScroll() {
 		p.clear();
@@ -399,17 +420,22 @@ public class PlatformLogicGDX implements Logic {
 		skyScroll = scroll;
 	}
 
-	private PlatformBodyGDX addActor(ActorAddable actor) {
-		return addActor(actor.actor, -1, actor.startX, actor.startY);
+	public  PlatformBodyGDX addActor(ActorAddable actor) {
+		return addActor(actor.actor, -1, actor.startX, actor.startY, actor.startDir);
 	}
 
 	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY) {
-		return addActor(actor, id, startX, startY, false);
+		return addActor(actor, id, startX, startY, 1, false);
+	}
+	
+	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY, int startDir) {
+		return addActor(actor, id, startX, startY, startDir, false);
 	}
 
-	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY, boolean isHero) {
+	private PlatformBodyGDX addActor(PlatformActor actor, int id, float startX, float startY, 
+			int startDir, boolean isHero) {
 		PlatformBodyGDX body = new PlatformBodyGDX(Viewport.DefaultViewport, world, actor, id,
-				startX, startY, isHero, actors);
+				startX, startY, startDir, isHero, actors);
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			actorMap.put(body.getBody().getFixtureList().get(i), body);
 		}
@@ -487,14 +513,20 @@ public class PlatformLogicGDX implements Logic {
 		}
 	}
 
-	private static class ActorAddable {
+	public static class ActorAddable {
 		public PlatformActor actor;
 		public float startX, startY;
+		public int startDir;
 
 		public ActorAddable(PlatformActor actor, float startX, float startY) {
+			this(actor, startX, startY, 1);
+		}
+		
+		public ActorAddable(PlatformActor actor, float startX, float startY, int startDir) {
 			this.actor = actor;
 			this.startX = startX;
 			this.startY = startY;
+			this.startDir = startDir;
 		}
 	}
 
