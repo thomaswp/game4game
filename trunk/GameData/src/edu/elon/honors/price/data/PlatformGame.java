@@ -55,6 +55,7 @@ public class PlatformGame implements Serializable {
 		hero.jumpVelocity = 6f;
 		hero.stunDuration = 600;
 		hero.imageName = "hero.png";
+		hero.name = "Hero";
 		hero.actorContactBehaviors[PlatformActor.BELOW] = PlatformActor.BEHAVIOR_JUMP;
 		hero.actorContactBehaviors[PlatformActor.LEFT] = PlatformActor.BEHAVIOR_STUN;
 		hero.actorContactBehaviors[PlatformActor.RIGHT] = PlatformActor.BEHAVIOR_STUN;

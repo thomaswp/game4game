@@ -40,7 +40,6 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 		return R.layout.platformactorselector;
 	}
 
-
 	@Override
 	public String getName() {
 		return "Actors";
@@ -72,8 +71,8 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 				if (getSelectedId() >= 0) {
 					Intent intent = new Intent(parent, PlatformEditActor.class);
 					intent.putExtra("id", getSelectedId());
-					intent.putExtra("game", parent.gameName);
-					parent.startActivity(intent);
+					intent.putExtra("game", getGame());
+					parent.startActivityForResult(intent, PlatformActivity.REQUEST_RETURN_GAME);
 				}
 			}
 		});

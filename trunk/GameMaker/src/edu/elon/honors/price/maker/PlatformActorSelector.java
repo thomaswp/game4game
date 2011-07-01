@@ -1,6 +1,8 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
@@ -36,28 +38,15 @@ public class PlatformActorSelector extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		String[] ids = getIntent().getExtras().getStringArray("ids");
-		String[] names = getIntent().getExtras().getStringArray("names");
-		
+		String gameName = getIntent().getExtras().getString("gameName");
+		PlatformGame game = (PlatformGame)Data.loadGame(gameName, this);
 		int id = getIntent().getExtras().getInt("id");
 		if (id == -1) id = 1; else if (id != 0) id++;
 			
-		Bitmap[] bitmaps = new Bitmap[ids.length+1];
-		bitmaps[0] = Bitmap.createBitmap(32 * 2, 48 * 2, Sprite.getDefaultConfig());
-		bitmaps[0].eraseColor(Color.RED);
-	
-		Bitmap actorStart = Bitmap.createBitmap(32 * 2, 48 * 2, Sprite.getDefaultConfig());
-		actorStart.eraseColor(Color.GREEN);
-		bitmaps[1] = actorStart;
-
-		for (int i = 1; i < ids.length; i++) {
-			Bitmap source = Data.loadActor(ids[i]);
-			bitmaps[i+1] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
-			bitmaps[i+1] = Bitmap.createScaledBitmap(bitmaps[i+1], bitmaps[i+1].getWidth() * 2, bitmaps[i+1].getHeight() * 2, false);
-		}
-
+		Game.debug(System.currentTimeMillis());
+		
 		final PlatformActorSelector me = this;
-		view = new ASView(this, bitmaps, names, id, new ASView.Poster() {
+		view = new ASView(this, game, id, new ASView.Poster() {
 			@Override
 			void post(int id) {
 				Intent intent = new Intent();
@@ -96,12 +85,25 @@ public class PlatformActorSelector extends Activity {
 			return thread;
 		}
 
-		public ASView(Context context, Bitmap[] bitmaps, String[] names, int id, Poster poster) {
+		public ASView(Context context, PlatformGame game, int id, Poster poster) {
 			super(context);
-			this.bitmaps = bitmaps;
+			
+			bitmaps = new Bitmap[game.actors.length + 1];
+			names = new String[game.actors.length];
+			
+			bitmaps[0] = Bitmap.createBitmap(32 * 2, 48 * 2, Sprite.getDefaultConfig());
+			bitmaps[0].eraseColor(Color.RED);
+
+			for (int i = 0; i < game.actors.length; i++) {
+				PlatformActor actor = i == 0 ? game.hero : game.actors[i];
+				Bitmap source = Data.loadActor(actor.imageName);
+				names[i] = actor.name;
+				bitmaps[i+1] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
+				bitmaps[i+1] = Bitmap.createScaledBitmap(bitmaps[i+1], bitmaps[i+1].getWidth() * 2, bitmaps[i+1].getHeight() * 2, false);
+			}
+			
 			this.id = id;
 			this.poster = poster;
-			this.names = names;
 			holder = getHolder();
 			holder.addCallback(this);
 

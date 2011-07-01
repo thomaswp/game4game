@@ -2,11 +2,17 @@ package edu.elon.honors.price.maker;
 
 import com.twp.platform.Platformer;
 
+import edu.elon.honors.price.audio.Audio;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
+import edu.elon.honors.price.graphics.Graphics;
+import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.maker.PlatformMakerLogic.ActorHolder;
 import edu.elon.honors.price.maker.PlatformMakerLogic.RectHolder;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -20,16 +26,13 @@ public class PlatformMaker extends Game {
 	private static final int REQUEST_CODE_ACTOR = 1;
 
 	private Rect selectionRect = new Rect();
-	private int actorId = -1;
+	private int actorId = -2;
 	private boolean isSelecting;
-	private String gameFinal;
-	
-	public String getGameName() {
-		return gameFinal.substring(GameMaker.PREFIX.length());
-	}
+	private String gameName;
+	private PlatformMakerLogic logic;
 
 	public void onCreate(Bundle savedInstanceState) {
-		this.gameFinal = getIntent().getExtras().getString("map");
+		this.gameName = getIntent().getExtras().getString("map");
 		super.onCreate(savedInstanceState);
 	}
 
@@ -73,20 +76,11 @@ public class PlatformMaker extends Game {
 					return;
 				}
 				isSelecting = true;
-
+				
 				Intent intent = new Intent(gm, PlatformActorSelector.class);
-				String[] ids = new String[game.actors.length];
-				for (int i = 1; i < ids.length; i++) {
-					ids[i] = game.actors[i].imageName;
-				}
-				String[] names = new String[ids.length];
-				for (int i = 1; i < ids.length; i++) {
-					names[i] = game.actors[i].name;
-					if (names[i] == null) names[i] = "";
-				}
-				intent.putExtra("ids", ids);
+
 				intent.putExtra("id", actorId);
-				intent.putExtra("names", names);
+				intent.putExtra("gameName", gameName);
 
 				startActivityForResult(intent, REQUEST_CODE_ACTOR);
 			}
@@ -98,8 +92,19 @@ public class PlatformMaker extends Game {
 		};
 
 
-		PlatformMakerLogic pm = new PlatformMakerLogic(getGameName(), rectHolder, actorHolder);
+		PlatformMakerLogic pm = new PlatformMakerLogic(gameName.substring(GameMaker.PREFIX.length()), rectHolder, actorHolder);
 		return pm;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if (logic != null) {
+			view.setLogic(logic);
+		} else {
+			logic = (PlatformMakerLogic)getLogic();
+		}
 	}
 
 	@Override
@@ -115,8 +120,8 @@ public class PlatformMaker extends Game {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getTitle().equals("Database")) {
 			Intent intent = new Intent(this, PlatformDatabase.class);
-			intent.putExtra("game", getGameName());
-			startActivity(intent);
+			intent.putExtra("game", logic.getGame());
+			startActivityForResult(intent, PlatformActivity.REQUEST_RETURN_GAME);
 		} else if (item.getTitle().equals("Save")) {
 			try {
 				((PlatformMakerLogic)view.getLogic()).saveFinal();
@@ -135,7 +140,7 @@ public class PlatformMaker extends Game {
 			}
 		} else if (item.getTitle().equals("Test")) {
 			Intent intent = new Intent(this, Platformer.class);
-			intent.putExtra("map", gameFinal);
+			intent.putExtra("map", gameName);
 			startActivity(intent);
 		}
 		return super.onMenuItemSelected(featureId, item);
@@ -153,11 +158,36 @@ public class PlatformMaker extends Game {
 				selectionRect.set(left, top, right, bottom);
 			} else if (requestCode == REQUEST_CODE_ACTOR) {
 				actorId = data.getExtras().getInt("id");
+			} else if (requestCode == PlatformActivity.REQUEST_RETURN_GAME) {
+				logic.setGame((PlatformGame)data.getSerializableExtra("game"));
 			}
 		}
 		isSelecting = false;
 	}
 
+	@Override
+	public void onBackPressed() {
+		new AlertDialog.Builder(this)
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle("Save?")
+        .setMessage("Do you want to save before quitting?")
+        .setPositiveButton("Save and Quit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	((PlatformMakerLogic)view.getLogic()).saveFinal();
+				Toast.makeText(PlatformMaker.this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
+                PlatformMaker.this.finish(); 
+            }
 
+        })
+        .setNeutralButton("Quit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PlatformMaker.this.finish(); 
+            }
 
+        })
+        .setNegativeButton("Cancel", null)
+        .show();	
+	}
 }

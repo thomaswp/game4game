@@ -41,7 +41,7 @@ import android.widget.Toast;
  */
 public abstract class Game extends Activity {
 
-	private static Game currentGame;
+	protected static Game currentGame;
 
 	protected GraphicsView view;
 	protected Handler alertHandler = new Handler(), toastHandler = new Handler();
@@ -51,6 +51,10 @@ public abstract class Game extends Activity {
 
 	public static Game getCurrentGame() {
 		return currentGame;
+	}
+	
+	public Logic getLogic() {
+		return view.getLogic();
 	}
 
 	@Override
@@ -77,6 +81,7 @@ public abstract class Game extends Activity {
 	@Override
 	public void onPause() {
 		debug("Activity Paused");
+			long time = System.currentTimeMillis();
 
 		Logic logic = view.getLogic();
 
@@ -91,6 +96,7 @@ public abstract class Game extends Activity {
 		}
 
 		Audio.stop();
+			Game.debug(System.currentTimeMillis() - time);
 
 		super.onPause();
 	}
@@ -209,6 +215,14 @@ public abstract class Game extends Activity {
 		}
 	}
 
+	public static void debug(long x) {
+		Game.debug("" + x);
+	}
+	
+	public static void debug(int x) {
+		Game.debug("" + x);
+	}
+	
 	public static void debug(Object o) {
 		debug(o.toString());
 	}

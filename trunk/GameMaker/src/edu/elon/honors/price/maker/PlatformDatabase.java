@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-public class PlatformDatabase extends PlatformDatabaseActivity {
+public class PlatformDatabase extends PlatformActivity {
 
 	private PlatformDatabasePage[] pages;
 	private int selectedPage = -1;
@@ -18,9 +19,6 @@ public class PlatformDatabase extends PlatformDatabaseActivity {
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		PlatformGame game = (PlatformGame)Data.loadGame(getGameFile(), this);
-		Data.saveGame(getTempFile(), this, game);
 
 		pages = new PlatformDatabasePage[] { 
 				new PlatformActorsPage(this),
@@ -53,16 +51,16 @@ public class PlatformDatabase extends PlatformDatabaseActivity {
 	private void setButtonEvents() {
 		Button ok = (Button)findViewById(R.id.buttonOk);
 		Button cancel = (Button)findViewById(R.id.buttonCancel);
-		
-		final PlatformDatabase me = this;
-		
+				
 		ok.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (selectedPage > 0) {
 					pages[selectedPage].onPause();
 				}
-				Data.saveGame(getGameFile(), me, game);
+				Intent intent = new Intent();
+				intent.putExtra("game", game);
+				setResult(RESULT_OK, intent);
 				finish();
 			}
 		});

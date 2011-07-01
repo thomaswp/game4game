@@ -35,7 +35,6 @@ public class PlatformMakerLogic implements Logic {
 	public static final int MODE_EDIT = 1;
 	public static final int MODE_DRAW = 2;
 
-	public static final String MAP = "_map";
 	public static final String DATA = "_data";
 
 	private static final int DARK = Color.argb(255, 150, 150, 150);
@@ -58,6 +57,14 @@ public class PlatformMakerLogic implements Logic {
 	private Viewport actorViewport;
 	private Sprite[][] actors;
 	private ActorHolder actorHolder;
+	
+	public PlatformGame getGame() {
+		return game;
+	}
+	
+	public void setGame(PlatformGame game) {
+		this.game = game;
+	}
 
 	@Override
 	public void setPaused(boolean paused) {
@@ -163,7 +170,6 @@ public class PlatformMakerLogic implements Logic {
 	@Override
 	public void save() {
 		Game.saveObject(mapName + DATA, data);
-		Game.saveObject(mapName + MAP, game);
 	}
 
 	public void saveFinal() {
@@ -174,13 +180,13 @@ public class PlatformMakerLogic implements Logic {
 	@Override
 	public void load() {
 		data = (PlatformData)Game.loadObject(mapName + DATA);
-		game = (PlatformGame)Game.loadObject(mapName + MAP);
-
+		
 		if (game == null) {
 			game = (PlatformGame)Game.loadObject(GameMaker.PREFIX + mapName);
-			if (game == null) {
-				game = new PlatformGame();
-			}
+		}
+
+		if (game == null) {
+			game = new PlatformGame();
 		}		
 		if (data == null) {
 			data = new PlatformData();
@@ -218,6 +224,7 @@ public class PlatformMakerLogic implements Logic {
 					} else {
 						rectHolder.newRect(getTileset().bitmapName, getTileset().tileWidth, getTileset().tileHeight);
 					}
+					menuTap = true;
 					return;
 				}
 			}
@@ -397,8 +404,8 @@ public class PlatformMakerLogic implements Logic {
 				drawActor();
 		}
 		if (Input.isTouchDown()) {
-			int x = (int)((data.scrollX + Input.getLastTouchX() - actorPreview.getWidth() / 2) / tileWidth) * tileWidth;
-			int y = (int)((data.scrollY + Input.getLastTouchY() - actorPreview.getHeight() / 2) / tileHeight) * tileHeight;
+			int x = (int)((data.scrollX + Input.getLastTouchX() - actorPreview.getWidth() / 2) / tileWidth) * tileWidth + tileWidth / 2;
+			int y = (int)((data.scrollY + Input.getLastTouchY() - actorPreview.getHeight() / 2) / tileHeight) * tileHeight + tileHeight / 2;
 			actorPreview.setX(x);
 			actorPreview.setY(y);
 			actorPreview.setVisible(true);
@@ -437,8 +444,8 @@ public class PlatformMakerLogic implements Logic {
 	private void drawActor() {
 		int tileWidth = getTileset().tileWidth;
 		int tileHeight = getTileset().tileHeight;
-		int column = (int)(actorPreview.getX() / tileWidth + 0.5);
-		int row = (int) (actorPreview.getY() / tileHeight + 0.5);
+		int column = (int)(actorPreview.getX() / tileWidth);
+		int row = (int) (actorPreview.getY() / tileHeight);
 		if (map.getActorType(row, column) == -1) return;
 		Action action = new Action(data.layer, null, row, column, actorHolder.getActorId());
 		doAction(action);
@@ -556,8 +563,9 @@ public class PlatformMakerLogic implements Logic {
 			canvas.drawText(text, 0, bmp.getHeight(), paint);
 			
 			actors[row][column] = new Sprite(actorViewport, bmp); 
-			actors[row][column].setX(column * getTileset().tileWidth);
-			actors[row][column].setY(row * getTileset().tileHeight);
+			actors[row][column].centerOrigin();
+			actors[row][column].setX((column + 0.5f) * getTileset().tileWidth);
+			actors[row][column].setY((row + 0.5f) * getTileset().tileHeight);
 		}
 	}
 
@@ -677,6 +685,7 @@ public class PlatformMakerLogic implements Logic {
 				mask.eraseColor(Color.BLACK);
 			}
 			actorPreview = new Sprite(actorViewport, mask);
+			actorPreview.centerOrigin();
 			actorPreview.setZ(10);
 			actorPreview.setVisible(false);
 		}

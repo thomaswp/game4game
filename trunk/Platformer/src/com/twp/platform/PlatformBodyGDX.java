@@ -53,6 +53,42 @@ public class PlatformBodyGDX {
 	private World world;
 	private Vector2 lastVelocity = new Vector2();
 	private Vector scaledPosition = new Vector();
+	private ArrayList<PlatformBodyGDX> touchingActors = new ArrayList<PlatformBodyGDX>();
+	private ArrayList<Fixture> touchingWalls = new ArrayList<Fixture>();
+	private ArrayList<PlatformBodyGDX> collidedActors = new ArrayList<PlatformBodyGDX>();
+	private boolean collidedWall;
+
+	public int getDirectionX() {
+		return directionX;
+	}
+
+	public void setDirectionX(int directionX) {
+		this.directionX = directionX;
+	}
+
+	public ArrayList<PlatformBodyGDX> getCollidedActors() {
+		return collidedActors;
+	}
+
+	public boolean isCollidedWall() {
+		return collidedWall;
+	}
+	
+	public void setCollidedWall(boolean collidedWall) {
+		this.collidedWall = collidedWall;
+	}
+
+	public boolean isTouchingWall() {
+		return touchingWalls.size() > 0;
+	}
+	
+	public ArrayList<Fixture> getTouchingWalls() {
+		return touchingWalls;
+	}
+
+	public ArrayList<PlatformBodyGDX> getTouchingActors() {
+		return touchingActors;
+	}
 
 	public boolean isStunned() {
 		return stun > 0;
@@ -157,8 +193,6 @@ public class PlatformBodyGDX {
 			actorFix.density = 1;
 			body.createFixture(actorFix);
 		}
-		
-		actors.add(this);
 	}
 
 	public static Vector2 spriteToVect(Sprite sprite, Vector offset) {
@@ -171,6 +205,8 @@ public class PlatformBodyGDX {
 	public void update(long timeElapsed, Vector offset) {
 		lastBehaviorTime += timeElapsed;
 		stun -= timeElapsed;
+		collidedActors.clear();
+		collidedWall = false;
 		
 		if (isHero) {
 			directionX = (int)Math.signum(getVelocity().x);
@@ -213,7 +249,7 @@ public class PlatformBodyGDX {
 	public void dispose() {
 		this.sprite.dispose();
 		this.world.destroyBody(body);
-		this.actors.remove(this);
+		this.actors.set(id, null);
 	}
 
 	public void doBehavior(int behavior, PlatformBodyGDX cause) {
@@ -269,6 +305,34 @@ public class PlatformBodyGDX {
 		return collidesOneWay(body1, body2) && collidesOneWay(body2, body1);
 	}
 
+	public static int getCollisionDirection(PlatformBodyGDX bodyA, PlatformBodyGDX bodyB) {
+		RectF rectA = bodyA.getSprite().getRect();
+		RectF rectB = bodyB.getSprite().getRect();
+		float nx = rectB.centerX() - rectA.centerX();
+		float ny = rectB.centerY() - rectA.centerY();
+
+		int dir;
+		if (Math.abs(nx) > Math.abs(ny)) {
+			if (nx > 0) {
+				//Game.debug(bodyA.getActor().name + ": Right");
+				dir = PlatformActor.RIGHT;
+			} else {
+				//Game.debug(bodyA.getActor().name + ": Left");
+				dir = PlatformActor.LEFT;
+			}
+		} else {
+			if (ny > 0) {
+				//Game.debug(bodyA.getActor().name + ": Below");
+				dir = PlatformActor.BELOW;
+			} else {
+				//Game.debug(bodyA.getActor().name + ": Above");
+				dir = PlatformActor.ABOVE;
+			}
+		}
+		
+		return dir;
+	}
+	
 	private static boolean collidesOneWay(PlatformBodyGDX body1, PlatformBodyGDX body2) {
 		PlatformActor actor1 = body1.getActor();
 		if (body2.isHero) {

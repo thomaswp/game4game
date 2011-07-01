@@ -17,6 +17,8 @@ import edu.elon.honors.price.physics.Vector;
 
 public class Interpreter extends PlatformEventIds {
 	
+	public static final float SCALE = PlatformLogicGDX.SCALE;
+	
 	private int actionIndex;
 	private PlatformEvent event;
 	private PlatformLogicGDX logic;
@@ -145,7 +147,31 @@ public class Interpreter extends PlatformEventIds {
 				}
 				
 				PlatformActor actor = logic.getGame().actors[params.getInt()];
-				logic.queueActor(new ActorAddable(actor, x, y, dir));
+				logic.addActor(new ActorAddable(actor, x, y, dir));
+			}
+			
+			if (action.id == ID_MOVE_ACTOR) {
+				int x, y, dir;
+				if (params.getInt(1) == 0) {
+					x = params.getInt(2);
+				} else {
+					x = Globals.getVariables()[params.getInt(2)];
+				}
+				if (params.getInt(3) == 0) {
+					y = params.getInt(4);
+				} else {
+					y = Globals.getVariables()[params.getInt(4)];
+				}
+				if (params.getInt(5) == 0) {
+					dir = -1;
+				} else {
+					dir = 1;
+				}
+				
+				PlatformBodyGDX actor = logic.getBodyFromId(params.getInt());
+				actor.getBody().setTransform(x / SCALE, y / SCALE, actor.getBody().getAngle());
+				if (params.getInt(5) != 2)
+					actor.setDirectionX(dir);
 			}
 			
 			actionIndex++;
