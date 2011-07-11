@@ -311,7 +311,7 @@ public class GraphicsRenderer implements Renderer {
 		times += System.currentTimeMillis() - time;
 		frame++;
 		if (frame == 60) {
-			Game.debug("" + (times / frame) + "ms, " + (rendered / frame) + "r: " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
+			Game.debug("" + (times / frame) + "ms, " + (rendered / frame) + "r, " + textures.size() + "t: " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
 			frame = 0;
 			times = 0;
 			rendered = 0;

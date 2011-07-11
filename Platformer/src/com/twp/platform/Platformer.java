@@ -1,5 +1,12 @@
 package com.twp.platform;
 
+/*
+ * TODO: 
+ * Asterisk
+ * Delayed load on Edit Hero
+ * AnimatedSprite Update
+ */
+
 import java.io.InputStream;
 
 import android.content.ContentResolver;
@@ -19,8 +26,7 @@ public class Platformer extends Game {
 			map = getIntent().getExtras().getString("map");
 		else
 			map = "final-Map_1";
-		
-		return new PlatformLogicGDX(map, this);
+		return new PlatformLogic(map, this);
 	}
 
 }

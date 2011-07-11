@@ -37,6 +37,16 @@ public class PlatformEventIds {
 	 * P5: Left | Right | Retain
 	 */
 	public static final int ID_MOVE_ACTOR = 4;
+	/**
+	 * P0: Id
+	 * P1: Behavior
+	 */
+	public static final int ID_ACTOR_BEHAVIOR = 5;
+	
+	/**
+	 * P0: On | Off
+	 */
+	public static final int ID_HERO_SET_LADDER = 6;
 	
 	/**
 	 * P0: Text | Switch | Variable

@@ -32,7 +32,10 @@ import android.widget.TextView;
 
 public class PlatformEditActor extends PlatformActivity {
 
-	public static int SPEEDS = 10;
+	public final static int SPEEDS = 10;
+
+	final static float SPEED_SCALE = SPEEDS / PlatformActor.MAX_SPEED;
+	final static float JUMP_SCALE = SPEEDS / PlatformActor.MAX_JUMP;
 
 	private int actorId;
 	private PlatformActor actor;
@@ -91,10 +94,8 @@ public class PlatformEditActor extends PlatformActivity {
 
 		speed.setMax(SPEEDS);
 		jump.setMax(SPEEDS);
-		final float speedScale = SPEEDS / PlatformActor.MAX_SPEED;
-		final float jumpScale = SPEEDS / PlatformActor.MAX_JUMP;
-		speed.setProgress((int)(actor.speed * speedScale + 0.5f));
-		jump.setProgress((int)(actor.jumpVelocity * jumpScale + 0.5f));
+		speed.setProgress((int)(actor.speed * SPEED_SCALE + 0.5f));
+		jump.setProgress((int)(actor.jumpVelocity * JUMP_SCALE + 0.5f));
 
 		eventSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_text, new String[] {
 				"Touches a wall",
@@ -202,19 +203,25 @@ public class PlatformEditActor extends PlatformActivity {
 		okButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				actor.name = actorName.getText().toString();
-				actor.imageName = (String)imageSpinner.getSelectedItem();
-				actor.speed = speed.getProgress() / speedScale;
-				actor.jumpVelocity = jump.getProgress() / jumpScale;
-				game.actors[actorId] = actor;
-				
-				Intent intent = new Intent();
-				intent.putExtra("game", game);
-				setResult(RESULT_OK, intent);
-				
-				finish();
+				finishOk();
 			}
 		});
+	}
+	
+	@Override
+	protected void finishOk() {
+		
+		actor.name = actorName.getText().toString();
+		actor.imageName = (String)imageSpinner.getSelectedItem();
+		actor.speed = speed.getProgress() / SPEED_SCALE;
+		actor.jumpVelocity = jump.getProgress() / JUMP_SCALE;
+		game.actors[actorId] = actor;
+		
+		Intent intent = new Intent();
+		intent.putExtra("game", game);
+		setResult(RESULT_OK, intent);
+		
+		finish();
 	}
 
 	public static class ImageAdapter extends ArrayAdapter<String> {

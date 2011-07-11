@@ -6,7 +6,7 @@
 	<classpathentry kind="src" path="GameData_src"/>
 	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Platformer"/>
-	<classpathentry excluding="com/twp/platform/PlatformLogicGDXOld.java" kind="src" path="Platformer_src"/>
+	<classpathentry kind="src" path="Platformer_src"/>
 	<classpathentry kind="src" path="PhysicsLib_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

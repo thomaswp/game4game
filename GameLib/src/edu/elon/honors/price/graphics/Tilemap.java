@@ -217,7 +217,15 @@ public class Tilemap {
 		int index = 0;
 		for (int j = 0; j < tilesBitmap.getHeight(); j += tileHeight + tileSpacing) {
 			for (int i = 0; i < tilesBitmap.getWidth(); i += tileWidth + tileSpacing) {
-				tiles[index++] = Bitmap.createBitmap(tilesBitmap, i, j, tileWidth, tileHeight);
+				String cacheName = tilesBitmap.hashCode() + ":" + i + "x" + j;
+				if (Cache.isBitmapRegistered(cacheName)) {
+					tiles[index++] = Cache.getRegisteredBitmap(cacheName);
+				}
+				else {
+					Bitmap bmp = Bitmap.createBitmap(tilesBitmap, i, j, tileWidth, tileHeight);
+					Cache.RegisterBitmap(cacheName, bmp);
+					tiles[index++] = bmp;
+				}
 			}
 		}
 		return tiles;

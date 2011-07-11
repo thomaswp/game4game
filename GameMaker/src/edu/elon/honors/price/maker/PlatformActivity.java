@@ -1,10 +1,13 @@
 package edu.elon.honors.price.maker;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 
@@ -25,7 +28,38 @@ public class PlatformActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 	}
+	
+	@Override
+	public void onBackPressed() {
+		new AlertDialog.Builder(this)
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle("Keep Changes?")
+        .setMessage("Do you want to keep the changes you made to this page?")
+        .setPositiveButton("Keep Changes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	finishOk();
+            }
 
+        })
+        .setNeutralButton("Discard Changes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+
+        })
+        .setNegativeButton("Stay Here", null)
+        .show();	
+	}
+
+	protected void finishOk() {
+		Intent intent = new Intent();
+		intent.putExtra("game", game);
+		setResult(RESULT_OK, intent);
+		finish();
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_RETURN_GAME) {

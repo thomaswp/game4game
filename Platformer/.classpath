@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="com/twp/platform/PlatformLogicGDXOld.java|com/twp/platform/PlatformBody.java|com/twp/platform/PlatformLogic.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry kind="src" path="GameData_src"/>
+	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry kind="src" path="PhysicsLib_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
