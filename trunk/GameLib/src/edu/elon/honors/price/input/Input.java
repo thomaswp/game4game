@@ -37,9 +37,6 @@ public final class Input {
 		Released
 	}
 
-
-	private static final boolean NORMALIZE = false;
-	private static final int TOO_CLOSE = 10;
 	private static final int POINTERS = 4;
 	private static final int EVENTS = 30;
 
@@ -361,11 +358,13 @@ public final class Input {
 
 				ArrayList<Input.TouchEvent> touchEventList = touchEvents.get(i);
 
-				if (touchEventList.size() == 0)
+				TouchState touchState = touchStates.get(i);
+				
+				if (touchEventList.size() == 0) {
 					continue;
+				}
 
 				TouchEvent event = touchEventList.get(0);
-				TouchState touchState = touchStates.get(i);
 
 				if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
 					//User just touched the screen
@@ -383,45 +382,12 @@ public final class Input {
 					touchState.touchDown = false;
 				}
 
-				if (!touchState.tapped && NORMALIZE) {
-					double closestX = Double.MAX_VALUE;
-					int closestXIndex = -1;
-					for (int j = 0; j < touchEvents.size(); j++) {
-						if (touchEvents.get(j).size() > 0 && j != i) {
-							double dis = Math.abs(touchEvents.get(j).get(0).getX() - event.getX());
-							if (dis < closestX) {
-								closestX = dis;
-								closestXIndex = j;
-							}
-						}
-					}
-					if (closestX > TOO_CLOSE) {
-						touchState.lastTouchX =  event.getX();
-					} else {
-						Game.debug(closestX + "");
-					}
-					
-					double closestY = Double.MAX_VALUE;
-					int closestYIndex = -1;
-					for (int j = 0; j < touchEvents.size(); j++) {
-						if (touchEvents.get(j).size() > 0 && j != i) {
-							double dis = Math.abs(touchEvents.get(j).get(0).getY() - event.getY());
-							if (dis < closestY) {
-								closestY = dis;
-								closestYIndex = j;
-							}
-						}
-					}
-					if (closestY > TOO_CLOSE) {
-						touchState.lastTouchY =  event.getY();
-					}
-				} else {
-					touchState.lastTouchX =  event.getX();
-					touchState.lastTouchY =  event.getY();
-				}
+				touchState.lastTouchX =  event.getX();
+				touchState.lastTouchY =  event.getY();
 
 				out += i + "-" + touchState + ";";
 			}
+			
 			for (int i = 0; i < touchEvents.size(); i++) {
 				ArrayList<Input.TouchEvent> touchEventList = touchEvents.get(i);
 				if (touchEventList.size() == 0)
@@ -473,8 +439,14 @@ public final class Input {
 		public void set(MotionEvent event, int i) {
 			x = event.getX(i);
 			y = event.getY(i);
-			action = event.getAction() & MotionEvent.ACTION_MASK;
-			if (event.getPointerId(i) != event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT) {
+			
+			int eventPid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			
+			if (event.getPointerId(i) == eventPid || 
+					event.getAction() == MotionEvent.ACTION_DOWN || 
+					event.getAction() == MotionEvent.ACTION_UP) {
+				action = event.getAction() & MotionEvent.ACTION_MASK;
+			} else {
 				action = MotionEvent.ACTION_MOVE;
 			}
 		}

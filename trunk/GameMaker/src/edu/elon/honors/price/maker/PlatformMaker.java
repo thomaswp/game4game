@@ -123,27 +123,60 @@ public class PlatformMaker extends Game {
 			intent.putExtra("game", logic.getGame());
 			startActivityForResult(intent, PlatformActivity.REQUEST_RETURN_GAME);
 		} else if (item.getTitle().equals("Save")) {
-			try {
-				((PlatformMakerLogic)view.getLogic()).saveFinal();
-				Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				Toast.makeText(this, "Save Failed!", Toast.LENGTH_SHORT).show(); 
-			}
+			save();
 		} else if (item.getTitle().equals("Load")) {
-			try {
-				((PlatformMakerLogic)view.getLogic()).loadFinal();
-				Toast.makeText(this, "Load Successful!", Toast.LENGTH_SHORT).show(); 
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				Toast.makeText(this, "Load Failed!", Toast.LENGTH_SHORT).show(); 
-			}
+			load();
 		} else if (item.getTitle().equals("Test")) {
-			Intent intent = new Intent(this, Platformer.class);
-			intent.putExtra("map", gameName);
-			startActivity(intent);
+			new AlertDialog.Builder(this)
+	        .setIcon(android.R.drawable.ic_dialog_alert)
+	        .setTitle("Save First?")
+	        .setMessage("Do you want to save before testing?")
+	        .setPositiveButton("Save and Test", new DialogInterface.OnClickListener() {
+	            @Override
+	            public void onClick(DialogInterface dialog, int which) {
+	            	save();
+					test();
+	            }
+
+	        })
+	        .setNeutralButton("Test", new DialogInterface.OnClickListener() {
+	            @Override
+	            public void onClick(DialogInterface dialog, int which) {
+	            	test();
+	            }
+
+	        })
+	        .setNegativeButton("Cancel", null)
+	        .show();
 		}
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	private void test() {
+		Intent intent = new Intent(PlatformMaker.this, Platformer.class);
+		intent.putExtra("map", gameName);
+		startActivity(intent);
+		Game.debug(System.currentTimeMillis());
+	}
+	
+	private void save() {
+		try {
+			((PlatformMakerLogic)view.getLogic()).saveFinal();
+			Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			Toast.makeText(this, "Save Failed!", Toast.LENGTH_SHORT).show(); 
+		}
+	}
+	
+	private void load() {
+		try {
+			((PlatformMakerLogic)view.getLogic()).loadFinal();
+			Toast.makeText(this, "Load Successful!", Toast.LENGTH_SHORT).show(); 
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			Toast.makeText(this, "Load Failed!", Toast.LENGTH_SHORT).show(); 
+		}
 	}
 
 	@Override
@@ -174,8 +207,7 @@ public class PlatformMaker extends Game {
         .setPositiveButton("Save and Quit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-            	((PlatformMakerLogic)view.getLogic()).saveFinal();
-				Toast.makeText(PlatformMaker.this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
+            	save();
                 PlatformMaker.this.finish(); 
             }
 

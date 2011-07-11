@@ -2,7 +2,7 @@ package com.twp.platform;
 
 import java.util.Random;
 
-import com.twp.platform.PlatformLogicGDX.ActorAddable;
+import com.twp.platform.PlatformLogic.ActorAddable;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,14 +17,14 @@ import edu.elon.honors.price.physics.Vector;
 
 public class Interpreter extends PlatformEventIds {
 	
-	public static final float SCALE = PlatformLogicGDX.SCALE;
+	public static final float SCALE = PlatformLogic.SCALE;
 	
 	private int actionIndex;
 	private PlatformEvent event;
-	private PlatformLogicGDX logic;
+	private PlatformLogic logic;
 	private Random rand = new Random();
 	
-	public Interpreter(PlatformLogicGDX logic) {
+	public Interpreter(PlatformLogic logic) {
 		this.logic = logic;
 	}
 	
@@ -97,7 +97,7 @@ public class Interpreter extends PlatformEventIds {
 						int randTo = params.getParameters(4).getInt(1);
 						argument = randFrom + rand.nextInt(randTo - randFrom + 1);
 					} else {
-						PlatformBodyGDX body = logic.getBodyFromId(params.getInt(4));
+						PlatformBody body = logic.getBodyFromId(params.getInt(4));
 						if (body != null) {
 							Vector pos = body.getScaledPosition();
 							if (params.getInt(5) == 0)
@@ -147,7 +147,8 @@ public class Interpreter extends PlatformEventIds {
 				}
 				
 				PlatformActor actor = logic.getGame().actors[params.getInt()];
-				logic.addActor(new ActorAddable(actor, x, y, dir));
+				if (actor != null)
+					logic.addActor(new ActorAddable(actor, x, y, dir));
 			}
 			
 			if (action.id == ID_MOVE_ACTOR) {
@@ -168,10 +169,25 @@ public class Interpreter extends PlatformEventIds {
 					dir = 1;
 				}
 				
-				PlatformBodyGDX actor = logic.getBodyFromId(params.getInt());
-				actor.getBody().setTransform(x / SCALE, y / SCALE, actor.getBody().getAngle());
-				if (params.getInt(5) != 2)
-					actor.setDirectionX(dir);
+				PlatformBody actor = logic.getBodyFromId(params.getInt());
+				if (actor != null) {
+					actor.getBody().setTransform(x / SCALE, y / SCALE, actor.getBody().getAngle());
+					if (params.getInt(5) != 2)
+						actor.setDirectionX(dir);
+				}
+			}
+			
+			if (action.id == ID_ACTOR_BEHAVIOR) {
+				PlatformBody actor = logic.getBodyFromId(params.getInt());
+				if (actor != null) {
+					actor.doBehavior(params.getInt(1), null);
+				}
+			}
+			
+			if (action.id == ID_HERO_SET_LADDER) {
+				if (logic.getHero() != null) {
+					logic.getHero().setOnLadder(params.getInt() == 0);
+				}
 			}
 			
 			actionIndex++;

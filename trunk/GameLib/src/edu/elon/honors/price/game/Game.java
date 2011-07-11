@@ -93,6 +93,7 @@ public abstract class Game extends Activity {
 			Input.reset();
 			//reset the Graphics
 			Graphics.reset();
+			view.getRenderer().setFlush(true);
 		}
 
 		Audio.stop();
@@ -105,6 +106,7 @@ public abstract class Game extends Activity {
 	public void onResume() {
 		debug("Activity Resumed");
 
+		
 		currentGame = this;
 		Input.reset();
 		//Load the logic back on resume

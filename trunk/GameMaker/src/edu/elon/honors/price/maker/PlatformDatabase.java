@@ -48,6 +48,13 @@ public class PlatformDatabase extends PlatformActivity {
 		super.onPause();
 	}
 	
+	protected void finishOk() {
+		if (selectedPage > 0) {
+			pages[selectedPage].onPause();
+		}
+		super.finishOk();
+	}
+	
 	private void setButtonEvents() {
 		Button ok = (Button)findViewById(R.id.buttonOk);
 		Button cancel = (Button)findViewById(R.id.buttonCancel);
@@ -55,13 +62,7 @@ public class PlatformDatabase extends PlatformActivity {
 		ok.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (selectedPage > 0) {
-					pages[selectedPage].onPause();
-				}
-				Intent intent = new Intent();
-				intent.putExtra("game", game);
-				setResult(RESULT_OK, intent);
-				finish();
+				finishOk();
 			}
 		});
 		

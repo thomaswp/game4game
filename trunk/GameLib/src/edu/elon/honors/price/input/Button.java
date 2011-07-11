@@ -2,6 +2,7 @@ package edu.elon.honors.price.input;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
@@ -70,6 +71,7 @@ public class Button {
 			} else {
 				top.setVisible(true);
 			}
+			//Game.debug(pull);
 		} else {
 			top.setVisible(false);
 			pull.set(0, 0);
