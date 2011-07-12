@@ -3,6 +3,7 @@ package com.twp.platform;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -29,6 +30,7 @@ import edu.elon.honors.price.data.PlatformEvent;
 import edu.elon.honors.price.data.PlatformEvent.Action;
 import edu.elon.honors.price.data.PlatformEvent.ActorTrigger;
 import edu.elon.honors.price.data.PlatformEvent.Parameters;
+import edu.elon.honors.price.data.PlatformEvent.RegionTrigger;
 import edu.elon.honors.price.data.PlatformEvent.SwitchTrigger;
 import edu.elon.honors.price.data.PlatformEvent.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
@@ -81,7 +83,9 @@ public class PlatformLogic implements Logic {
 
 	private HashMap<Fixture, PlatformBody> actorMap = new HashMap<Fixture, PlatformBody>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
-
+	
+	private ArrayList<Fixture> aabbFixtures = new ArrayList<Fixture>();
+	
 	private Interpreter interpreter;
 
 	private float mapX, mapY, bgX, bgY, skyScroll;
@@ -313,6 +317,16 @@ public class PlatformLogic implements Logic {
 						event.actorTriggers.add(trigger);
 						map.events.add(event);
 						
+						actions = new ArrayList<Action>();
+						params = new Parameters(new Object[] {0, "!"});
+						actions.add(new Action(Action.ID_DEBUG_BOX, params));
+//						params = new Parameters(new Object[] {0});
+//						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
+						RegionTrigger trigger2 = new RegionTrigger(16 * 48, 0, 48, 48 * 8, true);
+						event = new PlatformEvent(actions);
+						event.regionTriggers.add(trigger2);
+						map.events.add(event);
+						
 					}
 				}
 				int instanceId = actorLayer.tiles[i][j];
@@ -474,8 +488,36 @@ public class PlatformLogic implements Logic {
 				}
 			}
 			
+			for (int j = 0; j < event.regionTriggers.size(); j++) {
+				RegionTrigger trigger = event.regionTriggers.get(j);
+				
+				float left = trigger.left / SCALE;
+				float top = trigger.top / SCALE;
+				float right = trigger.right / SCALE;
+				float bottom = trigger.bottom / SCALE;
+				
+				aabbFixtures.clear();
+				world.QueryAABB(new QueryCallback() {
+					@Override
+					public boolean reportFixture(Fixture fixture) {
+						aabbFixtures.add(fixture);
+						return true;
+					}
+				}, left, top, right, bottom);
+				
+				for (int k = 0; k < aabbFixtures.size(); k++) {
+					if (actorMap.containsKey(aabbFixtures.get(k))) {
+						if ((trigger.onlyHero && actorMap.get(aabbFixtures.get(k)).isHero())
+								|| !trigger.onlyHero) {
+							triggered = true;
+							break;
+						}
+					}
+				}
+			}
+			
 			if (triggered) {
-				Game.debug("TRIGGER");
+				//Game.debug("TRIGGER");
 				interpreter.doEvent(event);
 			}
 		}
@@ -500,7 +542,7 @@ public class PlatformLogic implements Logic {
 				if (bodyA.getDirectionX() != 0) {
 					float y = bodyA.getPosition().y + (bodyA.getSprite().getHeight() / 2 + 5) / SCALE;
 					float x = bodyA.getPosition().x + (bodyA.getSprite().getWidth() / 2 + 5) * bodyA.getDirectionX() / SCALE;
-					EdgeCallback callback = new EdgeCallback(levelMap);
+					FixtureCallback callback = new FixtureCallback(levelMap.keySet());
 					world.QueryAABB(callback, x, y, x + 3 / SCALE, y + 3 / SCALE);
 					if (!callback.contact && bodyA.isGrounded()) {
 						bodyA.doBehaviorEdge();
@@ -579,7 +621,6 @@ public class PlatformLogic implements Logic {
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			actorMap.put(body.getBody().getFixtureList().get(i), body);
 		}
-		Game.debug(body.getId());
 		return body;
 	}
 
@@ -687,17 +728,17 @@ public class PlatformLogic implements Logic {
 		}
 	}
 	
-	private static class EdgeCallback implements QueryCallback {
+	private static class FixtureCallback implements QueryCallback {
 		public boolean contact = false;
-		public HashMap<Fixture, Sprite> levelMap;
+		public Set<Fixture> fixtures;
 		
-		public EdgeCallback(HashMap<Fixture, Sprite> levelMap) {
-			this.levelMap = levelMap;
+		public FixtureCallback(Set<Fixture> fixtures) {
+			this.fixtures = fixtures;
 		}
 		
 		@Override
 		public boolean reportFixture(Fixture fixture) {
-			if (levelMap.containsKey(fixture)) {
+			if (fixtures.contains(fixture)) {
 				contact = true;
 			}
 			return true;
