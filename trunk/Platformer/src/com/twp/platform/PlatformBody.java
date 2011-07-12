@@ -45,7 +45,7 @@ public class PlatformBody {
 	private ActorClass actor;
 	private int id;
 	private boolean isHero;
-	private ArrayList<PlatformBody> actors;
+	private ArrayList<PlatformBody> bodies;
 	private int directionX = 1;
 	private boolean stopped;
 	private int lastBehaviorTime;
@@ -53,10 +53,10 @@ public class PlatformBody {
 	private World world;
 	private Vector2 lastVelocity = new Vector2();
 	private Vector scaledPosition = new Vector();
-	private ArrayList<PlatformBody> touchingActors = new ArrayList<PlatformBody>();
+	private ArrayList<PlatformBody> touchingBodies = new ArrayList<PlatformBody>();
 	private ArrayList<Fixture> touchingWalls = new ArrayList<Fixture>();
 	private ArrayList<Fixture> touchingFloors = new ArrayList<Fixture>();
-	private ArrayList<PlatformBody> collidedActors = new ArrayList<PlatformBody>();
+	private ArrayList<PlatformBody> collidedBodies = new ArrayList<PlatformBody>();
 	private boolean collidedWall;
 	private boolean onLadder;
 
@@ -79,8 +79,8 @@ public class PlatformBody {
 		this.directionX = directionX;
 	}
 
-	public ArrayList<PlatformBody> getCollidedActors() {
-		return collidedActors;
+	public ArrayList<PlatformBody> getCollidedBodies() {
+		return collidedBodies;
 	}
 
 	public boolean isCollidedWall() {
@@ -103,8 +103,8 @@ public class PlatformBody {
 		return touchingFloors;
 	}
 
-	public ArrayList<PlatformBody> getTouchingActors() {
-		return touchingActors;
+	public ArrayList<PlatformBody> getTouchingBodies() {
+		return touchingBodies;
 	}
 
 	public boolean isGrounded() {
@@ -166,7 +166,7 @@ public class PlatformBody {
 	}
 
 	public PlatformBody(Viewport viewport, World world, ActorClass actor, int id, 
-			float startX, float startY, int startDir, boolean isHero, ArrayList<PlatformBody> actors) {
+			float startX, float startY, int startDir, boolean isHero, ArrayList<PlatformBody> bodies) {
 		this.id = id;
 		this.actor = actor;
 		this.directionX = startDir;
@@ -190,7 +190,7 @@ public class PlatformBody {
 		this.sprite.centerOrigin();
 		this.sprite.setZoom(actor.zoom);
 		this.isHero = isHero;
-		this.actors = actors;
+		this.bodies = bodies;
 		this.world = world;
 
 		BodyDef actorDef = new BodyDef();
@@ -226,7 +226,7 @@ public class PlatformBody {
 	public void update(long timeElapsed, Vector offset) {
 		lastBehaviorTime += timeElapsed;
 		stun -= timeElapsed;
-		collidedActors.clear();
+		collidedBodies.clear();
 		collidedWall = false;
 		
 		if (isHero) {
@@ -276,7 +276,7 @@ public class PlatformBody {
 	public void dispose() {
 		this.sprite.dispose();
 		this.world.destroyBody(body);
-		this.actors.set(id, null);
+		this.bodies.set(id, null);
 	}
 
 	public void doBehaviorWall() {
