@@ -3,6 +3,8 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import android.graphics.Rect;
+
 public class PlatformEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -10,6 +12,7 @@ public class PlatformEvent implements Serializable {
 	public ArrayList<SwitchTrigger> switchTriggers = new ArrayList<SwitchTrigger>();
 	public ArrayList<VariableTrigger> variableTriggers = new ArrayList<PlatformEvent.VariableTrigger>();
 	public ArrayList<ActorTrigger> actorTriggers = new ArrayList<PlatformEvent.ActorTrigger>();
+	public ArrayList<RegionTrigger> regionTriggers = new ArrayList<PlatformEvent.RegionTrigger>();
 	
 	public PlatformEvent(ArrayList<Action> actions) {
 		this.actions = actions;
@@ -126,6 +129,25 @@ public class PlatformEvent implements Serializable {
 			this.forInstance = forInstance;
 			this.id = id;
 			this.action = action;
+		}
+	}
+	
+	public static class RegionTrigger implements Serializable {
+		private static final long serialVersionUID = 1L;
+		
+		public int left, right, top, bottom;
+		public boolean onlyHero;
+		
+		public RegionTrigger(Rect rect, boolean onlyHero) {
+			this(rect.left, rect.top, rect.right, rect.bottom, onlyHero);
+		}
+		
+		public RegionTrigger(int left, int top, int right, int bottom, boolean onlyHero) {
+			this.left = left;
+			this.top = top;
+			this.right = right;
+			this.bottom = bottom;
+			this.onlyHero = onlyHero;
 		}
 	}
 }

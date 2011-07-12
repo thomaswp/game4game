@@ -81,7 +81,6 @@ public abstract class Game extends Activity {
 	@Override
 	public void onPause() {
 		debug("Activity Paused");
-			long time = System.currentTimeMillis();
 
 		Logic logic = view.getLogic();
 
@@ -97,7 +96,6 @@ public abstract class Game extends Activity {
 		}
 
 		Audio.stop();
-			Game.debug(System.currentTimeMillis() - time);
 
 		super.onPause();
 	}
@@ -239,7 +237,24 @@ public abstract class Game extends Activity {
 	 * @param text The text to be written.
 	 */
 	public static void debug(String text) {
-		Log.d("Game", "---{" + text + "}---");
+		String msg = "---{" + text + "}---";
+		String tag = "Game";
+		try
+		{
+			throw new Exception("Who called me?");
+		}
+		catch( Exception e )
+		{
+			int i = 1;
+			while (e.getStackTrace()[i].getClassName().equals(Game.class.getName()) &&
+					e.getStackTrace()[i].getMethodName().equals("debug")) i++;
+			tag += ": " +
+			e.getStackTrace()[i].getClassName() + 
+			"." +
+			e.getStackTrace()[i].getMethodName() + 
+			"()" ;
+		}
+		Log.d(tag, msg);
 	}
 
 	public void showAlert(String message) {
