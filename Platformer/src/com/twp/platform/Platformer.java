@@ -19,7 +19,8 @@ public class Platformer extends Game {
 			map = getIntent().getExtras().getString("map");
 		else
 			map = "final-Map_1";
-		return new PlatformLogic(map, this);
+		PlatformLogic logic = new PlatformLogic(map, this);
+		return logic;
 	}
 
 }
