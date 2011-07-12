@@ -3,16 +3,16 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.data.PlatformGame;
 import android.view.View;
 
-public abstract class PlatformDatabasePage {
+public abstract class Page {
 	
-	protected PlatformDatabase parent;
+	protected Database parent;
 
 	public abstract int getViewId();
 	public abstract String getName();
 	public abstract void onCreate();
 	public abstract void onResume();
 	
-	public PlatformDatabasePage(PlatformDatabase parent) {
+	public Page(Database parent) {
 		this.parent = parent;
 	}
 	

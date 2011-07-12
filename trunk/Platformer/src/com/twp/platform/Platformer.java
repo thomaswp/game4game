@@ -7,13 +7,6 @@ package com.twp.platform;
  * AnimatedSprite Update
  */
 
-import java.io.InputStream;
-
-import android.content.ContentResolver;
-import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 

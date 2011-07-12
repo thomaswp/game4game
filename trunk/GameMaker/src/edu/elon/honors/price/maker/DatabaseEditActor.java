@@ -6,6 +6,9 @@ import java.util.Arrays;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.maker.R;
+import edu.elon.honors.price.maker.R.id;
+import edu.elon.honors.price.maker.R.layout;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +33,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class PlatformEditActor extends PlatformActivity {
+public class DatabaseEditActor extends DatabaseActivity {
 
 	public final static int SPEEDS = 10;
 

@@ -13,12 +13,15 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.data.PlatformHero;
 import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.maker.PlatformEditActor.ImageAdapter;
+import edu.elon.honors.price.maker.R;
+import edu.elon.honors.price.maker.DatabaseEditActor.ImageAdapter;
+import edu.elon.honors.price.maker.R.id;
+import edu.elon.honors.price.maker.R.layout;
 
-public class PlatformHeroPage extends PlatformDatabasePage {
+public class PageHero extends Page {
 	
-	final float speedScale = PlatformEditActor.SPEEDS / PlatformActor.MAX_SPEED;
-	final float jumpScale = PlatformEditActor.SPEEDS / PlatformActor.MAX_JUMP;
+	final float speedScale = DatabaseEditActor.SPEEDS / PlatformActor.MAX_SPEED;
+	final float jumpScale = DatabaseEditActor.SPEEDS / PlatformActor.MAX_JUMP;
 	private PlatformHero actor;
 	private Spinner imageSpinner, eventSpinner, directionSpinner, behaviorSpinner;
 	private SeekBar speed, jump;
@@ -35,7 +38,7 @@ public class PlatformHeroPage extends PlatformDatabasePage {
 		return "Hero";
 	}
 	
-	public PlatformHeroPage(PlatformDatabase parent) {
+	public PageHero(Database parent) {
 		super(parent);
 	}
 
@@ -71,8 +74,8 @@ public class PlatformHeroPage extends PlatformDatabasePage {
 				imageSpinner.setSelection(i);
 		}
 
-		speed.setMax(PlatformEditActor.SPEEDS);
-		jump.setMax(PlatformEditActor.SPEEDS);
+		speed.setMax(DatabaseEditActor.SPEEDS);
+		jump.setMax(DatabaseEditActor.SPEEDS);
 		speed.setProgress((int)(actor.speed * speedScale + 0.5f));
 		jump.setProgress((int)(actor.jumpVelocity * jumpScale + 0.5f));
 

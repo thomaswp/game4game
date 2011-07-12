@@ -11,7 +11,7 @@ import android.widget.Toast;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 
-public class PlatformActivity extends Activity {
+public class DatabaseActivity extends Activity {
 	
 	protected PlatformGame game;
 	

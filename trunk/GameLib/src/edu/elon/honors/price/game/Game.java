@@ -48,6 +48,7 @@ public abstract class Game extends Activity {
 	protected boolean alertShowing;
 	protected String nextMessage;
 	protected int toastOffset;
+	protected Toast toast;
 
 	public static Game getCurrentGame() {
 		return currentGame;
@@ -297,8 +298,12 @@ public abstract class Game extends Activity {
 		toastHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				Game.debug("TOAST");
-				Toast toast = Toast.makeText(currentGame, m, Toast.LENGTH_SHORT);
+				if (toast == null) {
+					toast = Toast.makeText(currentGame, m, Toast.LENGTH_SHORT);
+				}
+				else {
+					toast.setText(m);
+				}
 				toast.show();
 			}
 		});

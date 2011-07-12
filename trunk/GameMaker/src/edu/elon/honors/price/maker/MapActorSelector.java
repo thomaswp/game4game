@@ -28,7 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 
-public class PlatformActorSelector extends Activity {
+public class MapActorSelector extends Activity {
 
 	ASView view;
 
@@ -45,7 +45,7 @@ public class PlatformActorSelector extends Activity {
 			
 		Game.debug(System.currentTimeMillis());
 		
-		final PlatformActorSelector me = this;
+		final MapActorSelector me = this;
 		view = new ASView(this, game, id, new ASView.Poster() {
 			@Override
 			void post(int id) {

@@ -29,7 +29,7 @@ import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.helper.Helper;
 import edu.elon.honors.price.input.Input;
 
-public class PlatformMakerLogic implements Logic {
+public class MapEditorLogic implements Logic {
 
 	public static final int MODE_MOVE = 0;
 	public static final int MODE_EDIT = 1;
@@ -72,7 +72,7 @@ public class PlatformMakerLogic implements Logic {
 
 	}
 
-	public PlatformMakerLogic(String mapName, RectHolder holder, ActorHolder actorHolder) {
+	public MapEditorLogic(String mapName, RectHolder holder, ActorHolder actorHolder) {
 		this.mapName = mapName;
 		this.rectHolder = holder;
 		this.actorHolder = actorHolder;
@@ -173,7 +173,7 @@ public class PlatformMakerLogic implements Logic {
 	}
 
 	public void saveFinal() {
-		if (!Game.saveObject(GameMaker.PREFIX + mapName, game))
+		if (!Game.saveObject(MainMenu.PREFIX + mapName, game))
 			throw new RuntimeException("Save Failed");
 	}
 
@@ -182,7 +182,7 @@ public class PlatformMakerLogic implements Logic {
 		data = (PlatformData)Game.loadObject(mapName + DATA);
 		
 		if (game == null) {
-			game = (PlatformGame)Game.loadObject(GameMaker.PREFIX + mapName);
+			game = (PlatformGame)Game.loadObject(MainMenu.PREFIX + mapName);
 		}
 
 		if (game == null) {
@@ -196,7 +196,7 @@ public class PlatformMakerLogic implements Logic {
 	}
 
 	public void loadFinal() {
-		PlatformGame game = (PlatformGame)Game.loadObject(GameMaker.PREFIX + mapName);
+		PlatformGame game = (PlatformGame)Game.loadObject(MainMenu.PREFIX + mapName);
 		if (game != null) {
 			this.game = game;
 			map = game.maps.get(game.startMapId);
