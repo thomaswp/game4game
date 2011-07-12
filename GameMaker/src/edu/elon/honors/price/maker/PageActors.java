@@ -6,6 +6,10 @@ import java.util.List;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformActor;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.maker.R;
+import edu.elon.honors.price.maker.R.id;
+import edu.elon.honors.price.maker.R.layout;
+import edu.elon.honors.price.maker.R.string;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +35,7 @@ import android.widget.ImageView.ScaleType;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class PlatformActorsPage extends PlatformDatabasePage{
+public class PageActors extends Page{
 	private ListView actorsView;
 	private EditText editSize;
 
@@ -45,7 +49,7 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 		return "Actors";
 	}
 	
-	public PlatformActorsPage(PlatformDatabase parent) {
+	public PageActors(Database parent) {
 		super(parent);
 	}
 	
@@ -69,10 +73,10 @@ public class PlatformActorsPage extends PlatformDatabasePage{
 			@Override
 			public void onClick(View v) {
 				if (getSelectedId() >= 0) {
-					Intent intent = new Intent(parent, PlatformEditActor.class);
+					Intent intent = new Intent(parent, DatabaseEditActor.class);
 					intent.putExtra("id", getSelectedId());
 					intent.putExtra("game", getGame());
-					parent.startActivityForResult(intent, PlatformActivity.REQUEST_RETURN_GAME);
+					parent.startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
 				}
 			}
 		});

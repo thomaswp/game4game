@@ -54,7 +54,7 @@ import edu.elon.honors.price.physics.Vector;
 
 public class PlatformLogic implements Logic {
 
-	public static final float GRAVITY = 0.01f;
+	public static final float GRAVITY = 10f;
 
 	private static final int BORDER = 130;
 	private static final int BSIZE = 50;
@@ -76,6 +76,8 @@ public class PlatformLogic implements Logic {
 	private World world;
 	private PlatformBody heroBody;
 	private Vector offset;
+	
+	private Vector2 antiGravity = new Vector2(0, -GRAVITY), zeroVector = new Vector2();
 
 	private ArrayList<PlatformBody> toRemove = new ArrayList<PlatformBody>();
 	private ArrayList<ActorAddable> toAdd = new ArrayList<ActorAddable>();
@@ -83,8 +85,6 @@ public class PlatformLogic implements Logic {
 
 	private HashMap<Fixture, PlatformBody> actorMap = new HashMap<Fixture, PlatformBody>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
-	
-	private ArrayList<Fixture> aabbFixtures = new ArrayList<Fixture>();
 	
 	private Interpreter interpreter;
 
@@ -151,7 +151,7 @@ public class PlatformLogic implements Logic {
 	}
 
 	private void initPhysics() {
-		world = new World(new Vector2(0, 10f), true);
+		world = new World(new Vector2(0, GRAVITY), true);
 		
 		ContactFilter filter = new ContactFilter() {
 
@@ -317,12 +317,20 @@ public class PlatformLogic implements Logic {
 						event.actorTriggers.add(trigger);
 						map.events.add(event);
 						
+						Rect ladder = new Rect(22 * 48 + 6, 0, 23 * 48 - 6, 48 * 6);
+						
 						actions = new ArrayList<Action>();
-						params = new Parameters(new Object[] {0, "!"});
-						actions.add(new Action(Action.ID_DEBUG_BOX, params));
-//						params = new Parameters(new Object[] {0});
-//						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
-						RegionTrigger trigger2 = new RegionTrigger(16 * 48, 0, 48, 48 * 8, true);
+						params = new Parameters(new Object[] {0});
+						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
+						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
+						event = new PlatformEvent(actions);
+						event.regionTriggers.add(trigger2);
+						map.events.add(event);
+						
+						actions = new ArrayList<Action>();
+						params = new Parameters(new Object[] {1});
+						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
+						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
 						event = new PlatformEvent(actions);
 						event.regionTriggers.add(trigger2);
 						map.events.add(event);
@@ -374,6 +382,8 @@ public class PlatformLogic implements Logic {
 			
 			if (heroBody.isOnLadder()) {
 				heroBody.setVelocityY(stick.getPull().getY() * heroBody.getActor().speed);
+				antiGravity.set(0, -GRAVITY * heroBody.getBody().getMass());
+				heroBody.getBody().applyForce(antiGravity, zeroVector);
 			}
 			else {
 				heroBody.setVelocityX(stick.getPull().getX() * heroBody.getActor().speed);
@@ -489,29 +499,74 @@ public class PlatformLogic implements Logic {
 			}
 			
 			for (int j = 0; j < event.regionTriggers.size(); j++) {
-				RegionTrigger trigger = event.regionTriggers.get(j);
+				final RegionTrigger trigger = event.regionTriggers.get(j);
 				
 				float left = trigger.left / SCALE;
 				float top = trigger.top / SCALE;
 				float right = trigger.right / SCALE;
 				float bottom = trigger.bottom / SCALE;
 				
-				aabbFixtures.clear();
+				if (s == null) {
+					s = new Sprite(Viewport.DefaultViewport, 
+							(trigger.left + trigger.right) / 2 + offset.getX(), 
+							(trigger.top + trigger.bottom) / 2 + offset.getY(), 
+							trigger.right - trigger.left,
+							trigger.bottom - trigger.top 
+							);
+					s.centerOrigin();
+					s.getBitmap().eraseColor(Color.BLACK);
+					s.setZ(-10);
+					s.setVisible(false);
+				}
+				s.setX((trigger.left + trigger.right) / 2 + offset.getX());
+				s.setY((trigger.top + trigger.bottom) / 2 + offset.getY());
+				
 				world.QueryAABB(new QueryCallback() {
 					@Override
 					public boolean reportFixture(Fixture fixture) {
-						aabbFixtures.add(fixture);
+						if (actorMap.containsKey(fixture)) {
+							PlatformBody actor = actorMap.get(fixture);
+							int index = -1;
+							boolean inRegion = inRegion(actor, trigger);
+							for (int k = 0; k < trigger.contacts.size(); k++) {
+								if (trigger.contacts.get(k).object == actor) index = k;
+							}
+							if (index < 0) {
+								int state = inRegion ? 5 : 2;
+								trigger.contacts.add(new RegionTrigger.Contact(actor, state));
+							} else {
+								RegionTrigger.Contact contact = trigger.contacts.get(index);
+								if (inRegion) {
+									if (contact.state == 3) {
+										contact.state = 4; //staying inside
+									} else if (contact.state < 4) {
+										contact.state = 5; //just fully entered
+									}
+								} else {
+									if (contact.state == 0 || contact.state > 2)
+										contact.state = 1; //staying touching or poked out
+								}
+							}
+						}
 						return true;
 					}
 				}, left, top, right, bottom);
 				
-				for (int k = 0; k < aabbFixtures.size(); k++) {
-					if (actorMap.containsKey(aabbFixtures.get(k))) {
-						if ((trigger.onlyHero && actorMap.get(aabbFixtures.get(k)).isHero())
+				for (int k = 0; k < trigger.contacts.size(); k++) {
+					RegionTrigger.Contact contact = trigger.contacts.get(k);
+
+					//Game.debug(contact.state);
+					if (trigger.mode == contact.state) {
+						if ((trigger.onlyHero && ((PlatformBody)contact.object).isHero())
 								|| !trigger.onlyHero) {
 							triggered = true;
-							break;
 						}
+					}
+					
+					contact.state--;
+					if (contact.state < 0) {
+						trigger.contacts.remove(k);
+						k--;
 					}
 				}
 			}
@@ -521,6 +576,14 @@ public class PlatformLogic implements Logic {
 				interpreter.doEvent(event);
 			}
 		}
+	}
+	Sprite s;
+	
+	private RectF regionRect = new RectF();
+	private boolean inRegion(PlatformBody body, RegionTrigger trigger) {
+		regionRect.set(trigger.left, trigger.top, trigger.right, trigger.bottom);
+		regionRect.offset(offset.getX(), offset.getY());
+		return regionRect.contains(body.getSprite().getRect());
 	}
 	
 	private void checkBehaviors() {

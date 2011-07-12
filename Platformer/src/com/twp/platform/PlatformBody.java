@@ -237,15 +237,19 @@ public class PlatformBody {
 		}
 		
 		if (actor.animated && stun <= 0) {
-			int frame = sprite.getFrame();
-			if (directionX > 0 && (frame / 4 != 2 || !sprite.isAnimated())) {
-				sprite.Animate(FRAME, 8, 4);
-			} else if (directionX < 0 && (frame / 4 != 1 || !sprite.isAnimated())) {
-				sprite.Animate(FRAME, 4, 4);
-			}
-			if (sprite.isAnimated()) {
-				if (stopped) {
-					sprite.setFrame(frame - frame % 4);
+			if (onLadder) {
+				sprite.setFrame(12);
+			} else {
+				int frame = sprite.getFrame();
+				if (directionX > 0 && (frame / 4 != 2 || !sprite.isAnimated())) {
+					sprite.Animate(FRAME, 8, 4);
+				} else if (directionX < 0 && (frame / 4 != 1 || !sprite.isAnimated())) {
+					sprite.Animate(FRAME, 4, 4);
+				}
+				if (sprite.isAnimated()) {
+					if (stopped) {
+						sprite.setFrame(frame - frame % 4);
+					}
 				}
 			}
 		}

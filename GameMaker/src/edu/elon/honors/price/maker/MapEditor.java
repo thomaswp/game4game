@@ -8,8 +8,8 @@ import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.maker.PlatformMakerLogic.ActorHolder;
-import edu.elon.honors.price.maker.PlatformMakerLogic.RectHolder;
+import edu.elon.honors.price.maker.MapEditorLogic.ActorHolder;
+import edu.elon.honors.price.maker.MapEditorLogic.RectHolder;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,7 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class PlatformMaker extends Game {
+public class MapEditor extends Game {
 
 	private static final int REQUEST_CODE_TEXTURE = 0;
 	private static final int REQUEST_CODE_ACTOR = 1;
@@ -29,7 +29,7 @@ public class PlatformMaker extends Game {
 	private int actorId = -2;
 	private boolean isSelecting;
 	private String gameName;
-	private PlatformMakerLogic logic;
+	private MapEditorLogic logic;
 
 	public void onCreate(Bundle savedInstanceState) {
 		this.gameName = getIntent().getExtras().getString("map");
@@ -39,7 +39,7 @@ public class PlatformMaker extends Game {
 	@Override
 	protected Logic getNewLogic() {
 
-		final PlatformMaker gm = this;
+		final MapEditor gm = this;
 		RectHolder rectHolder = new RectHolder() {
 
 			@Override
@@ -49,7 +49,7 @@ public class PlatformMaker extends Game {
 				}
 				isSelecting = true;
 
-				Intent intent = new Intent(gm, PlatformTextureSelector.class);
+				Intent intent = new Intent(gm, MapTextureSelector.class);
 				intent.putExtra("id", bitmapName);
 				intent.putExtra("tileWidth", tileWidth);
 				intent.putExtra("tileHeight", tileHeight);
@@ -77,7 +77,7 @@ public class PlatformMaker extends Game {
 				}
 				isSelecting = true;
 				
-				Intent intent = new Intent(gm, PlatformActorSelector.class);
+				Intent intent = new Intent(gm, MapActorSelector.class);
 
 				intent.putExtra("id", actorId);
 				intent.putExtra("gameName", gameName);
@@ -92,7 +92,7 @@ public class PlatformMaker extends Game {
 		};
 
 
-		PlatformMakerLogic pm = new PlatformMakerLogic(gameName.substring(GameMaker.PREFIX.length()), rectHolder, actorHolder);
+		MapEditorLogic pm = new MapEditorLogic(gameName.substring(MainMenu.PREFIX.length()), rectHolder, actorHolder);
 		return pm;
 	}
 
@@ -103,7 +103,7 @@ public class PlatformMaker extends Game {
 		if (logic != null) {
 			view.setLogic(logic);
 		} else {
-			logic = (PlatformMakerLogic)getLogic();
+			logic = (MapEditorLogic)getLogic();
 		}
 	}
 
@@ -119,9 +119,9 @@ public class PlatformMaker extends Game {
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getTitle().equals("Database")) {
-			Intent intent = new Intent(this, PlatformDatabase.class);
+			Intent intent = new Intent(this, Database.class);
 			intent.putExtra("game", logic.getGame());
-			startActivityForResult(intent, PlatformActivity.REQUEST_RETURN_GAME);
+			startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
 		} else if (item.getTitle().equals("Save")) {
 			save();
 		} else if (item.getTitle().equals("Load")) {
@@ -153,7 +153,7 @@ public class PlatformMaker extends Game {
 	}
 	
 	private void test() {
-		Intent intent = new Intent(PlatformMaker.this, Platformer.class);
+		Intent intent = new Intent(MapEditor.this, Platformer.class);
 		intent.putExtra("map", gameName);
 		startActivity(intent);
 		Game.debug(System.currentTimeMillis());
@@ -161,7 +161,7 @@ public class PlatformMaker extends Game {
 	
 	private void save() {
 		try {
-			((PlatformMakerLogic)view.getLogic()).saveFinal();
+			((MapEditorLogic)view.getLogic()).saveFinal();
 			Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -171,7 +171,7 @@ public class PlatformMaker extends Game {
 	
 	private void load() {
 		try {
-			((PlatformMakerLogic)view.getLogic()).loadFinal();
+			((MapEditorLogic)view.getLogic()).loadFinal();
 			Toast.makeText(this, "Load Successful!", Toast.LENGTH_SHORT).show(); 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -191,7 +191,7 @@ public class PlatformMaker extends Game {
 				selectionRect.set(left, top, right, bottom);
 			} else if (requestCode == REQUEST_CODE_ACTOR) {
 				actorId = data.getExtras().getInt("id");
-			} else if (requestCode == PlatformActivity.REQUEST_RETURN_GAME) {
+			} else if (requestCode == DatabaseActivity.REQUEST_RETURN_GAME) {
 				logic.setGame((PlatformGame)data.getSerializableExtra("game"));
 			}
 		}
@@ -208,14 +208,14 @@ public class PlatformMaker extends Game {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             	save();
-                PlatformMaker.this.finish(); 
+                MapEditor.this.finish(); 
             }
 
         })
         .setNeutralButton("Quit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                PlatformMaker.this.finish(); 
+                MapEditor.this.finish(); 
             }
 
         })

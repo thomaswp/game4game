@@ -2,6 +2,7 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.graphics.Rect;
 
@@ -135,19 +136,39 @@ public class PlatformEvent implements Serializable {
 	public static class RegionTrigger implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
+		public static final int MODE_TOUCH = 3;
+		public static final int MODE_CONTAIN = 5;
+		public static final int MODE_LOSE_TOUCH = 0;
+		public static final int MODE_LOSE_CONTAIN = 2;
+		
+		public transient ArrayList<Contact> contacts = new ArrayList<PlatformEvent.RegionTrigger.Contact>();
+		
 		public int left, right, top, bottom;
+		public int mode;
 		public boolean onlyHero;
 		
-		public RegionTrigger(Rect rect, boolean onlyHero) {
-			this(rect.left, rect.top, rect.right, rect.bottom, onlyHero);
+		public RegionTrigger(Rect rect, int mode, boolean onlyHero) {
+			this(rect.left, rect.top, rect.right, rect.bottom, mode, onlyHero);
 		}
 		
-		public RegionTrigger(int left, int top, int right, int bottom, boolean onlyHero) {
+		public RegionTrigger(int left, int top, int right, int bottom, int mode, boolean onlyHero) {
 			this.left = left;
 			this.top = top;
 			this.right = right;
 			this.bottom = bottom;
 			this.onlyHero = onlyHero;
+			this.mode = mode;
+		}
+		
+		public static class Contact {
+			
+			public int state;
+			public Object object;
+			
+			public Contact(Object object, int state) {
+				this.object = object;
+				this.state = state;
+			}
 		}
 	}
 }

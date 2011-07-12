@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Platformer"/>
 	<classpathentry kind="src" path="Platformer_src"/>
 	<classpathentry kind="src" path="PhysicsLib_src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/GameData"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

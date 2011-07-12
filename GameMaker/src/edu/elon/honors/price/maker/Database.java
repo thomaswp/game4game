@@ -2,6 +2,9 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.maker.R;
+import edu.elon.honors.price.maker.R.id;
+import edu.elon.honors.price.maker.R.layout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,9 +13,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-public class PlatformDatabase extends PlatformActivity {
+public class Database extends DatabaseActivity {
 
-	private PlatformDatabasePage[] pages;
+	private Page[] pages;
 	private int selectedPage = -1;
 	
 	private Button next, prev;
@@ -20,9 +23,9 @@ public class PlatformDatabase extends PlatformActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		pages = new PlatformDatabasePage[] { 
-				new PlatformActorsPage(this),
-				new PlatformHeroPage(this) 
+		pages = new Page[] { 
+				new PageActors(this),
+				new PageHero(this) 
 			};
 		
 		

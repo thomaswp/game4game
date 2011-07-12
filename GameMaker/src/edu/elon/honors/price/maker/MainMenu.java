@@ -39,7 +39,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
-public class GameMaker extends Activity {
+public class MainMenu extends Activity {
 
 	public static final String PREFIX = "final-";
 
@@ -185,7 +185,7 @@ public class GameMaker extends Activity {
 				public void onClick(DialogInterface dialog, int which) {
 					deleteFile(selectedMap);
 					String name = selectedMap.substring(PREFIX.length());
-					deleteFile(name + PlatformMakerLogic.DATA);
+					deleteFile(name + MapEditorLogic.DATA);
 					loadMaps();
 				}
 
@@ -197,7 +197,7 @@ public class GameMaker extends Activity {
 
 	private void edit() {
 		if (selectedMap != null) {
-			Intent intent = new Intent(this, PlatformMaker.class);
+			Intent intent = new Intent(this, MapEditor.class);
 			intent.putExtra("map", selectedMap);
 			startActivity(intent);
 		}
