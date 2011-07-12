@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.R.id;
@@ -86,7 +86,7 @@ public class PageActors extends Page{
 			@Override
 			public void onClick(View v) {
 				int id = getSelectedId();
-				getGame().actors[id] = new PlatformActor();
+				getGame().actors[id] = new ActorClass();
 				View row = actorsView.getChildAt(id - 1);
 				setRow(row, getGame().actors[id], parent);
 			}
@@ -102,12 +102,12 @@ public class PageActors extends Page{
 					me.setText(R.string.resize);
 					int newSize = Integer.parseInt(editSize.getText().toString()) + 1;
 					if (newSize != getGame().actors.length) {
-						PlatformActor[] newActors = new PlatformActor[newSize];
+						ActorClass[] newActors = new ActorClass[newSize];
 						for (int i = 0; i < newActors.length; i++) {
 							if (i < getGame().actors.length) {
 								newActors[i] = getGame().actors[i];
 							} else {
-								newActors[i] = new PlatformActor();
+								newActors[i] = new ActorClass();
 							}
 						}
 						getGame().actors = newActors;
@@ -123,14 +123,14 @@ public class PageActors extends Page{
 	}
 
 	private void createRadioButtons() {		
-		PlatformActor[] actors = new PlatformActor[getGame().actors.length - 1];
+		ActorClass[] actors = new ActorClass[getGame().actors.length - 1];
 		for (int i = 0; i < actors.length; i++) actors[i] = getGame().actors[i+1];
 		actorsView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		//actorsView.setAdapter(new ArrayAdapter<PlatformActor>(parent, android.R.layout.simple_list_item_1, actors));
 		actorsView.setAdapter(new ImageAdapter(parent, R.layout.imageadapterrow, actors));
 	}
 	
-	private static void setRow(View row, PlatformActor actor, Context context) {
+	private static void setRow(View row, ActorClass actor, Context context) {
 		TextView label=(TextView)row.findViewById(R.id.weekofday);
 		label.setText(actor.name);
 		label.setTextSize(20);
@@ -140,9 +140,9 @@ public class PageActors extends Page{
 		icon.setImageBitmap(bmp);
 	}
 	
-	private static class ImageAdapter extends ArrayAdapter<PlatformActor> {
+	private static class ImageAdapter extends ArrayAdapter<ActorClass> {
 		
-		public ImageAdapter(Context context, int textViewResourceId, PlatformActor[] actors) {
+		public ImageAdapter(Context context, int textViewResourceId, ActorClass[] actors) {
 			super(context, textViewResourceId, actors);
 		}
 		

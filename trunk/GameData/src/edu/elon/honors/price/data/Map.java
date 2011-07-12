@@ -5,37 +5,37 @@ import java.util.ArrayList;
 
 import android.graphics.Rect;
 
-public class PlatformMap implements Serializable{
+public class Map implements Serializable{
 	private static final long serialVersionUID = 9L;
 	
 	public int tilesetId;
-	public PlatformLayer[] layers;
-	public PlatformLayer actorLayer;
-	public ArrayList<PlatformActorInstance> actors; 
-	public ArrayList<PlatformEvent> events;
+	public MapLayer[] layers;
+	public MapLayer actorLayer;
+	public ArrayList<ActorInstance> actors; 
+	public ArrayList<Event> events;
 	public int rows, columns;
 	
-	public PlatformMap() {
+	public Map() {
 		
 		rows = 8;
 		columns = 30;
 		
 		tilesetId = 0;
 		
-		actorLayer = new PlatformLayer("actors", rows, columns, false);
+		actorLayer = new MapLayer("actors", rows, columns, false);
 		
-		events = new ArrayList<PlatformEvent>();
+		events = new ArrayList<Event>();
 		
-		actors = new ArrayList<PlatformActorInstance>();
+		actors = new ArrayList<ActorInstance>();
 		actors.add(null);
 		setActor(0, 0, -1);
 		
-		layers = new PlatformLayer[3];
-		PlatformLayer layer = new PlatformLayer("background", rows, columns, false);
+		layers = new MapLayer[3];
+		MapLayer layer = new MapLayer("background", rows, columns, false);
 		layers[0] = layer;
-		layer = new PlatformLayer("l1", rows, columns, true);
+		layer = new MapLayer("l1", rows, columns, true);
 		layers[1] = layer;
-		layer = new PlatformLayer("l2", rows, columns, false);
+		layer = new MapLayer("l2", rows, columns, false);
 		layers[2] = layer;
 	}
 	
@@ -44,7 +44,7 @@ public class PlatformMap implements Serializable{
 		return id > 0 ? actors.get(id).actorType : 0;
 	}
 	
-	public PlatformActorInstance getActorInstance(int row, int column) {
+	public ActorInstance getActorInstance(int row, int column) {
 		return actors.get(actorLayer.tiles[row][column]);
 	}
 	
@@ -62,7 +62,7 @@ public class PlatformMap implements Serializable{
 			int oldId = actorLayer.tiles[row][column];
 			if (oldId > 0 && actors.get(oldId).actorType == type) return oldId;
 			
-			PlatformActorInstance actor = new PlatformActorInstance(actors.size(), type);
+			ActorInstance actor = new ActorInstance(actors.size(), type);
 			actors.add(actor);
 			actorLayer.tiles[row][column] = actor.id;
 			return actor.id;

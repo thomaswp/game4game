@@ -22,9 +22,9 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformActor;
-import edu.elon.honors.price.data.PlatformActorInstance;
-import edu.elon.honors.price.data.PlatformMap;
+import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.ActorInstance;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Sprite;
@@ -42,7 +42,7 @@ public class PlatformBody {
 
 	private Body body;
 	private AnimatedSprite sprite;
-	private PlatformActor actor;
+	private ActorClass actor;
 	private int id;
 	private boolean isHero;
 	private ArrayList<PlatformBody> actors;
@@ -127,7 +127,7 @@ public class PlatformBody {
 		return body;
 	}
 
-	public PlatformActor getActor() {
+	public ActorClass getActor() {
 		return actor;
 	}
 
@@ -165,7 +165,7 @@ public class PlatformBody {
 		return sprite;
 	}
 
-	public PlatformBody(Viewport viewport, World world, PlatformActor actor, int id, 
+	public PlatformBody(Viewport viewport, World world, ActorClass actor, int id, 
 			float startX, float startY, int startDir, boolean isHero, ArrayList<PlatformBody> actors) {
 		this.id = id;
 		this.actor = actor;
@@ -301,24 +301,24 @@ public class PlatformBody {
 		lastBehaviorTime = 0;
 
 		switch (behavior) {
-		case PlatformActor.BEHAVIOR_STOP:
+		case ActorClass.BEHAVIOR_STOP:
 			stopped = true;
 			break;
-		case PlatformActor.BEHAVIOR_JUMP_TURN:
+		case ActorClass.BEHAVIOR_JUMP_TURN:
 			jump();
-		case PlatformActor.BEHAVIOR_TURN:
+		case ActorClass.BEHAVIOR_TURN:
 			directionX *= -1;
 			break;
-		case PlatformActor.BEHAVIOR_JUMP:
+		case ActorClass.BEHAVIOR_JUMP:
 			jump();
 			break;
-		case PlatformActor.BEHAVIOR_START_STOP:
+		case ActorClass.BEHAVIOR_START_STOP:
 			stopped = !stopped;
 			break;
-		case PlatformActor.BEHAVIOR_STUN:
+		case ActorClass.BEHAVIOR_STUN:
 			stun(cause);
 			break;
-		case PlatformActor.BEHAVIOR_DIE:
+		case ActorClass.BEHAVIOR_DIE:
 			dispose();
 			break;
 		}	
@@ -370,18 +370,18 @@ public class PlatformBody {
 		if (Math.abs(nx) > Math.abs(ny)) {
 			if (nx > 0) {
 				//Game.debug(bodyA.getActor().name + ": Right");
-				dir = PlatformActor.RIGHT;
+				dir = ActorClass.RIGHT;
 			} else {
 				//Game.debug(bodyA.getActor().name + ": Left");
-				dir = PlatformActor.LEFT;
+				dir = ActorClass.LEFT;
 			}
 		} else {
 			if (ny > 0) {
 				//Game.debug(bodyA.getActor().name + ": Below");
-				dir = PlatformActor.BELOW;
+				dir = ActorClass.BELOW;
 			} else {
 				//Game.debug(bodyA.getActor().name + ": Above");
-				dir = PlatformActor.ABOVE;
+				dir = ActorClass.ABOVE;
 			}
 		}
 		
@@ -389,7 +389,7 @@ public class PlatformBody {
 	}
 	
 	private static boolean collidesOneWay(PlatformBody body1, PlatformBody body2) {
-		PlatformActor actor1 = body1.getActor();
+		ActorClass actor1 = body1.getActor();
 		if (body2.isHero) {
 			return actor1.collidesWithHero;
 		} else {

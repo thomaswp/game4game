@@ -1,6 +1,6 @@
 package edu.elon.honors.price.data;
 
-public class PlatformEventIds {
+public class EventIds {
 	/**
 	 * P0: Specific | Range
 	 * P1: Id/(Start Range, End Range)
