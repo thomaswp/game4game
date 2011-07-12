@@ -7,20 +7,20 @@ import com.twp.platform.PlatformLogic.ActorAddable;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import edu.elon.honors.price.data.PlatformActor;
-import edu.elon.honors.price.data.PlatformEvent;
-import edu.elon.honors.price.data.PlatformEventIds;
-import edu.elon.honors.price.data.PlatformEvent.Action;
-import edu.elon.honors.price.data.PlatformEvent.Parameters;
+import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.Event;
+import edu.elon.honors.price.data.EventIds;
+import edu.elon.honors.price.data.Event.Action;
+import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.physics.Vector;
 
-public class Interpreter extends PlatformEventIds {
+public class Interpreter extends EventIds {
 	
 	public static final float SCALE = PlatformLogic.SCALE;
 	
 	private int actionIndex;
-	private PlatformEvent event;
+	private Event event;
 	private PlatformLogic logic;
 	private Random rand = new Random();
 	
@@ -28,7 +28,7 @@ public class Interpreter extends PlatformEventIds {
 		this.logic = logic;
 	}
 	
-	public void doEvent(PlatformEvent event) {
+	public void doEvent(Event event) {
 		if (event == null)
 			return;
 		
@@ -146,7 +146,7 @@ public class Interpreter extends PlatformEventIds {
 					dir = 1;
 				}
 				
-				PlatformActor actor = logic.getGame().actors[params.getInt()];
+				ActorClass actor = logic.getGame().actors[params.getInt()];
 				if (actor != null)
 					logic.addActor(new ActorAddable(actor, x, y, dir));
 			}

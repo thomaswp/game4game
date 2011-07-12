@@ -1,7 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.Graphics;
@@ -95,7 +95,7 @@ public class MapActorSelector extends Activity {
 			bitmaps[0].eraseColor(Color.RED);
 
 			for (int i = 0; i < game.actors.length; i++) {
-				PlatformActor actor = i == 0 ? game.hero : game.actors[i];
+				ActorClass actor = i == 0 ? game.hero : game.actors[i];
 				Bitmap source = Data.loadActor(actor.imageName);
 				names[i] = actor.name;
 				bitmaps[i+1] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);

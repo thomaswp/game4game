@@ -2,10 +2,10 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 
-public class PlatformActorInstance implements Serializable {
+public class ActorInstance implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	public PlatformActorInstance(int id, int actorType) {
+	public ActorInstance(int id, int actorType) {
 		this.id = id;
 		this.actorType = actorType;
 	}

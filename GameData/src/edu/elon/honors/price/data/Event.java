@@ -6,25 +6,25 @@ import java.util.HashMap;
 
 import android.graphics.Rect;
 
-public class PlatformEvent implements Serializable {
+public class Event implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public ArrayList<Action> actions;
 	public ArrayList<SwitchTrigger> switchTriggers = new ArrayList<SwitchTrigger>();
-	public ArrayList<VariableTrigger> variableTriggers = new ArrayList<PlatformEvent.VariableTrigger>();
-	public ArrayList<ActorTrigger> actorTriggers = new ArrayList<PlatformEvent.ActorTrigger>();
-	public ArrayList<RegionTrigger> regionTriggers = new ArrayList<PlatformEvent.RegionTrigger>();
+	public ArrayList<VariableTrigger> variableTriggers = new ArrayList<Event.VariableTrigger>();
+	public ArrayList<ActorTrigger> actorTriggers = new ArrayList<Event.ActorTrigger>();
+	public ArrayList<RegionTrigger> regionTriggers = new ArrayList<Event.RegionTrigger>();
 	
-	public PlatformEvent(ArrayList<Action> actions) {
+	public Event(ArrayList<Action> actions) {
 		this.actions = actions;
 	}
 	
-	public PlatformEvent(Action action) {
+	public Event(Action action) {
 		this(new ArrayList<Action>());
 		actions.add(action);
 	}
 
-	public static class Action extends PlatformEventIds implements Serializable {
+	public static class Action extends EventIds implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		public Parameters params;
@@ -141,7 +141,7 @@ public class PlatformEvent implements Serializable {
 		public static final int MODE_LOSE_TOUCH = 0;
 		public static final int MODE_LOSE_CONTAIN = 2;
 		
-		public transient ArrayList<Contact> contacts = new ArrayList<PlatformEvent.RegionTrigger.Contact>();
+		public transient ArrayList<Contact> contacts = new ArrayList<Event.RegionTrigger.Contact>();
 		
 		public int left, right, top, bottom;
 		public int mode;

@@ -10,8 +10,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformActor;
-import edu.elon.honors.price.data.PlatformHero;
+import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.Hero;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.DatabaseEditActor.ImageAdapter;
@@ -20,9 +20,9 @@ import edu.elon.honors.price.maker.R.layout;
 
 public class PageHero extends Page {
 	
-	final float speedScale = DatabaseEditActor.SPEEDS / PlatformActor.MAX_SPEED;
-	final float jumpScale = DatabaseEditActor.SPEEDS / PlatformActor.MAX_JUMP;
-	private PlatformHero actor;
+	final float speedScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_SPEED;
+	final float jumpScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_JUMP;
+	private Hero actor;
 	private Spinner imageSpinner, eventSpinner, directionSpinner, behaviorSpinner;
 	private SeekBar speed, jump;
 	private boolean forceSelect;

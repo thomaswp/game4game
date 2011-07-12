@@ -24,18 +24,18 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformActor;
-import edu.elon.honors.price.data.PlatformActorInstance;
-import edu.elon.honors.price.data.PlatformEvent;
-import edu.elon.honors.price.data.PlatformEvent.Action;
-import edu.elon.honors.price.data.PlatformEvent.ActorTrigger;
-import edu.elon.honors.price.data.PlatformEvent.Parameters;
-import edu.elon.honors.price.data.PlatformEvent.RegionTrigger;
-import edu.elon.honors.price.data.PlatformEvent.SwitchTrigger;
-import edu.elon.honors.price.data.PlatformEvent.VariableTrigger;
+import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.ActorInstance;
+import edu.elon.honors.price.data.Event;
+import edu.elon.honors.price.data.Event.Action;
+import edu.elon.honors.price.data.Event.ActorTrigger;
+import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.RegionTrigger;
+import edu.elon.honors.price.data.Event.SwitchTrigger;
+import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.PlatformLayer;
-import edu.elon.honors.price.data.PlatformMap;
+import edu.elon.honors.price.data.MapLayer;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.R;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Game;
@@ -64,7 +64,7 @@ public class PlatformLogic implements Logic {
 	
 	private boolean test = true;
 
-	PlatformMap map;
+	Map map;
 	PlatformGame game;
 	ArrayList<PlatformBody> actors = new ArrayList<PlatformBody>();
 	BackgroundSprite background, sky;
@@ -103,7 +103,7 @@ public class PlatformLogic implements Logic {
 		return game;
 	}
 
-	public PlatformMap getMap() {
+	public Map getMap() {
 		return map;
 	}
 
@@ -187,7 +187,7 @@ public class PlatformLogic implements Logic {
 		layers = new Tilemap[map.layers.length];
 		Tileset tileset = game.getMapTileset(map);
 		for (int i = 0; i < layers.length; i++) {
-			PlatformLayer layer = map.layers[i];
+			MapLayer layer = map.layers[i];
 			layers[i] = new Tilemap(Data.loadTileset(tileset.bitmapName), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, Graphics.getRect(), i * 2);
@@ -255,14 +255,14 @@ public class PlatformLogic implements Logic {
 			}
 		}
 
-		PlatformLayer actorLayer = map.actorLayer;
+		MapLayer actorLayer = map.actorLayer;
 		for (int i = 0; i < actorLayer.rows; i++) {
 			for (int j = 0; j < actorLayer.columns; j++) {
 				float x = (j + 0.5f) * game.getMapTileset(map).tileWidth;
 				float y = (i + 0.5f) * game.getMapTileset(map).tileHeight;
 				if (test) {
 					if (i == 0 && j == 0) {
-						PlatformActor rock = new PlatformActor();
+						ActorClass rock = new ActorClass();
 						rock.animated = false;
 						rock.fixedRotation = false;
 						rock.imageName = "rock.png";
@@ -271,29 +271,29 @@ public class PlatformLogic implements Logic {
 						addActor(rock, -1, 60, 0);
 					}
 					if (i == 4 && j == 18) {
-						PlatformActor dude = new PlatformActor();
+						ActorClass dude = new ActorClass();
 						dude.imageName = "blank.png";
 						dude.zoom = 3f;
 						dude.animated = false;
 						dude.name = "Dude";
-						dude.heroContactBehaviors[PlatformActor.LEFT] = PlatformActor.BEHAVIOR_DIE;
+						dude.heroContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_DIE;
 						PlatformBody dudeBody = addActor(dude, -1, x, y);
 						
-						PlatformActor critter = new PlatformActor();
+						ActorClass critter = new ActorClass();
 						critter.imageName = "critter.png";
 						critter.zoom = 1.5f;
 						critter.speed = 1;
 						critter.name = "Critter";
-						critter.edgeBehavior = PlatformActor.BEHAVIOR_TURN;
-						critter.wallBehavior = PlatformActor.BEHAVIOR_TURN;
-						critter.actorContactBehaviors[PlatformActor.LEFT] = PlatformActor.BEHAVIOR_TURN;
-						critter.actorContactBehaviors[PlatformActor.RIGHT] = PlatformActor.BEHAVIOR_TURN;
+						critter.edgeBehavior = ActorClass.BEHAVIOR_TURN;
+						critter.wallBehavior = ActorClass.BEHAVIOR_TURN;
+						critter.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_TURN;
+						critter.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_TURN;
 						game.actors[2] = critter;
 						
 						ArrayList<Action> actions;
 						Parameters params;
 						ActorTrigger trigger;
-						PlatformEvent event;
+						Event event;
 						
 						for (int k = -1; k < 2; k++) {
 							actions = new ArrayList<Action>();
@@ -304,16 +304,16 @@ public class PlatformLogic implements Logic {
 							params = new Parameters(new Object[] {2, 1, 0, 0, 0, (int)(Math.random() * 2)}); 
 							actions.add(new Action(Interpreter.ID_CREATE_ACTOR, params));
 							trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
-							event = new PlatformEvent(actions);
+							event = new Event(actions);
 							event.actorTriggers.add(trigger);
 							map.events.add(event);
 						}
 						
 						actions = new ArrayList<Action>();
-						params = new Parameters(new Object[] {1, PlatformActor.BEHAVIOR_STUN});
+						params = new Parameters(new Object[] {1, ActorClass.BEHAVIOR_STUN});
 						actions.add(new Action(Action.ID_ACTOR_BEHAVIOR, params));
 						trigger = new ActorTrigger(false, 2, ActorTrigger.ACTION_COLLIDES_HERO);
-						event = new PlatformEvent(actions);
+						event = new Event(actions);
 						event.actorTriggers.add(trigger);
 						map.events.add(event);
 						
@@ -323,7 +323,7 @@ public class PlatformLogic implements Logic {
 						params = new Parameters(new Object[] {0});
 						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
 						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
-						event = new PlatformEvent(actions);
+						event = new Event(actions);
 						event.regionTriggers.add(trigger2);
 						map.events.add(event);
 						
@@ -331,7 +331,7 @@ public class PlatformLogic implements Logic {
 						params = new Parameters(new Object[] {1});
 						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
 						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
-						event = new PlatformEvent(actions);
+						event = new Event(actions);
 						event.regionTriggers.add(trigger2);
 						map.events.add(event);
 						
@@ -339,7 +339,7 @@ public class PlatformLogic implements Logic {
 				}
 				int instanceId = actorLayer.tiles[i][j];
 				if (instanceId > 0) {
-					PlatformActorInstance instance = this.map.actors.get(instanceId);
+					ActorInstance instance = this.map.actors.get(instanceId);
 					int actorId = instance.actorType;
 					if (actorId > 0) {
 						addActor(game.actors[actorId], instanceId, x, y);
@@ -446,7 +446,7 @@ public class PlatformLogic implements Logic {
 
 	private void checkTriggers() {
 		for (int i = 0; i < map.events.size(); i++) {
-			PlatformEvent event = map.events.get(i);
+			Event event = map.events.get(i);
 			boolean triggered = false;
 
 			for (int j = 0; j < event.switchTriggers.size(); j++) {
@@ -663,15 +663,15 @@ public class PlatformLogic implements Logic {
 		skyScroll = scroll;
 	}
 
-	private PlatformBody addActor(PlatformActor actor, int id, float startX, float startY) {
+	private PlatformBody addActor(ActorClass actor, int id, float startX, float startY) {
 		return addActor(actor, id, startX, startY, 1, false);
 	}
 
-	private PlatformBody addActor(PlatformActor actor, int id, float startX, float startY, int startDir) {
+	private PlatformBody addActor(ActorClass actor, int id, float startX, float startY, int startDir) {
 		return addActor(actor, id, startX, startY, startDir, false);
 	}
 
-	private PlatformBody addActor(PlatformActor actor, int id, float startX, float startY, 
+	private PlatformBody addActor(ActorClass actor, int id, float startX, float startY, 
 			int startDir, boolean isHero) {
 		if (id < 0) {
 			id = actors.size();
@@ -766,15 +766,15 @@ public class PlatformLogic implements Logic {
 	}
 
 	public static class ActorAddable {
-		public PlatformActor actor;
+		public ActorClass actor;
 		public float startX, startY;
 		public int startDir;
 
-		public ActorAddable(PlatformActor actor, float startX, float startY) {
+		public ActorAddable(ActorClass actor, float startX, float startY) {
 			this(actor, startX, startY, 1);
 		}
 
-		public ActorAddable(PlatformActor actor, float startX, float startY, int startDir) {
+		public ActorAddable(ActorClass actor, float startX, float startY, int startDir) {
 			this.actor = actor;
 			this.startX = startX;
 			this.startY = startY;

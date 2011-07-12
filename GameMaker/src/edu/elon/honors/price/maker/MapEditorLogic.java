@@ -15,10 +15,10 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Environment;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.PlatformLayer;
-import edu.elon.honors.price.data.PlatformMap;
+import edu.elon.honors.price.data.MapLayer;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
@@ -41,7 +41,7 @@ public class MapEditorLogic implements Logic {
 	private static final float TRANS = 0.5f;
 
 	private PlatformGame game;
-	private PlatformMap map;
+	private Map map;
 	private PlatformData data;
 	private ArrayList<Tilemap> tilemaps;
 	private Tilemap texturePreview;
@@ -544,7 +544,7 @@ public class MapEditorLogic implements Logic {
 		}
 		if (newId != 0) {
 			int type = map.getActorType(row, column);
-			PlatformActor actor = type > 0 ? game.actors[type] : game.hero;
+			ActorClass actor = type > 0 ? game.actors[type] : game.hero;
 			Bitmap bmp = Data.loadActor(actor.imageName);
 			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
 			
@@ -637,7 +637,7 @@ public class MapEditorLogic implements Logic {
 		Rect rect = new Rect();
 		rect.set(0, 0, Graphics.getWidth(), Graphics.getHeight());
 		for (int i = 0; i < map.layers.length; i++) {
-			PlatformLayer layer = map.layers[i];
+			MapLayer layer = map.layers[i];
 			Tilemap tm = new Tilemap(Data.loadTileset(tileset.bitmapName), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, rect, i);
@@ -672,7 +672,7 @@ public class MapEditorLogic implements Logic {
 			int id = actorHolder.getActorId();
 			Bitmap mask;
 			if (id != 0) {
-				PlatformActor actor = id > 0 ? game.actors[id] : game.hero; 
+				ActorClass actor = id > 0 ? game.actors[id] : game.hero; 
 				Bitmap actorBmp = Data.loadActor(actor.imageName);
 				mask = Bitmap.createBitmap(actorBmp.getWidth() / 4, actorBmp.getHeight() / 4, Sprite.getDefaultConfig());
 				mask.eraseColor(Color.BLACK);

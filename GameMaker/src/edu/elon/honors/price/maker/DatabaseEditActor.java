@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformActor;
+import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.R.id;
@@ -37,11 +37,11 @@ public class DatabaseEditActor extends DatabaseActivity {
 
 	public final static int SPEEDS = 10;
 
-	final static float SPEED_SCALE = SPEEDS / PlatformActor.MAX_SPEED;
-	final static float JUMP_SCALE = SPEEDS / PlatformActor.MAX_JUMP;
+	final static float SPEED_SCALE = SPEEDS / ActorClass.MAX_SPEED;
+	final static float JUMP_SCALE = SPEEDS / ActorClass.MAX_JUMP;
 
 	private int actorId;
-	private PlatformActor actor;
+	private ActorClass actor;
 	private EditText actorName;
 	private Button okButton;
 	private Spinner imageSpinner, eventSpinner, directionSpinner, behaviorSpinner;

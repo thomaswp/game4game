@@ -2,7 +2,7 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 
-public class PlatformActor implements Serializable, Cloneable {
+public class ActorClass implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 	
 	public final static float MAX_SPEED = 5f;
@@ -38,9 +38,9 @@ public class PlatformActor implements Serializable, Cloneable {
 	public boolean collidesWithHero = true;
 	
 	@Override
-	public PlatformActor clone() {
+	public ActorClass clone() {
 		try {
-			PlatformActor a = (PlatformActor)super.clone();
+			ActorClass a = (ActorClass)super.clone();
 			a.actorContactBehaviors = actorContactBehaviors.clone();
 			a.heroContactBehaviors = heroContactBehaviors.clone();
 			return a;
