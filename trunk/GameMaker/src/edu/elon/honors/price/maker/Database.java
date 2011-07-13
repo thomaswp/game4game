@@ -48,11 +48,10 @@ public class Database extends DatabaseActivity {
 	}
 	
 	@Override
-	protected void finishOk() {
+	protected void onFinishing() {
 		if (selectedPage > 0) {
 			pages[selectedPage].onPause();
 		}
-		super.finishOk();
 	}
 	
 	private void setButtonEvents() {

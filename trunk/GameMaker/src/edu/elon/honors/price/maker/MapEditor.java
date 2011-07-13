@@ -36,7 +36,6 @@ public class MapEditor extends Game {
 	@Override
 	protected Logic getNewLogic() {
 
-		final MapEditor gm = this;
 		RectHolder rectHolder = new RectHolder() {
 
 			@Override
@@ -46,7 +45,7 @@ public class MapEditor extends Game {
 				}
 				isSelecting = true;
 
-				Intent intent = new Intent(gm, MapTextureSelector.class);
+				Intent intent = new Intent(MapEditor.this, MapTextureSelector.class);
 				intent.putExtra("id", bitmapName);
 				intent.putExtra("tileWidth", tileWidth);
 				intent.putExtra("tileHeight", tileHeight);
@@ -73,8 +72,8 @@ public class MapEditor extends Game {
 					return;
 				}
 				isSelecting = true;
-				
-				Intent intent = new Intent(gm, MapActorSelector.class);
+
+				Intent intent = new Intent(MapEditor.this, MapActorSelector.class);
 
 				intent.putExtra("id", actorId);
 				intent.putExtra("gameName", gameName);
@@ -96,7 +95,7 @@ public class MapEditor extends Game {
 	@Override
 	public void onResume() {
 		super.onResume();
-		
+
 		if (logic != null) {
 			view.setLogic(logic);
 		} else {
@@ -125,37 +124,37 @@ public class MapEditor extends Game {
 			load();
 		} else if (item.getTitle().equals("Test")) {
 			new AlertDialog.Builder(this)
-	        .setIcon(android.R.drawable.ic_dialog_alert)
-	        .setTitle("Save First?")
-	        .setMessage("Do you want to save before testing?")
-	        .setPositiveButton("Save and Test", new DialogInterface.OnClickListener() {
-	            @Override
-	            public void onClick(DialogInterface dialog, int which) {
-	            	save();
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setTitle("Save First?")
+			.setMessage("Do you want to save before testing?")
+			.setPositiveButton("Save and Test", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					save();
 					test();
-	            }
+				}
 
-	        })
-	        .setNeutralButton("Test", new DialogInterface.OnClickListener() {
-	            @Override
-	            public void onClick(DialogInterface dialog, int which) {
-	            	test();
-	            }
+			})
+			.setNeutralButton("Test", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					test();
+				}
 
-	        })
-	        .setNegativeButton("Cancel", null)
-	        .show();
+			})
+			.setNegativeButton("Cancel", null)
+			.show();
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
-	
+
 	private void test() {
 		Intent intent = new Intent(MapEditor.this, Platformer.class);
 		intent.putExtra("map", gameName);
 		startActivity(intent);
 		Game.debug(System.currentTimeMillis());
 	}
-	
+
 	private void save() {
 		try {
 			((MapEditorLogic)view.getLogic()).saveFinal();
@@ -165,7 +164,7 @@ public class MapEditor extends Game {
 			Toast.makeText(this, "Save Failed!", Toast.LENGTH_SHORT).show(); 
 		}
 	}
-	
+
 	private void load() {
 		try {
 			((MapEditorLogic)view.getLogic()).loadFinal();
@@ -197,26 +196,30 @@ public class MapEditor extends Game {
 
 	@Override
 	public void onBackPressed() {
-		new AlertDialog.Builder(this)
-        .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle("Save?")
-        .setMessage("Do you want to save before quitting?")
-        .setPositiveButton("Save and Quit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            	save();
-                MapEditor.this.finish(); 
-            }
+		if (logic.isChanged()) {
+			new AlertDialog.Builder(this)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setTitle("Save?")
+			.setMessage("Do you want to save before quitting?")
+			.setPositiveButton("Save and Quit", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					save();
+					MapEditor.this.finish(); 
+				}
 
-        })
-        .setNeutralButton("Quit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                MapEditor.this.finish(); 
-            }
+			})
+			.setNeutralButton("Quit", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					MapEditor.this.finish(); 
+				}
 
-        })
-        .setNegativeButton("Cancel", null)
-        .show();	
+			})
+			.setNegativeButton("Cancel", null)
+			.show();	
+		} else {
+			finish();
+		}
 	}
 }

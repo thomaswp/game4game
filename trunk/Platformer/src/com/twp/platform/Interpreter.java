@@ -147,6 +147,7 @@ public class Interpreter extends EventIds {
 			}
 			
 			if (action.id == ID_MOVE_ACTOR) {
+				
 				int x, y, dir;
 				if (params.getInt(1) == 0) {
 					x = params.getInt(2);

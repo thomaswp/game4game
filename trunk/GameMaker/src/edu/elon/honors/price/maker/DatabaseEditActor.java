@@ -206,19 +206,12 @@ public class DatabaseEditActor extends DatabaseActivity {
 	}
 	
 	@Override
-	protected void finishOk() {
-		
+	public void onFinishing() {
 		actor.name = actorName.getText().toString();
 		actor.imageName = (String)imageSpinner.getSelectedItem();
 		actor.speed = speed.getProgress() / SPEED_SCALE;
 		actor.jumpVelocity = jump.getProgress() / JUMP_SCALE;
 		game.actors[actorId] = actor;
-		
-		Intent intent = new Intent();
-		intent.putExtra("game", game);
-		setResult(RESULT_OK, intent);
-		
-		finish();
 	}
 
 	public static class ImageAdapter extends ArrayAdapter<String> {

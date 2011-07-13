@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.os.Bundle;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.PlatformGame;
@@ -35,7 +36,7 @@ public class MapEditorLogic implements Logic {
 	private static final int DARK = Color.argb(255, 150, 150, 150);
 	private static final float TRANS = 0.5f;
 
-	private PlatformGame game;
+	private PlatformGame game, oldGame;
 	private Map map;
 	private PlatformData data;
 	private ArrayList<Tilemap> tilemaps;
@@ -64,7 +65,10 @@ public class MapEditorLogic implements Logic {
 	@Override
 	public void setPaused(boolean paused) {
 		// TODO Auto-generated method stub
-
+	}
+	
+	public boolean isChanged() {
+		return !PlatformGame.areEqual(game, oldGame);
 	}
 
 	public MapEditorLogic(String mapName, RectHolder holder, ActorHolder actorHolder) {
@@ -170,6 +174,7 @@ public class MapEditorLogic implements Logic {
 	public void saveFinal() {
 		if (!Game.saveObject(MainMenu.PREFIX + mapName, game))
 			throw new RuntimeException("Save Failed");
+		setOldGame();
 	}
 
 	@Override
@@ -178,10 +183,12 @@ public class MapEditorLogic implements Logic {
 		
 		if (game == null) {
 			game = (PlatformGame)Game.loadObject(MainMenu.PREFIX + mapName);
+			setOldGame();
 		}
 
 		if (game == null) {
 			game = new PlatformGame();
+			setOldGame();
 		}		
 		if (data == null) {
 			data = new PlatformData();
@@ -199,8 +206,17 @@ public class MapEditorLogic implements Logic {
 			save();
 			Graphics.reset();
 			loadSprites();
+			setOldGame();
 		} else {
 			throw new RuntimeException("Load Failed!");
+		}
+	}
+	
+	private void setOldGame() {
+		try {
+			oldGame = (PlatformGame)Game.loadObject(MainMenu.PREFIX + mapName);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 

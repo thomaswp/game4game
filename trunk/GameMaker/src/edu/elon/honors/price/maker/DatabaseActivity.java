@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Game;
 
 public class DatabaseActivity extends Activity {
 	
@@ -29,29 +30,44 @@ public class DatabaseActivity extends Activity {
 	
 	@Override
 	public void onBackPressed() {
-		new AlertDialog.Builder(this)
-        .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle("Keep Changes?")
-        .setMessage("Do you want to keep the changes you made to this page?")
-        .setPositiveButton("Keep Changes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            	finishOk();
-            }
+		onFinishing();
+		if (hasChanged()) {
+			new AlertDialog.Builder(this)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setTitle("Keep Changes?")
+			.setMessage("Do you want to keep the changes you made to this page?")
+			.setPositiveButton("Keep Changes", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finishOk();
+				}
 
-        })
-        .setNeutralButton("Discard Changes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
+			})
+			.setNeutralButton("Discard Changes", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
 
-        })
-        .setNegativeButton("Stay Here", null)
-        .show();	
+			})
+			.setNegativeButton("Stay Here", null)
+			.show();	
+		} else {
+			finish();
+		}
+	}
+	
+	protected boolean hasChanged() {
+		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
+		return !PlatformGame.areEqual(oldGame, game);
 	}
 
-	protected void finishOk() {
+	protected void onFinishing() {
+		
+	}
+	
+	protected final void finishOk() {
+		onFinishing();
 		Intent intent = new Intent();
 		intent.putExtra("game", game);
 		setResult(RESULT_OK, intent);
