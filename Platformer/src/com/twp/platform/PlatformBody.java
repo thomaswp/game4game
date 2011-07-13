@@ -9,29 +9,19 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.data.ActorInstance;
-import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.physics.Physics;
 import edu.elon.honors.price.physics.Vector;
 
 public class PlatformBody {

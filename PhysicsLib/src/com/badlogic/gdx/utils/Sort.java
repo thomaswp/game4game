@@ -23,6 +23,7 @@ import java.util.Comparator;
  * short, or byte).
  * @author Nathan Sweet
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Sort {
 	static private Sort instance;
 

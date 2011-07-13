@@ -2,15 +2,11 @@ package edu.elon.honors.price.maker;
 
 import com.twp.platform.Platformer;
 
-import edu.elon.honors.price.audio.Audio;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
-import edu.elon.honors.price.graphics.Graphics;
-import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.maker.MapEditorLogic.ActorHolder;
 import edu.elon.honors.price.maker.MapEditorLogic.RectHolder;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,6 +27,7 @@ public class MapEditor extends Game {
 	private String gameName;
 	private MapEditorLogic logic;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		this.gameName = getIntent().getExtras().getString("map");
 		super.onCreate(savedInstanceState);

@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
-import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 
 public class DatabaseActivity extends Activity {

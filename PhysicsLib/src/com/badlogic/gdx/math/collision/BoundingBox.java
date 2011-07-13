@@ -287,6 +287,7 @@ public class BoundingBox implements Serializable {
 		return true;
 	}
 
+	@Override
 	public String toString () {
 		return "[" + min + "|" + max + "]";
 	}

@@ -2,10 +2,6 @@ package edu.elon.honors.price.graphics;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
-
-import edu.elon.honors.price.game.Game;
-
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;

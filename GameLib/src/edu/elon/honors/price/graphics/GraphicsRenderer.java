@@ -1,9 +1,6 @@
 package edu.elon.honors.price.graphics;
 
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -19,7 +16,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
-import android.graphics.RectF;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
@@ -65,6 +61,7 @@ public class GraphicsRenderer implements Renderer {
 		resources = new LinkedList<Integer>();
 	}
 	
+	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		Graphics.resize(width, height);
 
@@ -92,6 +89,7 @@ public class GraphicsRenderer implements Renderer {
 	 * goes to sleep, etc).  This function must fill the contents of vram with
 	 * texture data and (when using VBOs) hardware vertex arrays.
 	 */
+	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		/*
 		 * Some one-time OpenGL initialization can be made here probably based
@@ -153,6 +151,7 @@ public class GraphicsRenderer implements Renderer {
 	 * Draws the the Sprites in each Viewport.
 	 * @param canvas The canvas on which to draw.
 	 */
+	@Override
 	public void onDrawFrame(GL10 gl) {
 		long time = System.currentTimeMillis();
 

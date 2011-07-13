@@ -1,19 +1,14 @@
 package edu.elon.honors.price.maker;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
-import android.os.Environment;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.PlatformGame;

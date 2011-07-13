@@ -1,9 +1,5 @@
 package edu.elon.honors.price.graphics;
 
-import java.util.HashMap;
-
-import edu.elon.honors.price.game.Game;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -11,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Path.Direction;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
@@ -574,6 +569,7 @@ public class Sprite implements Comparable<Sprite> {
 		this.flashFrame = 0;
 	}
 	
+	@Override
 	public String toString() {
 		return "Sprite: {" + x + "," + y + "," + z + "}";
 	}

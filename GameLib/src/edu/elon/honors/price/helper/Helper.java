@@ -1,6 +1,5 @@
 package edu.elon.honors.price.helper;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;

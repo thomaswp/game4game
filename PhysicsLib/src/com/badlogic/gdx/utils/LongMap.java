@@ -17,8 +17,6 @@ package com.badlogic.gdx.utils;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Random;
-
 import com.badlogic.gdx.math.MathUtils;
 
 /**
@@ -30,6 +28,7 @@ import com.badlogic.gdx.math.MathUtils;
  * next higher POT size.
  * @author Nathan Sweet
  */
+@SuppressWarnings({"unused", "rawtypes", "unchecked"})
 public class LongMap<V> {
 	private static final int PRIME1 = 0xbe1f14b1;
 	private static final int PRIME2 = 0xb4b82e39;
@@ -472,6 +471,7 @@ public class LongMap<V> {
 		return (int)((h ^ h >>> hashShift) & mask);
 	}
 
+	@Override
 	public String toString () {
 		if (size == 0) return "[]";
 		StringBuilder buffer = new StringBuilder(32);
@@ -539,6 +539,7 @@ public class LongMap<V> {
 		public long key;
 		public V value;
 
+		@Override
 		public String toString () {
 			return key + "=" + value;
 		}
@@ -605,6 +606,7 @@ public class LongMap<V> {
 		/**
 		 * Note the same entry instance is returned each time this method is called.
 		 */
+		@Override
 		public Entry<V> next () {
 			if (!hasNext) throw new NoSuchElementException();
 			long[] keyTable = map.keyTable;
@@ -620,10 +622,12 @@ public class LongMap<V> {
 			return entry;
 		}
 
+		@Override
 		public boolean hasNext () {
 			return hasNext;
 		}
 
+		@Override
 		public Iterator<Entry<V>> iterator () {
 			return this;
 		}
@@ -634,10 +638,12 @@ public class LongMap<V> {
 			super(map);
 		}
 
+		@Override
 		public boolean hasNext () {
 			return hasNext;
 		}
 
+		@Override
 		public V next () {
 			V value;
 			if (nextIndex == INDEX_ZERO)
@@ -649,6 +655,7 @@ public class LongMap<V> {
 			return value;
 		}
 
+		@Override
 		public Iterator<V> iterator () {
 			return this;
 		}

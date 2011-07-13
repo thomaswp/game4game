@@ -1,11 +1,6 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.maker.R;
-import edu.elon.honors.price.maker.R.id;
-import edu.elon.honors.price.maker.R.layout;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +15,7 @@ public class Database extends DatabaseActivity {
 	
 	private Button next, prev;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -51,6 +47,7 @@ public class Database extends DatabaseActivity {
 		super.onPause();
 	}
 	
+	@Override
 	protected void finishOk() {
 		if (selectedPage > 0) {
 			pages[selectedPage].onPause();

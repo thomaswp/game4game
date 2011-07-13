@@ -493,6 +493,7 @@ public class World implements Disposable {
 
 	private native void jniGetContactList (long addr, long[] contacts);
 
+	@Override
 	public void dispose () {
 		jniDispose(addr);
 	}

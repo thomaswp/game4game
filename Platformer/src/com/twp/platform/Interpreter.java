@@ -4,9 +4,6 @@ import java.util.Random;
 
 import com.twp.platform.PlatformLogic.ActorAddable;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.EventIds;
@@ -20,7 +17,6 @@ public class Interpreter extends EventIds {
 	public static final float SCALE = PlatformLogic.SCALE;
 	
 	private int actionIndex;
-	private Event event;
 	private PlatformLogic logic;
 	private Random rand = new Random();
 	
@@ -32,7 +28,6 @@ public class Interpreter extends EventIds {
 		if (event == null)
 			return;
 		
-		this.event = event;
 		actionIndex = 0;
 
 		while (actionIndex < event.actions.size()) {

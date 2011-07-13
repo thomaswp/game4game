@@ -1,13 +1,11 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,13 +14,11 @@ import android.graphics.RectF;
 import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnTouchListener;
 
 public class MapTextureSelector extends Activity {
 
@@ -64,7 +60,7 @@ public class MapTextureSelector extends Activity {
 	private static class TSView extends SurfaceView implements SurfaceHolder.Callback{
 
 		private Bitmap bitmap;
-		private int height, width;
+		private int height;
 		private SurfaceHolder holder;
 		private Paint paint = new Paint();
 		private Thread thread;
@@ -103,7 +99,6 @@ public class MapTextureSelector extends Activity {
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width,
 				int height) {
-			this.width = width;
 			this.height = height;
 			okRect = new RectF(width - 50, 0, width, 50);
 		}

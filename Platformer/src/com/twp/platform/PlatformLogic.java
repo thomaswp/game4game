@@ -1,6 +1,5 @@
 package com.twp.platform;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -12,13 +11,11 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -33,6 +30,7 @@ import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
+import edu.elon.honors.price.data.EventIds;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.Map;
@@ -49,7 +47,6 @@ import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
-import edu.elon.honors.price.physics.Physics;
 import edu.elon.honors.price.physics.Vector;
 
 public class PlatformLogic implements Logic {
@@ -300,11 +297,11 @@ public class PlatformLogic implements Logic {
 						for (int k = -1; k < 2; k++) {
 							actions = new ArrayList<Action>();
 							params = new Parameters(new Object[] {0, 0, 0, 3, 1, 0});
-							actions.add(new Action(Action.ID_SET_VARIABLE, params));
+							actions.add(new Action(EventIds.ID_SET_VARIABLE, params));
 							params = new Parameters(new Object[] {0, 0, 1, 0, k * 60, 0});
-							actions.add(new Action(Action.ID_SET_VARIABLE, params));
+							actions.add(new Action(EventIds.ID_SET_VARIABLE, params));
 							params = new Parameters(new Object[] {2, 1, 0, 0, 0, (int)(Math.random() * 2)}); 
-							actions.add(new Action(Interpreter.ID_CREATE_ACTOR, params));
+							actions.add(new Action(EventIds.ID_CREATE_ACTOR, params));
 							trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
 							event = new Event(actions);
 							event.actorTriggers.add(trigger);
@@ -313,7 +310,7 @@ public class PlatformLogic implements Logic {
 						
 						actions = new ArrayList<Action>();
 						params = new Parameters(new Object[] {1, ActorClass.BEHAVIOR_STUN});
-						actions.add(new Action(Action.ID_ACTOR_BEHAVIOR, params));
+						actions.add(new Action(EventIds.ID_ACTOR_BEHAVIOR, params));
 						trigger = new ActorTrigger(false, 2, ActorTrigger.ACTION_COLLIDES_HERO);
 						event = new Event(actions);
 						event.actorTriggers.add(trigger);
@@ -323,7 +320,7 @@ public class PlatformLogic implements Logic {
 						
 						actions = new ArrayList<Action>();
 						params = new Parameters(new Object[] {0});
-						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
+						actions.add(new Action(EventIds.ID_HERO_SET_LADDER, params));
 						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
 						event = new Event(actions);
 						event.regionTriggers.add(trigger2);
@@ -331,7 +328,7 @@ public class PlatformLogic implements Logic {
 						
 						actions = new ArrayList<Action>();
 						params = new Parameters(new Object[] {1});
-						actions.add(new Action(Action.ID_HERO_SET_LADDER, params));
+						actions.add(new Action(EventIds.ID_HERO_SET_LADDER, params));
 						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
 						event = new Event(actions);
 						event.regionTriggers.add(trigger2);

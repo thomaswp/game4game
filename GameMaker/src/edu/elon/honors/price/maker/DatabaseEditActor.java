@@ -1,14 +1,9 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
-import edu.elon.honors.price.maker.R.id;
-import edu.elon.honors.price.maker.R.layout;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;

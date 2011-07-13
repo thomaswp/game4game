@@ -2,7 +2,6 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.graphics.Rect;
 

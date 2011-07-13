@@ -1,7 +1,6 @@
 package edu.elon.honors.price.graphics;
 
 import edu.elon.honors.price.game.Cache;
-import edu.elon.honors.price.game.Game;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;

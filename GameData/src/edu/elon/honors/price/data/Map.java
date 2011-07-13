@@ -3,8 +3,6 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import android.graphics.Rect;
-
 public class Map implements Serializable{
 	private static final long serialVersionUID = 9L;
 	

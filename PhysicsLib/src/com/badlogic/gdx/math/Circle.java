@@ -19,6 +19,7 @@ import java.io.Serializable;
  * @author mzechner
  *
  */
+@SuppressWarnings("serial")
 public class Circle implements Serializable {
 	public float x, y;
 	public float radius;

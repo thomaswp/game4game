@@ -1,11 +1,6 @@
 package edu.elon.honors.price.input;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import edu.elon.honors.price.game.Game;
-
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -323,6 +318,8 @@ public final class Input {
 		return true;
 	}
 
+	
+	@SuppressWarnings("unused")
 	private static void dumpEvent(MotionEvent event) {
 		String names[] = { "DOWN" , "UP" , "MOVE" , "CANCEL" , "OUTSIDE" ,
 				"POINTER_DOWN" , "POINTER_UP" , "7?" , "8?" , "9?" };
