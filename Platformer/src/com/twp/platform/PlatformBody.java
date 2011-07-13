@@ -295,12 +295,12 @@ public class PlatformBody {
 			stopped = true;
 			break;
 		case ActorClass.BEHAVIOR_JUMP_TURN:
-			jump();
+			jump(false);
 		case ActorClass.BEHAVIOR_TURN:
 			directionX *= -1;
 			break;
 		case ActorClass.BEHAVIOR_JUMP:
-			jump();
+			jump(false);
 			break;
 		case ActorClass.BEHAVIOR_START_STOP:
 			stopped = !stopped;
@@ -331,8 +331,8 @@ public class PlatformBody {
 		onLadder = false;
 	}
 	
-	public void jump() {
-		if (isGrounded() || isOnLadder()) {
+	public void jump(boolean checkGrounded) {
+		if (!checkGrounded || isGrounded() || isOnLadder()) {
 			setVelocity(getVelocity().x, -actor.jumpVelocity);
 			onLadder = false;
 		}

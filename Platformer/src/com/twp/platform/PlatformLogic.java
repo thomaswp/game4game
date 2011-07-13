@@ -131,9 +131,9 @@ public class PlatformLogic implements Logic {
 		skyStartY = bmp.getHeight() - Graphics.getHeight();
 		sky = new BackgroundSprite(bmp, new Rect(0, skyStartY, Graphics.getWidth(), skyStartY + Graphics.getHeight()), -5);
 
-		stick = new JoyStick(BSIZE + BBORDER, Graphics.getHeight() - BSIZE - BBORDER, 
+		stick = new JoyStick(BSIZE + BBORDER + 10, Graphics.getHeight() - BSIZE - BBORDER, 
 				BBORDER, BSIZE, Color.argb(150, 0, 0, 255));
-		button = new Button(Graphics.getWidth() - BSIZE - BBORDER, 
+		button = new Button(Graphics.getWidth() - BSIZE - BBORDER - 10, 
 				Graphics.getHeight() - BSIZE - BBORDER, BBORDER, 
 				BSIZE, Color.argb(150, 255, 0, 0));
 
@@ -267,7 +267,7 @@ public class PlatformLogic implements Logic {
 						rock.imageName = "rock.png";
 						rock.zoom = 0.6f;
 						rock.name = "Rock";
-						addBody(rock, -1, 60, 0);
+						addBody(rock, -1, 80, 20);
 					}
 					if (i == 4 && j == 18) {
 						ActorClass dude = new ActorClass();
@@ -316,9 +316,13 @@ public class PlatformLogic implements Logic {
 						event.actorTriggers.add(trigger);
 						map.events.add(event);
 						
-						Rect ladder = new Rect(22 * 48 + 6, 0, 23 * 48 - 6, 48 * 6);
+						Rect ladder = new Rect(23 * 48 + 8, 0, 24 * 48 - 4, 48 * 6);
 						
 						actions = new ArrayList<Action>();
+						params = new Parameters(new Object[] {0, 0, 0, 3, 1, 1});
+						actions.add(new Action(EventIds.ID_SET_VARIABLE, params));
+						params = new Parameters(new Object[] {1, 0, ladder.centerX(), 1, 0, 2});
+						actions.add(new Action(EventIds.ID_MOVE_ACTOR, params));
 						params = new Parameters(new Object[] {0});
 						actions.add(new Action(EventIds.ID_HERO_SET_LADDER, params));
 						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
@@ -376,7 +380,7 @@ public class PlatformLogic implements Logic {
 
 		if (!heroBody.isStunned()) {
 			if (button.isTapped()) {
-				heroBody.jump();
+				heroBody.jump(true);
 			}
 			
 			if (heroBody.isOnLadder()) {
