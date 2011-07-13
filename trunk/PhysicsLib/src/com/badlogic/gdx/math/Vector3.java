@@ -399,6 +399,7 @@ public class Vector3 implements Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toString () {
 		return String.format("%.4f", x) + ", " + String.format("%.4f", y) + ", " + String.format("%.4f", z);
 	}

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import android.graphics.RectF;
 import android.graphics.Region;
 
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 

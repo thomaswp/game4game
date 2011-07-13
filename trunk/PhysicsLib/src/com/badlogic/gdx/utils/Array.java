@@ -27,6 +27,7 @@ import com.badlogic.gdx.math.MathUtils;
  * last element is moved to the removed element's position).
  * @author Nathan Sweet
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Array<T> implements Iterable<T> {
 	/**
 	 * Provides direct access to the underlying array. If the Array's generic type is not Object, this field may only be accessed
@@ -283,12 +284,14 @@ public class Array<T> implements Iterable<T> {
 	 * Returns an iterator for the items in the array. Remove is supported. Note that the same iterator instance is returned each
 	 * time this method is called. Use the {@link ArrayIterator} constructor for nested or multithreaded iteration.
 	 */
+	@Override
 	public Iterator<T> iterator () {
 		if (iterator == null) iterator = new ArrayIterator(this);
 		iterator.index = 0;
 		return iterator;
 	}
 
+	@Override
 	public String toString () {
 		if (size == 0) return "[]";
 		Object[] items = this.items;
@@ -311,15 +314,18 @@ public class Array<T> implements Iterable<T> {
 			this.array = array;
 		}
 
+		@Override
 		public boolean hasNext () {
 			return index < array.size;
 		}
 
+		@Override
 		public T next () {
 			if (index >= array.size) throw new NoSuchElementException(String.valueOf(index));
 			return array.items[index++];
 		}
 
+		@Override
 		public void remove () {
 			index--;
 			array.removeIndex(index);

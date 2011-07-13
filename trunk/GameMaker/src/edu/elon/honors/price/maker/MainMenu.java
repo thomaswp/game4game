@@ -1,32 +1,22 @@
 package edu.elon.honors.price.maker;
 
-import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import com.badlogic.gdx.utils.Array;
 import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.game.Game;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -37,7 +27,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 
 public class MainMenu extends Activity {
 
@@ -67,6 +56,7 @@ public class MainMenu extends Activity {
 				ArrayList<String> dirs = new ArrayList<String>();
 				dirs.add(Data.ACTORS_DIR);
 				dirs.add(Data.TILESETS_DIR);
+				dirs.add("export/");
 				
 				for (int i = 0; i < dirs.size(); i++) {
 					File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + dirs.get(i));
@@ -154,8 +144,74 @@ public class MainMenu extends Activity {
 				newGame();
 			}
 		});
+		
+		copy.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				new AlertDialog.Builder(MainMenu.this)
+		        .setIcon(android.R.drawable.ic_dialog_alert)
+		        .setTitle("Import/Export")
+		        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
+		            @Override
+		            public void onClick(DialogInterface dialog, int which) {
+		            	importGames();
+		            }
+
+		        })
+		        .setNeutralButton("Export", new DialogInterface.OnClickListener() {
+		            @Override
+		            public void onClick(DialogInterface dialog, int which) {
+		            	exportGames();
+		            }
+
+		        })
+		        .show();	
+			}
+		});
 	}
 
+	private void importGames() {
+		File dir = new File(Environment.getExternalStorageDirectory(), 
+				Data.SD_FOLDER + "export/");
+		for (String file : dir.list()) {
+			if (file.indexOf(PREFIX) == 0) {
+				try {
+    				FileInputStream fis = new FileInputStream(new File(dir, file));
+    				ObjectInputStream ois = new ObjectInputStream(fis);
+    				PlatformGame game = (PlatformGame)ois.readObject();
+    				FileOutputStream fos = openFileOutput(file, MODE_WORLD_WRITEABLE);
+    				ObjectOutputStream oos = new ObjectOutputStream(fos);
+    				oos.writeObject(game);
+    				loadMaps();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private void exportGames() {
+		String[] files = fileList();
+		for (String file : files) {
+			if (file.indexOf(PREFIX) == 0) {
+				try {
+    				FileInputStream fis = openFileInput(file);
+    				ObjectInputStream ois = new ObjectInputStream(fis);
+    				PlatformGame game = (PlatformGame)ois.readObject();
+    				File file2 = new File(Environment.getExternalStorageDirectory(), 
+    						Data.SD_FOLDER + "export/" + file);
+    				FileOutputStream fos = new FileOutputStream(file2);
+    				ObjectOutputStream oos = new ObjectOutputStream(fos);
+    				oos.writeObject(game);
+    				
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	private void newGame() {
 		String[] files = fileList();
 		int n = 0;

@@ -129,6 +129,7 @@ public class Vector implements Serializable{
 		v.set((float)Math.cos(angle), (float)Math.sin(angle));
 	}
 	
+	@Override
 	public String toString() {
 		return "{" + x + "," + y + "}";
 	}

@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
 import edu.elon.honors.price.data.Data;
@@ -15,8 +14,6 @@ import edu.elon.honors.price.data.Hero;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.DatabaseEditActor.ImageAdapter;
-import edu.elon.honors.price.maker.R.id;
-import edu.elon.honors.price.maker.R.layout;
 
 public class PageHero extends Page {
 	

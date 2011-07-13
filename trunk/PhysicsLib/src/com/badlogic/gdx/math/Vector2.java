@@ -200,6 +200,7 @@ public class Vector2 implements Serializable {
 		return x_d * x_d + y_d * y_d;
 	}
 
+	@Override
 	public String toString () {
 		return "[" + x + ":" + y + "]";
 	}

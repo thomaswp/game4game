@@ -1,10 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.game.Game;
-import android.R;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Checkable;

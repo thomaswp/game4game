@@ -5,8 +5,6 @@ import edu.elon.honors.price.audio.Audio;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.physics.Physics;
-
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.KeyEvent;
@@ -103,6 +101,7 @@ public class GraphicsView extends GLSurfaceView {
 		//Create the Thread
 		final SurfaceHolder surfaceHolder = getHolder();
 		thread = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				//Wait for the surface to be created
 				while (Graphics.getWidth() == 0 || Graphics.getHeight() == 0);

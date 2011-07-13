@@ -1,32 +1,16 @@
 package edu.elon.honors.price.maker;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.game.Game;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 
 public class ResourceProvider extends ContentProvider {
 
