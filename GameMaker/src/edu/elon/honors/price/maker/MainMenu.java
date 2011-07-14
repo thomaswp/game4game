@@ -45,14 +45,6 @@ public class MainMenu extends Activity {
 		
 		loadMaps();
 		loadButtons();
-		
-//		PlatformGame game1 = new PlatformGame();
-//		//game1.maps.get(0).layers[0].tiles[0][10]++;
-//		PlatformGame game2 = new PlatformGame();
-//		
-//		long time = System.currentTimeMillis();
-//		Game.debug(PlatformGame.areEqual(game1, game2));
-//		Game.debug(System.currentTimeMillis() - time);
 
 		super.onCreate(savedInstanceState);
 	}
