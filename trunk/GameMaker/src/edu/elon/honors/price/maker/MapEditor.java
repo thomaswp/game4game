@@ -121,29 +121,50 @@ public class MapEditor extends Game {
 		} else if (item.getTitle().equals("Save")) {
 			save();
 		} else if (item.getTitle().equals("Load")) {
-			load();
+			if (logic.isChanged()) {
+				new AlertDialog.Builder(this)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setTitle("Discard Changes?")
+				.setMessage("This game has been changed. Discard changes and load from last save?")
+				.setPositiveButton("Load", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						load();
+					}
+
+				})
+				.setNegativeButton("Cancel", null)
+				.show();
+			} else {
+				load();
+			}
 		} else if (item.getTitle().equals("Test")) {
-			new AlertDialog.Builder(this)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setTitle("Save First?")
-			.setMessage("Do you want to save before testing?")
-			.setPositiveButton("Save and Test", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					save();
-					test();
-				}
+			if (logic.isChanged()) {
+				new AlertDialog.Builder(this)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setTitle("Save First?")
+				.setMessage("Do you want to save before testing?")
+				.setPositiveButton("Save and Test", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						save();
+						test();
+					}
 
-			})
-			.setNeutralButton("Test", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					test();
-				}
+				})
+				.setNeutralButton("Test", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						test();
+					}
 
-			})
-			.setNegativeButton("Cancel", null)
-			.show();
+				})
+				.setNegativeButton("Cancel", null)
+				.show();
+			} else {
+				test();
+			}
+			
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}

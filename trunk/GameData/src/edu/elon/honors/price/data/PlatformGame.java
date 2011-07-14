@@ -1,12 +1,9 @@
 package edu.elon.honors.price.data;
 
-import java.io.FileDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-
-import edu.elon.honors.price.game.Game;
 
 import android.graphics.Rect;
 
@@ -104,9 +101,21 @@ public class PlatformGame implements Serializable {
 		if (o1.getClass().isArray()) {
 			if (Array.getLength(o1) != Array.getLength(o2))
 				return false;
+			
+			String className = o1.getClass().toString();
+			int index = className.lastIndexOf("[");
+			boolean shallowArray = className.length() > 1 && index == 0 && 
+				className.charAt(1) != 'L';
+			shallowArray = false;
+			
 			for (int i = 0; i < Array.getLength(o1); i++) {
-				if (!areEqual(Array.get(o1, i), Array.get(o2, i)))
-					return false;
+				if (shallowArray) {
+					if (Array.get(o1, i).equals(Array.get(o2, i)))
+						return false;
+				} else {
+					if (!areEqual(Array.get(o1, i), Array.get(o2, i)))
+						return false;
+				}
 			}
 		}
 		
