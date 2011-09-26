@@ -36,25 +36,25 @@ public final class Data {
 	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	
-	private static Bitmap loadBitmap(String id, Context parent) {
+	private static Bitmap loadBitmap(String name, Context parent) {
 		try {
-			if (Cache.isBitmapRegistered(id)) {
+			if (Cache.isBitmapRegistered(name)) {
 				//Game.debug("Cache: " + id);
-				return Cache.getRegisteredBitmap(id);
+				return Cache.getRegisteredBitmap(name);
 			}
 			else {
 				//Game.debug("Load New: " + id);
 				try {
 					ContentResolver cr = parent.getContentResolver();
-					AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, id), "r");
+					AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, name), "r");
 					InputStream is = afd.createInputStream();
 					Bitmap bmp = BitmapFactory.decodeStream(is);
-					Cache.RegisterBitmap(id, bmp);
+					Cache.RegisterBitmap(name, bmp);
 					return bmp;
 				} catch (Exception ex) {
-					Game.debug("Could not find '" + id + "' in local resrounces. Attempting external storage.");
+					Game.debug("Could not find '" + name + "' in local resrounces. Attempting external storage.");
 					if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-						File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + id);
+						File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + name);
 						return BitmapFactory.decodeFile(file.getAbsolutePath());
 					} else {
 						Game.debug("Failed: No SD Card detected");
@@ -68,6 +68,15 @@ public final class Data {
 		}
 	}
 	
+	/**
+	 * Returns a list of the file names of all resources in the given directory. 
+	 * @param dir The directory to be searched. Use one of the directory contants
+	 * found in this class. This will only return Assets if called from the GameMaker
+	 * namespace.
+	 * @param parent The context in which the request should be made. This should
+	 * be an Activity in the GameMaker app.
+	 * @return
+	 */
 	public static ArrayList<String> getResources(String dir, Context parent) {
 		ArrayList<String> files = new ArrayList<String>();
 		
@@ -96,22 +105,59 @@ public final class Data {
 		return files;
 	}
 
+	/**
+	 * Loads an actor from the ACTORS_DIR directory. Uses the current running
+	 * Game as a context. Use only from an appropriate Logic class.
+	 * @param name File name (without path but with extension), such as
+	 * 'actor.png'.
+	 * @return The bitmap.
+	 */
 	public static Bitmap loadActor(String name) {
 		return loadActor(name, Game.getCurrentGame());
 	}
 	
+	/**
+	 * Loads an actor from the ACTORS_DIR directory.
+	 * @param name File name (without path but with extension), such as
+	 * 'actor.png'.
+	 * @param context The context in which to load the resource.
+	 * @return The bitmap.
+	 */
 	public static Bitmap loadActor(String name, Context context) {
 		return loadBitmap(ACTORS_DIR + name, context);
 	}
 
+	/**
+	 * Loads a tileset from the TILESETS_DIR directory. Uses the current running
+	 * Game as a context. Use only from an appropriate Logic class.
+	 * @param name File name (without path but with extension), such as
+	 * 'tileset.png'.
+	 * @return The bitmap.
+	 */
 	public static Bitmap loadTileset(String name) {
 		return loadTileset(name, Game.getCurrentGame());
 	}
 	
+	/**
+	 * Loads a tileset from the TILESETS_DIR directory.
+	 * @param name File name (without path but with extension), such as
+	 * 'tileset.png'.
+	 * @param context The context in which to load the resource.
+	 * @return The bitmap.
+	 */
 	public static Bitmap loadTileset(String name, Context parent) {
 		return loadBitmap(TILESETS_DIR + name, parent);
 	}
 
+	/**
+	 * Used to load game data stored in the GameMaker namespace. Can
+	 * be used outside of this namespace.
+	 * @param name The file name of the game to be loaded. No directory
+	 * should be provided
+	 * @param parent The context in which to load the game. This does not
+	 * have to be in the GameMaker namespace.
+	 * @return The PlatformGame object.
+	 */
 	public static Object loadGame(String name, Activity parent) {
 		try {
 			InputStream is = parent.getContentResolver().openInputStream(Uri.withAppendedPath(Data.CONTENT_URI, name));
@@ -125,6 +171,16 @@ public final class Data {
 		}
 	}
 
+	/**
+	 * Used to save game data stored in the GameMaker namespace. Can
+	 * be used outside of this namespace.
+	 * @param name The file name of the game to be saved. No directory
+	 * should be provided
+	 * @param parent The context in which to save the game. This does not
+	 * have to be in the GameMaker namespace.
+	 * @param data The PlatformGame object.
+	 * @return true if the save was successful.
+	 */
 	public static boolean saveGame(String name, Activity parent, Serializable data) {
 		try {
 			FileOutputStream fos = parent.openFileOutput(name, Context.MODE_WORLD_WRITEABLE);

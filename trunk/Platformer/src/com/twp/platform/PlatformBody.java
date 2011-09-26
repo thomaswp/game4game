@@ -332,10 +332,10 @@ public class PlatformBody {
 	}
 	
 	public void jump(boolean checkGrounded) {
-		if (!checkGrounded || isGrounded() || isOnLadder()) {
+		///if (!checkGrounded || isGrounded() || isOnLadder()) {
 			setVelocity(getVelocity().x, -actor.jumpVelocity);
 			onLadder = false;
-		}
+		//}
 	}
 
 	public static boolean contactBetween(Contact contact, PlatformBody body1, PlatformBody body2) {

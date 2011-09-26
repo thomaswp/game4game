@@ -39,7 +39,7 @@ public class Map implements Serializable{
 	
 	public int getActorType(int row, int column) {
 		int id = actorLayer.tiles[row][column];
-		return id > 0 ? actors.get(id).actorType : 0;
+		return id > 0 ? actors.get(id).classIndex : 0;
 	}
 	
 	public ActorInstance getActorInstance(int row, int column) {
@@ -58,7 +58,7 @@ public class Map implements Serializable{
 			return 1;
 		} else {
 			int oldId = actorLayer.tiles[row][column];
-			if (oldId > 0 && actors.get(oldId).actorType == type) return oldId;
+			if (oldId > 0 && actors.get(oldId).classIndex == type) return oldId;
 			
 			ActorInstance actor = new ActorInstance(actors.size(), type);
 			actors.add(actor);

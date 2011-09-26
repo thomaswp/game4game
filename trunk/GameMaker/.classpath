@@ -3,11 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="src" path="GameData_src"/>
-	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Platformer"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GameData"/>
 	<classpathentry kind="src" path="Platformer_src"/>
+	<classpathentry kind="src" path="GameData_src"/>
+	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry kind="src" path="PhysicsLib_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

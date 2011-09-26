@@ -124,12 +124,12 @@ public class PlatformLogic implements Logic {
 
 		Bitmap bmp = Game.loadBitmap(R.drawable.ocean);
 		startOceanY = Graphics.getHeight() - bmp.getHeight();
-		background = new BackgroundSprite(bmp, new Rect(0, Graphics.getHeight() - bmp.getHeight(), 
+		background = new BackgroundSprite(bmp, new Rect(0, startOceanY, 
 				Graphics.getWidth(), Graphics.getHeight()), -5);
 
 		bmp = Game.loadBitmap(R.drawable.sky);
-		skyStartY = bmp.getHeight() - Graphics.getHeight();
-		sky = new BackgroundSprite(bmp, new Rect(0, skyStartY, Graphics.getWidth(), skyStartY + Graphics.getHeight()), -5);
+		skyStartY = startOceanY - Graphics.getHeight();
+		sky = new BackgroundSprite(bmp, new Rect(0, skyStartY, Graphics.getWidth(), startOceanY), -5);
 
 		stick = new JoyStick(BSIZE + BBORDER + 10, Graphics.getHeight() - BSIZE - BBORDER, 
 				BBORDER, BSIZE, Color.argb(150, 0, 0, 255));
@@ -343,7 +343,7 @@ public class PlatformLogic implements Logic {
 				int instanceId = actorLayer.tiles[i][j];
 				if (instanceId > 0) {
 					ActorInstance instance = this.map.actors.get(instanceId);
-					int actorId = instance.actorType;
+					int actorId = instance.classIndex;
 					if (actorId > 0) {
 						addBody(game.actors[actorId], instanceId, x, y);
 					} else if (actorId == -1) {

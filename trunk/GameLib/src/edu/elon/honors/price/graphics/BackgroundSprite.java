@@ -3,52 +3,78 @@ package edu.elon.honors.price.graphics;
 import edu.elon.honors.price.game.Cache;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-public class BackgroundSprite extends Sprite {
+public class BackgroundSprite {
 	private Rect fullRect;
-	private int segmentWidth, segmentHeight;
+	private Bitmap tile;
+	private Sprite[][] sprites;
+	private Viewport viewport;
+	private boolean createdViewport;
+	private int z;
+	
+	public Viewport getViewport() {
+		return viewport;
+	}
+	
+	public int getZ() {
+		return z;
+	}
+	
+	public void setZ(int z) {
+		this.z = z;
+		for (int i = 0; i < sprites.length; i++) {
+			for (int j = 0; j < sprites[i].length; j++) {
+				if (sprites[i][j] != null)
+					sprites[i][j].setZ(z);
+			}
+		}
+	}
+	
 
 	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
 		this(bitmap, createViewport(rect, z));
+		createdViewport = true;
 	}
 
 	public BackgroundSprite(Bitmap bitmap, Viewport viewport) {
-		super(viewport, createBitmap(bitmap, viewport.getRect()));
+		this.viewport = viewport;
 		fullRect = viewport.getRect();
-		this.segmentWidth = bitmap.getWidth();
-		this.segmentHeight = bitmap.getHeight();
+		tile = bitmap;
+		createSprites();
 	}
-
+	
 	public void scroll(float x, float y) {
-		setOriginX(getOriginX() + x);
-		setOriginY(getOriginY() + y);
-		RectF spriteRect = getRect();
-		fullRect = getViewport().getRect();
-		while (spriteRect.left > fullRect.left) {
-			this.setOriginX(this.getOriginX() + segmentWidth);
-			spriteRect = getRect();
+		shiftAll(-x, -y);
+		
+		Sprite corner = sprites[0][0];
+		while (corner.getX() > 0) {
+			shiftAll(-tile.getWidth(), 0);
 		}
-		while (spriteRect.right < fullRect.right) {
-			this.setOriginX(this.getOriginX() - segmentWidth);
-			spriteRect = getRect();
+		while (corner.getX() < -tile.getWidth()) {
+			shiftAll(tile.getWidth(), 0);
 		}
-		while (spriteRect.top > fullRect.top) {
-			this.setOriginY(this.getOriginY() + segmentHeight);
-			spriteRect = getRect();
+		while (corner.getY() > 0) {
+			shiftAll(0, -tile.getHeight());
 		}
-		while (spriteRect.bottom < fullRect.bottom) {
-			this.setOriginY(this.getOriginY() - segmentHeight);
-			spriteRect = getRect();
+		while (corner.getY() < -tile.getHeight()) {
+			shiftAll(0, tile.getHeight());
 		}
 	}
 
-	@Override
 	public void dispose() {
-		super.dispose();
-		Graphics.getViewports().remove(getViewport());
+		for (int i = 0; i < sprites.length; i++) {
+			for (int j = 0; j < sprites[i].length; j++) {
+				if (sprites[i][j] != null)
+					sprites[i][j].dispose();
+			}
+		}
+		if (createdViewport) {
+			Graphics.getViewports().remove(getViewport());
+		}
 	}
 
 	private static Viewport createViewport(Rect rect, int z) {
@@ -57,36 +83,63 @@ public class BackgroundSprite extends Sprite {
 		vp.setZ(z);
 		return vp;
 	}
-
-	private static Bitmap createBitmap(Bitmap original, Rect rect) {
-		int code = original.hashCode() + BackgroundSprite.class.hashCode();
-		if (Cache.isBitmapRegistered(code)) {
-			//Game.debug("Cache: " + code);
-			return Cache.getRegisteredBitmap(code);
-		} else {
-			//Game.debug("Load New: " + code);
-			int width, height;
-			if (original.getWidth() < rect.width()) {
-				width = original.getWidth() * ((rect.width() / original.getWidth()) + 2);
-			} else {
-				width = original.getWidth() * 2;
-			}
-			if (original.getHeight() < rect.height()) {
-				height = original.getHeight() * ((rect.height() / original.getHeight()) + 2);
-			} else {
-				height = original.getHeight() * 2;
-			}
-			Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
-			Canvas canvas = new Canvas();
-			canvas.setBitmap(bmp);
-			Paint paint = new Paint();
-			for (int i = 0; i < width; i += original.getWidth()) {
-				for (int j = 0; j < height; j += original.getHeight()) {
-					canvas.drawBitmap(original, i, j, paint);
+	
+	private void shiftAll(float x, float y) {
+		for (int i = 0; i < sprites.length; i++) {
+			for (int j = 0; j < sprites[i].length; j++) {
+				if (sprites[i][j] != null) {
+					Sprite s = sprites[i][j];
+					s.setX(s.getX() + x);
+					s.setY(s.getY() + y);
 				}
 			}
-			Cache.RegisterBitmap(code, bmp);
-			return bmp;
 		}
 	}
+
+	private void createSprites() {
+		int rows = fullRect.height() / tile.getHeight() + 2;
+		int cols = fullRect.width() / tile.getWidth() + 2;
+		
+		sprites = new Sprite[rows][cols];
+		
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				sprites[i][j] = new Sprite(viewport, tile);
+				sprites[i][j].setX(j * tile.getWidth());
+				sprites[i][j].setY(i * tile.getHeight());
+			}
+		}
+	}
+
+//	private static Bitmap createBitmap(Bitmap original, Rect rect) {
+//		int code = original.hashCode() + BackgroundSprite.class.hashCode();
+//		if (Cache.isBitmapRegistered(code)) {
+//			//Game.debug("Cache: " + code);
+//			return Cache.getRegisteredBitmap(code);
+//		} else {
+//			//Game.debug("Load New: " + code);
+//			int width, height;
+//			if (original.getWidth() < rect.width()) {
+//				width = original.getWidth() * ((rect.width() / original.getWidth()) + 2);
+//			} else {
+//				width = original.getWidth() * 2;
+//			}
+//			if (original.getHeight() < rect.height()) {
+//				height = original.getHeight() * ((rect.height() / original.getHeight()) + 2);
+//			} else {
+//				height = original.getHeight() * 2;
+//			}
+//			Bitmap bmp = Bitmap.createBitmap(width, height, Sprite.defaultConfig);
+//			Canvas canvas = new Canvas();
+//			canvas.setBitmap(bmp);
+//			Paint paint = new Paint();
+//			for (int i = 0; i < width; i += original.getWidth()) {
+//				for (int j = 0; j < height; j += original.getHeight()) {
+//					canvas.drawBitmap(original, i, j, paint);
+//				}
+//			}
+//			Cache.RegisterBitmap(code, bmp);
+//			return bmp;
+//		}
+//	}
 }

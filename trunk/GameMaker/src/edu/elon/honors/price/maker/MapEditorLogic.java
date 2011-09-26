@@ -143,10 +143,10 @@ public class MapEditorLogic implements Logic {
 			if (i == map.layers.length - 1) {
 				if (data.actorLayer) {
 					tilemap.setShowingGrid(true);
-					tilemap.getGrid().setOpacity(TRANS);
+					tilemap.getGrid().getViewport().setOpacity(TRANS);
 				} else {
 					tilemap.setShowingGrid(i == data.layer);
-					tilemap.getGrid().setOpacity(1);
+					tilemap.getGrid().getViewport().setOpacity(1);
 				}
 			} else {
 				tilemap.setShowingGrid(i == data.layer);
