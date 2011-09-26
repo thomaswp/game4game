@@ -2,6 +2,11 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 
+/**
+ * Represents an Actor Class, defining characteristics
+ * such as look, speed, jump height and behaviors.
+ *
+ */
 public class ActorClass implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 	

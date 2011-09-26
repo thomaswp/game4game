@@ -81,18 +81,18 @@ public class Tilemap {
 	}
 	
 	public boolean isShowingGrid() {
-		return grid != null && grid.isVisible();
+		return grid != null && grid.getViewport().isVisible();
 	}
 	
 	public void setShowingGrid(boolean showing) {
-		if (showing) {
-			if (grid == null)
-				createGrid();
-			grid.setVisible(true);
-		} else {
-			if (grid != null)
-				grid.setVisible(false);
-		}
+//		if (showing) {
+//			if (grid == null)
+//				createGrid();
+//			grid.getViewport().setVisible(true);
+//		} else {
+//			if (grid != null)
+//				grid.getViewport().setVisible(false);
+//		}
 	}
 	
 	public boolean isVisible() {

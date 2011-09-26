@@ -5,6 +5,12 @@ import java.util.ArrayList;
 
 import android.graphics.Rect;
 
+/**
+ * Represents an Event, including its triggers and actions. Events
+ * will cue the interpreter to performs a series of actions in-game,
+ * once one of its triggers' conditions are met.
+ *
+ */
 public class Event implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -14,90 +20,218 @@ public class Event implements Serializable {
 	public ArrayList<ActorTrigger> actorTriggers = new ArrayList<Event.ActorTrigger>();
 	public ArrayList<RegionTrigger> regionTriggers = new ArrayList<Event.RegionTrigger>();
 	
+	/**
+	 * Creates a new event with the given list of Actions.
+	 * @param actions The actions this event performs when triggered.
+	 */
 	public Event(ArrayList<Action> actions) {
 		this.actions = actions;
 	}
 	
+	/**
+	 * Creates a new event with the given Action. More actions
+	 * can be added later.
+	 * @param action The action this event performs when triggered.
+	 */
 	public Event(Action action) {
 		this(new ArrayList<Action>());
 		actions.add(action);
 	}
 
+	/**
+	 * Represents an action carried out by this event. Actions have an
+	 * id, chosen from the constants in the EventIds class, as well as a
+	 * set of Parameters. The parameters are interpreted in the context of
+	 * the type of action this is. The constant will have a description
+	 * explaining how to set the parameters for a given id.
+	 *
+	 */
 	public static class Action extends EventIds implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		public Parameters params;
 		public int id;
 		
+		/**
+		 * Creates a new Action with the given id and parameters. See the
+		 * class' javadoc for more.
+		 * @param id The id of the Action. Should be a constant from this
+		 * class.
+		 * @param params The parameters for this action.
+		 */
 		public Action(int id, Parameters params) {
 			this.id = id;
 			this.params = params;
 		}
 	}
 	
+	/**
+	 * Represents a set of parameters for an action.
+	 *
+	 */
 	public static class Parameters implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		private Object[] params;
 		
+		/**
+		 * Creates a new set of Parameters from the given array
+		 * of objects.
+		 * @param params The parameters.
+		 */
 		public Parameters(Object... params) {
 			this.params = params;
 		}
 		
+		/**
+		 * Gets the number of parameters in this set.
+		 * @return The size
+		 */
 		public int getSize() {
 			return params.length;
 		}
 		
+		/**
+		 * Gets the first parameter, cast as a boolean.
+		 * @return The parameter
+		 */
 		public boolean getBoolean() { return getBoolean(0); }
+		/**
+		 * Gets the parameter at the given index, cast as a boolean.
+		 * @param index The index
+		 * @return The parameter
+		 */
 		public boolean getBoolean(int index) {
 			return (Boolean)params[index];
 		}
 		
+		/**
+		 * Gets the first parameter, cast as a String.
+		 * @return The parameter
+		 */
 		public String getString() { return getString(0); }
+		/**
+		 * Gets the parameter at the given index, cast as a String.
+		 * @param index The index
+		 * @return The parameter
+		 */
 		public String getString(int index) {
 			return (String)params[index];
 		}
 		
+		/**
+		 * Gets the first parameter, cast as an int.
+		 * @return The parameter
+		 */
 		public int getInt() { return getInt(0); }
+		/**
+		 * Gets the parameter at the given index, cast as an int.
+		 * @param index The index
+		 * @return The parameter
+		 */
 		public int getInt(int index) {
 			return (Integer)params[index];
 		}
 		
+		/**
+		 * Gets the first parameter, cast as a float.
+		 * @return The parameter
+		 */
 		public float getFloat() { return getFloat(0); }
+		/**
+		 * Gets the parameter at the given index, cast as a float.
+		 * @param index The index
+		 * @return The parameter
+		 */
 		public float getFloat(int index) {
 			return (Float)params[index];
 		}
 		
+		/**
+		 * Gets the first parameter, cast as another set of Parameters.
+		 * This is used when a list or complex data is passed as a parameter.
+		 * @return The parameter
+		 */
 		public Parameters getParameters() { return getParameters(0); }
+		/**
+		 * Gets the parameter at the given index, cast as another set of Parameters.
+		 * This is used when a list or complex data is passed as a parameter.
+		 * @param index The index
+		 * @return The parameter
+		 */
 		public Parameters getParameters(int index) {
 			return (Parameters)params[index];
 		}
 	}
 	
+	/**
+	 * Represents an Event trigger which is triggered by a switch
+	 * taking on a certain value.
+	 *
+	 */
 	public static class SwitchTrigger implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		public int switchId;
 		public boolean value;
 		
+		/**
+		 * Creates a SwitchTrigger, activated when the switch with
+		 * the given id is set to the given value.
+		 * @param switchId The id of the switch
+		 * @param value The value 
+		 */
 		public SwitchTrigger(int switchId, boolean value) {
 			this.switchId = switchId;
 			this.value = value;
 		}
 	}
 	
+	/**
+	 * Represents an Event trigger which is triggered by a variable
+	 * falling under a given condition, such as equalling a value
+	 * or exceeding it.
+	 *
+	 */
 	public static class VariableTrigger implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
+		/**
+		 * Tests if the variable is equal to the value.
+		 */
 		public static final int TEST_EQUALS = 0;
+		/**
+		 * Tests if the variable is not equal to the value.
+		 */
 		public static final int TEST_NOT_EQUALS = 1;
+		/**
+		 * Tests if the variable is greater than the value.
+		 */
 		public static final int TEST_GT = 2;
+		/**
+		 * Tests if the variable is less than the value.
+		 */
 		public static final int TEST_LT = 3;
+		/**
+		 * Tests if the variable is greater than or equal to the value.
+		 */
 		public static final int TEST_GEQ = 4;
+		/**
+		 * Tests if the variable is less than or equal to the value.
+		 */
 		public static final int TEST_LEQ = 5;
+		/**
+		 * Tests if the variable is divisible by the value.
+		 */
 		public static final int TEST_DIVISIBLE = 6;
 		
+		/**
+		 * Tests against another variable
+		 */
 		public static final int WITH_VARIABLE = 0;
+		/**
+		 * Tests against a literal value
+		 */
 		public static final int WITH_VALUE = 1;
 		
 		public int variableId;
