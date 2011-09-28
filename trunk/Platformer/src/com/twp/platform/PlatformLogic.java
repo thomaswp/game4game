@@ -654,10 +654,10 @@ public class PlatformLogic implements Logic {
 		bgY = Math.min(0, bgY);
 
 		background.scroll(p.getX(), 0);
-		background.getViewport().setY(startOceanY - bgY);
+		background.setY(startOceanY - bgY);
 
-		sky.getViewport().setY(Math.min(0, skyStartY - bgY));
-		float scroll = Math.min(0, sky.getViewport().getY() + bgY);
+		sky.setY(Math.min(0, skyStartY - bgY));
+		float scroll = Math.min(0, sky.getY() + bgY);
 		sky.scroll(p.getX(), scroll - skyScroll);
 		skyScroll = scroll;
 	}

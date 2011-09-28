@@ -1,12 +1,5 @@
 package com.twp.platform;
 
-/*
- * TODO: 
- * Asterisk
- * Delayed load on Edit Hero
- * AnimatedSprite Update
- */
-
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 
