@@ -13,35 +13,50 @@ public class BackgroundSprite {
 	private Bitmap tile;
 	private Sprite[][] sprites;
 	private Viewport viewport;
-	private boolean createdViewport;
-	private int z;
 	
-	public Viewport getViewport() {
-		return viewport;
-	}
 	
 	public int getZ() {
-		return z;
+		return viewport.getZ();
 	}
 	
 	public void setZ(int z) {
-		this.z = z;
-		for (int i = 0; i < sprites.length; i++) {
-			for (int j = 0; j < sprites[i].length; j++) {
-				if (sprites[i][j] != null)
-					sprites[i][j].setZ(z);
-			}
-		}
+		viewport.setZ(z);
 	}
 	
-
-	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
-		this(bitmap, createViewport(rect, z));
-		createdViewport = true;
+	public float getOpacity() {
+		return viewport.getOpacity();
+	}
+	
+	public void setOpacity(float opacity) {
+		viewport.setOpacity(opacity);
+	}
+	
+	public boolean isVisible() {
+		return viewport.isVisible();
+	}
+	
+	public void setVisible(boolean visible) {
+		viewport.setVisible(visible);
 	}
 
-	public BackgroundSprite(Bitmap bitmap, Viewport viewport) {
-		this.viewport = viewport;
+	public float getX() {
+		return viewport.getY();
+	}
+	
+	public void setX(float x) {
+		viewport.setY(x);
+	}
+	
+	public float getY() {
+		return viewport.getY();
+	}
+	
+	public void setY(float y) {
+		viewport.setY(y);
+	}
+	
+	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
+		viewport = createViewport(rect, z);
 		fullRect = viewport.getRect();
 		tile = bitmap;
 		createSprites();
@@ -72,9 +87,7 @@ public class BackgroundSprite {
 					sprites[i][j].dispose();
 			}
 		}
-		if (createdViewport) {
-			Graphics.getViewports().remove(getViewport());
-		}
+		Graphics.getViewports().remove(viewport);
 	}
 
 	private static Viewport createViewport(Rect rect, int z) {

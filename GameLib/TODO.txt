@@ -1,0 +1,4 @@
+-Delayed load on Edit Hero
+-AnimatedSprite Update (when paused)
+-Keyboard Reloading
+-Flash between screens

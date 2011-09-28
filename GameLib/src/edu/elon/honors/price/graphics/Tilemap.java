@@ -17,6 +17,7 @@ public class Tilemap {
 	private int rows, columns, tileWidth, tileHeight;
 	private float scrollX, scrollY;
 	
+	private boolean showingGrid;
 	private Bitmap gridBitmap;
 	private BackgroundSprite grid;
 	
@@ -74,6 +75,7 @@ public class Tilemap {
 
 	public void setOpacity(float opacity) {
 		viewport.setOpacity(opacity);
+		grid.setOpacity(opacity);
 	}
 
 	public Sprite[][] getSprites() {
@@ -81,18 +83,18 @@ public class Tilemap {
 	}
 	
 	public boolean isShowingGrid() {
-		return grid != null && grid.getViewport().isVisible();
+		return grid != null && grid.isVisible();
 	}
 	
 	public void setShowingGrid(boolean showing) {
-//		if (showing) {
-//			if (grid == null)
-//				createGrid();
-//			grid.getViewport().setVisible(true);
-//		} else {
-//			if (grid != null)
-//				grid.getViewport().setVisible(false);
-//		}
+		if (showing) {
+			if (grid == null)
+				createGrid();
+			grid.setVisible(true);
+		} else {
+			if (grid != null)
+				grid.setVisible(false);
+		}
 	}
 	
 	public boolean isVisible() {
@@ -246,7 +248,8 @@ public class Tilemap {
 			Cache.RegisterBitmap(getGridId(), gridBitmap);
 		}
 		
-		grid = new BackgroundSprite(gridBitmap, viewport);
+		//grid = new BackgroundSprite(gridBitmap, viewport);
+		grid = new BackgroundSprite(gridBitmap, viewport.getRect(), viewport.getZ());
 		grid.setZ(10);
 	}
 	

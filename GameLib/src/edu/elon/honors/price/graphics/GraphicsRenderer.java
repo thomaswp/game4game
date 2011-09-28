@@ -376,7 +376,7 @@ public class GraphicsRenderer implements Renderer {
 			while (targetHeight < height) targetHeight *= 2;
 			if ((width != targetWidth || height != targetHeight)) {
 				
-				Game.debug(targetWidth + ", " + targetHeight);
+				//Game.debug(targetWidth + ", " + targetHeight);
 				int[] bmpPixels = new int[targetWidth * targetHeight];
 				bitmap.getPixels(bmpPixels, 0, targetWidth, 0, 0, width, height);
 				for (int i = 0; i < bmpPixels.length; i++) {
