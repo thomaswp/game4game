@@ -62,6 +62,10 @@ public class PlatformGame implements Serializable {
 		hero.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_STUN;
 		hero.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_STUN;
 	}
+	
+	public Map getSelectedMap() {
+		return maps.get(startMapId);
+	}
 
 	public Tileset getMapTileset(Map map) {
 		return tilesets[map.tilesetId];

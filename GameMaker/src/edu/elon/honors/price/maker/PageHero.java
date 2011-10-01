@@ -13,14 +13,14 @@ import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Hero;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
-import edu.elon.honors.price.maker.DatabaseEditActor.ImageAdapter;
 
 public class PageHero extends Page {
 	
 	final float speedScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_SPEED;
 	final float jumpScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_JUMP;
 	private Hero actor;
-	private Spinner imageSpinner, eventSpinner, directionSpinner, behaviorSpinner;
+	private Spinner eventSpinner, directionSpinner, behaviorSpinner;
+	private SelectorActorImage imageSpinner;
 	private SeekBar speed, jump;
 	private boolean forceSelect;
 	
@@ -42,7 +42,7 @@ public class PageHero extends Page {
 	
 	@Override
 	public void onCreate() {
-		imageSpinner = (Spinner)findViewById(R.id.spinnerActorImage);
+		imageSpinner = (SelectorActorImage)findViewById(R.id.spinnerActorImage);
 		speed = (SeekBar)findViewById(R.id.seekBarSpeed);
 		jump = (SeekBar)findViewById(R.id.seekBarJump);
 		eventSpinner = (Spinner)findViewById(R.id.spinnerEvent);
@@ -61,15 +61,7 @@ public class PageHero extends Page {
 	public void onResume() {
 		actor = getGame().hero;
 		
-		final ArrayList<String> imageNames = Data.getResources(Data.ACTORS_DIR, parent);
-		ImageAdapter spinnerAdapter = new ImageAdapter(parent,
-				android.R.layout.simple_spinner_dropdown_item,
-				imageNames);
-		imageSpinner.setAdapter(spinnerAdapter);
-		for (int i = 0; i < imageNames.size(); i++) {
-			if (imageNames.get(i).equals(actor.imageName))
-				imageSpinner.setSelection(i);
-		}
+		imageSpinner.setSelectedImageName(actor.imageName);
 
 		speed.setMax(DatabaseEditActor.SPEEDS);
 		jump.setMax(DatabaseEditActor.SPEEDS);

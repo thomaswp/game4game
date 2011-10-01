@@ -37,7 +37,8 @@ public class DatabaseEditActor extends DatabaseActivity {
 	private ActorClass actor;
 	private EditText actorName;
 	private Button okButton;
-	private Spinner imageSpinner, eventSpinner, directionSpinner, behaviorSpinner;
+	private Spinner eventSpinner, directionSpinner, behaviorSpinner;
+	private SelectorActorImage imageSpinner;
 	private SeekBar speed, jump;
 	private boolean forceSelect;
 
@@ -50,7 +51,7 @@ public class DatabaseEditActor extends DatabaseActivity {
 
 		actorName = (EditText)findViewById(R.id.editTextActorName);
 		okButton = (Button)findViewById(R.id.buttonOk);
-		imageSpinner = (Spinner)findViewById(R.id.spinnerActorImage);
+		imageSpinner = (SelectorActorImage)findViewById(R.id.spinnerActorImage);
 		speed = (SeekBar)findViewById(R.id.seekBarSpeed);
 		jump = (SeekBar)findViewById(R.id.seekBarJump);
 		eventSpinner = (Spinner)findViewById(R.id.spinnerEvent);
@@ -78,15 +79,7 @@ public class DatabaseEditActor extends DatabaseActivity {
 			}
 		});
 
-		final ArrayList<String> imageNames = Data.getResources(Data.ACTORS_DIR, this);
-		ImageAdapter spinnerAdapter = new ImageAdapter(this,
-				android.R.layout.simple_spinner_dropdown_item,
-				imageNames);
-		imageSpinner.setAdapter(spinnerAdapter);
-		for (int i = 0; i < imageNames.size(); i++) {
-			if (imageNames.get(i).equals(actor.imageName))
-				imageSpinner.setSelection(i);
-		}
+		imageSpinner.setSelectedImageName(actor.imageName);
 
 		speed.setMax(SPEEDS);
 		jump.setMax(SPEEDS);
@@ -207,41 +200,9 @@ public class DatabaseEditActor extends DatabaseActivity {
 	@Override
 	public void onFinishing() {
 		actor.name = actorName.getText().toString();
-		actor.imageName = (String)imageSpinner.getSelectedItem();
+		actor.imageName = imageSpinner.getSelectedImageName();
 		actor.speed = speed.getProgress() / SPEED_SCALE;
 		actor.jumpVelocity = jump.getProgress() / JUMP_SCALE;
 		game.actors[actorId] = actor;
-	}
-
-	public static class ImageAdapter extends ArrayAdapter<String> {
-
-
-		public ImageAdapter(Context context, int textViewResourceId,
-				ArrayList<String> objects) {
-			super(context, textViewResourceId, objects);
-		}
-
-		@Override
-		public View getDropDownView(int position, View convertView,
-				ViewGroup parent) {
-			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-			View row=inflater.inflate(R.layout.imageadapterrow, parent, false);
-			TextView label=(TextView)row.findViewById(R.id.weekofday);
-			label.setText(getItem(position));
-			label.setTextSize(20);
-			label.setTextColor(Color.DKGRAY);
-			ImageView icon=(ImageView)row.findViewById(R.id.icon);
-			Bitmap bmp = Data.loadActor(getItem(position), getContext());
-			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
-			icon.setImageBitmap(bmp);
-			return row;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = getDropDownView(position, convertView, parent);
-			v.findViewById(R.id.checkedTextView1).setVisibility(View.GONE);
-			return v;
-		}
 	}
 }
