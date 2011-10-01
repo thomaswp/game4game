@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <edu.elon.honors.price.maker.SelectorActorClass android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/selectorActorClass"></edu.elon.honors.price.maker.SelectorActorClass>
+    <edu.elon.honors.price.maker.SelectorActorInstance android:layout_height="wrap_content" android:id="@+id/selectorActorInstance1" android:text="SelectorActorInstance" android:layout_width="294dp"></edu.elon.honors.price.maker.SelectorActorInstance>
+    
+</LinearLayout>

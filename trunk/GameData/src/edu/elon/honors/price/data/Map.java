@@ -20,6 +20,7 @@ public class Map implements Serializable{
 		
 		tilesetId = 0;
 		
+		//layer with tiles representing indices in the actors ArrayList 
 		actorLayer = new MapLayer("actors", rows, columns, false);
 		
 		events = new ArrayList<Event>();
@@ -46,10 +47,27 @@ public class Map implements Serializable{
 		return actors.get(actorLayer.tiles[row][column]);
 	}
 	
+	/**
+	 * Sets the actor at the given row and column to the type give.
+	 * If the type is 0, it clears the actor.
+	 * If the type is -1, it sets the actor to the hero.
+	 * If the type is greater than 0, it creates a new actor instance
+	 * with its class' id given by the type
+	 * 
+	 * Note that if the actor in this position is
+	 * already of the class indicated by type, nothing
+	 * will happen and the id of the actor will be returned.
+	 * 
+	 * @param row The row
+	 * @param column The column
+	 * @param type The type
+	 * @return The id of the new instance in the row and column.
+	 * 1 is always the hero, and 0 indicates the actor was cleared.
+	 */
 	public int setActor(int row, int column, int type) {
 		if (type == 0) {
 			if (actorLayer.tiles[row][column] != 0) {
-				//Delete actor?
+				//Dispose actor?
 			}
 			actorLayer.tiles[row][column] = 0;
 			return 0;
@@ -58,6 +76,7 @@ public class Map implements Serializable{
 			return 1;
 		} else {
 			int oldId = actorLayer.tiles[row][column];
+			//If it's the same class of actor, don't do anything
 			if (oldId > 0 && actors.get(oldId).classIndex == type) return oldId;
 			
 			ActorInstance actor = new ActorInstance(actors.size(), type);

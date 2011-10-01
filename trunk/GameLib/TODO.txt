@@ -2,3 +2,5 @@
 -AnimatedSprite Update (when paused)
 -Keyboard Reloading
 -Flash between screens
+-MapActorSelector doesn't update after actors change
+-Deleted actors, reset instances
