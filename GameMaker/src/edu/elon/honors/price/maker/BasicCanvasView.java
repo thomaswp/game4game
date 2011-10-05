@@ -21,14 +21,6 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 	public BasicCanvasView(Context context) {
 		super(context);
 		getHolder().addCallback(this);
-		thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while(running) {
-					updateThread();
-				}
-			}
-		});
 	}
 	
 	public boolean onTouchEvent(MotionEvent event) {
@@ -48,6 +40,14 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		this.width = holder.getSurfaceFrame().width();
 		this.height = holder.getSurfaceFrame().height();
 		running = true;
+		thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(running) {
+					updateThread();
+				}
+			}
+		});
 		thread.start();
 	}
 

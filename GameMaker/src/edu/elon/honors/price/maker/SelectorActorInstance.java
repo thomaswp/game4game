@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +16,7 @@ import android.widget.Button;
 public class SelectorActorInstance extends Button {
 
 	private PlatformGame game;
-	private int id = 0;
+	private int id = 1;
 	
 	public int getSelectedInstance() {
 		return id;
@@ -58,14 +59,23 @@ public class SelectorActorInstance extends Button {
 
 	public void populate(final PlatformGame game) {
 		this.game = game; 
-		setSelectedInstance(0);
+		setSelectedInstance(1);
 		this.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getContext(), SelectorMapBase.class);
+				Intent intent = new Intent(getContext(), SelectorMapActorInstance.class);
 				intent.putExtra("game", game);
-				((Activity)getContext()).startActivityForResult(intent, SelectorMapBase.CODE);
+				intent.putExtra("id", id);
+				//Game.debug(getId());
+				((Activity)getContext()).startActivityForResult(intent, getId());
 			}
 		});
+	}
+
+	public void onActivityResult(int requestCode, Intent data) {
+		//Game.debug(getId());
+		if (requestCode == getId()) {
+			setSelectedInstance(data.getExtras().getInt("id"));
+		}
 	}
 }

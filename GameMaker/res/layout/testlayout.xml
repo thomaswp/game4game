@@ -6,5 +6,5 @@
   android:layout_height="match_parent">
     <edu.elon.honors.price.maker.SelectorActorClass android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/selectorActorClass"></edu.elon.honors.price.maker.SelectorActorClass>
     <edu.elon.honors.price.maker.SelectorActorInstance android:layout_height="wrap_content" android:id="@+id/selectorActorInstance1" android:text="SelectorActorInstance" android:layout_width="294dp"></edu.elon.honors.price.maker.SelectorActorInstance>
-    
+    <edu.elon.honors.price.maker.SelectorActorInstance android:layout_height="wrap_content" android:id="@+id/selectorActorInstance2" android:text="SelectorActorInstance" android:layout_width="294dp"></edu.elon.honors.price.maker.SelectorActorInstance>
 </LinearLayout>

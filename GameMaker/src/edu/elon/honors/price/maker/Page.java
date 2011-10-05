@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.PlatformGame;
+import android.content.Intent;
 import android.view.View;
 
 public abstract class Page {
@@ -56,5 +57,16 @@ public abstract class Page {
 	 */
 	protected View findViewById(int id) {
 		return parent.findViewById(id);
+	}
+	
+	/**
+	 * Called when a requested Activity returns with a result.
+	 * 
+	 * @param requestCode The Activity's request code 
+	 * @param resultCode The Activity's result code (will always be OK if this is called)
+	 * @param data The data returned by this Activity.
+	 */
+	public void onActivityResult(int requestCode, Intent data) {
+		
 	}
 }
