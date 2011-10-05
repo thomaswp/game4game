@@ -1,6 +1,8 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,15 +44,25 @@ public class Database extends DatabaseActivity {
 	
 	@Override
 	public void onPause() {
-		if (selectedPage > 0) {
+		if (selectedPage >= 0) {
 			pages[selectedPage].onPause();
 		}
 		super.onPause();
 	}
 	
 	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (selectedPage >= 0) {
+			if (resultCode == RESULT_OK) {
+				pages[selectedPage].onActivityResult(requestCode, data);
+			}
+		}
+	}
+
+	@Override
 	protected void onFinishing() {
-		if (selectedPage > 0) {
+		if (selectedPage >= 0) {
 			pages[selectedPage].onPause();
 		}
 	}
@@ -91,7 +103,7 @@ public class Database extends DatabaseActivity {
 	}
 	
 	private void selectPage(int page) {
-		if (selectedPage > 0) {
+		if (selectedPage >= 0) {
 			pages[selectedPage].onPause();
 		}
 		selectedPage = page;
