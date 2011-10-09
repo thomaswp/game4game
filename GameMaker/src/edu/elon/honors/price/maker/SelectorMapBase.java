@@ -86,6 +86,10 @@ public class SelectorMapBase extends Activity {
 		protected final static int MODE_MOVE = 0;
 		protected final static int MODE_SELECT = 1;
 		
+		protected int selectionFillColor = Color.argb(200, 150, 150, 255);
+		protected int selectionBorderColor = Color.argb(255, 50, 50, 255);
+		protected int selectionBorderWidth = 2;
+		
 		protected PlatformGame game;
 		private Paint paint;
 		protected float offX, offY;
@@ -168,6 +172,10 @@ public class SelectorMapBase extends Activity {
 			return false;
 		}
 		
+		protected void updateSelection() {
+			
+		}
+		
 		@Override
 		protected void update(long timeElapsed) {
 			Input.update(timeElapsed);
@@ -222,6 +230,8 @@ public class SelectorMapBase extends Activity {
 					offX = startDragOffX + Input.getDistanceTouchX();
 					offY = startDragOffY + Input.getDistanceTouchY();
 				}
+			} else if (shouldSelect()) {
+				updateSelection();
 			}
 
 			if (offX > 0) {

@@ -6,6 +6,8 @@ import android.content.Intent;
 public class PageTest extends Page{
 
 	private SelectorActorInstance sai, sai2;
+	private SelectorRegion sr;
+	private SelectorSwitch ss;
 	
 	public PageTest(Database parent) {
 		super(parent);
@@ -26,9 +28,13 @@ public class PageTest extends Page{
 		((SelectorActorClass)findViewById(R.id.selectorActorClass)).populate(getGame());
 		sai = (SelectorActorInstance)findViewById(R.id.selectorActorInstance1); 
 		sai.populate(getGame());
-		sai.setSelectedInstance(2);
 		sai2 = (SelectorActorInstance)findViewById(R.id.selectorActorInstance2); 
 		sai2.populate(getGame());
+		sr = (SelectorRegion)findViewById(R.id.selectorRegion1);
+		sr.populate(getGame());
+		ss = (SelectorSwitch)findViewById(R.id.selectorSwitch1);
+		ss.populate(getGame());
+		ss.setSwitchId(1);
 	}
 
 	@Override
@@ -41,7 +47,7 @@ public class PageTest extends Page{
 		super.onActivityResult(requestCode, data);
 		sai.onActivityResult(requestCode, data);
 		sai2.onActivityResult(requestCode, data);
-		
+		sr.onActivityResult(requestCode, data);
 	}
 
 }

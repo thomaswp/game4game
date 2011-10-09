@@ -71,12 +71,12 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId,
 				Bitmap bmp) {
 			if (instanceId == selectedId) {
-				paint.setColor(Color.argb(200, 150, 150, 255));
+				paint.setColor(selectionFillColor);
 				paint.setStyle(Style.FILL);
 				c.drawRect(dx, dy, dx + bmp.getWidth(), dy + bmp.getHeight(), paint);
-				paint.setColor(Color.argb(255, 50, 50, 255));
+				paint.setColor(selectionBorderColor);
 				paint.setStyle(Style.STROKE);
-				paint.setStrokeWidth(2);
+				paint.setStrokeWidth(selectionBorderWidth);
 				c.drawRect(dx + 2, dy + 2, dx + bmp.getWidth() - 2, dy + bmp.getHeight() - 2, paint);
 			}
 			super.drawActor(c, dx, dy, instanceId, bmp);
