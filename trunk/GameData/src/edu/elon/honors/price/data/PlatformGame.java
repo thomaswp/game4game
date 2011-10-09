@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import android.graphics.Rect;
 
 public class PlatformGame implements Serializable {
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 
 
 	private transient Rect mapRect = new Rect();
@@ -19,8 +19,16 @@ public class PlatformGame implements Serializable {
 	public Tileset[] tilesets;
 	public ActorClass[] actors;
 	public Hero hero;
+	
+	public String[] switchNames;
+	public String[] variableNames;
 
 	public PlatformGame() {
+		switchNames = new String[100];
+		for (int i = 0; i < switchNames.length; i++) switchNames[i] = "";
+		variableNames = new String[100];
+		for (int i = 0; i < variableNames.length; i++) variableNames[i] = "";
+		
 		maps = new ArrayList<Map>();
 		maps.add(new Map());
 		startMapId = 0;
