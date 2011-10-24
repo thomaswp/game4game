@@ -34,7 +34,6 @@ import edu.elon.honors.price.data.EventIds;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.data.R;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
@@ -59,7 +58,7 @@ public class PlatformLogic implements Logic {
 
 	public static final float SCALE = 50;
 	
-	private boolean test = true;
+	private boolean test = false;
 
 	Map map;
 	PlatformGame game;
@@ -112,7 +111,7 @@ public class PlatformLogic implements Logic {
 
 	public PlatformLogic(String mapName, Game host) {
 		this.mapName = mapName;
-		this.test = mapName.equals("final-Map_1");
+		//this.test = mapName.equals("final-Map_1");
 		this.interpreter = new Interpreter(this);
 		paused = true;
 	}
