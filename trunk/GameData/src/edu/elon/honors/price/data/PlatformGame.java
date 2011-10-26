@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.graphics.Rect;
 
@@ -21,13 +22,18 @@ public class PlatformGame implements Serializable {
 	public Hero hero;
 	
 	public String[] switchNames;
+	public boolean[] switchValues;
 	public String[] variableNames;
+	public int[] variableValues;
 
 	public PlatformGame() {
-		switchNames = new String[100];
-		for (int i = 0; i < switchNames.length; i++) switchNames[i] = "";
-		variableNames = new String[100];
-		for (int i = 0; i < variableNames.length; i++) variableNames[i] = "";
+		switchNames = new String[] { };
+		switchValues = new boolean[] { };
+		resizeSwitches(100);
+
+		variableNames = new String[] { };
+		variableValues = new int[] { };
+		resizeVariables(100);
 		
 		maps = new ArrayList<Map>();
 		maps.add(new Map());
@@ -161,5 +167,29 @@ public class PlatformGame implements Serializable {
 		}
 
 		return true;
+	}
+	
+	public void resizeSwitches(int newSize) {
+		switchNames = Arrays.copyOf(switchNames, newSize);
+		switchValues = Arrays.copyOf(switchValues, newSize);
+		for (int i = 0; i < switchNames.length; i++) {
+			if (switchNames[i] == null) {
+				switchNames[i] = String.format("Switch%03d", i);
+			}
+		}
+		
+		//TODO: Important stuff for when variables no longer exist!
+	}
+	
+	public void resizeVariables(int newSize) {
+		variableNames = Arrays.copyOf(variableNames, newSize);
+		variableValues = Arrays.copyOf(variableValues, newSize);
+		for (int i = 0; i < variableNames.length; i++) {
+			if (variableNames[i] == null) {
+				variableNames[i] = String.format("Variable%03d", i);
+			}
+		}
+		
+		//TODO: Important stuff for when variables no longer exist!
 	}
 }

@@ -9,5 +9,6 @@
 	<classpathentry kind="src" path="GameData_src"/>
 	<classpathentry kind="src" path="GameLib_src"/>
 	<classpathentry kind="src" path="PhysicsLib_src"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

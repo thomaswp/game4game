@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -117,7 +118,7 @@ public class PlatformLogic implements Logic {
 	}
 
 	@Override
-	public void initialize() {		
+	public void initialize() {
 		if (game == null) game = new PlatformGame();
 		map = game.maps.get(game.startMapId);
 

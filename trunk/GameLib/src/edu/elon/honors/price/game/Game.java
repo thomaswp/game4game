@@ -232,6 +232,10 @@ public abstract class Game extends Activity {
 		debug("" + x);
 	}
 
+	public static void debug(String format, Object... args) {
+		debug(String.format(format, args));
+	}
+	
 	/**
 	 * A method to write specially formatted debug text.
 	 * 
