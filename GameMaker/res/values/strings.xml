@@ -17,4 +17,11 @@
     <string name="speed">Speed:</string>
     <string name="editActor">Edit Actor</string>
     <string name="jumpSpeed">Jump Speed</string>
+    <string name="cancel">Cancel</string>
+    <string name="switchName">Switch Name:</string>
+    <string name="defaultValue">Default Value:</string>
+    <string name="variableName">Variable Name</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="switchId">Switch Id:</string>
 </resources>

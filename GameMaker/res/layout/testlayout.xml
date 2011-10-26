@@ -8,5 +8,10 @@
     <edu.elon.honors.price.maker.SelectorActorInstance android:layout_height="wrap_content" android:id="@+id/selectorActorInstance1" android:text="SelectorActorInstance" android:layout_width="294dp"></edu.elon.honors.price.maker.SelectorActorInstance>
     <edu.elon.honors.price.maker.SelectorActorInstance android:layout_height="wrap_content" android:id="@+id/selectorActorInstance2" android:text="SelectorActorInstance" android:layout_width="294dp"></edu.elon.honors.price.maker.SelectorActorInstance>
     <edu.elon.honors.price.maker.SelectorRegion android:id="@+id/selectorRegion1" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorRegion>
-    <edu.elon.honors.price.maker.SelectorSwitch android:id="@+id/selectorSwitch1" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorSwitch>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout1">
+        <edu.elon.honors.price.maker.SelectorSwitch android:id="@+id/selectorSwitch1" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorSwitch>
+        <edu.elon.honors.price.maker.SelectorSwitch android:id="@+id/selectorSwitch2" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorSwitch>
+        <edu.elon.honors.price.maker.SelectorVariable android:text="SelectorVariable" android:id="@+id/selectorVariable1" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorVariable>
+        <edu.elon.honors.price.maker.SelectorVariable android:text="SelectorVariable" android:id="@+id/selectorVariable2" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorVariable>
+    </LinearLayout>
 </LinearLayout>
