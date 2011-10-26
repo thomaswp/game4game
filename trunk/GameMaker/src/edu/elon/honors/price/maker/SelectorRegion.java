@@ -69,7 +69,7 @@ public class SelectorRegion extends LinearLayout {
 	
 	public void populate(final PlatformGame game) {
 		this.game = game;
-		setRect(new Rect(0,0,0,0));
+		setRect(rect);
 		
 		select.setOnClickListener(new OnClickListener() {
 			@Override
@@ -87,6 +87,8 @@ public class SelectorRegion extends LinearLayout {
 	
 	protected void setup() {
 		this.setOrientation(HORIZONTAL);
+		
+		rect = new Rect();
 		
 		coords = new EditText[4];
 		

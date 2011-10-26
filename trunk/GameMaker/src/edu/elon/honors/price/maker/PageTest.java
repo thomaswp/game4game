@@ -3,11 +3,12 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.game.Game;
 import android.content.Intent;
 
-public class PageTest extends Page{
+public class PageTest extends Page {
 
 	private SelectorActorInstance sai, sai2;
 	private SelectorRegion sr;
-	private SelectorSwitch ss;
+	private SelectorSwitch ss, ss2;
+	private SelectorVariable sv1, sv2;
 	
 	public PageTest(Database parent) {
 		super(parent);
@@ -26,28 +27,48 @@ public class PageTest extends Page{
 	@Override
 	public void onCreate() {
 		((SelectorActorClass)findViewById(R.id.selectorActorClass)).populate(getGame());
-		sai = (SelectorActorInstance)findViewById(R.id.selectorActorInstance1); 
-		sai.populate(getGame());
-		sai2 = (SelectorActorInstance)findViewById(R.id.selectorActorInstance2); 
-		sai2.populate(getGame());
+		sai = (SelectorActorInstance)findViewById(R.id.selectorActorInstance1);
+		sai2 = (SelectorActorInstance)findViewById(R.id.selectorActorInstance2);
 		sr = (SelectorRegion)findViewById(R.id.selectorRegion1);
-		sr.populate(getGame());
 		ss = (SelectorSwitch)findViewById(R.id.selectorSwitch1);
-		ss.populate(getGame());
-		ss.setSwitchId(1);
+		ss2 = (SelectorSwitch)findViewById(R.id.selectorSwitch2);
+		sv1 = (SelectorVariable)findViewById(R.id.selectorVariable1);
+		sv2 = (SelectorVariable)findViewById(R.id.selectorVariable2);
+		
+		populate();
+		
+		ss.setSwitchId(20);
+		ss2.setSwitchId(10);
+		sv1.setVariableId(15);
+		sv2.setVariableId(25);
 	}
 
 	@Override
 	public void onResume() {
-		
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, Intent data) {
 		super.onActivityResult(requestCode, data);
+		
+		populate();
+		
 		sai.onActivityResult(requestCode, data);
 		sai2.onActivityResult(requestCode, data);
 		sr.onActivityResult(requestCode, data);
+		ss.onActivityResult(requestCode, data);
+		ss2.onActivityResult(requestCode, data);
+		sv1.onActivityResult(requestCode, data);
+		sv2.onActivityResult(requestCode, data);
 	}
 
+	private void populate() {
+		sai.populate(getGame()); 
+		sai2.populate(getGame());
+		sr.populate(getGame());
+		ss.populate(getGame());
+		ss2.populate(getGame());
+		sv1.populate(getGame());
+		sv2.populate(getGame());
+	}
 }

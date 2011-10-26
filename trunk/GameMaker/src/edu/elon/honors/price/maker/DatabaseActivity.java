@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import java.io.Serializable;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -69,17 +71,28 @@ public class DatabaseActivity extends Activity {
 		onFinishing();
 		Intent intent = new Intent();
 		intent.putExtra("game", game);
+		putExtras(intent);
 		setResult(RESULT_OK, intent);
 		finish();
 	}
 	
+	protected void putExtras(Intent intent) {
+		
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_RETURN_GAME) {
-			if (resultCode == RESULT_OK) {
-				game = (PlatformGame)data.getExtras().getSerializable("game");
+		//removed so that Selectors can take advantage of the system 
+		//if (requestCode == REQUEST_RETURN_GAME) { 
+		if (resultCode == RESULT_OK) {
+			if (data.hasExtra("game")) {
+				Serializable obj = data.getExtras().getSerializable("game");;
+				if (obj instanceof PlatformGame) {
+					game = (PlatformGame) obj;
+				}
 			}
 		}
+		//}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

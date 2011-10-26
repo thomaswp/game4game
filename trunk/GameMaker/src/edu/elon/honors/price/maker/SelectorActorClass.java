@@ -35,6 +35,9 @@ public class SelectorActorClass extends Spinner {
 	public void populate(PlatformGame game) {
 		Context context = getContext();
 		
+		//figure out how to maintain this, but
+		//change as necessary if the game changes...
+		
 		this.game = game;
 		
 		ArrayList<String> labels = new ArrayList<String>();
