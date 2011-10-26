@@ -59,7 +59,7 @@ public class SelectorActorInstance extends Button {
 
 	public void populate(final PlatformGame game) {
 		this.game = game; 
-		setSelectedInstance(1);
+		setSelectedInstance(id);
 		this.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

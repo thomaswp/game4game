@@ -10,28 +10,28 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 
-public class SelectorSwitch extends Button {
+public class SelectorVariable extends Button {
 
-	private int switchId;
+	private int variableId;
 	private PlatformGame game;
 	
-	public int getSwitchId() {
-		return switchId;
+	public int getVariableId() {
+		return variableId;
 	}
 	
-	public void setSwitchId(int switchId) {
-		this.switchId = switchId;
+	public void setVariableId(int variableId) {
+		this.variableId = variableId;
 		
 		if (game != null) {
-			setText(String.format("%03d: %s", switchId, game.switchNames[switchId]));
+			setText(String.format("%03d: %s", variableId, game.variableNames[variableId]));
 		}
 	}
 	
-	public SelectorSwitch(Context context) {
+	public SelectorVariable(Context context) {
 		super(context);
 	}
 
-	public SelectorSwitch(Context context, AttributeSet attrs) {
+	public SelectorVariable(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 	
@@ -40,21 +40,21 @@ public class SelectorSwitch extends Button {
 		setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				PlatformGame iGame = SelectorSwitch.this.game;
+				PlatformGame iGame = SelectorVariable.this.game;
 				if (iGame != null) {
-					Intent intent = new Intent(getContext(), SelectorActivitySwitch.class);
+					Intent intent = new Intent(getContext(), SelectorActivityVariable.class);
 					intent.putExtra("game", iGame);
-					intent.putExtra("id", switchId);
+					intent.putExtra("id", variableId);
 					((Activity)getContext()).startActivityForResult(intent, getId());
 				}
 			}
 		});
-		setSwitchId(switchId);
+		setVariableId(variableId);
 	}
 
 	public void onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
-			setSwitchId(data.getExtras().getInt("id"));
+			setVariableId(data.getExtras().getInt("id"));
 		}
 	}
 
