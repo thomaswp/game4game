@@ -47,7 +47,7 @@ public class DatabaseEditActor extends DatabaseActivity {
 		super.onCreate(savedInstanceState);
 
 		actorId = getIntent().getExtras().getInt("id");
-		setContentView(R.layout.platformactoreditor);
+		setContentView(R.layout.database_edit_actor);
 
 		actorName = (EditText)findViewById(R.id.editTextActorName);
 		okButton = (Button)findViewById(R.id.buttonOk);

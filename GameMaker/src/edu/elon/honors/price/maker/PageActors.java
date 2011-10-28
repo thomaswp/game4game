@@ -25,7 +25,7 @@ public class PageActors extends Page{
 
 	@Override
 	public int getViewId() {
-		return R.layout.platformactorselector;
+		return R.layout.page_actors;
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class PageActors extends Page{
 		for (int i = 0; i < actors.length; i++) actors[i] = getGame().actors[i+1];
 		actorsView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		//actorsView.setAdapter(new ArrayAdapter<PlatformActor>(parent, android.R.layout.simple_list_item_1, actors));
-		actorsView.setAdapter(new ImageAdapter(parent, R.layout.imageadapterrow, actors));
+		actorsView.setAdapter(new ImageAdapter(parent, R.layout.image_adapter_row, actors));
 	}
 	
 	private static void setRow(View row, ActorClass actor, Context context) {
@@ -133,7 +133,7 @@ public class PageActors extends Page{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-			View row=inflater.inflate(R.layout.imageadapterrow, parent, false);
+			View row=inflater.inflate(R.layout.image_adapter_row, parent, false);
 			setRow(row, getItem(position), getContext());
 			return row;
 		}		

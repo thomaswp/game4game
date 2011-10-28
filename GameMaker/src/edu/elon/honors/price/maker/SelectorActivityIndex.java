@@ -42,7 +42,7 @@ public abstract class SelectorActivityIndex extends DatabaseActivity {
 		id = getIntent().getExtras().getInt("id");
 		originalId = id;
  
-		setContentView(R.layout.selectorindex);
+		setContentView(R.layout.selector_index);
 		
 		((TextView)findViewById(R.id.textViewIdPrompt)).setText(getType() + " Id:");
 		((TextView)findViewById(R.id.textViewNamePrompt)).setText(getType() + " Name:");

@@ -22,13 +22,14 @@ public class Database extends DatabaseActivity {
 		super.onCreate(savedInstanceState);
 
 		pages = new Page[] { 
-				new PageTest(this),
+				new PageEvents(this),
 				new PageActors(this),
-				new PageHero(this)
+				new PageHero(this),
+				new PageTest(this)
 			};
 		
 		
-		setContentView(R.layout.platformdatabase);
+		setContentView(R.layout.database);
 		next = (Button)findViewById(R.id.buttonNext);
 		prev = (Button)findViewById(R.id.buttonPrevious);
 		

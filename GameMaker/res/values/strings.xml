@@ -24,4 +24,9 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="switchId">Switch Id:</string>
+    <string name="events">Events</string>
+    <string name="new_">New</string>
+    <string name="editEvent">Edit Event</string>
+    <string name="triggers">Triggers</string>
+    <string name="actions">Actions</string>
 </resources>
