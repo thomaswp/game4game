@@ -14,6 +14,7 @@ import android.graphics.Rect;
 public class Event implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	public String name = "";
 	public ArrayList<Action> actions;
 	public ArrayList<SwitchTrigger> switchTriggers = new ArrayList<SwitchTrigger>();
 	public ArrayList<VariableTrigger> variableTriggers = new ArrayList<Event.VariableTrigger>();
@@ -36,6 +37,10 @@ public class Event implements Serializable {
 	public Event(Action action) {
 		this(new ArrayList<Action>());
 		actions.add(action);
+	}
+	
+	public Event(String name) {
+		this.name = name;
 	}
 
 	/**
