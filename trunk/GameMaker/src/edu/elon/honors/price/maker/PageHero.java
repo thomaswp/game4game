@@ -26,7 +26,7 @@ public class PageHero extends Page {
 	
 	@Override
 	public int getViewId() {
-		return R.layout.platformheroeditor;
+		return R.layout.page_hero;
 	}
 
 

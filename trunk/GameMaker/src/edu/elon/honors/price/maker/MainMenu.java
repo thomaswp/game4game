@@ -39,7 +39,7 @@ public class MainMenu extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		setContentView(R.layout.main);
+		setContentView(R.layout.main_menu);
 
 		createDirs();
 		

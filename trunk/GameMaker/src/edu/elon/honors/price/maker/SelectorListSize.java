@@ -63,7 +63,7 @@ public class SelectorListSize extends RelativeLayout {
 	public SelectorListSize(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		LayoutInflater inflator = ((Activity)getContext()).getLayoutInflater();
-		inflator.inflate(R.layout.selectorlistsize, this);
+		inflator.inflate(R.layout.selector_list_size, this);
 		
 		buttonResize = (Button)findViewById(R.id.buttonResize);
 		editText = (EditText)findViewById(R.id.editText);
