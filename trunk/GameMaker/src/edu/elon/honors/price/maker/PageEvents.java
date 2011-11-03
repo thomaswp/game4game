@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.game.Game;
+import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -37,7 +38,13 @@ public class PageEvents extends Page {
 		buttonEdit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				int id = CheckableArrayAdapter.getSelectedId(listViewEvents);
+				if (id >= 0) {
+					Intent intent = new Intent(parent, DatabaseEditEvent.class);
+					intent.putExtra("game", getGame());
+					intent.putExtra("id", id);
+					parent.startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
+				}
 			}
 		});
 

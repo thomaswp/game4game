@@ -52,10 +52,12 @@ public class SelectorVariable extends Button {
 		setVariableId(variableId);
 	}
 
-	public void onActivityResult(int requestCode, Intent data) {
+	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
 			setVariableId(data.getExtras().getInt("id"));
+			return true;
 		}
+		return false;
 	}
 
 }

@@ -7,7 +7,8 @@
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
 
         <LinearLayout
             android:id="@+id/linearLayout1"
@@ -21,12 +22,36 @@
                 android:layout_height="wrap_content"
                 android:text="@string/editEvent"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/name"
+                    android:textAppearance="?android:attr/textAppearanceMedium" 
+                    android:layout_marginRight="20dip"/>
+                <EditText
+                    android:id="@+id/editTextName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:width="200dip" 
+                    android:maxLines="1"
+                    android:maxLength="15"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dip"
+                android:paddingBottom="10dip"
                 android:text="@string/triggers"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -37,24 +62,61 @@
                 android:orientation="vertical" >
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonNewTrigger"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/newTrigger" 
+                android:layout_marginTop="10dip" />
 
             <TextView
                 android:id="@+id/TextView01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dip"
+                android:paddingBottom="10dip"
                 android:text="@string/actions"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <LinearLayout
-                android:id="@+id/LinearLayoutActions"
+                android:id="@+id/linearLayoutActions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonNewAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/newAction" 
+                android:layout_marginTop="10dip" />
+
         </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/buttonOk"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dip"
+            android:text="@string/ok" />
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -12,14 +12,11 @@ import android.graphics.Rect;
  *
  */
 public class Event implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	public String name = "";
-	public ArrayList<Action> actions;
-	public ArrayList<SwitchTrigger> switchTriggers = new ArrayList<SwitchTrigger>();
-	public ArrayList<VariableTrigger> variableTriggers = new ArrayList<Event.VariableTrigger>();
-	public ArrayList<ActorTrigger> actorTriggers = new ArrayList<Event.ActorTrigger>();
-	public ArrayList<RegionTrigger> regionTriggers = new ArrayList<Event.RegionTrigger>();
+	public ArrayList<Action> actions = new ArrayList<Event.Action>();
+	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
 	
 	/**
 	 * Creates a new event with the given list of Actions.
@@ -169,12 +166,16 @@ public class Event implements Serializable {
 		}
 	}
 	
+	public abstract static class Trigger implements Serializable {
+		private static final long serialVersionUID = 1L;
+	}
+	
 	/**
 	 * Represents an Event trigger which is triggered by a switch
 	 * taking on a certain value.
 	 *
 	 */
-	public static class SwitchTrigger implements Serializable {
+	public static class SwitchTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 		
 		public int switchId;
@@ -190,6 +191,15 @@ public class Event implements Serializable {
 			this.switchId = switchId;
 			this.value = value;
 		}
+		
+		public SwitchTrigger() {
+			this(0, true);
+		}
+		
+		public boolean equals(SwitchTrigger o) {
+			return o.switchId == switchId &&
+				o.value == value;
+		}
 	}
 	
 	/**
@@ -198,7 +208,7 @@ public class Event implements Serializable {
 	 * or exceeding it.
 	 *
 	 */
-	public static class VariableTrigger implements Serializable {
+	public static class VariableTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 		
 		/**
@@ -238,6 +248,16 @@ public class Event implements Serializable {
 		 * Tests against a literal value
 		 */
 		public static final int WITH_VALUE = 1;
+
+		public static final String[] OPERATORS = new String[] {
+			"equal to",
+			"not equal to",
+			"greater than",
+			"less than",
+			"greater than or equal to",
+			"less than or equal to",
+			"divisible by"
+		};
 		
 		public int variableId;
 		public int test;
@@ -250,9 +270,20 @@ public class Event implements Serializable {
 			this.with = with;
 			this.valueOrId = valueOrId;
 		}
+		
+		public VariableTrigger() {
+			this(0, 0, 0, 0);
+		}
+		
+		public boolean equals(VariableTrigger o) {
+			return o.variableId == variableId &&
+				o.test == test &&
+				o.with == with &&
+				o.valueOrId == valueOrId;
+		}
 	}
 	
-	public static class ActorTrigger implements Serializable {
+	public static class ActorTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 		
 		public static final int ACTION_COLLIDES_ACTOR = 0;
@@ -271,7 +302,7 @@ public class Event implements Serializable {
 		}
 	}
 	
-	public static class RegionTrigger implements Serializable {
+	public static class RegionTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 		
 		public static final int MODE_TOUCH = 3;

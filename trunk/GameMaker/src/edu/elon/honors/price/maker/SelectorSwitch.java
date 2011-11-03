@@ -52,10 +52,12 @@ public class SelectorSwitch extends Button {
 		setSwitchId(switchId);
 	}
 
-	public void onActivityResult(int requestCode, Intent data) {
+	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
 			setSwitchId(data.getExtras().getInt("id"));
+			return true;
 		}
+		return false;
 	}
 
 }
