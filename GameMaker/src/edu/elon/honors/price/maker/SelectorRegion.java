@@ -154,13 +154,15 @@ public class SelectorRegion extends LinearLayout {
 	}
 	
 
-	public void onActivityResult(int requestCode, Intent data) {
+	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
 			int left = data.getIntExtra("left", 0);
 			int top = data.getIntExtra("top", 0);
 			int right = data.getIntExtra("right", 0);
 			int bottom = data.getIntExtra("bottom", 0);
 			setRect(new Rect(left, top, right, bottom));
+			return true;
 		}
+		return false;
 	}
 }

@@ -7,8 +7,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import edu.elon.honors.price.data.PlatformGame;
 
 public class DatabaseActivity extends Activity {
@@ -27,6 +30,29 @@ public class DatabaseActivity extends Activity {
 		game = (PlatformGame)getIntent().getExtras().getSerializable("game");
 		
 		super.onCreate(savedInstanceState);
+	}
+	
+	protected void setDefaultButtonActions() {
+		Button buttonOk = (Button)findViewById(R.id.buttonOk);
+		Button buttonCancel = (Button)findViewById(R.id.buttonCancel);
+		
+		if (buttonOk != null) {
+			buttonOk.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					finishOk();
+				}
+			});
+		}
+		
+		if (buttonCancel != null) {
+			buttonCancel.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					finish();
+				}
+			});
+		}
 	}
 	
 	@Override
