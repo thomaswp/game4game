@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
 
+import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.ActorTrigger;
@@ -38,7 +39,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	};
 	
 	private static final String COLOR_VARIABLE = "#00CC00";
-	private static final String COLOR_TEST = "#FFCC00";
+	private static final String COLOR_MODE = "#FFCC00";
 	private static final String COLOR_VALUE = "#5555FF";
 	
 	private int id;
@@ -115,6 +116,12 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					intent = new Intent(DatabaseEditEvent.this,
 							DatabaseEditTriggerVariable.class);
 					break;
+				case 2:
+					intent = new Intent(DatabaseEditEvent.this,
+							DatabaseEditTriggerActor.class);
+				case 3:
+					intent = new Intent(DatabaseEditEvent.this,
+							DatabaseEditTriggerRegion.class);
 				}
 				
 				if (intent != null) {
@@ -215,11 +222,11 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				return DatabaseEditTriggerSwitch.class;
 			} else if (trigger instanceof VariableTrigger) {
 				return DatabaseEditTriggerVariable.class;
-			} else if (trigger instanceof RegionTrigger) {
-				
 			} else if (trigger instanceof ActorTrigger) {
-				
-			}
+				return DatabaseEditTriggerActor.class;
+			} else if (trigger instanceof RegionTrigger) {
+				return DatabaseEditTriggerRegion.class;
+			} 
 			
 			return null;
 		}
@@ -245,10 +252,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				text = getTriggerText((SwitchTrigger)trigger);
 			} else if (trigger instanceof VariableTrigger) {
 				text = getTriggerText((VariableTrigger)trigger);
-			} else if (trigger instanceof RegionTrigger) {
-				text = getTriggerText((RegionTrigger)trigger);
 			} else if (trigger instanceof ActorTrigger) {
 				text = getTriggerText((ActorTrigger)trigger);
+			} else if (trigger instanceof RegionTrigger) {
+				text = getTriggerText((RegionTrigger)trigger);
 			}
 			
 			tv.setText(Html.fromHtml(text));
@@ -282,7 +289,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			
 			addColoredText(sb, game.variableNames[trigger.variableId], COLOR_VARIABLE);
 			sb.append(" is ");
-			addColoredText(sb, VariableTrigger.OPERATORS[trigger.test], COLOR_TEST);
+			addColoredText(sb, VariableTrigger.OPERATORS[trigger.test], COLOR_MODE);
 			sb.append(" ");
 			if (trigger.with == VariableTrigger.WITH_VALUE) {
 				addColoredText(sb, trigger.valueOrId, COLOR_VALUE);
@@ -293,12 +300,47 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			return sb.toString();
 		}
 		
-		private String getTriggerText(RegionTrigger trigger) {
-			return "Region Trigger";
+		private String getTriggerText(ActorTrigger trigger) {
+			StringBuilder sb = new StringBuilder();
+			
+			if (trigger.forInstance) {
+				ActorInstance instance = game.getSelectedMap().actors.get(trigger.id);
+				
+				String actorString;
+				if (instance.classIndex > 0)
+					actorString = String.format("%s %03d", 
+							game.actors[instance.classIndex].name, instance.id);
+				else
+					actorString = game.hero.name;
+				
+				addColoredText(sb, actorString, COLOR_VARIABLE);
+			} else {
+				sb.append("A ");
+				addColoredText(sb, game.actors[trigger.id].name, COLOR_VARIABLE);
+			}
+			sb.append(" ");
+			addColoredText(sb, ActorTrigger.ACTIONS[trigger.action], COLOR_MODE);
+			
+			return sb.toString();
 		}
 		
-		private String getTriggerText(ActorTrigger trigger) {
-			return "Actor Trigger";
+		private String getTriggerText(RegionTrigger trigger) {
+			StringBuilder sb = new StringBuilder();
+			
+			if (trigger.onlyHero) {
+				addColoredText(sb, game.hero.name, COLOR_VARIABLE);
+			} else {
+				sb.append("An actor");
+			}
+			sb.append(" ");
+			addColoredText(sb, RegionTrigger.MODES[trigger.mode], COLOR_MODE);
+			sb.append(" the region (")
+			.append(trigger.left).append(", ")
+			.append(trigger.top).append(", ")
+			.append(trigger.right).append(", ")
+			.append(trigger.bottom).append(")");
+			
+			return sb.toString();
 		}
 	}
 }

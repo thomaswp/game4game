@@ -72,10 +72,11 @@ public class SelectorActorInstance extends Button {
 		});
 	}
 
-	public void onActivityResult(int requestCode, Intent data) {
-		//Game.debug(getId());
+	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
 			setSelectedInstance(data.getExtras().getInt("id"));
+			return true;
 		}
+		return false;
 	}
 }

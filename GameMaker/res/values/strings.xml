@@ -40,4 +40,11 @@
     <string name="is">is</string>
     <string name="theValue">the value</string>
     <string name="theVariable">the variable</string>
+    <string name="editActorTrigger">Edit Actor Trigger</string>
+    <string name="specificActor">the specific actor</string>
+    <string name="anyActorWithTheClass">any actor with the class</string>
+    <string name="editRegionTrigger">Edit Region Trigger</string>
+    <string name="anyActor">any actor</string>
+    <string name="theHero">the hero</string>
+    <string name="theRegion">the region</string>
 </resources>

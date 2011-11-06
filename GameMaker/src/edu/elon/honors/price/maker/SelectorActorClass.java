@@ -9,19 +9,31 @@ import edu.elon.honors.price.data.PlatformGame;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SelectorActorClass extends Spinner {
 	
-	PlatformGame game;
+	private PlatformGame game;
+	private OnActorClassChangedListener onActorClassChangedListener;
 
 	public int getSelectedActorId() {
 		return getSelectedItemPosition() + 1;
 	}
 	
+	public void setSelectedActorId(int id) {
+		setSelection(id - 1);
+	}
+	
 	public ActorClass getSelectedActor() {
 		if (game == null) return null;
 		return game.actors[getSelectedActorId()];
+	}
+	
+	public void setOnActorClassChangedListenter(OnActorClassChangedListener onActorClassChangedListener) {
+		this.onActorClassChangedListener = onActorClassChangedListener;
 	}
 	
 	public SelectorActorClass(Context context, PlatformGame game) {
@@ -58,5 +70,21 @@ public class SelectorActorClass extends Spinner {
 				images);
 		
 		setAdapter(imageAdapter);
+		
+		setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (onActorClassChangedListener != null) {
+					onActorClassChangedListener.onActorClassChanged(position + 1);
+				}
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) { }
+		});
+	}
+	
+	public static abstract class OnActorClassChangedListener {
+		public abstract void onActorClassChanged(int newId);
 	}
 }

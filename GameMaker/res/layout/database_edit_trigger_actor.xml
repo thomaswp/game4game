@@ -9,21 +9,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
         android:layout_weight="10" >
-
+
+
         <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
-
+            android:orientation="vertical" >
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
-                android:text="@string/editVariableTrigger"
+                android:text="@string/editActorTrigger"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
@@ -32,29 +32,48 @@
                 android:text="@string/eventTriggeredWhen"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <edu.elon.honors.price.maker.SelectorVariable
-                android:id="@+id/selectorVariable1"
+            <RadioGroup
+                android:id="@+id/radioGroupType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SelectorVariable" 
-                android:minWidth="100dip" />
+                android:layout_marginBottom="10dip"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radioInstance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/specificActor" />
+
+                <RadioButton
+                    android:id="@+id/radioClass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/anyActorWithTheClass" />
 
+            </RadioGroup>
+
+            
+            <edu.elon.honors.price.maker.SelectorActorClass
+                android:id="@+id/selectorActorClass1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <edu.elon.honors.price.maker.SelectorActorInstance
+                android:id="@+id/selectorActorInstance1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SelectorActorInstance" />
+                
             <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical" >
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dip"
-                    android:text="@string/is"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
                 <Spinner
-                    android:id="@+id/spinnerOperator"
+                    android:id="@+id/spinnerAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dip"
@@ -62,44 +81,6 @@
                     android:minWidth="200dip" />
 
             </LinearLayout>
-
-            <RadioGroup
-                android:id="@+id/radioGroupType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dip" >
-
-                <RadioButton
-                    android:id="@+id/radioValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/theValue" />
-
-                <RadioButton
-                    android:id="@+id/radioVariable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/theVariable" />
-
-            </RadioGroup>
-
-                <edu.elon.honors.price.maker.SelectorVariable
-                    android:id="@+id/selectorVariable2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SelectorVariable" 
-                    android:minWidth="100dip" />
-
-                <EditText
-                    android:id="@+id/editTextValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="9"
-                    android:minWidth="200dip" >
-                </EditText>
                 
         </LinearLayout>
     </ScrollView>
@@ -110,7 +91,8 @@
         android:layout_height="wrap_content" 
         android:gravity="center" 
         android:layout_weight="1" >
-
+
+
         <Button
             android:id="@+id/buttonOk"
             android:layout_width="wrap_content"
@@ -118,7 +100,8 @@
             android:layout_marginRight="20dip"
             android:text="@string/ok"
             android:width="100dip" />
-
+
+
         <Button
             android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"

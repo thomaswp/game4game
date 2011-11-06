@@ -30,6 +30,7 @@ import edu.elon.honors.price.data.Event.ActorTrigger;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
+import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.EventIds;
 import edu.elon.honors.price.data.PlatformGame;
@@ -58,13 +59,13 @@ public class PlatformLogic implements Logic {
 	private static final int BBORDER = 15;
 
 	public static final float SCALE = 50;
-	
+
 	private boolean test = false;
 
 	Map map;
 	PlatformGame game;
 	ArrayList<PlatformBody> bodies = new ArrayList<PlatformBody>();
-	
+
 	BackgroundSprite background, sky;
 	Tilemap[] layers;
 	JoyStick stick;
@@ -74,7 +75,7 @@ public class PlatformLogic implements Logic {
 	private World world;
 	private PlatformBody heroBody;
 	private Vector offset;
-	
+
 	private Vector2 antiGravity = new Vector2(0, -GRAVITY), zeroVector = new Vector2();
 
 	private ArrayList<PlatformBody> toRemove = new ArrayList<PlatformBody>();
@@ -83,7 +84,7 @@ public class PlatformLogic implements Logic {
 
 	private HashMap<Fixture, PlatformBody> bodyMap = new HashMap<Fixture, PlatformBody>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
-	
+
 	private Interpreter interpreter;
 
 	private float mapX, mapY, bgX, bgY, skyScroll;
@@ -92,7 +93,7 @@ public class PlatformLogic implements Logic {
 	private boolean paused;
 
 	private String mapName;
-	
+
 	public PlatformBody getHero() {
 		return heroBody;
 	}
@@ -151,7 +152,7 @@ public class PlatformLogic implements Logic {
 
 	private void initPhysics() {
 		world = new World(new Vector2(0, GRAVITY), true);
-		
+
 		ContactFilter filter = new ContactFilter() {
 
 			@Override
@@ -166,7 +167,7 @@ public class PlatformLogic implements Logic {
 			}
 		};
 		world.setContactFilter(filter);
-		
+
 		ContactListener listener = new ContactListener() {
 
 			@Override
@@ -277,7 +278,7 @@ public class PlatformLogic implements Logic {
 						dude.name = "Dude";
 						dude.heroContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_DIE;
 						PlatformBody dudeBody = addBody(dude, -1, x, y);
-						
+
 						ActorClass critter = new ActorClass();
 						critter.imageName = "critter.png";
 						critter.zoom = 1.5f;
@@ -288,12 +289,12 @@ public class PlatformLogic implements Logic {
 						critter.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_TURN;
 						critter.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_TURN;
 						game.actors[2] = critter;
-						
+
 						ArrayList<Action> actions;
 						Parameters params;
 						ActorTrigger trigger;
 						Event event;
-						
+
 						for (int k = -1; k < 2; k++) {
 							actions = new ArrayList<Action>();
 							params = new Parameters(new Object[] {0, 0, 0, 3, 1, 0});
@@ -304,20 +305,20 @@ public class PlatformLogic implements Logic {
 							actions.add(new Action(EventIds.ID_CREATE_ACTOR, params));
 							trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
 							event = new Event(actions);
-							event.actorTriggers.add(trigger);
+							event.triggers.add(trigger);
 							map.events.add(event);
 						}
-						
+
 						actions = new ArrayList<Action>();
 						params = new Parameters(new Object[] {1, ActorClass.BEHAVIOR_STUN});
 						actions.add(new Action(EventIds.ID_ACTOR_BEHAVIOR, params));
 						trigger = new ActorTrigger(false, 2, ActorTrigger.ACTION_COLLIDES_HERO);
 						event = new Event(actions);
-						event.actorTriggers.add(trigger);
+						event.triggers.add(trigger);
 						map.events.add(event);
-						
+
 						Rect ladder = new Rect(23 * 48 + 8, 0, 24 * 48 - 4, 48 * 6);
-						
+
 						actions = new ArrayList<Action>();
 						params = new Parameters(new Object[] {0, 0, 0, 3, 1, 1});
 						actions.add(new Action(EventIds.ID_SET_VARIABLE, params));
@@ -327,17 +328,17 @@ public class PlatformLogic implements Logic {
 						actions.add(new Action(EventIds.ID_HERO_SET_LADDER, params));
 						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
 						event = new Event(actions);
-						event.regionTriggers.add(trigger2);
+						event.triggers.add(trigger2);
 						map.events.add(event);
-						
+
 						actions = new ArrayList<Action>();
 						params = new Parameters(new Object[] {1});
 						actions.add(new Action(EventIds.ID_HERO_SET_LADDER, params));
 						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
 						event = new Event(actions);
-						event.regionTriggers.add(trigger2);
+						event.triggers.add(trigger2);
 						map.events.add(event);
-						
+
 					}
 				}
 				int instanceId = actorLayer.tiles[i][j];
@@ -368,7 +369,7 @@ public class PlatformLogic implements Logic {
 	public void update(long timeElapsed) {
 
 		if (Input.isTapped()) paused = false;
-		
+
 		if (paused) {
 			updateScroll();
 			return;
@@ -382,7 +383,7 @@ public class PlatformLogic implements Logic {
 			if (button.isTapped()) {
 				heroBody.jump(true);
 			}
-			
+
 			if (heroBody.isOnLadder()) {
 				heroBody.setVelocityY(stick.getPull().getY() * heroBody.getActor().speed);
 				antiGravity.set(0, -GRAVITY * heroBody.getBody().getMass());
@@ -401,15 +402,15 @@ public class PlatformLogic implements Logic {
 
 		world.step(timeElapsed / 1000.0f, 6, 6);
 
-		
+
 		for (int i = 0; i < contacts.size(); i++) {
 			doContact(contacts.get(i));
 		}
 		contacts.clear();
-		
+
 		checkTriggers();
 		checkBehaviors();
-		
+
 		for (int i = 0; i < toRemove.size(); i++) {
 			removeBody(toRemove.get(i));
 		}
@@ -448,128 +449,132 @@ public class PlatformLogic implements Logic {
 			Event event = map.events.get(i);
 			boolean triggered = false;
 
-			for (int j = 0; j < event.switchTriggers.size(); j++) {
-				SwitchTrigger trigger = event.switchTriggers.get(j);
-				triggered |= Globals.getSwitches()[trigger.switchId] == trigger.value; 
-			}
+			for (int j = 0; j < event.triggers.size(); j++) {
+				Trigger generic = event.triggers.get(i);
 
-			for (int j = 0; j < event.variableTriggers.size(); j++) {
-				VariableTrigger trigger = event.variableTriggers.get(j);
-
-				int value1 = Globals.getVariables()[trigger.variableId];
-				int value2 = trigger.with == VariableTrigger.WITH_VALUE ? trigger.valueOrId :
-					Globals.getVariables()[trigger.valueOrId];
-
-				boolean result = false;
-				switch (trigger.test) {
-				case VariableTrigger.TEST_EQUALS: result = value1 == value2; break;
-				case VariableTrigger.TEST_NOT_EQUALS: result = value1 != value2; break;
-				case VariableTrigger.TEST_GT: result = value1 > value2; break;
-				case VariableTrigger.TEST_LT: result = value1 < value2; break;
-				case VariableTrigger.TEST_GEQ: result = value1 >= value2; break;
-				case VariableTrigger.TEST_LEQ: result = value1 <= value2; break;
+				if (generic instanceof SwitchTrigger) {
+					SwitchTrigger trigger = (SwitchTrigger)generic;
+					triggered |= Globals.getSwitches()[trigger.switchId] == trigger.value;
 				}
-				
-				triggered |= result;
-			}
-			
-			for (int j = 0; j < event.actorTriggers.size(); j++) {
-				ActorTrigger trigger = event.actorTriggers.get(j);
-				
-				for (int k = 0; k < bodies.size(); k++) {
-					PlatformBody body = bodies.get(k);
-					
-					if (body == null) continue;
-					if (trigger.forInstance && k != trigger.id) continue;
-					if (!trigger.forInstance && body.getActor() != game.actors[trigger.id]) continue;
-					
-					if (trigger.action == ActorTrigger.ACTION_COLLIDES_HERO) {
-						for (int l = 0; l < body.getCollidedBodies().size(); l++) {
-							 triggered |= body.getCollidedBodies().get(l).isHero();
+
+
+				if (generic instanceof VariableTrigger) {
+					VariableTrigger trigger = (VariableTrigger)generic;
+
+					int value1 = Globals.getVariables()[trigger.variableId];
+					int value2 = trigger.with == VariableTrigger.WITH_VALUE ? trigger.valueOrId :
+						Globals.getVariables()[trigger.valueOrId];
+
+					boolean result = false;
+					switch (trigger.test) {
+					case VariableTrigger.TEST_EQUALS: result = value1 == value2; break;
+					case VariableTrigger.TEST_NOT_EQUALS: result = value1 != value2; break;
+					case VariableTrigger.TEST_GT: result = value1 > value2; break;
+					case VariableTrigger.TEST_LT: result = value1 < value2; break;
+					case VariableTrigger.TEST_GEQ: result = value1 >= value2; break;
+					case VariableTrigger.TEST_LEQ: result = value1 <= value2; break;
+					}
+
+					triggered |= result;
+				}
+
+				if (generic instanceof ActorTrigger) {
+					ActorTrigger trigger = (ActorTrigger)generic;
+
+					for (int k = 0; k < bodies.size(); k++) {
+						PlatformBody body = bodies.get(k);
+
+						if (body == null) continue;
+						if (trigger.forInstance && k != trigger.id) continue;
+						if (!trigger.forInstance && body.getActor() != game.actors[trigger.id]) continue;
+
+						if (trigger.action == ActorTrigger.ACTION_COLLIDES_HERO) {
+							for (int l = 0; l < body.getCollidedBodies().size(); l++) {
+								triggered |= body.getCollidedBodies().get(l).isHero();
+							}
+						}
+						if (trigger.action == ActorTrigger.ACTION_COLLIDES_ACTOR) {
+							triggered |= body.getCollidedBodies().size() > 0;
+						}
+						if (trigger.action == ActorTrigger.ACTION_COLLIDES_WALL) {
+							triggered |= body.isCollidedWall();
 						}
 					}
-					if (trigger.action == ActorTrigger.ACTION_COLLIDES_ACTOR) {
-						triggered |= body.getCollidedBodies().size() > 0;
-					}
-					if (trigger.action == ActorTrigger.ACTION_COLLIDES_WALL) {
-						triggered |= body.isCollidedWall();
-					}
 				}
-			}
-			
-			for (int j = 0; j < event.regionTriggers.size(); j++) {
-				final RegionTrigger trigger = event.regionTriggers.get(j);
-				
-				float left = trigger.left / SCALE;
-				float top = trigger.top / SCALE;
-				float right = trigger.right / SCALE;
-				float bottom = trigger.bottom / SCALE;
-				
-				if (s == null) {
-					s = new Sprite(Viewport.DefaultViewport, 
-							(trigger.left + trigger.right) / 2 + offset.getX(), 
-							(trigger.top + trigger.bottom) / 2 + offset.getY(), 
-							trigger.right - trigger.left,
-							trigger.bottom - trigger.top 
-							);
-					s.centerOrigin();
-					s.getBitmap().eraseColor(Color.BLACK);
-					s.setZ(-10);
-					s.setVisible(false);
-				}
-				s.setX((trigger.left + trigger.right) / 2 + offset.getX());
-				s.setY((trigger.top + trigger.bottom) / 2 + offset.getY());
-				
-				world.QueryAABB(new QueryCallback() {
-					@Override
-					public boolean reportFixture(Fixture fixture) {
-						if (bodyMap.containsKey(fixture)) {
-							PlatformBody body = bodyMap.get(fixture);
-							int index = -1;
-							boolean inRegion = inRegion(body, trigger);
-							for (int k = 0; k < trigger.contacts.size(); k++) {
-								if (trigger.contacts.get(k).object == body) index = k;
-							}
-							if (index < 0) {
-								int state = inRegion ? 5 : 2;
-								trigger.contacts.add(new RegionTrigger.Contact(body, state));
-							} else {
-								RegionTrigger.Contact contact = trigger.contacts.get(index);
-								if (inRegion) {
-									if (contact.state == 3) {
-										contact.state = 4; //staying inside
-									} else if (contact.state < 4) {
-										contact.state = 5; //just fully entered
-									}
+
+				if (generic instanceof RegionTrigger) {
+					final RegionTrigger trigger = (RegionTrigger)generic;
+
+					float left = trigger.left / SCALE;
+					float top = trigger.top / SCALE;
+					float right = trigger.right / SCALE;
+					float bottom = trigger.bottom / SCALE;
+
+					if (s == null) {
+						s = new Sprite(Viewport.DefaultViewport, 
+								(trigger.left + trigger.right) / 2 + offset.getX(), 
+								(trigger.top + trigger.bottom) / 2 + offset.getY(), 
+								trigger.right - trigger.left,
+								trigger.bottom - trigger.top 
+						);
+						s.centerOrigin();
+						s.getBitmap().eraseColor(Color.BLACK);
+						s.setZ(-10);
+						s.setVisible(false);
+					}
+					s.setX((trigger.left + trigger.right) / 2 + offset.getX());
+					s.setY((trigger.top + trigger.bottom) / 2 + offset.getY());
+
+					world.QueryAABB(new QueryCallback() {
+						@Override
+						public boolean reportFixture(Fixture fixture) {
+							if (bodyMap.containsKey(fixture)) {
+								PlatformBody body = bodyMap.get(fixture);
+								int index = -1;
+								boolean inRegion = inRegion(body, trigger);
+								for (int k = 0; k < trigger.contacts.size(); k++) {
+									if (trigger.contacts.get(k).object == body) index = k;
+								}
+								if (index < 0) {
+									int state = inRegion ? 5 : 2;
+									trigger.contacts.add(new RegionTrigger.Contact(body, state));
 								} else {
-									if (contact.state == 0 || contact.state > 2)
-										contact.state = 1; //staying touching or poked out
+									RegionTrigger.Contact contact = trigger.contacts.get(index);
+									if (inRegion) {
+										if (contact.state == 3) {
+											contact.state = 4; //staying inside
+										} else if (contact.state < 4) {
+											contact.state = 5; //just fully entered
+										}
+									} else {
+										if (contact.state == 0 || contact.state > 2)
+											contact.state = 1; //staying touching or poked out
+									}
 								}
 							}
+							return true;
 						}
-						return true;
-					}
-				}, left, top, right, bottom);
-				
-				for (int k = 0; k < trigger.contacts.size(); k++) {
-					RegionTrigger.Contact contact = trigger.contacts.get(k);
+					}, left, top, right, bottom);
 
-					//Game.debug(contact.state);
-					if (trigger.mode == contact.state) {
-						if ((trigger.onlyHero && ((PlatformBody)contact.object).isHero())
-								|| !trigger.onlyHero) {
-							triggered = true;
+					for (int k = 0; k < trigger.contacts.size(); k++) {
+						RegionTrigger.Contact contact = trigger.contacts.get(k);
+
+						//Game.debug(contact.state);
+						if (trigger.getTriggerState() == contact.state) {
+							if ((trigger.onlyHero && ((PlatformBody)contact.object).isHero())
+									|| !trigger.onlyHero) {
+								triggered = true;
+							}
 						}
-					}
-					
-					contact.state--;
-					if (contact.state < 0) {
-						trigger.contacts.remove(k);
-						k--;
+
+						contact.state--;
+						if (contact.state < 0) {
+							trigger.contacts.remove(k);
+							k--;
+						}
 					}
 				}
 			}
-			
 			if (triggered) {
 				//Game.debug("TRIGGER");
 				interpreter.doEvent(event);
@@ -577,21 +582,21 @@ public class PlatformLogic implements Logic {
 		}
 	}
 	Sprite s;
-	
+
 	private RectF regionRect = new RectF();
 	private boolean inRegion(PlatformBody body, RegionTrigger trigger) {
 		regionRect.set(trigger.left, trigger.top, trigger.right, trigger.bottom);
 		regionRect.offset(offset.getX(), offset.getY());
 		return regionRect.contains(body.getSprite().getRect());
 	}
-	
+
 	private void checkBehaviors() {
 		for (int i = 0; i < bodies.size(); i++) {
 			PlatformBody bodyA = bodies.get(i);
 			if (bodyA != null) {
 				for (int j = 0; j < bodyA.getCollidedBodies().size(); j++) {
 					PlatformBody bodyB = bodyA.getCollidedBodies().get(j);
-					
+
 					int dir = PlatformBody.getCollisionDirection(bodyA, bodyB);
 					if (bodyB.isHero())
 						bodyA.doBehaviorCollideHero(dir, bodyB);
@@ -661,7 +666,7 @@ public class PlatformLogic implements Logic {
 		sky.scroll(p.getX(), scroll - skyScroll);
 		skyScroll = scroll;
 	}
-	
+
 
 	public  PlatformBody addBody(ActorAddable actor) {
 		return addBody(actor.actor, -1, actor.startX, actor.startY, actor.startDir);
@@ -734,7 +739,7 @@ public class PlatformLogic implements Logic {
 						bodyA.getTouchingFloors().add(fixtureB);
 					}
 				}
-				
+
 				bodyA.setOnLadder(false);
 			}
 
@@ -744,11 +749,11 @@ public class PlatformLogic implements Logic {
 			doContact(contact, true);
 		}
 	}
-	
+
 	private void doEndContact(Fixture fixtureA, Fixture fixtureB) {
 		doEndContact(fixtureA, fixtureB, false);
 	}
-	
+
 	private void doEndContact(Fixture fixtureA, Fixture fixtureB, boolean anti) {
 		if (bodyMap.containsKey(fixtureA)) {
 			PlatformBody bodyA = bodyMap.get(fixtureA);
@@ -794,15 +799,15 @@ public class PlatformLogic implements Logic {
 			this.fixtureB = fixtureB;
 		}
 	}
-	
+
 	private static class FixtureCallback implements QueryCallback {
 		public boolean contact = false;
 		public Set<Fixture> fixtures;
-		
+
 		public FixtureCallback(Set<Fixture> fixtures) {
 			this.fixtures = fixtures;
 		}
-		
+
 		@Override
 		public boolean reportFixture(Fixture fixture) {
 			if (fixtures.contains(fixture)) {
