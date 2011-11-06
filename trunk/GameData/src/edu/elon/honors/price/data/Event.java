@@ -286,6 +286,13 @@ public class Event implements Serializable {
 	public static class ActorTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 		
+		public static final String[] ACTIONS = new String[] {
+			"collides with an actor",
+			"collides with the Hero",
+			"collides with a wall",
+			"dies"
+		};
+		
 		public static final int ACTION_COLLIDES_ACTOR = 0;
 		public static final int ACTION_COLLIDES_HERO = 1;
 		public static final int ACTION_COLLIDES_WALL = 2;
@@ -300,21 +307,48 @@ public class Event implements Serializable {
 			this.id = id;
 			this.action = action;
 		}
+		
+		public ActorTrigger() {
+			this(true, 1, 0);
+		}
+		
+		public boolean equals(ActorTrigger o) {
+			return o.id == id &&
+				o.action == action &&
+				o.forInstance == forInstance;
+		}
 	}
 	
 	public static class RegionTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 		
-		public static final int MODE_TOUCH = 3;
-		public static final int MODE_CONTAIN = 5;
-		public static final int MODE_LOSE_TOUCH = 0;
+		public static final String[] MODES = new String[] {
+			"begins to enter",
+			"fully enters",
+			"begins to leave",
+			"fully leaves"
+		};
+		
+		public static final int MODE_TOUCH = 0;
+		public static final int MODE_CONTAIN = 1;
 		public static final int MODE_LOSE_CONTAIN = 2;
+		public static final int MODE_LOSE_TOUCH = 3;
 		
 		public transient ArrayList<Contact> contacts = new ArrayList<Event.RegionTrigger.Contact>();
 		
 		public int left, right, top, bottom;
 		public int mode;
 		public boolean onlyHero;
+		
+		public int getTriggerState() {
+			switch (mode) {
+			case MODE_LOSE_TOUCH: return 0;
+			case MODE_LOSE_CONTAIN: return 2;
+			case MODE_TOUCH: return 3;
+			case MODE_CONTAIN: return 5;
+			}
+			return -1;
+		}
 		
 		public RegionTrigger(Rect rect, int mode, boolean onlyHero) {
 			this(rect.left, rect.top, rect.right, rect.bottom, mode, onlyHero);
@@ -327,6 +361,10 @@ public class Event implements Serializable {
 			this.bottom = bottom;
 			this.onlyHero = onlyHero;
 			this.mode = mode;
+		}
+		
+		public RegionTrigger() {
+			this(0, 0, 0, 0, 0, false);
 		}
 		
 		public static class Contact {

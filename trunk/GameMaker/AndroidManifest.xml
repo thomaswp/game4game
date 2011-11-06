@@ -32,6 +32,8 @@
     	<activity android:name=".DatabaseEditEvent" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditTriggerSwitch" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".DatabaseEditTriggerActor" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".DatabaseEditTriggerRegion" android:screenOrientation="landscape"></activity>
     	
     	<activity android:name="com.twp.platform.Platformer"
                   android:label="@string/app_name" android:screenOrientation="landscape">
