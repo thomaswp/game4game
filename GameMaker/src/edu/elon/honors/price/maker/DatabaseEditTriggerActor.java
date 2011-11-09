@@ -11,31 +11,34 @@ import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import edu.elon.honors.price.data.Event.ActorTrigger;
+import edu.elon.honors.price.data.Event.SwitchTrigger;
+import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.SelectorActorClass.OnActorClassChangedListener;
 
 public class DatabaseEditTriggerActor extends DatabaseActivity {
 
-	private ActorTrigger originalTrigger, trigger;
+	private ActorTrigger trigger;
 	
 	private RadioButton radioInstance, radioClass;
 	private SelectorActorInstance selectorActorInstance;
 	private SelectorActorClass selectorActorClass;
 	private Spinner spinnerAction;
 	
+	public ActorTrigger getOriginalTrigger() {
+		Bundle extras = getIntent().getExtras();
+		if (extras.containsKey("trigger")) {
+			return (ActorTrigger)extras.getSerializable("trigger");
+		}
+		return new ActorTrigger();
+	}
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_trigger_actor);
 		setDefaultButtonActions();
 		
-		Bundle extras = getIntent().getExtras();
-		if (extras.containsKey("trigger")) {
-			originalTrigger = (ActorTrigger)extras.getSerializable("trigger");
-			trigger = (ActorTrigger)extras.getSerializable("trigger");
-		} else {
-			originalTrigger = new ActorTrigger();
-			trigger = new ActorTrigger();
-		}
+		trigger = getOriginalTrigger();
 		
 		radioInstance = (RadioButton)findViewById(R.id.radioInstance);
 		radioClass = (RadioButton)findViewById(R.id.radioClass);
@@ -101,7 +104,6 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 
 		if (resultCode == RESULT_OK) {
 			if (selectorActorInstance.onActivityResult(requestCode, data)) {
-				Game.debug("!");
 				trigger.id = selectorActorInstance.getSelectedInstance();
 			}
 		}
@@ -112,6 +114,7 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 	}
 
 	protected boolean hasChanged() {
+		ActorTrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() ||
 		!trigger.equals(originalTrigger);
 	}

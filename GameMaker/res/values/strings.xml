@@ -27,8 +27,8 @@
     <string name="events">Events</string>
     <string name="new_">New</string>
     <string name="editEvent">Edit Event</string>
-    <string name="triggers">Triggers</string>
-    <string name="actions">Actions</string>
+    <string name="triggers">Triggers:</string>
+    <string name="actions">Actions:</string>
     <string name="name">Name:</string>
     <string name="newTrigger">New Trigger</string>
     <string name="newAction">New Action</string>

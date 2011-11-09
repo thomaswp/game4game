@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.game.Game;
 import android.content.Intent;
@@ -19,26 +20,27 @@ import android.widget.TextView.OnEditorActionListener;
 
 public class DatabaseEditTriggerVariable extends DatabaseActivity {
 
-	private VariableTrigger trigger, originalTrigger;
+	private VariableTrigger trigger;
 
 	private SelectorVariable selectorVariableSet, selectorVariableTo;
 	private RadioButton radioVariable, radioValue;
 	private EditText editTextValue;
 	private Spinner spinnerOperator;
 
+	public VariableTrigger getOriginalTrigger() {
+		Bundle extras = getIntent().getExtras();
+		if (extras.containsKey("trigger")) {
+			return (VariableTrigger)extras.getSerializable("trigger");
+		}
+		return new VariableTrigger();
+	}
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_trigger_variable);
 		setDefaultButtonActions();
 
-		Bundle extras = getIntent().getExtras();
-		if (extras.containsKey("trigger")) {
-			originalTrigger = (VariableTrigger)extras.getSerializable("trigger");
-			trigger = (VariableTrigger)extras.getSerializable("trigger");
-		} else {
-			originalTrigger = new VariableTrigger();
-			trigger = new VariableTrigger();
-		}
+		trigger = getOriginalTrigger();
 
 		selectorVariableSet = (SelectorVariable)findViewById(R.id.selectorVariable1);
 		selectorVariableTo = (SelectorVariable)findViewById(R.id.selectorVariable2);
@@ -77,16 +79,22 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 				editTextValue.setVisibility(!isChecked ? View.GONE : View.VISIBLE);
 				trigger.with = isChecked ? VariableTrigger.WITH_VALUE :
 					VariableTrigger.WITH_VARIABLE;
+				if (isChecked) {
+					int value = Integer.parseInt(editTextValue.getText().toString());
+					trigger.valueOrId = value;
+				} else {
+					trigger.valueOrId = selectorVariableTo.getVariableId();
+				}
 			}
 		});
 
 		if (trigger.with == VariableTrigger.WITH_VALUE) {
 			selectorVariableTo.setVariableId(0);
-			editTextValue.setText("" + trigger.variableId);
+			editTextValue.setText("" + trigger.valueOrId);
 			radioValue.setChecked(true);
 			selectorVariableTo.setVisibility(View.GONE);
 		} else {
-			selectorVariableTo.setVariableId(trigger.variableId);
+			selectorVariableTo.setVariableId(trigger.valueOrId);
 			editTextValue.setText("0");
 			radioVariable.setChecked(true);
 			editTextValue.setVisibility(View.GONE);
@@ -126,7 +134,8 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 	}
 
 	protected boolean hasChanged() {
+		VariableTrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() ||
-		!trigger.equals(originalTrigger);
+			!trigger.equals(originalTrigger);
 	}
 }

@@ -14,7 +14,8 @@
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:focusableInTouchMode="true" >
 
             <TextView
                 android:id="@+id/textView1"
@@ -42,7 +43,8 @@
                     android:layout_weight="1"
                     android:width="200dip" 
                     android:maxLines="1"
-                    android:maxLength="15"/>
+                    android:maxLength="15"
+                    android:singleLine="true"/>
 
             </LinearLayout>
 

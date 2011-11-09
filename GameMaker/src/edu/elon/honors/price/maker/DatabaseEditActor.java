@@ -36,7 +36,6 @@ public class DatabaseEditActor extends DatabaseActivity {
 	private int actorId;
 	private ActorClass actor;
 	private EditText actorName;
-	private Button okButton;
 	private Spinner eventSpinner, directionSpinner, behaviorSpinner;
 	private SelectorActorImage imageSpinner;
 	private SeekBar speed, jump;
@@ -50,7 +49,6 @@ public class DatabaseEditActor extends DatabaseActivity {
 		setContentView(R.layout.database_edit_actor);
 
 		actorName = (EditText)findViewById(R.id.editTextActorName);
-		okButton = (Button)findViewById(R.id.buttonOk);
 		imageSpinner = (SelectorActorImage)findViewById(R.id.spinnerActorImage);
 		speed = (SeekBar)findViewById(R.id.seekBarSpeed);
 		jump = (SeekBar)findViewById(R.id.seekBarJump);
@@ -189,12 +187,7 @@ public class DatabaseEditActor extends DatabaseActivity {
 		directionSpinner.setSelection(0);
 		eventSpinner.setSelection(0);
 
-		okButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finishOk();
-			}
-		});
+		setDefaultButtonActions();
 	}
 	
 	@Override

@@ -12,7 +12,7 @@
                 </TableRow>
                 <TableRow android:id="@+id/tableRow2" android:layout_height="wrap_content" android:layout_width="match_parent" android:gravity="center_vertical">
                     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/switchName" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/textViewNamePrompt"></TextView>
-                    <EditText android:layout_height="wrap_content" android:id="@+id/editTextSwitchName" android:layout_width="match_parent" android:layout_weight="1" android:maxLength="15"></EditText>
+                    <EditText android:layout_height="wrap_content" android:id="@+id/editTextSwitchName" android:layout_width="match_parent" android:layout_weight="1" android:maxLength="15" android:singleLine="true"></EditText>
                 </TableRow>
                 <TableRow android:id="@+id/tableRow3" android:layout_height="wrap_content" android:layout_width="match_parent" android:gravity="center_vertical">
                     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/textView1" android:text="@string/defaultValue" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_marginRight="20dip"></TextView>

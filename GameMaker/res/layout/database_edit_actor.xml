@@ -1,43 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <FrameLayout android:id="@+id/frameLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
-        <LinearLayout android:id="@+id/linearLayout1" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal">
-            <ScrollView android:layout_width="match_parent" android:id="@+id/scrollView1" android:layout_height="match_parent" android:layout_weight="2" android:descendantFocusability="blocksDescendants">
-                <TableLayout android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/tableLayout1" android:descendantFocusability="beforeDescendants" android:focusable="true" android:focusableInTouchMode="true">
-                    <TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="@string/editActor" android:id="@+id/textView5" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="wrap_content"></TextView>
-                    </TableRow>
-                    <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="@string/actorName" android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_width="100dip"></TextView>
-                        <EditText android:maxLines="1" android:layout_height="wrap_content" android:id="@+id/editTextActorName" android:layout_width="match_parent" android:maxLength="15"></EditText>
-                    </TableRow>
-                    <TableRow android:id="@+id/tableRow3" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="@string/actorImage" android:id="@+id/textView2" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
-                        <edu.elon.honors.price.maker.SelectorActorImage android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/spinnerActorImage"></edu.elon.honors.price.maker.SelectorActorImage>
-                    </TableRow>
-                    <TableRow android:id="@+id/tableRow5" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="@string/speed" android:id="@+id/textView3" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
-                        <SeekBar android:layout_height="wrap_content" android:layout_width="150dip" android:id="@+id/seekBarSpeed"></SeekBar>
-                    </TableRow>
-                    <TableRow android:id="@+id/tableRow6" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="Jump Height:" android:id="@+id/textView4" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
-                        <SeekBar android:layout_height="wrap_content" android:layout_width="150dip" android:id="@+id/seekBarJump"></SeekBar>
-                    </TableRow>
-                    <TableRow android:id="@+id/tableRow7" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="Event:" android:id="@+id/textView6" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
-                        <Spinner android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/spinnerEvent" android:focusable="true" android:focusableInTouchMode="true"></Spinner>
-                    </TableRow>
-                    <TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="Direction:" android:id="@+id/TextView01" android:layout_height="wrap_content" android:layout_width="wrap_content" android:visibility="invisible"></TextView>
-                        <Spinner android:layout_height="wrap_content" android:layout_width="wrap_content" android:visibility="invisible" android:id="@+id/spinnerDirection"></Spinner>
-                    </TableRow>
-                    <TableRow android:id="@+id/tableRow8" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <TextView android:text="Behavior:" android:id="@+id/textView7" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView>
-                        <Spinner android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/spinnerBehavior"></Spinner>
-                    </TableRow>
-                    <TableRow android:id="@+id/tableRow4" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                    </TableRow>
-                </TableLayout>
-            </ScrollView>
-            <Button android:id="@+id/buttonOk" android:text="@string/ok" android:layout_width="match_parent" android:layout_weight="8" android:layout_height="100dip" android:layout_gravity="center"></Button>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <ScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <TableLayout
+                android:id="@+id/tableLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="true" >
+
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/editActor"
+                        android:textAppearance="?android:attr/textAppearanceMedium" >
+                    </TextView>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="100dip"
+                        android:layout_height="wrap_content"
+                        android:text="@string/actorName" >
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/editTextActorName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLength="15"
+                        android:maxLines="1"
+                        android:singleLine="true" >
+                    </EditText>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/actorImage" >
+                    </TextView>
+
+                    <edu.elon.honors.price.maker.SelectorActorImage
+                        android:id="@+id/spinnerActorImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                    </edu.elon.honors.price.maker.SelectorActorImage>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/speed" >
+                    </TextView>
+
+                    <SeekBar
+                        android:id="@+id/seekBarSpeed"
+                        android:layout_width="150dip"
+                        android:layout_height="wrap_content" >
+                    </SeekBar>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jump Height:" >
+                    </TextView>
+
+                    <SeekBar
+                        android:id="@+id/seekBarJump"
+                        android:layout_width="150dip"
+                        android:layout_height="wrap_content" >
+                    </SeekBar>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Event:" >
+                    </TextView>
+
+                    <Spinner
+                        android:id="@+id/spinnerEvent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+                    </Spinner>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/TableRow01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/TextView01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Direction:"
+                        android:visibility="invisible" >
+                    </TextView>
+
+                    <Spinner
+                        android:id="@+id/spinnerDirection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="invisible" >
+                    </Spinner>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Behavior:" >
+                    </TextView>
+
+                    <Spinner
+                        android:id="@+id/spinnerBehavior"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+                    </Spinner>
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <Button
+                android:id="@+id/buttonOk"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dip"
+                android:text="@string/ok" />
+
+            <Button
+                android:id="@+id/buttonCancel"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel" />
         </LinearLayout>
-    </FrameLayout>
+    </LinearLayout>
+
+</FrameLayout>
