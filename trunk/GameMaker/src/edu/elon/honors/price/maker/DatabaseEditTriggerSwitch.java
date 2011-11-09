@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
+import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.game.Game;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,10 +13,18 @@ import android.widget.RadioButton;
 
 public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 
-	private SwitchTrigger trigger, originalTrigger;
+	private SwitchTrigger trigger;
 	
 	private SelectorSwitch selectorSwitch;
 	private RadioButton radioOn, radioOff;
+	
+	public SwitchTrigger getOriginalTrigger() {
+		Bundle extras = getIntent().getExtras();
+		if (extras.containsKey("trigger")) {
+			return (SwitchTrigger)extras.getSerializable("trigger");
+		}
+		return new SwitchTrigger();
+	}
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -23,14 +32,7 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 		setContentView(R.layout.database_edit_trigger_switch);
 		setDefaultButtonActions();
 		
-		Bundle extras = getIntent().getExtras();
-		if (extras.containsKey("trigger")) {
-			originalTrigger = (SwitchTrigger)extras.getSerializable("trigger");
-			trigger = (SwitchTrigger)extras.getSerializable("trigger");
-		} else {
-			originalTrigger = new SwitchTrigger(0, true);
-			trigger = new SwitchTrigger(0, true);
-		}
+		trigger = getOriginalTrigger();
 		
 		selectorSwitch = (SelectorSwitch)findViewById(R.id.selectorSwitch1);
 		radioOn = (RadioButton)findViewById(R.id.radioOn);
@@ -65,6 +67,7 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 	}
 	
 	protected boolean hasChanged() {
+		SwitchTrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() || 
 			!originalTrigger.equals(trigger);
 	}

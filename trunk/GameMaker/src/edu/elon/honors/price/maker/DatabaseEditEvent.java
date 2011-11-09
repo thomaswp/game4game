@@ -21,11 +21,14 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -64,6 +67,18 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		linearLayoutActions = (LinearLayout)findViewById(R.id.linearLayoutActions);
 		Button buttonNewTrigger = (Button)findViewById(R.id.buttonNewTrigger);
 		Button buttonNewAction = (Button)findViewById(R.id.buttonNewAction);
+		
+		//Must set one view to focusableInTouchMode
+		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
+		scroll.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (editTextName.hasFocus()) {
+					editTextName.clearFocus();
+				}
+				return false;
+			}
+		});
 		
 		editTextName.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
@@ -334,11 +349,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 			sb.append(" ");
 			addColoredText(sb, RegionTrigger.MODES[trigger.mode], COLOR_MODE);
-			sb.append(" the region (")
-			.append(trigger.left).append(", ")
-			.append(trigger.top).append(", ")
-			.append(trigger.right).append(", ")
-			.append(trigger.bottom).append(")");
+			sb.append(" the region (");
+			addColoredText(sb, trigger.left, COLOR_VALUE);
+			sb.append(", ");
+			addColoredText(sb, trigger.top, COLOR_VALUE);
+			sb.append(", ");
+			addColoredText(sb, trigger.right, COLOR_VALUE);
+			sb.append(", ");
+			addColoredText(sb, trigger.bottom, COLOR_VALUE);
+			sb.append(")");
 			
 			return sb.toString();
 		}

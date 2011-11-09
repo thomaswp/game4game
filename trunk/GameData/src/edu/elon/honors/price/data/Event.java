@@ -367,6 +367,15 @@ public class Event implements Serializable {
 			this(0, 0, 0, 0, 0, false);
 		}
 		
+		public boolean equals(RegionTrigger o) {
+			return o.left == left &&
+				o.top == top &&
+				o.right == right &&
+				o.bottom == bottom && 
+				o.mode == mode &&
+				o.onlyHero == onlyHero;
+		}
+		
 		public static class Contact {
 			
 			public int state;
