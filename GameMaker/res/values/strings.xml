@@ -47,4 +47,6 @@
     <string name="anyActor">any actor</string>
     <string name="theHero">the hero</string>
     <string name="theRegion">the region</string>
+    <string name="addEvents">Add Event</string>
+    <string name="category">Category:</string>
 </resources>

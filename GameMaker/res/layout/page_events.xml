@@ -32,21 +32,20 @@
 </Button>
 
             <Button
-                android:id="@+id/buttonNew"
+                android:id="@+id/buttonReset"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/new_" >
+                android:text="@string/reset" >
 </Button>
             <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_width="match_parent">
 
                 <Button
-                    android:id="@+id/buttonDelete"
+                    android:id="@+id/buttonAdd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/delete" >
+                    android:text="@string/addEvents" >
 </Button>
-                <EditText android:layout_weight="2" android:layout_height="wrap_content" android:inputType="number" android:layout_width="match_parent" android:id="@+id/editTextResize" android:visibility="gone" android:maxLength="2"></EditText>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
