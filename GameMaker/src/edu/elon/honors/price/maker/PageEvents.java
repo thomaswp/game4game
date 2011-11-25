@@ -1,12 +1,18 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.badlogic.gdx.utils.Array;
 
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.game.Game;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -15,6 +21,7 @@ import android.widget.TextView;
 public class PageEvents extends Page {
 
 	private ListView listViewEvents;
+	private int selectedId;
 
 	public PageEvents(Database parent) {
 		super(parent);
@@ -38,45 +45,53 @@ public class PageEvents extends Page {
 		buttonEdit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int id = CheckableArrayAdapter.getSelectedId(listViewEvents);
-				if (id >= 0) {
+				if (selectedId >= 0) {
 					Intent intent = new Intent(parent, DatabaseEditEvent.class);
 					intent.putExtra("game", getGame());
-					intent.putExtra("id", id);
+					intent.putExtra("id", selectedId);
 					parent.startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
 				}
 			}
 		});
 
-		Button buttonNew = (Button)findViewById(R.id.buttonNew);
-		buttonNew.setOnClickListener(new OnClickListener() {
+		Button buttonReset = (Button)findViewById(R.id.buttonReset);
+		buttonReset.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				getGame().getSelectedMap().events.add(new Event("New Event"));
-				final int id = CheckableArrayAdapter.getSelectedId(listViewEvents);
-				populateListView();
-
-				if (id >= 0) {
-					listViewEvents.post(new Runnable() {
-						public void run() {
-							CheckableArrayAdapter.setSelectedId(listViewEvents, id);
-						}
-					});
-
-				}
+				Event e = new Event();
+				getGame().getSelectedMap().events[selectedId] = e;
+				CheckableArrayAdapter adapter = 
+					(CheckableArrayAdapter)listViewEvents.getAdapter();
+				adapter.replaceItem(selectedId, e.name);
 			}
 		});
 
-		Button buttonDelete = (Button)findViewById(R.id.buttonDelete);
-		buttonDelete.setOnClickListener(new OnClickListener() {
+		Button buttonAdd = (Button)findViewById(R.id.buttonAdd);
+		buttonAdd.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				int id = CheckableArrayAdapter.getSelectedId(listViewEvents); 
-				ArrayList<Event> events = getGame().getSelectedMap().events;
-				if (id >= 0 && id < events.size()) {
-					events.remove(id);
+			public void onClick(View v) { 
+				CheckableArrayAdapter adapter = 
+					(CheckableArrayAdapter)listViewEvents.getAdapter();
+				
+				Event[] events = getGame().getSelectedMap().events;
+				int oldLength = events.length;
+				events = Arrays.copyOf(events, oldLength + 1);
+				for (int i = oldLength; i < events.length; i++) {
+					events[i] = new Event();
+					adapter.addItem(events[i].name);
 				}
-				populateListView();
+				getGame().getSelectedMap().events = events;
+				((CheckableArrayAdapter)listViewEvents.getAdapter())
+					.notifyDataSetChanged();
+			}
+		});
+		
+		listViewEvents.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int selected,
+					long id) {
+				selectedId = selected;
 			}
 		});
 	}
@@ -87,14 +102,14 @@ public class PageEvents extends Page {
 	}
 
 	private void populateListView() {
-		ArrayList<Event> events = getGame().getSelectedMap().events;
-		String[] names = new String[events.size()];
-		for (int i = 0; i < events.size(); i++) {
-			Event event = events.get(i);
-			names[i] = event.name;
+		Event[] events = getGame().getSelectedMap().events;
+		ArrayList<String> names = new ArrayList<String>();
+		for (int i = 0; i < events.length; i++) {
+			Event event = events[i];
+			names.add(event.name);
 		}
 		listViewEvents.setAdapter(new CheckableArrayAdapter(parent, R.layout.checkable_array_adapter_row, names));
-
+		listViewEvents.setSelection(0);
 	}
 
 }

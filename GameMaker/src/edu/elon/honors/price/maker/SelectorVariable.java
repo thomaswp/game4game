@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 
-public class SelectorVariable extends Button {
+public class SelectorVariable extends Button implements IPopulatable {
 
 	private int variableId;
 	private PlatformGame game;

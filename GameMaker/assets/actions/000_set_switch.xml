@@ -1,0 +1,33 @@
+<action id="0" name="Set Switch">
+
+	<text value="For" />
+
+	<radio>
+		<choice text="one switch">
+			<text value="width the id" />
+			<switch />
+		</choice>
+		<choice text="all switches from">
+			<group>
+				<switch />
+				<text value="to" />
+				<switch />
+			</group>
+		</choice>
+	</radio>
+
+	<radio>
+		<choice text="set it to">
+			<radio>
+				<choice text="On" />
+				<choice text="Off" />
+				<choice text="a Switch's value">
+					<switch />
+				</choice>
+				<choice text="a random value" />
+			</radio>
+		</choice>
+		<choice text="toggle it" />
+	</radio>
+
+</action>

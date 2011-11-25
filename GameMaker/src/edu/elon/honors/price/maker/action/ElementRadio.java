@@ -15,62 +15,91 @@ import android.widget.RadioGroup;
 
 public class ElementRadio extends Element {
 
-	public ElementRadio(Attributes atts) {
-		super(atts);
+	private RadioGroup group;
+
+	public ElementRadio(Attributes atts, Context context) {
+		super(atts, context);
 	}
 
 	@Override
-	public ParamViewHolder genView(Context context) {
-		final ParamViewHolder[] holders = new ParamViewHolder[children.size()];
-		
-		final LinearLayout layout = new LinearLayout(context);
-		layout.setOrientation(LinearLayout.VERTICAL);
-		final RadioGroup group = new RadioGroup(context);
-		group.setOrientation(RadioGroup.HORIZONTAL);
-		layout.addView(group);
-		for (int i = 0; i < children.size(); i++) {
-			ElementChoice choice = (ElementChoice)children.get(i);
-			final RadioButton button = new RadioButton(context);
-			button.setText(choice.getText());
-			if (i == 0) {
-				button.post(new Runnable() {
-					@Override
-					public void run() {
-						button.setChecked(true);
-					}
-				});
-			}
-			group.addView(button);
+	public void addChild(Element child) {
+		boolean first = children.size() == 0;
+		children.add(child);
 
-			holders[i] = choice.genView(context);
-			final View view = holders[i].getView();
-			view.setVisibility(i == 0 ? View.VISIBLE : View.GONE);
-			button.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		ElementChoice choice = (ElementChoice)child;
+		final RadioButton button = new RadioButton(context);
+		button.setText(choice.getText());
+		if (first) {
+			button.post(new Runnable() {
 				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					view.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+				public void run() {
+					button.setChecked(true);
 				}
 			});
-			layout.addView(view);
 		}
+		group.addView(button);
 
-		return new ParamViewHolder() {
-
+		final View view = child.getView();
+		view.setVisibility(first ? View.VISIBLE : View.GONE);
+		button.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
-			public View getView() {
-				return layout;
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				view.setVisibility(isChecked ? View.VISIBLE : View.GONE);
 			}
-			
-			public void addParameters(Parameters params) {
-				int index = 0;
-				for (int i = 1; i < group.getChildCount(); i++) {
-					if (((RadioButton)group.getChildAt(i)).isChecked()) {
-						index = i;
-					}
-				}
-				params.addParam(index);
-				holders[index].addParameters(params);
+		});
+		host.addView(view);
+	}
+
+	@Override
+	protected void addParameters(Parameters params) {
+		int index = getSelectedIndex();
+		params.addParam(index);
+		children.get(index).addParameters(params);
+	}
+
+	@Override
+	protected int readParameters(Parameters params, int index) {
+		int i = params.getInt(index);
+		setSelectedIndex(i);
+		return children.get(i).readParameters(params, index + 1);
+	}
+
+	@Override
+	public void genView() {	
+		LinearLayout layout = new LinearLayout(context);
+		layout.setOrientation(LinearLayout.VERTICAL);
+		group = new RadioGroup(context);
+		group.setOrientation(RadioGroup.HORIZONTAL);
+		layout.addView(group);
+		main = layout;
+		host = layout;
+	}
+
+	private int getSelectedIndex() {
+		int index = -1;
+		for (int i = 0; i < group.getChildCount(); i++) {
+			if (((RadioButton)group.getChildAt(i)).isChecked()) {
+				index = i;
+				break;
 			}
-		};
+		}
+		return index;
+	}
+
+
+	private void setSelectedIndex(int index) {
+		final RadioButton button = (RadioButton)group.getChildAt(index);
+		button.post(new Runnable() {
+			@Override
+			public void run() {
+				button.setChecked(true);
+			}
+		});
+	}
+
+	@Override
+	public String getDescription() {
+		int index = getSelectedIndex();
+		return children.get(index).getDescription();
 	}
 }

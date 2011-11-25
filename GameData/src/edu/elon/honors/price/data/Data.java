@@ -33,6 +33,7 @@ public final class Data {
 	public final static Uri CONTENT_URI = Uri.parse("content://edu.elon.honors.price.maker/");
 	public final static String SD_FOLDER = "Game Maker/";
 	public final static String GRAPHICS = "graphics";
+	public final static String ACTIONS_DIR = "actions";
 	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	
@@ -105,6 +106,18 @@ public final class Data {
 		return files;
 	}
 
+	public static InputStream loadAction(int id, Context context) throws IOException {
+		ArrayList<String> resources = getResources(ACTIONS_DIR, context);
+		String idString = String.format("%03d", id);
+		for (int i = 0; i < resources.size(); i++) {
+			if (resources.get(i).startsWith(idString)) {
+				return context.getAssets().open(ACTIONS_DIR + "/" + resources.get(i));
+			}
+		}
+		Game.debug("No actions found for id " + idString);
+		return null;
+	}
+	
 	/**
 	 * Loads an actor from the ACTORS_DIR directory. Uses the current running
 	 * Game as a context. Use only from an appropriate Logic class.

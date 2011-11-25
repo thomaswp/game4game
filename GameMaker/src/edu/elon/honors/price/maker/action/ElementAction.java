@@ -3,6 +3,8 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.maker.DatabaseEditEvent;
+import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
 import android.view.View;
@@ -22,13 +24,17 @@ public class ElementAction extends Element {
 		return name;
 	}
 	
-	public ElementAction(Attributes atts) {
-		super(atts);
+	public ElementAction(Attributes atts, Context context) {
+		super(atts, context);
+	}
+	
+	protected void readAttributes(Attributes atts) {
 		id = Integer.parseInt(atts.getValue("id"));
 		name = atts.getValue("name");
 	}
 	
-	public ParamViewHolder genView(Context context) {
+	@Override
+	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		layout.setOrientation(LinearLayout.VERTICAL);
 		
@@ -37,12 +43,21 @@ public class ElementAction extends Element {
 		title.setText(name);
 		layout.addView(title);
 		
-		ParamViewHolder[] holders = new ParamViewHolder[children.size()];
+		super.genView();
+		layout.addView(main);
+		main = layout;
+	}
+
+	@Override
+	public String getDescription() {
+		StringBuilder sb = new StringBuilder();
+		TextUtils.addColoredText(sb, name, DatabaseEditEvent.COLOR_ACTION);
+		sb.append(":");
 		for (int i = 0; i < children.size(); i++) {
-			holders[i] = children.get(i).genView(context);
-			layout.addView(holders[i].getView());
+			sb.append(" ");
+			sb.append(children.get(i).getDescription());
 		}
 		
-		return new BasicParamViewHolder(layout, holders);
+		return sb.toString();
 	}
 }

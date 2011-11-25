@@ -6,29 +6,39 @@ import android.content.Context;
 import android.widget.LinearLayout;
 
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.maker.DatabaseEditEvent;
+import edu.elon.honors.price.maker.TextUtils;
 
 public class ElementGroup extends Element {
 
-	public ElementGroup(Attributes atts) {
-		super(atts);
+	public ElementGroup(Attributes atts, Context context) {
+		super(atts, context);
 	}
 	
 	@Override
-	public ParamViewHolder genView(Context context) {
-		final ParamViewHolder[] holders = new ParamViewHolder[children.size()];
-		final LinearLayout layout = new LinearLayout(context);
-		layout.setOrientation(LinearLayout.VERTICAL);
+	protected void addParameters(Parameters params) {
+		Parameters childPs = new Parameters();
+		super.addParameters(childPs);
+		params.addParam(childPs);
+	}
+	
+	@Override
+	protected int readParameters(Parameters params, int index) {
+		Parameters childPs = params.getParameters(index);
+		super.readParameters(childPs, 0);
+		return index + 1;
+	}
+
+	@Override
+	public String getDescription() {
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < children.size(); i++) {
-			holders[i] = children.get(i).genView(context);
-			layout.addView(holders[i].getView());
-		}
-		return new BasicParamViewHolder(layout, holders) {
-			@Override
-			public void addParameters(Parameters params) {
-				Parameters ps = new Parameters();
-				super.addParameters(ps);
-				params.addParam(ps);
+			if (i != 0) {
+				sb.append(" ");
 			}
-		};
+			sb.append(children.get(i).getDescription());
+		}
+		
+		return sb.toString();
 	}
 }
