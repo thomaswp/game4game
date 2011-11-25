@@ -16,11 +16,16 @@ import edu.elon.honors.price.game.Game;
 public class ActionParser implements ContentHandler {
 	
 	private Stack<Element> parents = new Stack<Element>();
+	private Context context;
+	
+	public ActionParser(Context context) {
+		this.context = context;
+	}
 	
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
-		parents.add(Element.genElement(qName, atts));
+		parents.add(Element.genElement(qName, atts, context));
 	}
 
 	@Override
@@ -32,9 +37,9 @@ public class ActionParser implements ContentHandler {
 		}
 	}
 
-	public Element.ParamViewHolder generateLayout(Context context) {
+	public Element getLayout() {
 		if (parents.size() == 0) return null;
-		return parents.peek().genView(context);
+		return parents.peek();
 	}
 	
 	@Override

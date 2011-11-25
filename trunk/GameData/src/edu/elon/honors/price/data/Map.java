@@ -10,7 +10,7 @@ public class Map implements Serializable{
 	public MapLayer[] layers;
 	public MapLayer actorLayer;
 	public ArrayList<ActorInstance> actors; 
-	public ArrayList<Event> events;
+	public Event[] events;
 	public int rows, columns;
 	
 	public Map() {
@@ -23,7 +23,9 @@ public class Map implements Serializable{
 		//layer with tiles representing indices in the actors ArrayList 
 		actorLayer = new MapLayer("actors", rows, columns, false);
 		
-		events = new ArrayList<Event>();
+		events = new Event[3];
+		for (int i = 0; i < events.length; i++) 
+			events[i] = new Event(String.format("Event%d", i));
 		
 		actors = new ArrayList<ActorInstance>();
 		actors.add(null);

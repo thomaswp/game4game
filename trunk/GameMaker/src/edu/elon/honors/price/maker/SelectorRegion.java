@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-public class SelectorRegion extends LinearLayout {
+public class SelectorRegion extends LinearLayout implements IPopulatable {
 
 	protected PlatformGame game;
 	protected Rect rect;

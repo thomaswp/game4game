@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 
-public class SelectorActorInstance extends Button {
+public class SelectorActorInstance extends Button implements IPopulatable {
 
 	private PlatformGame game;
 	private int id = 1;

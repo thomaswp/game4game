@@ -32,7 +32,7 @@ import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.data.EventIds;
+import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.Map;
@@ -271,73 +271,73 @@ public class PlatformLogic implements Logic {
 						addBody(rock, -1, 80, 20);
 					}
 					if (i == 4 && j == 18) {
-						ActorClass dude = new ActorClass();
-						dude.imageName = "blank.png";
-						dude.zoom = 3f;
-						dude.animated = false;
-						dude.name = "Dude";
-						dude.heroContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_DIE;
-						PlatformBody dudeBody = addBody(dude, -1, x, y);
-
-						ActorClass critter = new ActorClass();
-						critter.imageName = "critter.png";
-						critter.zoom = 1.5f;
-						critter.speed = 1;
-						critter.name = "Critter";
-						critter.edgeBehavior = ActorClass.BEHAVIOR_TURN;
-						critter.wallBehavior = ActorClass.BEHAVIOR_TURN;
-						critter.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_TURN;
-						critter.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_TURN;
-						game.actors[2] = critter;
-
-						ArrayList<Action> actions;
-						Parameters params;
-						ActorTrigger trigger;
-						Event event;
-
-						for (int k = -1; k < 2; k++) {
-							actions = new ArrayList<Action>();
-							params = new Parameters(new Object[] {0, 0, 0, 3, 1, 0});
-							actions.add(new Action(EventIds.ID_SET_VARIABLE, params));
-							params = new Parameters(new Object[] {0, 0, 1, 0, k * 60, 0});
-							actions.add(new Action(EventIds.ID_SET_VARIABLE, params));
-							params = new Parameters(new Object[] {2, 1, 0, 0, 0, (int)(Math.random() * 2)}); 
-							actions.add(new Action(EventIds.ID_CREATE_ACTOR, params));
-							trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
-							event = new Event(actions);
-							event.triggers.add(trigger);
-							map.events.add(event);
-						}
-
-						actions = new ArrayList<Action>();
-						params = new Parameters(new Object[] {1, ActorClass.BEHAVIOR_STUN});
-						actions.add(new Action(EventIds.ID_ACTOR_BEHAVIOR, params));
-						trigger = new ActorTrigger(false, 2, ActorTrigger.ACTION_COLLIDES_HERO);
-						event = new Event(actions);
-						event.triggers.add(trigger);
-						map.events.add(event);
-
-						Rect ladder = new Rect(23 * 48 + 8, 0, 24 * 48 - 4, 48 * 6);
-
-						actions = new ArrayList<Action>();
-						params = new Parameters(new Object[] {0, 0, 0, 3, 1, 1});
-						actions.add(new Action(EventIds.ID_SET_VARIABLE, params));
-						params = new Parameters(new Object[] {1, 0, ladder.centerX(), 1, 0, 2});
-						actions.add(new Action(EventIds.ID_MOVE_ACTOR, params));
-						params = new Parameters(new Object[] {0});
-						actions.add(new Action(EventIds.ID_HERO_SET_LADDER, params));
-						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
-						event = new Event(actions);
-						event.triggers.add(trigger2);
-						map.events.add(event);
-
-						actions = new ArrayList<Action>();
-						params = new Parameters(new Object[] {1});
-						actions.add(new Action(EventIds.ID_HERO_SET_LADDER, params));
-						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
-						event = new Event(actions);
-						event.triggers.add(trigger2);
-						map.events.add(event);
+//						ActorClass dude = new ActorClass();
+//						dude.imageName = "blank.png";
+//						dude.zoom = 3f;
+//						dude.animated = false;
+//						dude.name = "Dude";
+//						dude.heroContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_DIE;
+//						PlatformBody dudeBody = addBody(dude, -1, x, y);
+//
+//						ActorClass critter = new ActorClass();
+//						critter.imageName = "critter.png";
+//						critter.zoom = 1.5f;
+//						critter.speed = 1;
+//						critter.name = "Critter";
+//						critter.edgeBehavior = ActorClass.BEHAVIOR_TURN;
+//						critter.wallBehavior = ActorClass.BEHAVIOR_TURN;
+//						critter.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_TURN;
+//						critter.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_TURN;
+//						game.actors[2] = critter;
+//
+//						ArrayList<Action> actions;
+//						Parameters params;
+//						ActorTrigger trigger;
+//						Event event;
+//
+//						for (int k = -1; k < 2; k++) {
+//							actions = new ArrayList<Action>();
+//							params = new Parameters(new Object[] {0, 0, 0, 3, 1, 0});
+//							actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
+//							params = new Parameters(new Object[] {0, 0, 1, 0, k * 60, 0});
+//							actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
+//							params = new Parameters(new Object[] {2, 1, 0, 0, 0, (int)(Math.random() * 2)}); 
+//							actions.add(new Action(ActionIds.ID_CREATE_ACTOR, params));
+//							trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
+//							event = new Event(actions);
+//							event.triggers.add(trigger);
+//							//map.events.add(event);
+//						}
+//
+//						actions = new ArrayList<Action>();
+//						params = new Parameters(new Object[] {1, ActorClass.BEHAVIOR_STUN});
+//						actions.add(new Action(ActionIds.ID_ACTOR_BEHAVIOR, params));
+//						trigger = new ActorTrigger(false, 2, ActorTrigger.ACTION_COLLIDES_HERO);
+//						event = new Event(actions);
+//						event.triggers.add(trigger);
+//						//map.events.add(event);
+//
+//						Rect ladder = new Rect(23 * 48 + 8, 0, 24 * 48 - 4, 48 * 6);
+//
+//						actions = new ArrayList<Action>();
+//						params = new Parameters(new Object[] {0, 0, 0, 3, 1, 1});
+//						actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
+//						params = new Parameters(new Object[] {1, 0, ladder.centerX(), 1, 0, 2});
+//						actions.add(new Action(ActionIds.ID_MOVE_ACTOR, params));
+//						params = new Parameters(new Object[] {0});
+//						actions.add(new Action(ActionIds.ID_HERO_SET_LADDER, params));
+//						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
+//						event = new Event(actions);
+//						event.triggers.add(trigger2);
+//						//map.events.add(event);
+//
+//						actions = new ArrayList<Action>();
+//						params = new Parameters(new Object[] {1});
+//						actions.add(new Action(ActionIds.ID_HERO_SET_LADDER, params));
+//						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
+//						event = new Event(actions);
+//						event.triggers.add(trigger2);
+//						//map.events.add(event);
 
 					}
 				}
@@ -445,8 +445,8 @@ public class PlatformLogic implements Logic {
 	}
 
 	private void checkTriggers() {
-		for (int i = 0; i < map.events.size(); i++) {
-			Event event = map.events.get(i);
+		for (int i = 0; i < map.events.length; i++) {
+			Event event = map.events[i];
 			boolean triggered = false;
 
 			for (int j = 0; j < event.triggers.size(); j++) {

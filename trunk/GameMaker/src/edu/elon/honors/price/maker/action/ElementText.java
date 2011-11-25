@@ -11,16 +11,25 @@ import android.widget.TextView;
 public class ElementText extends Element {
 	private String text;
 	
-	public ElementText(Attributes atts) {
-		super(atts);
+	public ElementText(Attributes atts, Context context) {
+		super(atts, context);
+	}
+	
+	@Override
+	protected void readAttributes(Attributes atts) {
 		text = atts.getValue("value");
 	}
 
 	@Override
-	public ParamViewHolder genView(Context context) {
+	public void genView() {
 		TextView tv = new TextView(context);
 		tv.setTextSize(20);
 		tv.setText(text);
-		return new BasicParamViewHolder(tv);
+		main = tv;
+	}
+
+	@Override
+	public String getDescription() {
+		return text;
 	}
 }

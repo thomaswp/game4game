@@ -7,6 +7,7 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,7 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class SelectorActorClass extends Spinner {
+public class SelectorActorClass extends Spinner implements IPopulatable {
 	
 	private PlatformGame game;
 	private OnActorClassChangedListener onActorClassChangedListener;
@@ -86,5 +87,10 @@ public class SelectorActorClass extends Spinner {
 	
 	public static abstract class OnActorClassChangedListener {
 		public abstract void onActorClassChanged(int newId);
+	}
+
+	@Override
+	public boolean onActivityResult(int requestCode, Intent data) {
+		return false;
 	}
 }

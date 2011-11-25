@@ -1,11 +1,22 @@
 package edu.elon.honors.price.data;
 
-public class EventIds {
+public class ActionIds {
+	
+	public static final String[] ACTION_NAMES = new String[] {
+		"Set Switch",
+		"Set Variable",
+		"Create Actor",
+		"Show Debug Box",
+		"Move Actor",
+		"Trigger Actor Behavior",
+		"Set Hero On/Off Ladder"
+	};
+	
 	/**
 	 * P0: Specific | Range
 	 * P1: Id/(Start Range, End Range)
-	 * P2: Set | ?
-	 * P3: Value | Switch | Random
+	 * P3: Set | Toggle
+	 * P3: Value | Switch | Random/-
 	 * P4: Value/Id/-
 	 */
 	public static final int ID_SET_SWITCH = 0;

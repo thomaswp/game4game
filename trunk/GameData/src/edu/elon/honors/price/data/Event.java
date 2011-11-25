@@ -2,6 +2,9 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import android.graphics.Rect;
 
@@ -13,11 +16,11 @@ import android.graphics.Rect;
  */
 public class Event implements Serializable {
 	private static final long serialVersionUID = 2L;
-	
+
 	public String name = "";
 	public ArrayList<Action> actions = new ArrayList<Event.Action>();
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
-	
+
 	/**
 	 * Creates a new event with the given list of Actions.
 	 * @param actions The actions this event performs when triggered.
@@ -25,7 +28,7 @@ public class Event implements Serializable {
 	public Event(ArrayList<Action> actions) {
 		this.actions = actions;
 	}
-	
+
 	/**
 	 * Creates a new event with the given Action. More actions
 	 * can be added later.
@@ -35,9 +38,13 @@ public class Event implements Serializable {
 		this(new ArrayList<Action>());
 		actions.add(action);
 	}
-	
+
 	public Event(String name) {
 		this.name = name;
+	}
+
+	public Event() {
+		this("New Event");
 	}
 
 	/**
@@ -48,12 +55,14 @@ public class Event implements Serializable {
 	 * explaining how to set the parameters for a given id.
 	 *
 	 */
-	public static class Action extends EventIds implements Serializable {
+	public static class Action extends ActionIds implements Serializable {
 		private static final long serialVersionUID = 1L;
-		
+
 		public Parameters params;
 		public int id;
-		
+		public int indent;
+		public String description;
+
 		/**
 		 * Creates a new Action with the given id and parameters. See the
 		 * class' javadoc for more.
@@ -66,33 +75,34 @@ public class Event implements Serializable {
 			this.params = params;
 		}
 	}
-	
+
 	/**
 	 * Represents a set of parameters for an action.
 	 *
 	 */
 	public static class Parameters implements Serializable {
 		private static final long serialVersionUID = 1L;
-		
-		private Object[] params;
-		
-		/**
-		 * Creates a new set of Parameters from the given array
-		 * of objects.
-		 * @param params The parameters.
-		 */
-		public Parameters(Object... params) {
-			this.params = params;
-		}
-		
+
+		private ArrayList<Object> params = new ArrayList<Object>();
+
 		/**
 		 * Gets the number of parameters in this set.
 		 * @return The size
 		 */
 		public int getSize() {
-			return params.length;
+			return params.size();
 		}
-		
+
+		public void addParam(Object param) {
+			params.add(param);
+		}
+
+		public Object getObject() { return getObject(0); }
+
+		public Object getObject(int index) {
+			return params.get(0);
+		}
+
 		/**
 		 * Gets the first parameter, cast as a boolean.
 		 * @return The parameter
@@ -104,9 +114,9 @@ public class Event implements Serializable {
 		 * @return The parameter
 		 */
 		public boolean getBoolean(int index) {
-			return (Boolean)params[index];
+			return (Boolean)params.get(index);
 		}
-		
+
 		/**
 		 * Gets the first parameter, cast as a String.
 		 * @return The parameter
@@ -118,9 +128,9 @@ public class Event implements Serializable {
 		 * @return The parameter
 		 */
 		public String getString(int index) {
-			return (String)params[index];
+			return (String)params.get(index);
 		}
-		
+
 		/**
 		 * Gets the first parameter, cast as an int.
 		 * @return The parameter
@@ -132,9 +142,9 @@ public class Event implements Serializable {
 		 * @return The parameter
 		 */
 		public int getInt(int index) {
-			return (Integer)params[index];
+			return (Integer)params.get(index);
 		}
-		
+
 		/**
 		 * Gets the first parameter, cast as a float.
 		 * @return The parameter
@@ -146,9 +156,9 @@ public class Event implements Serializable {
 		 * @return The parameter
 		 */
 		public float getFloat(int index) {
-			return (Float)params[index];
+			return (Float)params.get(index);
 		}
-		
+
 		/**
 		 * Gets the first parameter, cast as another set of Parameters.
 		 * This is used when a list or complex data is passed as a parameter.
@@ -162,14 +172,40 @@ public class Event implements Serializable {
 		 * @return The parameter
 		 */
 		public Parameters getParameters(int index) {
-			return (Parameters)params[index];
+			return (Parameters)params.get(index);
+		}
+
+		@Override
+		public String toString() {
+			return Arrays.toString(params.toArray());
+		}
+
+		public boolean equals(Parameters o) {
+			if (o.getSize() != getSize())
+				return false;
+
+			boolean equal = true;
+			try {
+				for (int i = 0; i < o.params.size(); i++) {
+					if (params.get(i) instanceof Parameters) {
+						equal &= getParameters(i).equals(o.getParameters(i));
+					} else {
+						equal &= getObject(i).equals(o.getObject(i));
+					}
+				}
+			}
+			catch (Exception e) {
+				return false;
+			}
+
+			return equal;
 		}
 	}
-	
+
 	public abstract static class Trigger implements Serializable {
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	/**
 	 * Represents an Event trigger which is triggered by a switch
 	 * taking on a certain value.
@@ -177,10 +213,10 @@ public class Event implements Serializable {
 	 */
 	public static class SwitchTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
-		
+
 		public int switchId;
 		public boolean value;
-		
+
 		/**
 		 * Creates a SwitchTrigger, activated when the switch with
 		 * the given id is set to the given value.
@@ -191,17 +227,17 @@ public class Event implements Serializable {
 			this.switchId = switchId;
 			this.value = value;
 		}
-		
+
 		public SwitchTrigger() {
 			this(0, true);
 		}
-		
+
 		public boolean equals(SwitchTrigger o) {
 			return o.switchId == switchId &&
-				o.value == value;
+			o.value == value;
 		}
 	}
-	
+
 	/**
 	 * Represents an Event trigger which is triggered by a variable
 	 * falling under a given condition, such as equalling a value
@@ -210,7 +246,7 @@ public class Event implements Serializable {
 	 */
 	public static class VariableTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
-		
+
 		/**
 		 * Tests if the variable is equal to the value.
 		 */
@@ -239,7 +275,7 @@ public class Event implements Serializable {
 		 * Tests if the variable is divisible by the value.
 		 */
 		public static final int TEST_DIVISIBLE = 6;
-		
+
 		/**
 		 * Tests against another variable
 		 */
@@ -258,88 +294,88 @@ public class Event implements Serializable {
 			"less than or equal to",
 			"divisible by"
 		};
-		
+
 		public int variableId;
 		public int test;
 		public int with;
 		public int valueOrId;
-		
+
 		public VariableTrigger(int variableId, int test, int with, int valueOrId) {
 			this.variableId = variableId;
 			this.test = test;
 			this.with = with;
 			this.valueOrId = valueOrId;
 		}
-		
+
 		public VariableTrigger() {
 			this(0, 0, 0, 0);
 		}
-		
+
 		public boolean equals(VariableTrigger o) {
 			return o.variableId == variableId &&
-				o.test == test &&
-				o.with == with &&
-				o.valueOrId == valueOrId;
+			o.test == test &&
+			o.with == with &&
+			o.valueOrId == valueOrId;
 		}
 	}
-	
+
 	public static class ActorTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
-		
+
 		public static final String[] ACTIONS = new String[] {
 			"collides with an actor",
 			"collides with the Hero",
 			"collides with a wall",
 			"dies"
 		};
-		
+
 		public static final int ACTION_COLLIDES_ACTOR = 0;
 		public static final int ACTION_COLLIDES_HERO = 1;
 		public static final int ACTION_COLLIDES_WALL = 2;
 		public static final int ACTION_DIES = 3;
-		
+
 		public int id;
 		public int action;
 		public boolean forInstance;
-		
+
 		public ActorTrigger(boolean forInstance, int id, int action) {
 			this.forInstance = forInstance;
 			this.id = id;
 			this.action = action;
 		}
-		
+
 		public ActorTrigger() {
 			this(true, 1, 0);
 		}
-		
+
 		public boolean equals(ActorTrigger o) {
 			return o.id == id &&
-				o.action == action &&
-				o.forInstance == forInstance;
+			o.action == action &&
+			o.forInstance == forInstance;
 		}
 	}
-	
+
 	public static class RegionTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
-		
+
 		public static final String[] MODES = new String[] {
 			"begins to enter",
 			"fully enters",
 			"begins to leave",
 			"fully leaves"
 		};
-		
+
 		public static final int MODE_TOUCH = 0;
 		public static final int MODE_CONTAIN = 1;
 		public static final int MODE_LOSE_CONTAIN = 2;
 		public static final int MODE_LOSE_TOUCH = 3;
-		
+
 		public transient ArrayList<Contact> contacts = new ArrayList<Event.RegionTrigger.Contact>();
-		
+
 		public int left, right, top, bottom;
 		public int mode;
 		public boolean onlyHero;
-		
+
 		public int getTriggerState() {
 			switch (mode) {
 			case MODE_LOSE_TOUCH: return 0;
@@ -349,11 +385,11 @@ public class Event implements Serializable {
 			}
 			return -1;
 		}
-		
+
 		public RegionTrigger(Rect rect, int mode, boolean onlyHero) {
 			this(rect.left, rect.top, rect.right, rect.bottom, mode, onlyHero);
 		}
-		
+
 		public RegionTrigger(int left, int top, int right, int bottom, int mode, boolean onlyHero) {
 			this.left = left;
 			this.top = top;
@@ -362,25 +398,25 @@ public class Event implements Serializable {
 			this.onlyHero = onlyHero;
 			this.mode = mode;
 		}
-		
+
 		public RegionTrigger() {
 			this(0, 0, 0, 0, 0, false);
 		}
-		
+
 		public boolean equals(RegionTrigger o) {
 			return o.left == left &&
-				o.top == top &&
-				o.right == right &&
-				o.bottom == bottom && 
-				o.mode == mode &&
-				o.onlyHero == onlyHero;
+			o.top == top &&
+			o.right == right &&
+			o.bottom == bottom && 
+			o.mode == mode &&
+			o.onlyHero == onlyHero;
 		}
-		
+
 		public static class Contact {
-			
+
 			public int state;
 			public Object object;
-			
+
 			public Contact(Object object, int state) {
 				this.object = object;
 				this.state = state;

@@ -6,13 +6,13 @@ import com.twp.platform.PlatformLogic.ActorAddable;
 
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Event;
-import edu.elon.honors.price.data.EventIds;
+import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.physics.Vector;
 
-public class Interpreter extends EventIds {
+public class Interpreter extends ActionIds {
 	
 	public static final float SCALE = PlatformLogic.SCALE;
 	
