@@ -6,6 +6,10 @@ public class TextUtils {
 	}
 
 	public static void  addColoredText(StringBuilder sb, String text, String color) {
+		if (color == null) {
+			sb.append(text);
+			return;
+		}
 		sb.append("<font color='")
 		.append(color)
 		.append("'>")

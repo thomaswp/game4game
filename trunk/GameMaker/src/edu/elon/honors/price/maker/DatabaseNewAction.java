@@ -45,10 +45,10 @@ public class DatabaseNewAction extends DatabaseActivity {
 		for (Category cat : categories) {
 			categoryNames.add(cat.name);
 		}
-		
+
 		listViewCategories.setAdapter(new CheckableArrayAdapter(this,
 				android.R.layout.simple_spinner_item, categoryNames));
-		
+
 		listViewCategories.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -56,27 +56,29 @@ public class DatabaseNewAction extends DatabaseActivity {
 				selectCategory(selected);
 			}
 		});
-		
+
 		listViewCategories.setSelection(0);
 		selectCategory(0);
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (data.getExtras().containsKey("action")) {
-			action = (Action)data.getExtras().getSerializable("action");
-			this.finishOk();
+		if (resultCode == RESULT_OK) {
+			if (data.getExtras().containsKey("action")) {
+				action = (Action)data.getExtras().getSerializable("action");
+				this.finishOk();
+			}
 		}
 	}
-	
+
 	@Override
 	protected void putExtras(Intent data) {
 		if (action != null) {
 			data.putExtra("action", action);
 		}
 	}
-	
+
 	private void selectCategory(int selected) {
 		linearLayoutActions.removeAllViews();
 		Category category = categories.get(selected);
@@ -85,23 +87,23 @@ public class DatabaseNewAction extends DatabaseActivity {
 					createActionView(category.actions[i]));
 		}
 	}
-	
+
 	private View createActionView(final int id) {
 		LinearLayout layout = new LinearLayout(this);
 		layout.setOrientation(LinearLayout.HORIZONTAL);
 		layout.setGravity(Gravity.CENTER_VERTICAL);
-		
+
 		TextView tv = new TextView(this);
 		tv.setTextSize(20);
 		tv.setWidth(150);
 		tv.setText(ActionIds.ACTION_NAMES[id]);
 		layout.addView(tv);
-		
+
 		Button button = new Button(this);
 		button.setText("Select");
 		button.setWidth(100);
 		layout.addView(button);
-		
+
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -112,7 +114,7 @@ public class DatabaseNewAction extends DatabaseActivity {
 				startActivityForResult(intent, REQUEST_RETURN_GAME);
 			}
 		});
-		
+
 		return layout;
 	}
 

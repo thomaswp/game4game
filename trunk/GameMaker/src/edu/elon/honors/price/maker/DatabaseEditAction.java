@@ -18,9 +18,13 @@ import edu.elon.honors.price.maker.action.Element;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Xml;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class DatabaseEditAction extends DatabaseActivity {
@@ -39,6 +43,14 @@ public class DatabaseEditAction extends DatabaseActivity {
 		id = getIntent().getExtras().getInt("id");
 		
 		linearLayoutHost = (LinearLayout)findViewById(R.id.linearLayoutHost);
+		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
+		scroll.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				//removeFocus();
+				return false;
+			}
+		});
 		
 		ActionParser parser = new ActionParser(this);
 		
@@ -68,7 +80,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 		super.putExtras(intent);
 		Parameters params = rootElement.getParameters();
 		Action action = new Action(id, params);
-		action.description = rootElement.getDescription();
+		action.description = rootElement.getDescription(game);
 		intent.putExtra("action", action);
 		Game.debug(params);
 	}
@@ -97,6 +109,24 @@ public class DatabaseEditAction extends DatabaseActivity {
 			View v = findViewById(requestCode); 
 			if (v != null && v instanceof IPopulatable) {
 				((IPopulatable)v).onActivityResult(requestCode, data);
+			}
+		}
+	}
+	
+	private void removeFocus() {
+		removeFocus(linearLayoutHost);
+	}
+	
+	private void removeFocus(View v) {
+		if (v instanceof EditText) {
+			if (v.hasFocus()) {
+				v.clearFocus();
+			}
+		}
+		if (v instanceof ViewGroup) {
+			ViewGroup vg = (ViewGroup)v;
+			for (int i = 0; i < vg.getChildCount(); i++) {
+				removeFocus(vg.getChildAt(i));
 			}
 		}
 	}

@@ -1,10 +1,10 @@
 <action id="0" name="Set Switch">
 
-	<text value="For" />
+	<text text="For" />
 
 	<radio>
 		<choice text="one switch">
-			<text value="width the id" />
+			<text text="width the id" />
 			<switch />
 		</choice>
 		<choice text="all switches from">
@@ -19,8 +19,8 @@
 	<radio>
 		<choice text="set it to">
 			<radio>
-				<choice text="On" />
-				<choice text="Off" />
+				<choice text="On" color="value" />
+				<choice text="Off" color="value" />
 				<choice text="a Switch's value">
 					<switch />
 				</choice>
