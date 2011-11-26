@@ -1,0 +1,55 @@
+<action id="1" name="Set Variable">
+
+	<text text="For" />
+
+	<radio>
+		<choice text="one variable">
+			<text text="width the id" />
+			<variable />
+		</choice>
+		<choice text="all variables from">
+			<group>
+				<variable />
+				<text text="to" />
+				<variable />
+			</group>
+		</choice>
+	</radio>
+
+	<radio>
+		<choice text="set it to" />
+		<choice text="add" />
+		<choice text="subtract" />
+		<choice text="multiply" />
+		<choice text="divide" />
+		<choice text="mod by" />	
+	</radio>
+
+	<radio>
+		<choice text="the value">
+			<number />
+		</choice>
+		<choice text="a variable">
+			<variable />
+		</choice>
+		<choice text="a random number">
+			<group>
+				<text text="between" />
+				<number />
+				<text text="and" />
+				<number />
+			</group>
+		</choice>
+		<choice text="an actor property">
+			<description text=":" />
+			<actorInstance />
+			<description text=";" />
+			<radio>
+				<choice text="x-coordinate" />
+				<choice text="y-coordinate" />
+			</radio>
+		</choice>
+		
+	</radio>
+
+</action>

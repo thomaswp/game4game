@@ -2,7 +2,9 @@ package edu.elon.honors.price.maker.action;
 
 import org.xml.sax.Attributes;
 
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
 import android.view.View;
@@ -17,7 +19,8 @@ public class ElementText extends Element {
 	
 	@Override
 	protected void readAttributes(Attributes atts) {
-		text = atts.getValue("value");
+		super.readAttributes(atts);
+		text = atts.getValue("text");
 	}
 
 	@Override
@@ -29,7 +32,9 @@ public class ElementText extends Element {
 	}
 
 	@Override
-	public String getDescription() {
-		return text;
+	public String getDescription(PlatformGame game) {
+		StringBuilder sb = new StringBuilder();
+		TextUtils.addColoredText(sb, text, color);
+		return sb.toString();
 	}
 }

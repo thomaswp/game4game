@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.maker.DatabaseEditEvent;
 
 import android.content.Context;
 import android.view.View;
@@ -19,7 +21,12 @@ public abstract class Element {
 	protected Context context;
 	protected View main;
 	protected ViewGroup host;
+	protected String color;
 
+	protected String getDefaultColor() {
+		return null;
+	}
+	
 	public Element(Attributes atts, Context context) {
 		this.context = context;
 		readAttributes(atts);
@@ -60,7 +67,23 @@ public abstract class Element {
 		return index;
 	}
 
-	protected void readAttributes(Attributes atts) { }
+	protected void readAttributes(Attributes atts) { 
+		String color = atts.getValue("color");
+		if (color != null) {
+			if (color.equals("value")) {
+				this.color = DatabaseEditEvent.COLOR_VALUE;
+			} else if (color.equals("variable")) {
+				this.color = DatabaseEditEvent.COLOR_VARIABLE;
+			} else if (color.equals("mode")) {
+				this.color = DatabaseEditEvent.COLOR_MODE;
+			} else if (color.equals("action")) {
+				this.color = DatabaseEditEvent.COLOR_ACTION;
+			}
+		}
+		if (this.color == null) {
+			this.color = getDefaultColor();
+		}
+	}
 	
 	protected void genView() {
 		LinearLayout layout = new LinearLayout(context);
@@ -69,7 +92,7 @@ public abstract class Element {
 		host = layout;
 	}
 	
-	public abstract String getDescription();
+	public abstract String getDescription(PlatformGame game);
 
 	public static Element genElement(String qName, Attributes atts, Context context) {
 		if (qName.equals("action")) {
@@ -84,6 +107,14 @@ public abstract class Element {
 			return new ElementGroup(atts, context);
 		} else if (qName.equals("switch")) {
 			return new ElementSwitch(atts, context);
+		} else if (qName.equals("variable")) {
+			return new ElementVariable(atts, context);
+		} else if (qName.equals("description")) {
+			return new ElementDescription(atts, context);
+		} else if (qName.equals("number")) {
+			return new ElementNumber(atts, context);
+		} else if (qName.equals("actorInstance")) {
+			return new ElementActorInstance(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

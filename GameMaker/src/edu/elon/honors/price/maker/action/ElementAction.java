@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker.action;
 
 import org.xml.sax.Attributes;
 
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.TextUtils;
@@ -24,11 +25,18 @@ public class ElementAction extends Element {
 		return name;
 	}
 	
+	@Override
+	protected String getDefaultColor() {
+		return DatabaseEditEvent.COLOR_ACTION;
+	}
+	
 	public ElementAction(Attributes atts, Context context) {
 		super(atts, context);
+		color = DatabaseEditEvent.COLOR_ACTION;
 	}
 	
 	protected void readAttributes(Attributes atts) {
+		super.readAttributes(atts);
 		id = Integer.parseInt(atts.getValue("id"));
 		name = atts.getValue("name");
 	}
@@ -37,6 +45,7 @@ public class ElementAction extends Element {
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		layout.setOrientation(LinearLayout.VERTICAL);
+		layout.setFocusableInTouchMode(true);
 		
 		TextView title = new TextView(context);
 		title.setTextSize(24);
@@ -49,13 +58,13 @@ public class ElementAction extends Element {
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription(PlatformGame game) {
 		StringBuilder sb = new StringBuilder();
-		TextUtils.addColoredText(sb, name, DatabaseEditEvent.COLOR_ACTION);
+		TextUtils.addColoredText(sb, name, color);
 		sb.append(":");
 		for (int i = 0; i < children.size(); i++) {
 			sb.append(" ");
-			sb.append(children.get(i).getDescription());
+			sb.append(children.get(i).getDescription(game));
 		}
 		
 		return sb.toString();

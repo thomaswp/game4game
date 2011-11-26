@@ -232,7 +232,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 							Action action = (Action)data.getExtras()
 								.getSerializable("action");
 							getEvent().actions.remove(index);
-							getEvent().actions.add(action);
+							getEvent().actions.add(index, action);
 							populateViews();
 						}
 					};

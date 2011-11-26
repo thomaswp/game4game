@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker.action;
 
 import org.xml.sax.Attributes;
 
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 
 import android.content.Context;
@@ -98,8 +99,8 @@ public class ElementRadio extends Element {
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription(PlatformGame game) {
 		int index = getSelectedIndex();
-		return children.get(index).getDescription();
+		return children.get(index).getDescription(game);
 	}
 }
