@@ -1,0 +1,25 @@
+<action id="2" name="Create Actor">
+
+	<text text="Create a" />
+	<actorClass />
+	<text text="at coordinates defined by" />
+	
+	<radio>
+		<choice text="the point">
+			<point />		
+		</choice>
+		<choice text="the variables">
+			<text text="x =" />
+			<variable />
+			<text text="y =" />
+			<variable />
+		</choice>
+	</radio>
+	
+	<text text="and facing" />
+	<radio>
+		<choice text="left" color="value" />
+		<choice text="right" color="value" />
+	</radio>
+
+</action>

@@ -27,6 +27,7 @@
     	<activity android:name=".SelectorMapBase" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapActorInstance" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapRegion" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".SelectorMapPoint" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorActivitySwitch" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorActivityVariable" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditEvent" android:screenOrientation="landscape"></activity>

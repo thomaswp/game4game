@@ -45,7 +45,6 @@ public class ElementAction extends Element {
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		layout.setOrientation(LinearLayout.VERTICAL);
-		layout.setFocusableInTouchMode(true);
 		
 		TextView title = new TextView(context);
 		title.setTextSize(24);
@@ -60,8 +59,9 @@ public class ElementAction extends Element {
 	@Override
 	public String getDescription(PlatformGame game) {
 		StringBuilder sb = new StringBuilder();
+		sb.append("<i>");
 		TextUtils.addColoredText(sb, name, color);
-		sb.append(":");
+		sb.append("</i>:");
 		for (int i = 0; i < children.size(); i++) {
 			sb.append(" ");
 			sb.append(children.get(i).getDescription(game));

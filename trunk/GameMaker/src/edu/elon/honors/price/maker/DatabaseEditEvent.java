@@ -46,7 +46,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	public static final String COLOR_VARIABLE = "#00CC00";
 	public static final String COLOR_MODE = "#FFCC00";
 	public static final String COLOR_VALUE = "#5555FF";
-	public static final String COLOR_ACTION = "#6600FF";
+	public static final String COLOR_ACTION = "#8800FF";
 
 	private int id;
 	private EditText editTextName;
