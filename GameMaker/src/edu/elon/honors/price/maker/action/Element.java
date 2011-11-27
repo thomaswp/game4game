@@ -115,6 +115,10 @@ public abstract class Element {
 			return new ElementNumber(atts, context);
 		} else if (qName.equals("actorInstance")) {
 			return new ElementActorInstance(atts, context);
+		} else if (qName.equals("actorClass")) {
+			return new ElementActorClass(atts, context);
+		} else if (qName.equals("point")) {
+			return new ElementPoint(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

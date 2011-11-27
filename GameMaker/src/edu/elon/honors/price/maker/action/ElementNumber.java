@@ -45,6 +45,7 @@ public class ElementNumber extends Element {
 	@Override
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
+		layout.setFocusableInTouchMode(true);
 		editText = new EditText(context);
 		editText.setInputType(InputType.TYPE_CLASS_NUMBER | 
 				InputType.TYPE_NUMBER_FLAG_SIGNED);

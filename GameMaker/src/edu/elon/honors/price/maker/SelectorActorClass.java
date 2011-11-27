@@ -37,7 +37,7 @@ public class SelectorActorClass extends Spinner implements IPopulatable {
 		this.onActorClassChangedListener = onActorClassChangedListener;
 	}
 	
-	public SelectorActorClass(Context context, PlatformGame game) {
+	public SelectorActorClass(Context context) {
 		super(context);	
 	}
 	

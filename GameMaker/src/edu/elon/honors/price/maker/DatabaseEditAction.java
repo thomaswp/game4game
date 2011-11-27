@@ -47,7 +47,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 		scroll.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				//removeFocus();
+				removeFocus();
 				return false;
 			}
 		});
