@@ -28,6 +28,8 @@ public class Interpreter extends ActionIds {
 		if (event == null)
 			return;
 		
+		Game.debug(event.name);
+		
 		actionIndex = 0;
 
 		while (actionIndex < event.actions.size()) {
@@ -60,12 +62,16 @@ public class Interpreter extends ActionIds {
 				
 				for (int i = 0; i <= to; i++) {
 					boolean argument;
-					if (params.getInt(3) == 0) {
-						argument = params.getBoolean(4);
-					} else if (params.getInt(3) == 1) {
-						argument = Globals.getSwitches()[params.getInt(4)]; 
+					if (params.getInt(2) == 0) {
+						if (params.getInt(3) == 0) {
+							argument = params.getInt(4) == 0;
+						} else if (params.getInt(3) == 1) {
+							argument = Globals.getSwitches()[params.getInt(4)]; 
+						} else {
+							argument = rand.nextBoolean();
+						}
 					} else {
-						argument = rand.nextBoolean();
+						argument = !Globals.getSwitches()[i];
 					}
 					Globals.getSwitches()[i] = argument;
 				}
@@ -130,12 +136,12 @@ public class Interpreter extends ActionIds {
 				} else {
 					x = Globals.getVariables()[params.getInt(2)];
 				}
-				if (params.getInt(3) == 0) {
-					y = params.getInt(4);
+				if (params.getInt(1) == 0) {
+					y = params.getInt(3);
 				} else {
-					y = Globals.getVariables()[params.getInt(4)];
+					y = Globals.getVariables()[params.getInt(3)];
 				}
-				if (params.getInt(5) == 0) {
+				if (params.getInt(4) == 0) {
 					dir = -1;
 				} else {
 					dir = 1;
@@ -154,12 +160,12 @@ public class Interpreter extends ActionIds {
 				} else {
 					x = Globals.getVariables()[params.getInt(2)];
 				}
-				if (params.getInt(3) == 0) {
-					y = params.getInt(4);
+				if (params.getInt(1) == 0) {
+					y = params.getInt(3);
 				} else {
-					y = Globals.getVariables()[params.getInt(4)];
+					y = Globals.getVariables()[params.getInt(3)];
 				}
-				if (params.getInt(5) == 0) {
+				if (params.getInt(4) == 0) {
 					dir = -1;
 				} else {
 					dir = 1;
@@ -168,7 +174,7 @@ public class Interpreter extends ActionIds {
 				PlatformBody body = logic.getBodyFromId(params.getInt());
 				if (body != null) {
 					body.getBody().setTransform(x / SCALE, y / SCALE, body.getBody().getAngle());
-					if (params.getInt(5) != 2)
+					if (params.getInt(4) != 2)
 						body.setDirectionX(dir);
 				}
 			}

@@ -74,6 +74,10 @@ public class Event implements Serializable {
 			this.id = id;
 			this.params = params;
 		}
+		
+		public boolean canHaveChildren() {
+			return id == ID_IF;
+		}
 	}
 
 	/**
@@ -370,21 +374,11 @@ public class Event implements Serializable {
 		public static final int MODE_LOSE_CONTAIN = 2;
 		public static final int MODE_LOSE_TOUCH = 3;
 
-		public transient ArrayList<Contact> contacts = new ArrayList<Event.RegionTrigger.Contact>();
+		public transient ArrayList<Contact> contacts;
 
 		public int left, right, top, bottom;
 		public int mode;
 		public boolean onlyHero;
-
-		public int getTriggerState() {
-			switch (mode) {
-			case MODE_LOSE_TOUCH: return 0;
-			case MODE_LOSE_CONTAIN: return 2;
-			case MODE_TOUCH: return 3;
-			case MODE_CONTAIN: return 5;
-			}
-			return -1;
-		}
 
 		public RegionTrigger(Rect rect, int mode, boolean onlyHero) {
 			this(rect.left, rect.top, rect.right, rect.bottom, mode, onlyHero);
@@ -414,12 +408,18 @@ public class Event implements Serializable {
 
 		public static class Contact {
 
+			public final static int STATE_TOUCHING = 0;
+			public final static int STATE_CONTAINED = 1;
+			
 			public int state;
 			public Object object;
+			public int event;
+			public boolean checked = true;
 
-			public Contact(Object object, int state) {
+			public Contact(Object object, int state, int event) {
 				this.object = object;
 				this.state = state;
+				this.event = event;
 			}
 		}
 	}

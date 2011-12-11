@@ -3,6 +3,9 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import android.content.Context;
+import android.text.Layout;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
@@ -37,8 +40,13 @@ public class ElementActorClass extends Element {
 	
 	@Override
 	public void genView() {
+		LinearLayout layout = new LinearLayout(context);
 		selectorActorClass = new SelectorActorClass(context);
-		main = selectorActorClass;
+		ViewGroup.LayoutParams params = new LayoutParams(
+				ViewGroup.LayoutParams.WRAP_CONTENT, 
+				ViewGroup.LayoutParams.WRAP_CONTENT);
+		layout.addView(selectorActorClass, params);
+		main = layout;
 	}
 
 	@Override

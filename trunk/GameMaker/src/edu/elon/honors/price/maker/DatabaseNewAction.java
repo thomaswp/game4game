@@ -141,8 +141,12 @@ public class DatabaseNewAction extends DatabaseActivity {
 					ID_ACTOR_BEHAVIOR
 			}));
 
-			categories.add(new Category("Hero Action", new int[] {
+			categories.add(new Category("Hero Actions", new int[] {
 					ID_HERO_SET_LADDER
+			}));
+			
+			categories.add(new Category("Control", new int[] {
+					ID_IF
 			}));
 
 			categories.add(new Category("Debug Actions", new int[] {

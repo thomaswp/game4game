@@ -21,6 +21,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ActorInstance;
@@ -271,73 +272,73 @@ public class PlatformLogic implements Logic {
 						addBody(rock, -1, 80, 20);
 					}
 					if (i == 4 && j == 18) {
-//						ActorClass dude = new ActorClass();
-//						dude.imageName = "blank.png";
-//						dude.zoom = 3f;
-//						dude.animated = false;
-//						dude.name = "Dude";
-//						dude.heroContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_DIE;
-//						PlatformBody dudeBody = addBody(dude, -1, x, y);
-//
-//						ActorClass critter = new ActorClass();
-//						critter.imageName = "critter.png";
-//						critter.zoom = 1.5f;
-//						critter.speed = 1;
-//						critter.name = "Critter";
-//						critter.edgeBehavior = ActorClass.BEHAVIOR_TURN;
-//						critter.wallBehavior = ActorClass.BEHAVIOR_TURN;
-//						critter.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_TURN;
-//						critter.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_TURN;
-//						game.actors[2] = critter;
-//
-//						ArrayList<Action> actions;
-//						Parameters params;
-//						ActorTrigger trigger;
-//						Event event;
-//
-//						for (int k = -1; k < 2; k++) {
-//							actions = new ArrayList<Action>();
-//							params = new Parameters(new Object[] {0, 0, 0, 3, 1, 0});
-//							actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
-//							params = new Parameters(new Object[] {0, 0, 1, 0, k * 60, 0});
-//							actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
-//							params = new Parameters(new Object[] {2, 1, 0, 0, 0, (int)(Math.random() * 2)}); 
-//							actions.add(new Action(ActionIds.ID_CREATE_ACTOR, params));
-//							trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
-//							event = new Event(actions);
-//							event.triggers.add(trigger);
-//							//map.events.add(event);
-//						}
-//
-//						actions = new ArrayList<Action>();
-//						params = new Parameters(new Object[] {1, ActorClass.BEHAVIOR_STUN});
-//						actions.add(new Action(ActionIds.ID_ACTOR_BEHAVIOR, params));
-//						trigger = new ActorTrigger(false, 2, ActorTrigger.ACTION_COLLIDES_HERO);
-//						event = new Event(actions);
-//						event.triggers.add(trigger);
-//						//map.events.add(event);
-//
-//						Rect ladder = new Rect(23 * 48 + 8, 0, 24 * 48 - 4, 48 * 6);
-//
-//						actions = new ArrayList<Action>();
-//						params = new Parameters(new Object[] {0, 0, 0, 3, 1, 1});
-//						actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
-//						params = new Parameters(new Object[] {1, 0, ladder.centerX(), 1, 0, 2});
-//						actions.add(new Action(ActionIds.ID_MOVE_ACTOR, params));
-//						params = new Parameters(new Object[] {0});
-//						actions.add(new Action(ActionIds.ID_HERO_SET_LADDER, params));
-//						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
-//						event = new Event(actions);
-//						event.triggers.add(trigger2);
-//						//map.events.add(event);
-//
-//						actions = new ArrayList<Action>();
-//						params = new Parameters(new Object[] {1});
-//						actions.add(new Action(ActionIds.ID_HERO_SET_LADDER, params));
-//						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
-//						event = new Event(actions);
-//						event.triggers.add(trigger2);
-//						//map.events.add(event);
+						//						ActorClass dude = new ActorClass();
+						//						dude.imageName = "blank.png";
+						//						dude.zoom = 3f;
+						//						dude.animated = false;
+						//						dude.name = "Dude";
+						//						dude.heroContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_DIE;
+						//						PlatformBody dudeBody = addBody(dude, -1, x, y);
+						//
+						//						ActorClass critter = new ActorClass();
+						//						critter.imageName = "critter.png";
+						//						critter.zoom = 1.5f;
+						//						critter.speed = 1;
+						//						critter.name = "Critter";
+						//						critter.edgeBehavior = ActorClass.BEHAVIOR_TURN;
+						//						critter.wallBehavior = ActorClass.BEHAVIOR_TURN;
+						//						critter.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_TURN;
+						//						critter.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_TURN;
+						//						game.actors[2] = critter;
+						//
+						//						ArrayList<Action> actions;
+						//						Parameters params;
+						//						ActorTrigger trigger;
+						//						Event event;
+						//
+						//						for (int k = -1; k < 2; k++) {
+						//							actions = new ArrayList<Action>();
+						//							params = new Parameters(new Object[] {0, 0, 0, 3, 1, 0});
+						//							actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
+						//							params = new Parameters(new Object[] {0, 0, 1, 0, k * 60, 0});
+						//							actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
+						//							params = new Parameters(new Object[] {2, 1, 0, 0, 0, (int)(Math.random() * 2)}); 
+						//							actions.add(new Action(ActionIds.ID_CREATE_ACTOR, params));
+						//							trigger = new ActorTrigger(true, dudeBody.getId(), ActorTrigger.ACTION_COLLIDES_HERO);
+						//							event = new Event(actions);
+						//							event.triggers.add(trigger);
+						//							//map.events.add(event);
+						//						}
+						//
+						//						actions = new ArrayList<Action>();
+						//						params = new Parameters(new Object[] {1, ActorClass.BEHAVIOR_STUN});
+						//						actions.add(new Action(ActionIds.ID_ACTOR_BEHAVIOR, params));
+						//						trigger = new ActorTrigger(false, 2, ActorTrigger.ACTION_COLLIDES_HERO);
+						//						event = new Event(actions);
+						//						event.triggers.add(trigger);
+						//						//map.events.add(event);
+						//
+						//						Rect ladder = new Rect(23 * 48 + 8, 0, 24 * 48 - 4, 48 * 6);
+						//
+						//						actions = new ArrayList<Action>();
+						//						params = new Parameters(new Object[] {0, 0, 0, 3, 1, 1});
+						//						actions.add(new Action(ActionIds.ID_SET_VARIABLE, params));
+						//						params = new Parameters(new Object[] {1, 0, ladder.centerX(), 1, 0, 2});
+						//						actions.add(new Action(ActionIds.ID_MOVE_ACTOR, params));
+						//						params = new Parameters(new Object[] {0});
+						//						actions.add(new Action(ActionIds.ID_HERO_SET_LADDER, params));
+						//						RegionTrigger trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_CONTAIN, true);
+						//						event = new Event(actions);
+						//						event.triggers.add(trigger2);
+						//						//map.events.add(event);
+						//
+						//						actions = new ArrayList<Action>();
+						//						params = new Parameters(new Object[] {1});
+						//						actions.add(new Action(ActionIds.ID_HERO_SET_LADDER, params));
+						//						trigger2 = new RegionTrigger(ladder, RegionTrigger.MODE_LOSE_TOUCH, true);
+						//						event = new Event(actions);
+						//						event.triggers.add(trigger2);
+						//						//map.events.add(event);
 
 					}
 				}
@@ -450,7 +451,7 @@ public class PlatformLogic implements Logic {
 			boolean triggered = false;
 
 			for (int j = 0; j < event.triggers.size(); j++) {
-				Trigger generic = event.triggers.get(i);
+				Trigger generic = event.triggers.get(j);
 
 				if (generic instanceof SwitchTrigger) {
 					SwitchTrigger trigger = (SwitchTrigger)generic;
@@ -525,6 +526,13 @@ public class PlatformLogic implements Logic {
 					s.setX((trigger.left + trigger.right) / 2 + offset.getX());
 					s.setY((trigger.top + trigger.bottom) / 2 + offset.getY());
 
+					if (trigger.contacts == null) {
+						trigger.contacts = new ArrayList<Event.RegionTrigger.Contact>();
+					}
+					for (int k = 0; k < trigger.contacts.size(); k++) {
+						trigger.contacts.get(k).event = -1;
+						trigger.contacts.get(k).checked = false;
+					}
 					world.QueryAABB(new QueryCallback() {
 						@Override
 						public boolean reportFixture(Fixture fixture) {
@@ -536,20 +544,31 @@ public class PlatformLogic implements Logic {
 									if (trigger.contacts.get(k).object == body) index = k;
 								}
 								if (index < 0) {
-									int state = inRegion ? 5 : 2;
-									trigger.contacts.add(new RegionTrigger.Contact(body, state));
+									int state = inRegion ? RegionTrigger.Contact.STATE_CONTAINED :
+										RegionTrigger.Contact.STATE_TOUCHING;
+									int event = inRegion ? RegionTrigger.MODE_CONTAIN :
+										RegionTrigger.MODE_TOUCH;
+									Game.debug("add %d", event);
+									trigger.contacts.add(new RegionTrigger.Contact(body, state, event));
 								} else {
 									RegionTrigger.Contact contact = trigger.contacts.get(index);
 									if (inRegion) {
-										if (contact.state == 3) {
-											contact.state = 4; //staying inside
-										} else if (contact.state < 4) {
-											contact.state = 5; //just fully entered
+										int newState = RegionTrigger.Contact.STATE_CONTAINED;
+										if (contact.state != newState) {
+											contact.event = RegionTrigger.MODE_CONTAIN;
+											contact.state = newState;
 										}
 									} else {
-										if (contact.state == 0 || contact.state > 2)
-											contact.state = 1; //staying touching or poked out
+										int newState = RegionTrigger.Contact.STATE_TOUCHING;
+										if (contact.state != newState) {
+											contact.event = 
+												contact.state == RegionTrigger.Contact.STATE_CONTAINED ?
+														RegionTrigger.MODE_LOSE_CONTAIN :
+															RegionTrigger.MODE_TOUCH;
+											contact.state = newState;
+										}
 									}
+									contact.checked = true;
 								}
 							}
 							return true;
@@ -559,19 +578,26 @@ public class PlatformLogic implements Logic {
 					for (int k = 0; k < trigger.contacts.size(); k++) {
 						RegionTrigger.Contact contact = trigger.contacts.get(k);
 
-						//Game.debug(contact.state);
-						if (trigger.getTriggerState() == contact.state) {
+						
+						int contactEvent = contact.event;
+						
+						if (!contact.checked) {
+							contactEvent = RegionTrigger.MODE_LOSE_TOUCH;
+							trigger.contacts.remove(k);
+							k--;
+						}
+
+						if (contactEvent >= 0 && ((PlatformBody)contact.object).isHero())
+							Game.debug(contactEvent);
+						
+						if (trigger.mode == contactEvent) {
 							if ((trigger.onlyHero && ((PlatformBody)contact.object).isHero())
 									|| !trigger.onlyHero) {
 								triggered = true;
 							}
 						}
 
-						contact.state--;
-						if (contact.state < 0) {
-							trigger.contacts.remove(k);
-							k--;
-						}
+						
 					}
 				}
 			}

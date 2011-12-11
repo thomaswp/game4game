@@ -12,6 +12,7 @@ import edu.elon.honors.price.maker.TextUtils;
 public class ElementChoice extends Element {
 
 	private String text;
+	private boolean mute;
 	
 	public String getText() {
 		return text;
@@ -30,12 +31,18 @@ public class ElementChoice extends Element {
 	protected void readAttributes(Attributes atts) {
 		super.readAttributes(atts);
 		text = atts.getValue("text");
+		String mute = atts.getValue("mute");
+		if (mute != null) {
+			this.mute = Boolean.parseBoolean(mute);
+		}
 	}
 
 	@Override
-	public String getDescription(PlatformGame game) {
+	public String getDescription(PlatformGame game) {		
 		StringBuilder sb = new StringBuilder();
-		TextUtils.addColoredText(sb, text, color);
+		if (!mute) {
+			TextUtils.addColoredText(sb, text, color);
+		}
 		for (int i = 0; i < children.size(); i++) {
 			sb.append(" ");
 			sb.append(children.get(i).getDescription(game));

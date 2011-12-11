@@ -119,6 +119,12 @@ public abstract class Element {
 			return new ElementActorClass(atts, context);
 		} else if (qName.equals("point")) {
 			return new ElementPoint(atts, context);
+		} else if (qName.equals("line")) {
+			return new ElementLine(atts, context);
+		} else if (qName.equals("string")) {
+			return new ElementString(atts, context);
+		} else if (qName.equals("region")) {
+			return new ElementRegion(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);
