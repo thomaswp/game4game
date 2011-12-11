@@ -49,6 +49,8 @@ public class PlatformBody {
 	private ArrayList<PlatformBody> collidedBodies = new ArrayList<PlatformBody>();
 	private boolean collidedWall;
 	private boolean onLadder;
+	
+	private int animationFrames = 4;
 
 	public boolean isOnLadder() {
 		return onLadder;
@@ -163,7 +165,7 @@ public class PlatformBody {
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Bitmap[] frames;
 		if (actor.animated) {
-			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / 4, bitmap.getHeight() / 4, 0); 
+			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / animationFrames, bitmap.getHeight() / 4, 0); 
 		} else {
 			frames = new Bitmap[] { bitmap.copy(bitmap.getConfig(), true) };
 		}
@@ -226,19 +228,20 @@ public class PlatformBody {
 				setOnLadder(false);
 		}
 		
+		
 		if (actor.animated && stun <= 0) {
 			if (onLadder) {
-				sprite.setFrame(12);
+				sprite.setFrame(3 * animationFrames);
 			} else {
 				int frame = sprite.getFrame();
-				if (directionX > 0 && (frame / 4 != 2 || !sprite.isAnimated())) {
-					sprite.Animate(FRAME, 8, 4);
-				} else if (directionX < 0 && (frame / 4 != 1 || !sprite.isAnimated())) {
-					sprite.Animate(FRAME, 4, 4);
+				if (directionX > 0 && (frame / animationFrames != 2 || !sprite.isAnimated())) {
+					sprite.Animate(FRAME, 2 * animationFrames, animationFrames);
+				} else if (directionX < 0 && (frame / animationFrames != 1 || !sprite.isAnimated())) {
+					sprite.Animate(FRAME, animationFrames, animationFrames);
 				}
 				if (sprite.isAnimated()) {
 					if (stopped) {
-						sprite.setFrame(frame - frame % 4);
+						sprite.setFrame(frame - frame % animationFrames);
 					}
 				}
 			}

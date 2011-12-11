@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.ActorInstance;
@@ -17,6 +18,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.AttributeSet;
@@ -25,6 +30,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
@@ -193,10 +199,88 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		}
 
 		linearLayoutActions.removeAllViews();
+		Stack<LinearLayout> hosts = new Stack<LinearLayout>();
+		hosts.add(linearLayoutActions);
+
 		for (int i = 0; i < event.actions.size(); i++) {
+			final Action action = event.actions.get(i);
+
+			while (hosts.size() - 1 > action.indent) {
+				View button = createAddActionButton(hosts.size() - 1, i);
+				LinearLayout layout = hosts.pop();
+				layout.addView(button);
+				hosts.peek().addView(layout);
+			}
+
 			ActionView av = new ActionView(this, i);
-			linearLayoutActions.addView(av);
+			hosts.peek().addView(av);
+			if (hosts.peek().getChildCount() == 1 && hosts.size() > 1) {
+				int res = hosts.size() % 2 == 0 ?
+						R.drawable.border_green : R.drawable.border_blue;
+				hosts.peek().setBackgroundDrawable(
+						getResources().getDrawable(res));
+			}
+
+
+			if (action.canHaveChildren()) {
+				LinearLayout layout = new LinearLayout(this);
+				layout.setOrientation(LinearLayout.VERTICAL);
+				LinearLayout.LayoutParams lp = 
+					new LinearLayout.LayoutParams(
+							LinearLayout.LayoutParams.FILL_PARENT, 
+							LinearLayout.LayoutParams.FILL_PARENT);
+				lp.setMargins(20, 0, 0, 0);
+				layout.setLayoutParams(lp);
+				hosts.push(layout);
+			}
 		}
+
+		while (hosts.size() > 1) {
+			View button = createAddActionButton(hosts.size() - 1, 
+					event.actions.size());
+			LinearLayout layout = hosts.pop();
+			layout.addView(button);
+			hosts.peek().addView(layout);
+		}
+	}
+
+	private View createAddActionButton(final int indent, final int index) {
+		LinearLayout layout = new LinearLayout(this);
+		layout.setOrientation(LinearLayout.HORIZONTAL);
+		//		for (int j = 0; j < indent; j++) {
+		//			TextView indentTV = new TextView(this);
+		//			indentTV.setTextSize(20);
+		//			indentTV.setText("\u21B3");
+		//			layout.addView(indentTV);
+		//		}
+		Button button = new Button(this);
+		button.setText("Add Action");
+		button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				newIndentAction(index, indent);
+			}
+		});
+		layout.addView(button);
+
+		return layout;
+	}
+
+	private void newIndentAction(final int index, final int indent) {
+		returnResponse = new ReturnResponse() {
+			@Override
+			void run(Intent data) {
+				Action a = (Action)data.getExtras()
+				.getSerializable("action");
+				a.indent = indent;
+				getEvent().actions.add(index, a);
+				populateViews();
+			}
+		};
+		Intent intent = new Intent(DatabaseEditEvent.this, 
+				DatabaseNewAction.class);
+		intent.putExtra("game", game);
+		startActivityForResult(intent, REQUEST_RETURN_GAME);
 	}
 
 	private abstract static class ReturnResponse {
@@ -210,79 +294,151 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			return getEvent().actions.get(index);
 		}
 
-		public ActionView(Context context, int actionIndex) {
+		public ActionView(final Context context, int actionIndex) {
 			super(context);
 
 			index = actionIndex;
 
 			setGravity(Gravity.CENTER_VERTICAL);
 
+			//			for (int i = 0; i < getAction().indent; i++) {
+			//				TextView indent = new TextView(context);
+			//				indent.setTextSize(20);
+			//				indent.setText("\u21B3");
+			//				addView(indent);
+			//			}
+
 			TextView tv = createTextView();
 			addView(tv);
 
-			Button buttonEdit = new Button(context);
-			buttonEdit.setText("Edit");
-			buttonEdit.setWidth(100);
-			buttonEdit.setOnClickListener(new OnClickListener() {
+			Button buttonOptions = new Button(context);
+			buttonOptions.setText("!");
+			buttonOptions.setWidth(50);
+			buttonOptions.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					returnResponse = new ReturnResponse() {
-						@Override
-						void run(Intent data) {
-							Action action = (Action)data.getExtras()
-								.getSerializable("action");
-							getEvent().actions.remove(index);
-							getEvent().actions.add(index, action);
-							populateViews();
-						}
-					};
-					Intent intent = new Intent(DatabaseEditEvent.this, 
-							DatabaseEditAction.class);
-					intent.putExtra("game", game);
-					intent.putExtra("id", getAction().id);
-					intent.putExtra("params", getAction().params);
-					startActivityForResult(intent, REQUEST_RETURN_GAME);
+					new AlertDialog.Builder(context).setItems(
+							new String[] { "Edit", "Insert", "Delete" },
+							new AlertDialog.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									switch (which) {
+										case 0: edit();	break;
+										case 1: insert(); break;
+										case 2: delete(); break;
+									}
+								}
+							}
+					).show();
 				}
 			});
-			addView(buttonEdit);
+			
+			addView(buttonOptions);
 
-			Button buttonInsert = new Button(context);
-			buttonInsert.setText("Insert");
-			buttonInsert.setWidth(100);
-			buttonInsert.setOnClickListener(new OnClickListener() {
+			//			Button buttonEdit = new Button(context);
+			//			buttonEdit.setText("Edit");
+			//			buttonEdit.setWidth(100);
+			//			buttonEdit.setOnClickListener(new OnClickListener() {
+			//				@Override
+			//				public void onClick(View v) {
+			//					edit();
+			//				}
+			//			});
+			//			addView(buttonEdit);
+			//
+			//			Button buttonInsert = new Button(context);
+			//			buttonInsert.setText("Insert");
+			//			buttonInsert.setWidth(100);
+			//			buttonInsert.setOnClickListener(new OnClickListener() {
+			//				@Override
+			//				public void onClick(View v) {
+			//					insert();
+			//				}
+			//			});
+			//			addView(buttonInsert);
+			//
+			//			Button buttonDelete = new Button(context);
+			//			buttonDelete.setText("Delete");
+			//			buttonDelete.setWidth(100);
+			//			buttonDelete.setOnClickListener(new OnClickListener() {
+			//				@Override
+			//				public void onClick(View v) {
+			//					delete();
+			//				}
+			//			});
+			//			addView(buttonDelete);
+
+		}
+
+		private void edit() {
+			returnResponse = new ReturnResponse() {
 				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(DatabaseEditEvent.this, 
-							DatabaseNewAction.class);
-					intent.putExtra("game", game);
-
-					returnResponse = new ReturnResponse() {
-						@Override
-						void run(Intent data) {
-							Action action = (Action)data.getExtras().
-							getSerializable("action");
-							getEvent().actions.add(index, action);
-							populateViews();
-						}
-					};
-
-					startActivityForResult(intent, REQUEST_RETURN_GAME);
-				}
-			});
-			addView(buttonInsert);
-
-			Button buttonDelete = new Button(context);
-			buttonDelete.setText("Delete");
-			buttonDelete.setWidth(100);
-			buttonDelete.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
+				void run(Intent data) {
+					Action action = (Action)data.getExtras()
+					.getSerializable("action");
+					action.indent = getAction().indent;
 					getEvent().actions.remove(index);
+					getEvent().actions.add(index, action);
 					populateViews();
 				}
-			});
-			addView(buttonDelete);
+			};
+			Intent intent = new Intent(DatabaseEditEvent.this, 
+					DatabaseEditAction.class);
+			intent.putExtra("game", game);
+			intent.putExtra("id", getAction().id);
+			intent.putExtra("params", getAction().params);
+			startActivityForResult(intent, REQUEST_RETURN_GAME);
+		}
 
+		private void insert() {
+			Intent intent = new Intent(DatabaseEditEvent.this, 
+					DatabaseNewAction.class);
+			intent.putExtra("game", game);
+
+			returnResponse = new ReturnResponse() {
+				@Override
+				void run(Intent data) {
+					Action action = (Action)data.getExtras().
+					getSerializable("action");
+					action.indent = getAction().indent;
+					getEvent().actions.add(index, action);
+					populateViews();
+				}
+			};
+
+			startActivityForResult(intent, REQUEST_RETURN_GAME);
+		}
+
+		private void delete() {
+			int toRemove = 1;
+			final ArrayList<Action> actions = getEvent().actions;
+			for (int i = index + 1; i < actions.size(); i++) {
+				if (actions.get(i).indent > actions.get(index).indent) {
+					toRemove++;
+				} else {
+					break;
+				}
+			}
+			final int toRemoveF = toRemove;
+			if (toRemove == 1) {
+				getEvent().actions.remove(index);
+				populateViews();
+			} else {
+				new AlertDialog.Builder(getContext())
+				.setTitle("Delete?")
+				.setMessage("This will delete all the actions inside this statement. Are you sure you want to delete?")
+				.setPositiveButton("Delete", new AlertDialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						for (int i = 0; i < toRemoveF; i++) {
+							actions.remove(index);
+							populateViews();
+						}
+					}
+				})
+				.setNegativeButton("Cancel", null)
+				.show();
+			}
 		}
 
 		private TextView createTextView() {
@@ -290,12 +446,12 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
 			TextView tv = new TextView(getContext());
-			tv.setWidth(200);
+			//tv.setWidth(200);
 			tv.setSingleLine(false);
 			tv.setTextSize(16);
 			tv.setLayoutParams(lp);
 			tv.requestLayout();
-			
+
 			tv.setText(Html.fromHtml(getAction().description));
 			return tv;
 		}

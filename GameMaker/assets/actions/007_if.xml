@@ -1,0 +1,59 @@
+<action id="7" name="If...">
+
+	<text text="If" />
+	<radio>
+		<choice text="the switch" mute="true">
+			<switch />
+			<radio>
+				<choice text="equals" />
+				<choice text="does not equal" />
+			</radio>
+			<radio>
+				<choice text="On" color="value" />
+				<choice text="Off" color="value" />
+				<choice text="the switch" mute="true">
+					<switch />
+				</choice>
+			</radio>
+		</choice>
+		<choice text="the variable" mute="true">
+			<variable />
+			<radio>
+				<choice text="=" />
+				<choice text="≠" />
+				<choice text="&gt;" />
+				<choice text="≥" />
+				<choice text="&lt;" />
+				<choice text="≤" />
+			</radio>
+			<radio>
+				<choice text="the variable" mute="true">
+					<variable />
+				</choice>
+				<choice text="the value" mute="true">
+					<number />
+				</choice>
+			</radio>
+		</choice>
+		<choice text="the actor" mute="true">
+			<actorInstance />
+			<radio>
+				<choice text="property" mute="true">
+					<radio>
+						<choice text="is alive" />
+						<choice text="is dead" />
+					</radio>
+				</choice>
+				<choice text="region" mute="true">
+					<radio>
+						<choice text="is inside" />
+						<choice text="is touching" />
+						<choice text="is outside" />
+					</radio>
+					<region />
+				</choice>
+			</radio>
+		</choice>
+	</radio>
+
+</action>

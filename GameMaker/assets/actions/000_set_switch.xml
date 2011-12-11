@@ -3,14 +3,13 @@
 	<text text="For" />
 
 	<radio>
-		<choice text="one switch">
-			<text text="width the id" />
+		<choice text="one switch" mute="true">
 			<switch />
 		</choice>
 		<choice text="all switches from">
 			<group>
 				<switch />
-				<text value="to" />
+				<text text="to" />
 				<switch />
 			</group>
 		</choice>
@@ -21,7 +20,7 @@
 			<radio>
 				<choice text="On" color="value" />
 				<choice text="Off" color="value" />
-				<choice text="a Switch's value">
+				<choice text="a Switch's value" mute="true" >
 					<switch />
 				</choice>
 				<choice text="a random value" />

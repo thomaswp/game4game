@@ -1,8 +1,8 @@
-<action id="2" name="Create Actor">
+<action id="4" name="Move Actor">
 
-	<text text="Create a" />
-	<actorClass />
-	<text text="at" />
+	<text text="Move" />
+	<actorInstance />
+	<text text="to" />
 	
 	<radio>
 		<choice text="the exact point">
@@ -23,6 +23,7 @@
 	<radio>
 		<choice text="left" color="value" />
 		<choice text="right" color="value" />
+		<choice text="the same direction" />
 	</radio>
 
 </action>
