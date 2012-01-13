@@ -36,6 +36,17 @@ public final class Data {
 	public final static String ACTIONS_DIR = "actions";
 	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
+	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
+	
+	private static Context defaultParent;
+	
+	public static Context getDefaultParent() {
+		return defaultParent == null ? Game.getCurrentGame() : defaultParent;
+	}
+	
+	public static void setDefaultParent(Context parent) {
+		defaultParent = parent;
+	}
 	
 	private static Bitmap loadBitmap(String name, Context parent) {
 		try {
@@ -54,6 +65,7 @@ public final class Data {
 					return bmp;
 				} catch (Exception ex) {
 					Game.debug("Could not find '" + name + "' in local resrounces. Attempting external storage.");
+					ex.printStackTrace();
 					if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 						File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + name);
 						return BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -118,6 +130,10 @@ public final class Data {
 		return null;
 	}
 	
+	public static Bitmap loadObject(String name) {
+		return loadBitmap(OBJECTS_DIR + name, getDefaultParent());
+	}
+	
 	/**
 	 * Loads an actor from the ACTORS_DIR directory. Uses the current running
 	 * Game as a context. Use only from an appropriate Logic class.
@@ -126,7 +142,7 @@ public final class Data {
 	 * @return The bitmap.
 	 */
 	public static Bitmap loadActor(String name) {
-		return loadActor(name, Game.getCurrentGame());
+		return loadActor(name, getDefaultParent());
 	}
 	
 	/**
@@ -148,7 +164,7 @@ public final class Data {
 	 * @return The bitmap.
 	 */
 	public static Bitmap loadTileset(String name) {
-		return loadTileset(name, Game.getCurrentGame());
+		return loadTileset(name, getDefaultParent());
 	}
 	
 	/**
@@ -159,7 +175,7 @@ public final class Data {
 	 * @return The bitmap.
 	 */
 	public static Bitmap loadTileset(String name, Context parent) {
-		return loadBitmap(TILESETS_DIR + name, parent);
+		return loadBitmap(TILESETS_DIR + name, getDefaultParent());
 	}
 
 	/**

@@ -3,14 +3,13 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.input.Input;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -35,19 +34,17 @@ public class MapActorSelector extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		String gameName = getIntent().getExtras().getString("gameName");
-		PlatformGame game = (PlatformGame)Data.loadGame(gameName, this);
+		PlatformGame game = (PlatformGame)getIntent().getExtras().getSerializable("game");
 		int id = getIntent().getExtras().getInt("id");
-		if (id == -1) id = 1; else if (id != 0) id++;
+		id++;
 			
-		Game.debug(System.currentTimeMillis());
-		
 		final MapActorSelector me = this;
 		view = new ASView(this, game, id, new ASView.Poster() {
 			@Override
 			void post(int id) {
+				Input.reset();
 				Intent intent = new Intent();
-				if (id == 1) id = -1; else if (id != 0) id--;
+				id--;
 				intent.putExtra("id", id);
 				view.getThread().interrupt();
 				me.setResult(RESULT_OK, intent);
@@ -88,8 +85,9 @@ public class MapActorSelector extends Activity {
 			bitmaps = new Bitmap[game.actors.length + 1];
 			names = new String[game.actors.length];
 			
-			bitmaps[0] = Bitmap.createBitmap(32 * 2, 48 * 2, Sprite.getDefaultConfig());
-			bitmaps[0].eraseColor(Color.RED);
+			bitmaps[0] = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.no);
+			bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], 
+					bitmaps[0].getWidth() * 2, bitmaps[0].getHeight() * 2, false);
 
 			for (int i = 0; i < game.actors.length; i++) {
 				ActorClass actor = i == 0 ? game.hero : game.actors[i];
@@ -118,10 +116,7 @@ public class MapActorSelector extends Activity {
 			this.width = width;
 			this.height = height;
 			okRect = new RectF(width - 50, 0, width, 50);
-		}
-
-		@Override
-		public void surfaceCreated(SurfaceHolder holder) {
+			
 			createRects();
 
 			thread = new Thread(new Runnable() {
@@ -138,6 +133,11 @@ public class MapActorSelector extends Activity {
 				}
 			});
 			thread.start();
+		}
+
+		@Override
+		public void surfaceCreated(SurfaceHolder holder) {
+			
 		}
 
 		@Override
@@ -202,7 +202,7 @@ public class MapActorSelector extends Activity {
 			int x = 0, y = 0, maxHeight = 0;
 			for (int i = 0; i < bitmaps.length; i++) {
 				Bitmap bmp = bitmaps[i];
-				if (x + bmp.getWidth() + BORDER >= Graphics.getWidth() && x != 0) {
+				if (x + bmp.getWidth() + BORDER >= this.width && x != 0) {
 					x = 0;
 					y += maxHeight;
 					maxHeight = 0;
@@ -223,7 +223,7 @@ public class MapActorSelector extends Activity {
 					poster.post(id);
 					return;
 				}
-				move = Input.getLastTouchX() > Graphics.getWidth() - BORDER;
+				move = Input.getLastTouchX() > this.width - BORDER;
 				startScrollY = scrollY;
 				if (!move) {
 					for (int i = 0; i < bitmapRects.length; i++) {

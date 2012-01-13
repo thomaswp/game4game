@@ -40,7 +40,7 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 		super.finishOk();
 	}
 
-	private static class ActorInstanceView extends MapView {
+	private static class ActorInstanceView extends SelectorMapView {
 		private int selectedId;
 		private Paint paint;
 		
@@ -69,7 +69,7 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 
 		@Override
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId,
-				Bitmap bmp) {
+				Bitmap bmp, Paint paint) {
 			if (instanceId == selectedId) {
 				paint.setColor(selectionFillColor);
 				paint.setStyle(Style.FILL);
@@ -79,7 +79,7 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 				paint.setStrokeWidth(selectionBorderWidth);
 				c.drawRect(dx + 2, dy + 2, dx + bmp.getWidth() - 2, dy + bmp.getHeight() - 2, paint);
 			}
-			super.drawActor(c, dx, dy, instanceId, bmp);
+			super.drawActor(c, dx, dy, instanceId, bmp, paint);
 		}
 
 		protected boolean doSelection() {

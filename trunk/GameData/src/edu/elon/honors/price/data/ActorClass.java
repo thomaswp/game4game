@@ -41,6 +41,7 @@ public class ActorClass implements Serializable, Cloneable {
 	public float zoom = 1;
 	public boolean collidesWithActors = true;
 	public boolean collidesWithHero = true;
+	public boolean collidesWithObjects = true;
 	
 	@Override
 	public ActorClass clone() {
