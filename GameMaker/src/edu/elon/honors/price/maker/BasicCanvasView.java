@@ -56,6 +56,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		while(true) {
 			try {
 				thread.join();
+				Input.reset();
 				break;
 			} catch (Exception e) {}
 		}

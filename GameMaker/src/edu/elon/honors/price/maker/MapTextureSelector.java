@@ -42,6 +42,7 @@ public class MapTextureSelector extends Activity {
 		view = new TSView(this, bitmap, r, tileWidth, tileHeight, new TSView.Poster() {
 			@Override
 			void post(Rect rect) {
+				Input.reset();
 				Intent intent = new Intent();
 				intent.putExtra("left", rect.left);
 				intent.putExtra("top", rect.top);

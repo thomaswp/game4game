@@ -98,7 +98,7 @@ public class Interpreter extends ActionIds {
 						int randTo = params.getParameters(4).getInt(1);
 						argument = randFrom + rand.nextInt(randTo - randFrom + 1);
 					} else {
-						PlatformBody body = logic.getBodyFromId(params.getInt(4));
+						ActorBody body = logic.getActorBodyFromId(params.getInt(4));
 						if (body != null) {
 							Vector pos = body.getScaledPosition();
 							if (params.getInt(5) == 0)
@@ -149,7 +149,7 @@ public class Interpreter extends ActionIds {
 				
 				ActorClass actor = logic.getGame().actors[params.getInt()];
 				if (actor != null)
-					logic.addBody(new ActorAddable(actor, x, y, dir));
+					logic.addActorBody(new ActorAddable(actor, x, y, dir));
 			}
 			
 			if (action.id == ID_MOVE_ACTOR) {
@@ -171,7 +171,7 @@ public class Interpreter extends ActionIds {
 					dir = 1;
 				}
 				
-				PlatformBody body = logic.getBodyFromId(params.getInt());
+				ActorBody body = logic.getActorBodyFromId(params.getInt());
 				if (body != null) {
 					body.getBody().setTransform(x / SCALE, y / SCALE, body.getBody().getAngle());
 					if (params.getInt(4) != 2)
@@ -180,7 +180,7 @@ public class Interpreter extends ActionIds {
 			}
 			
 			if (action.id == ID_ACTOR_BEHAVIOR) {
-				PlatformBody body = logic.getBodyFromId(params.getInt());
+				ActorBody body = logic.getActorBodyFromId(params.getInt());
 				if (body != null) {
 					body.doBehavior(params.getInt(1), null);
 				}

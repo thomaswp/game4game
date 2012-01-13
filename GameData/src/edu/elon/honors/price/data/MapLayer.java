@@ -17,4 +17,12 @@ public class MapLayer implements Serializable{
 		this.tiles = new int[rows][columns];
 	}
 
+	public void setAll(int id) {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				tiles[i][j] = id;
+			}
+		}
+	}
+
 }

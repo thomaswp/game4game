@@ -9,9 +9,12 @@ public class Map implements Serializable{
 	public int tilesetId;
 	public MapLayer[] layers;
 	public MapLayer actorLayer;
+	public MapLayer objectLayer;
 	public ArrayList<ActorInstance> actors; 
+	public ArrayList<ObjectInstance> objects;
 	public Event[] events;
 	public int rows, columns;
+	public Serializable editorData;
 	
 	public Map() {
 		
@@ -22,14 +25,22 @@ public class Map implements Serializable{
 		
 		//layer with tiles representing indices in the actors ArrayList 
 		actorLayer = new MapLayer("actors", rows, columns, false);
+		actorLayer.setAll(-1);
+		
+		actors = new ArrayList<ActorInstance>();
+		actors.add(null);
+		setActor(0, 0, 0);
+
+		objectLayer = new MapLayer("objects", rows, columns, false);
+		objectLayer.setAll(-1);
+		
+		objects = new ArrayList<ObjectInstance>();
+		setObject(1, 1, 1);
+		
 		
 		events = new Event[3];
 		for (int i = 0; i < events.length; i++) 
 			events[i] = new Event(String.format("Event%d", i));
-		
-		actors = new ArrayList<ActorInstance>();
-		actors.add(null);
-		setActor(0, 0, -1);
 		
 		layers = new MapLayer[3];
 		MapLayer layer = new MapLayer("background", rows, columns, false);
@@ -40,8 +51,39 @@ public class Map implements Serializable{
 		layers[2] = layer;
 	}
 	
+	public int getObjectType(int row, int column) {
+		int id = objectLayer.tiles[row][column];
+		return id >= 0 ? objects.get(id).classIndex : -1;
+	}
+	
+	public ObjectInstance getObjectInstance(int row, int column) {
+		return objects.get(objectLayer.tiles[row][column]);
+	}
+	
+	public int setObject(int row, int column, int type) {
+		int previousId = objectLayer.tiles[row][column];
+		if (type == -1) {
+			if (previousId >= 0) {
+				//Remove old instance?
+			}
+			objectLayer.tiles[row][column] = -1;
+			return -1;
+		} else {
+			if (previousId > -1) {
+				if (objects.get(previousId).classIndex == type) {
+					return previousId;
+				}
+			}
+			ObjectInstance instance = new ObjectInstance(objects.size(), type);
+			objects.add(instance);
+			objectLayer.tiles[row][column] = instance.id;
+			return instance.id;
+		}
+	}
+	
 	public int getActorType(int row, int column) {
 		int id = actorLayer.tiles[row][column];
+		if (id == -1) return -1;
 		return id > 0 ? actors.get(id).classIndex : 0;
 	}
 	
@@ -50,9 +92,9 @@ public class Map implements Serializable{
 	}
 	
 	/**
-	 * Sets the actor at the given row and column to the type give.
-	 * If the type is 0, it clears the actor.
-	 * If the type is -1, it sets the actor to the hero.
+	 * Sets the actor at the given row and column to the type given.
+	 * If the type is -1, it clears the actor.
+	 * If the type is 0, it sets the actor to the hero.
 	 * If the type is greater than 0, it creates a new actor instance
 	 * with its class' id given by the type
 	 * 
@@ -67,13 +109,16 @@ public class Map implements Serializable{
 	 * 1 is always the hero, and 0 indicates the actor was cleared.
 	 */
 	public int setActor(int row, int column, int type) {
-		if (type == 0) {
-			if (actorLayer.tiles[row][column] != 0) {
+		if (type == -1) {
+			if (actorLayer.tiles[row][column] > 0) {
 				//Dispose actor?
+				if (actorLayer.tiles[row][column] == actors.size() - 1) {
+					actors.remove(actors.size() - 1);
+				}
 			}
-			actorLayer.tiles[row][column] = 0;
+			actorLayer.tiles[row][column] = -1;
 			return 0;
-		} else if (type == -1 && actors.size() > 1) {
+		} else if (type == 0 && actors.size() > 1) {
 			actorLayer.tiles[row][column] = 1;
 			return 1;
 		} else {
@@ -86,5 +131,27 @@ public class Map implements Serializable{
 			actorLayer.tiles[row][column] = actor.id;
 			return actor.id;
 		}
+	}
+	
+	public int getHeroRow() {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				if (getActorType(i,j) == 0) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public int getHeroCol() {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				if (getActorType(i,j) == 0) {
+					return j;
+				}
+			}
+		}
+		return -1;
 	}
 }

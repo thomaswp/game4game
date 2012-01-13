@@ -46,7 +46,7 @@ public class SelectorMapPoint extends SelectorMapBase {
 		super.finishOk();
 	}
 
-	protected static class PointView extends MapView {
+	protected static class PointView extends SelectorMapView {
 
 		protected final static int SCROLL_BORDER = 25;
 		protected final static int SCROLL_TICK = 3;
@@ -64,10 +64,14 @@ public class SelectorMapPoint extends SelectorMapBase {
 
 		public PointView(Context context, PlatformGame game, int x, int y) {
 			super(context, game);
-			this.showLeftButton = true;
 			this.x = x;
 			this.y = y;
 			paint = new Paint();
+		}
+		
+		@Override
+		protected boolean showLeftButton() {
+			return true;
 		}
 
 		public void surfaceCreated(SurfaceHolder holder) {
@@ -80,7 +84,7 @@ public class SelectorMapPoint extends SelectorMapBase {
 			float x = Input.getLastTouchX();
 			float y = Input.getLastTouchY();
 
-			if (!isInLeftButton(x, y) && !isInRightButton(x, y)) {
+			if (!leftButton.isInButton(x, y) && !rightButton.isInButton(x, y)) {
 				this.x = (int)(x - offX);
 				this.y = (int)(y - offY);
 				validatePoint();
@@ -90,7 +94,7 @@ public class SelectorMapPoint extends SelectorMapBase {
 		}
 
 		protected void updateSelection() {
-			if (Input.isTouchDown() && !leftButtonDown && !rightButtonDown) {
+			if (Input.isTouchDown() && !leftButton.down && !rightButton.down) {
 				float x = Input.getLastTouchX();
 				float y = Input.getLastTouchY();
 
