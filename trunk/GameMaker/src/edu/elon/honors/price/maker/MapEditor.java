@@ -2,107 +2,59 @@ package edu.elon.honors.price.maker;
 
 import com.twp.platform.Platformer;
 
+import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.game.Cache;
 import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.game.Logic;
-import edu.elon.honors.price.maker.MapEditorLogic.ActorHolder;
-import edu.elon.honors.price.maker.MapEditorLogic.RectHolder;
+import edu.elon.honors.price.input.Input;
+import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Rect;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.Bitmap.Config;
+import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
-public class MapEditor extends Game {
+public class MapEditor extends MapActivityBase {
 
-	private static final int REQUEST_CODE_TEXTURE = 0;
-	private static final int REQUEST_CODE_ACTOR = 1;
-
-	private Rect selectionRect = new Rect();
-	private int actorId = -2;
-	private boolean isSelecting;
-	private String gameName;
-	private MapEditorLogic logic;
+	protected String gameName;
+	protected ReturnResponse returnResponse;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		this.gameName = getIntent().getExtras().getString("map");
+		Data.setDefaultParent(this);
+		gameName = getIntent().getExtras().getString("gameName");
 		super.onCreate(savedInstanceState);
 	}
 
-	@Override
-	protected Logic getNewLogic() {
-
-		RectHolder rectHolder = new RectHolder() {
-
-			@Override
-			public void newRect(String bitmapName, int tileWidth, int tileHeight) {
-				if (isSelecting) {
-					return;
-				}
-				isSelecting = true;
-
-				Intent intent = new Intent(MapEditor.this, MapTextureSelector.class);
-				intent.putExtra("id", bitmapName);
-				intent.putExtra("tileWidth", tileWidth);
-				intent.putExtra("tileHeight", tileHeight);
-				Rect rect = this.getRect();
-				intent.putExtra("left", rect.left);
-				intent.putExtra("top", rect.top);
-				intent.putExtra("right", rect.right);
-				intent.putExtra("bottom", rect.bottom);
-
-				startActivityForResult(intent, REQUEST_CODE_TEXTURE);
-			}
-
-			@Override
-			public Rect getRect() {
-				return selectionRect;
-			}
-		};
-
-		ActorHolder actorHolder = new ActorHolder() {
-
-			@Override
-			public void newActor(PlatformGame game) {
-				if (isSelecting) {
-					return;
-				}
-				isSelecting = true;
-
-				Intent intent = new Intent(MapEditor.this, MapActorSelector.class);
-
-				intent.putExtra("id", actorId);
-				intent.putExtra("gameName", gameName);
-
-				startActivityForResult(intent, REQUEST_CODE_ACTOR);
-			}
-
-			@Override
-			public int getActorId() {
-				return actorId;
-			}
-		};
-
-
-		MapEditorLogic pm = new MapEditorLogic(gameName.substring(MainMenu.PREFIX.length()), rectHolder, actorHolder);
-		return pm;
+	protected MapView getMapView(PlatformGame game) {
+		return new MapEditorView(this, game);
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		if (logic != null) {
-			view.setLogic(logic);
-		} else {
-			logic = (MapEditorLogic)getLogic();
-		}
+	protected boolean hasChanged() {
+		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
+		return !PlatformGame.areEqual(oldGame, game);
 	}
 
+	protected void finishOk() {
+		finish();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Database");
@@ -111,17 +63,17 @@ public class MapEditor extends Game {
 		menu.add("Test");
 		return super.onCreateOptionsMenu(menu);
 	}
-
+	
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getTitle().equals("Database")) {
 			Intent intent = new Intent(this, Database.class);
-			intent.putExtra("game", logic.getGame());
+			intent.putExtra("game", game);
 			startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
 		} else if (item.getTitle().equals("Save")) {
 			save();
 		} else if (item.getTitle().equals("Load")) {
-			if (logic.isChanged()) {
+			if (hasChanged()) {
 				new AlertDialog.Builder(this)
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setTitle("Discard Changes?")
@@ -139,7 +91,7 @@ public class MapEditor extends Game {
 				load();
 			}
 		} else if (item.getTitle().equals("Test")) {
-			if (logic.isChanged()) {
+			if (hasChanged()) {
 				new AlertDialog.Builder(this)
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setTitle("Save First?")
@@ -168,9 +120,9 @@ public class MapEditor extends Game {
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
-
+	
 	private void test() {
-		Intent intent = new Intent(MapEditor.this, Platformer.class);
+		Intent intent = new Intent(this, Platformer.class);
 		intent.putExtra("map", gameName);
 		startActivity(intent);
 		Game.debug(System.currentTimeMillis());
@@ -178,17 +130,28 @@ public class MapEditor extends Game {
 
 	private void save() {
 		try {
-			((MapEditorLogic)view.getLogic()).saveFinal();
+			((MapEditorView)view).saveMapData();
+			Data.saveGame(gameName, this, game);
+			PlatformGame gameCopy = (PlatformGame) Data.loadGame(gameName, this);
+			getIntent().putExtra("game", gameCopy);
 			Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			Toast.makeText(this, "Save Failed!", Toast.LENGTH_SHORT).show(); 
 		}
 	}
+	
+	private void refresh() {
+		((MapEditorView)view).refresh();
+	}
 
 	private void load() {
 		try {
-			((MapEditorLogic)view.getLogic()).loadFinal();
+			game = (PlatformGame) Data.loadGame(gameName, this);
+			((MapEditorView)view).setGame(game);
+			PlatformGame gameCopy = (PlatformGame) Data.loadGame(gameName, this);
+			getIntent().putExtra("game", gameCopy);
+			refresh();
 			Toast.makeText(this, "Load Successful!", Toast.LENGTH_SHORT).show(); 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -200,24 +163,22 @@ public class MapEditor extends Game {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			if (requestCode == REQUEST_CODE_TEXTURE) {
-				int left = data.getExtras().getInt("left");
-				int top = data.getExtras().getInt("top");
-				int right = data.getExtras().getInt("right");
-				int bottom = data.getExtras().getInt("bottom");
-				selectionRect.set(left, top, right, bottom);
-			} else if (requestCode == REQUEST_CODE_ACTOR) {
-				actorId = data.getExtras().getInt("id");
-			} else if (requestCode == DatabaseActivity.REQUEST_RETURN_GAME) {
-				logic.setGame((PlatformGame)data.getSerializableExtra("game"));
+			if (requestCode == DatabaseActivity.REQUEST_RETURN_GAME) {
+				game = (PlatformGame)data.getExtras().getSerializable("game");
+				((MapEditorView)view).setGame(game);
+			} else {
+				if (returnResponse != null) {
+					returnResponse.onReturn(data);
+					returnResponse = null;
+				}
 			}
+			refresh();
 		}
-		isSelecting = false;
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (logic.isChanged()) {
+		if (hasChanged()) {
 			new AlertDialog.Builder(this)
 			.setIcon(android.R.drawable.ic_dialog_alert)
 			.setTitle("Save?")
@@ -242,5 +203,9 @@ public class MapEditor extends Game {
 		} else {
 			finish();
 		}
+	}
+	
+	public static abstract class ReturnResponse {
+		public abstract void onReturn(Intent data);
 	}
 }

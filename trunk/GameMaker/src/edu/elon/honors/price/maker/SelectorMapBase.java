@@ -4,6 +4,7 @@ import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.MapLayer;
+import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Cache;
@@ -138,7 +139,7 @@ public class SelectorMapBase extends MapActivityBase {
 		}
 
 		protected boolean shouldSelect() {
-			return !rightButton.showing || mode == MODE_SELECT;
+			return !leftButton.showing || mode == MODE_SELECT;
 		}
 		
 		protected boolean doSelection() {
@@ -192,11 +193,15 @@ public class SelectorMapBase extends MapActivityBase {
 		}
 		
 		protected void drawContent(Canvas c) {
+			drawTiles(c);
+			drawActors(c);
+			drawObjects(c);
+		}
+		
+		protected void drawTiles(Canvas c) {
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
-
 			paint.setColor(Color.WHITE);
-
 			for (int i = 0; i < map.layers.length; i++) {
 				MapLayer layer = map.layers[i];
 
@@ -212,18 +217,30 @@ public class SelectorMapBase extends MapActivityBase {
 
 				paint.setAlpha(200);
 			}
-
-			drawActors(c);
 		}
-		
 
 		protected void drawTile(Canvas c, float x, float y, int tileId, Bitmap tileBitmap) {
 			c.drawBitmap(tileBitmap, x + offX, y + offY, paint);
 		}
 		
+		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
+				Bitmap bitmap, Paint paint) {
+			paint.setAlpha(255);
+			c.drawBitmap(bitmap, x, y, paint);
+		}
+		
+		protected void drawObjects(Canvas c) {
+			for (int i = 0; i < game.getSelectedMap().objects.size(); i++) {
+				ObjectInstance instance = game.getSelectedMap().objects.get(i);
+				Bitmap bitmap = objects[instance.classIndex];
+				float x = instance.startX - bitmap.getWidth() / 2 + offX;
+				float y = instance.startY - bitmap.getHeight() / 2 + offY;
+				drawObject(c, instance, x, y, bitmap, paint);
+			}
+		}
+		
 		protected void drawActors(Canvas c) {
 			paint.setAlpha(255);
-			paint.setTextSize(12);
 			paint.setAntiAlias(true);
 			
 			Map map = game.getSelectedMap();

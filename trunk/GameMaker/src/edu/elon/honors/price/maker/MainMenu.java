@@ -253,7 +253,7 @@ public class MainMenu extends Activity {
 
 	private void edit() {
 		if (selectedMap != null) {
-			Intent intent = new Intent(this, MapEditor_Canvas.class);
+			Intent intent = new Intent(this, MapEditor.class);
 			PlatformGame game = (PlatformGame) Data.loadGame(selectedMap, this);
 			intent.putExtra("gameName", selectedMap);
 			intent.putExtra("game", game);

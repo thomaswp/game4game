@@ -10,6 +10,8 @@ public class PageTest extends Page {
 	private SelectorSwitch ss, ss2;
 	private SelectorVariable sv1, sv2;
 	private SelectorPoint sp;
+	private SelectorObjectInstance so;
+	private SelectorObjectClass soc;
 	
 	public PageTest(Database parent) {
 		super(parent);
@@ -36,6 +38,8 @@ public class PageTest extends Page {
 		sv1 = (SelectorVariable)findViewById(R.id.selectorVariable1);
 		sv2 = (SelectorVariable)findViewById(R.id.selectorVariable2);
 		sp = (SelectorPoint)findViewById(R.id.selectorPoint1);
+		so = (SelectorObjectInstance)findViewById(R.id.selectorObjectInstance1);
+		soc = (SelectorObjectClass)findViewById(R.id.selectorObjectClass1);
 		
 		populate();
 		
@@ -63,6 +67,8 @@ public class PageTest extends Page {
 		sv1.onActivityResult(requestCode, data);
 		sv2.onActivityResult(requestCode, data);
 		sp.onActivityResult(requestCode, data);
+		so.onActivityResult(requestCode, data);
+		soc.onActivityResult(requestCode, data);
 	}
 
 	private void populate() {
@@ -74,5 +80,7 @@ public class PageTest extends Page {
 		sv1.populate(getGame());
 		sv2.populate(getGame());
 		sp.populate(getGame());
+		so.populate(getGame());
+		soc.populate(getGame());
 	}
 }

@@ -288,19 +288,15 @@ public class PlatformLogic implements Logic {
 
 			}
 		}
-		
-		MapLayer objectLayer = map.objectLayer;
-		for (int i = 0; i < objectLayer.rows; i++) {
-			for (int j = 0; j < objectLayer.columns; j++) {
-				float x = (j + 0.5f) * game.getMapTileset(map).tileWidth;
-				float y = (i + 0.5f) * game.getMapTileset(map).tileHeight;
-				int instanceId = objectLayer.tiles[i][j];
-				if (instanceId >= 0) {
-					ObjectInstance instance = this.map.objects.get(instanceId);
-					int objectId = instance.classIndex;
-					addObjectBody(game.objects[objectId], instanceId, x, y);
-				}
 
+		for (int i = 0; i < map.objects.size(); i++) {
+			ObjectInstance instance = map.objects.get(i);
+			if (instance != null) {
+				float x = instance.startX;
+				float y = instance.startY;
+				int instanceId = instance.id;
+				int objectId = instance.classIndex;
+				addObjectBody(game.objects[objectId], instanceId, x, y);
 			}
 		}
 	}
@@ -569,7 +565,7 @@ public class PlatformLogic implements Logic {
 						ActorBody bodyB = (ActorBody)bodyA.getCollidedBodies().get(j);
 
 						Game.debug("%s v %s", bodyA.getActor().name, bodyB.getActor().name);
-						
+
 						int dir = ActorBody.getCollisionDirection(bodyA, bodyB);
 						if (bodyB.isHero())
 							bodyA.doBehaviorCollideHero(dir, bodyB);
@@ -613,9 +609,9 @@ public class PlatformLogic implements Logic {
 
 		offset.add(p);
 
-		for (int i = 0; i < actorBodies.size(); i++) {
-			if (actorBodies.get(i) != null) {
-				actorBodies.get(i).updateSprite(offset);
+		for (int i = 0; i < platformBodies.size(); i++) {
+			if (platformBodies.get(i) != null) {
+				platformBodies.get(i).updateSprite(offset);
 			}
 		}
 
@@ -656,7 +652,7 @@ public class PlatformLogic implements Logic {
 		});
 		objectBodies.set(id, body);
 		platformBodies.add(body);
-		
+
 		return body;
 	}
 
@@ -680,12 +676,12 @@ public class PlatformLogic implements Logic {
 		}
 		ActorBody body = new ActorBody(Viewport.DefaultViewport, world, actor, id,
 				startX, startY, startDir, isHero, new PlatformBody.DisposeCallback() {
-					@Override
-					public void onDispose(PlatformBody body) {
-						actorBodies.set(body.id, null);
-						platformBodies.remove(body);
-					}
-				});
+			@Override
+			public void onDispose(PlatformBody body) {
+				actorBodies.set(body.id, null);
+				platformBodies.remove(body);
+			}
+		});
 		actorBodies.set(id, body);
 		platformBodies.add(body);
 

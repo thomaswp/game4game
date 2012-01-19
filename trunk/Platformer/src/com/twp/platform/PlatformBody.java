@@ -116,6 +116,12 @@ public abstract class PlatformBody {
 		}
 	}
 	
+	public void updateSprite(Vector offset) {
+		setSpritePosition(sprite, body, offset);
+		//if (!actor.fixedRotation) {
+			sprite.setRotation(body.getAngle() * 180 / (float)Math.PI);
+		//}
+	}
 	
 	public static Vector2 spriteToVect(Sprite sprite, Vector offset) {
 		if (offset == null)

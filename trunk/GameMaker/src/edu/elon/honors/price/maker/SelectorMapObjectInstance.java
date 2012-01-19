@@ -4,50 +4,47 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Paint.Style;
-import android.os.Bundle;
 import android.view.SurfaceHolder;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
+import edu.elon.honors.price.maker.MapActivityBase.MapView;
+import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
 
-public class SelectorMapActorInstance extends SelectorMapBase {
-	
+public class SelectorMapObjectInstance extends SelectorMapBase {
 	private int originalId;
 	
 	@Override
 	protected MapView getMapView(PlatformGame game) {
 		originalId = getIntent().getExtras().getInt("id");
-		return new ActorInstanceView(this, game, originalId);
+		return new ObjectInstanceView(this, game, originalId);
 	}
 	
 	@Override
 	protected boolean hasChanged() {
-		ActorInstanceView view = (ActorInstanceView)this.view;
+		ObjectInstanceView view = (ObjectInstanceView)this.view;
 		return view.selectedId !=  originalId;
 	}
 
 	@Override
 	protected void finishOk() {
-		ActorInstanceView view = (ActorInstanceView)this.view;
+		ObjectInstanceView view = (ObjectInstanceView)this.view;
 		Intent intent = new Intent();
 		intent.putExtra("id", view.selectedId);
 		setResult(RESULT_OK, intent);
 		super.finishOk();
 	}
 
-	private static class ActorInstanceView extends SelectorMapView {
+	private static class ObjectInstanceView extends SelectorMapView {
 		private int selectedId;
 		private RectF selectedRect = new RectF();
 		
-		public ActorInstanceView(Context context, PlatformGame game, int selectedId) {
+		public ObjectInstanceView(Context context, PlatformGame game, int selectedId) {
 			super(context, game);
 			this.selectedId = selectedId;
 			paint = new Paint();
@@ -58,22 +55,16 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 			
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.getMapTileset(map);
-			for (int i = 0; i < map.rows; i++) {
-				for (int j = 0; j < map.columns; j++) {
-					if (map.actorLayer.tiles[i][j] == selectedId) {
-						float x = j * (tileset.tileWidth + 1);
-						float y = i * (tileset.tileHeight + 1);
-						offX = width / 2 - x;
-						offY = height / 2 - y;
-					}
-				}
-			}
+			ObjectInstance instance = map.objects.get(selectedId);
+			offX = -instance.startX;
+			offY = -instance.startY;
+			doOriginBounding(width, height);
 		}
 
 		@Override 
-		protected void drawActors(Canvas c) {
+		protected void drawObjects(Canvas c) {
 			selectedRect.setEmpty();
-			super.drawActors(c);
+			super.drawObjects(c);
 		}
 		
 		protected void drawGrid(Canvas c) {
@@ -88,35 +79,38 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 		}
 		
 		@Override
-		protected void drawActor(Canvas c, float dx, float dy, int instanceId,
-				Bitmap bmp, Paint paint) {
-			if (instanceId == selectedId) {
+		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
+				Bitmap bitmap, Paint paint) {
+			if (instance.id == selectedId) {
 				paint.setColor(selectionFillColor);
 				paint.setStyle(Style.FILL);
-				selectedRect.set(dx, dy, dx + bmp.getWidth(), dy + bmp.getHeight());
+				selectedRect.set(x, y, x + bitmap.getWidth(), y + bitmap.getHeight());
 				c.drawRect(selectedRect, paint);
 			}
-			super.drawActor(c, dx, dy, instanceId, bmp, paint);
+			super.drawObject(c, instance, x, y, bitmap, paint);
 		}
 
 		protected boolean doSelection() {
 			if (Input.isTapped()) {
 				Map map = game.getSelectedMap();
-				Tileset tileset = game.getMapTileset(map);
-				
+
 				float x = Input.getLastTouchX() - offX;
 				float y = Input.getLastTouchY() - offY;
 				
-				int ix = (int)(x / tileset.tileWidth);
-				int iy = (int)(y / tileset.tileHeight);
-				
-				if (ix < map.actorLayer.columns && iy < map.actorLayer.rows) {
-					int id = map.actorLayer.tiles[iy][ix];
-					if (id > 0) {
-						selectedId = id;
-						return true;
+				boolean select = false;
+				for (int i = 0; i < map.objects.size(); i++) {
+					ObjectInstance instance = map.objects.get(i);
+					Bitmap bmp = objects[instance.classIndex];
+					float left = instance.startX - bmp.getWidth() / 2;
+					float top = instance.startY - bmp.getHeight() / 2;
+					float right = instance.startX + bmp.getWidth() / 2;
+					float bottom = instance.startY + bmp.getHeight() / 2;
+					if (x >= left && x < right && y >= top && y < bottom) {
+						selectedId = instance.id;
+						select = true;
 					}
 				}
+				return select;
 			}
 			
 			return false;

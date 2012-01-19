@@ -25,7 +25,7 @@ import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.maker.MapActivityBase.MapView;
 import edu.elon.honors.price.maker.MapEditorLayer.Action;
 import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
-import edu.elon.honors.price.maker.MapEditor_Canvas.ReturnResponse;
+import edu.elon.honors.price.maker.MapEditor.ReturnResponse;
 
 public class MapEditorView extends MapView {
 
@@ -37,6 +37,8 @@ public class MapEditorView extends MapView {
 	public static final int EDIT_NORMAL = 0;
 	public static final int EDIT_ALT = 1;
 	public static final int N_EDIT_MODES = 2;
+	protected final static int SCROLL_BORDER = 25;
+	protected final static int SCROLL_TICK = 3;
 
 
 	private MapEditorLayer[] layers;
@@ -50,6 +52,7 @@ public class MapEditorView extends MapView {
 	private Button[] cancelButtons, cancelReplacedButtons;
 	private ArrayList<Action> actions = new ArrayList<Action>();
 	private int actionIndex = 0;
+	private Paint darkPaint;
 
 	protected int editMode;
 	protected Bitmap[] darkTiles;
@@ -58,10 +61,12 @@ public class MapEditorView extends MapView {
 	protected Bitmap tilesetImage;
 	protected int actorSelection;
 	protected Bitmap actorImage;
+	protected int objectSelection;
+	protected Bitmap objectImage;
 	protected int mode;
 
-	private MapEditor_Canvas getEditor() {
-		return (MapEditor_Canvas)getContext();
+	private MapEditor getEditor() {
+		return (MapEditor)getContext();
 	}
 
 	private String getModeButtonText() {
@@ -74,6 +79,7 @@ public class MapEditorView extends MapView {
 	
 	public void setGame(PlatformGame game) {
 		updateActors(game);
+		updateObjects(game);
 		this.game = game;
 		if (layers != null) {
 			for (int i = 0; i < layers.length; i++) {
@@ -89,9 +95,8 @@ public class MapEditorView extends MapView {
 
 	public MapEditorView(Context context, PlatformGame game) {
 		super(context, game);
-		createDarkTiles();
-		createDarkActors();
-
+		createDarkBitmaps();
+		
 		if (game.getSelectedMap().editorData != null) {
 			loadMapData((EditorData)game.getSelectedMap().editorData);
 		} else {
@@ -115,12 +120,12 @@ public class MapEditorView extends MapView {
 		EditorData data = new EditorData();
 		data.layer = selectedLayer;
 		data.editMode = editMode;
-		data.mode = mode;
 		data.actorSelection = actorSelection;
 		data.tileSelectionLeft = tilesetSelection.left;
 		data.tileSelectionTop = tilesetSelection.top;
 		data.tileSelectionRight = tilesetSelection.right;
 		data.tileSelectionBottom = tilesetSelection.bottom;
+		data.objectSelection = objectSelection;
 
 		game.getSelectedMap().editorData = data;
 	}
@@ -128,7 +133,7 @@ public class MapEditorView extends MapView {
 	public void loadMapData(EditorData data) {
 		this.selectedLayer = data.layer;
 		this.editMode = data.editMode;
-		this.mode = data.mode;
+		this.mode = MODE_MOVE;
 		this.actorSelection = data.actorSelection;
 		this.tilesetSelection = new Rect(
 				data.tileSelectionLeft,
@@ -136,6 +141,7 @@ public class MapEditorView extends MapView {
 				data.tileSelectionRight,
 				data.tileSelectionBottom
 		);
+		this.objectSelection = data.objectSelection;
 	}
 
 	@Override
@@ -233,12 +239,15 @@ public class MapEditorView extends MapView {
 				if (checkCancel(x, y)) {
 					layer.touchDown = false;
 				} else {
-					layer.onTouchUp(x, y);
+					if (layer.touchDown) {
+						layer.onTouchUp(x, y);
+					}
 				}
 
 			}
 		} else {
 			if (layer.isTouchDown()) {
+				doScroll(x, y, width, height);
 				boolean show = !checkCancelDrag(x, y);
 				dimButtons();
 				layer.onTouchDrag(x, y, show);
@@ -262,6 +271,23 @@ public class MapEditorView extends MapView {
 		undoButton.enabled = actionIndex > 0;
 
 		doMovement();
+		doOriginBounding(width, height);
+	}
+	
+	protected void doScroll(float x, float y, int width, int height) {
+		if (x < SCROLL_BORDER) {
+			offX += SCROLL_TICK;
+		}
+		if (x > this.width - SCROLL_BORDER) {
+			offX -= SCROLL_TICK;
+			Game.debug(offX);
+		}
+		if (y < SCROLL_BORDER) {
+			offY += SCROLL_TICK;
+		}
+		if (y > this.height - SCROLL_BORDER) {
+			offY -= SCROLL_TICK;
+		}
 		doOriginBounding(width, height);
 	}
 
@@ -498,34 +524,39 @@ public class MapEditorView extends MapView {
 				actors[i] = Data.loadActor(game.actors[i].imageName);
 				actors[i] = Bitmap.createBitmap(actors[i], 0, 0, 
 						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
+				darkActors[i] = darken(actors[i]);
 			}
 		}
 	}
 	
-	private void createDarkActors() {
-		Paint paint = new Paint();
-		ColorMatrix cm = new ColorMatrix();
-		cm.setScale(DARK, DARK, DARK, 1);
-		paint.setColorFilter(new ColorMatrixColorFilter(cm));
-		darkActors = new Bitmap[actors.length];
-		for (int i = 0; i < darkActors.length; i++) {
-			darkActors[i] = Bitmap.createBitmap(actors[i].getWidth(), 
-					actors[i].getHeight(), actors[i].getConfig());
-			new Canvas(darkActors[i]).drawBitmap(actors[i], 0, 0, paint);
-		}
+	private void updateObjects(PlatformGame game) {
+		//TODO: This...
 	}
 
-	private void createDarkTiles() {
-		Paint paint = new Paint();
-		ColorMatrix cm = new ColorMatrix();
-		cm.setScale(DARK, DARK, DARK, 1);
-		paint.setColorFilter(new ColorMatrixColorFilter(cm));
+	private void createDarkBitmaps() {
 		darkTiles = new Bitmap[tiles.length];
 		for (int i = 0; i < darkTiles.length; i++) {
-			darkTiles[i] = Bitmap.createBitmap(tiles[i].getWidth(), 
-					tiles[i].getHeight(), tiles[i].getConfig());
-			new Canvas(darkTiles[i]).drawBitmap(tiles[i], 0, 0, paint);
+			darkTiles[i] = darken(tiles[i]);
 		}
+		
+		darkActors = new Bitmap[actors.length];
+		for (int i = 0; i < darkActors.length; i++) {
+			darkActors[i] = darken(actors[i]);
+		}
+	}
+	
+	private Bitmap darken(Bitmap base) {
+		if (darkPaint == null) {
+			darkPaint = new Paint();
+			ColorMatrix cm = new ColorMatrix();
+			cm.setScale(DARK, DARK, DARK, 1);
+			darkPaint.setColorFilter(new ColorMatrixColorFilter(cm));
+		}
+		
+		Bitmap bmp = Bitmap.createBitmap(base.getWidth(), 
+				base.getHeight(), base.getConfig());
+		new Canvas(bmp).drawBitmap(base, 0, 0, darkPaint);
+		return bmp;
 	}
 
 	public void selectActor() {
@@ -555,7 +586,6 @@ public class MapEditorView extends MapView {
 		intent.putExtra("top", tilesetSelection.top);
 		intent.putExtra("right", tilesetSelection.right);
 		intent.putExtra("bottom", tilesetSelection.bottom);
-		getEditor().startActivityForResult(intent, REQ_SELECTOR);
 
 		getEditor().returnResponse = new ReturnResponse() {
 			@Override
@@ -567,6 +597,23 @@ public class MapEditorView extends MapView {
 				tilesetSelection.set(left, top, right, bottom);
 			}
 		};
+
+		getEditor().startActivityForResult(intent, REQ_SELECTOR);
+	}
+
+	public void selectObject() {
+		Intent intent = new Intent(getContext(), MapEditorObjectSelector.class);
+		intent.putExtra("game", game);
+		intent.putExtra("id", objectSelection);
+		
+		getEditor().returnResponse = new ReturnResponse() {
+			@Override
+			public void onReturn(Intent data) {
+				objectSelection =  data.getExtras().getInt("id");
+			}
+		};
+		
+		getEditor().startActivityForResult(intent, REQ_SELECTOR);
 	}
 
 	public void refresh() {
@@ -590,13 +637,13 @@ public class MapEditorView extends MapView {
 		actions.get(actionIndex).redo(game);
 		actionIndex++;
 	}
-
+	
 	public static class EditorData implements Serializable {
 		private static final long serialVersionUID = 1L;
 
-		public int layer = 1, editMode = 0, mode = 0;
+		public int layer = 1, editMode = 0;
 		public int tileSelectionLeft, tileSelectionTop; 
 		public int tileSelectionRight = 1, tileSelectionBottom = 1;
-		public int actorSelection;
+		public int actorSelection, objectSelection;
 	}
 }

@@ -60,8 +60,7 @@ public abstract class MapActivityBase extends Activity {
 		protected float startDragOffX;
 		protected float startDragOffY;
 		protected boolean moving;
-		protected Bitmap[] tiles;
-		protected Bitmap[] actors;
+		protected Bitmap[] tiles, actors, objects;
 		protected Bitmap grid;
 		protected ArrayList<Button> buttons;
 
@@ -82,6 +81,7 @@ public abstract class MapActivityBase extends Activity {
 			Bitmap tilesetBmp = Data.loadTileset(tileset.bitmapName, getContext());
 			tiles = createTiles(tilesetBmp, tileset.tileWidth, tileset.tileHeight, 0);
 			createActors();
+			createObjects();
 		}
 
 		protected void doReleaseTouch(float x, float y) {
@@ -156,8 +156,6 @@ public abstract class MapActivityBase extends Activity {
 
 		@Override
 		protected void update(long timeElapsed) {
-			Input.update(timeElapsed);
-
 			if (buttons == null) {
 				buttons = new ArrayList<Button>();
 				createButtons();
@@ -242,6 +240,16 @@ public abstract class MapActivityBase extends Activity {
 						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
 			}
 		}
+		
+		private void createObjects() {
+			objects = new Bitmap[game.objects.length];
+			for (int i = 0; i < objects.length; i++) {
+				objects[i] = Data.loadObject(game.objects[i].imageName);
+				objects[i] = Bitmap.createScaledBitmap(objects[i], 
+						(int)(objects[i].getWidth() * game.objects[i].zoom), 
+						(int)(objects[i].getHeight() * game.objects[i].zoom), true);
+			}
+		}
 
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId, 
 				Bitmap bmp, Paint paint) {
@@ -250,11 +258,12 @@ public abstract class MapActivityBase extends Activity {
 
 			String text = "" + instanceId;
 			paint.setColor(Color.WHITE);
+			paint.setAlpha(150);
 			paint.setStyle(Style.FILL);
 			c.drawRect(dx, dy + bmp.getHeight() - paint.getTextSize(), 
 					dx + paint.measureText(text), dy + bmp.getHeight(), paint);
 			paint.setColor(Color.BLACK);
-			paint.setStyle(Style.STROKE);
+			paint.setTextSize(12);
 			c.drawText(text, dx, dy + bmp.getHeight(), paint);
 		}
 

@@ -16,19 +16,21 @@
             </intent-filter>
         </activity>
     
-        <activity android:name=".MapEditor"
+        <activity android:name=".MapEditor_Old"
                   android:label="@string/app_name" android:screenOrientation="landscape">
         </activity>
-        <activity android:name=".MapEditor_Canvas"
+        <activity android:name=".MapEditor"
                   android:label="@string/app_name" android:screenOrientation="landscape">
         </activity>
 
     	<activity android:name=".MapTextureSelector" android:screenOrientation="landscape"></activity>
     	<activity android:name=".MapActorSelector" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".MapEditorObjectSelector" android:screenOrientation="landscape"></activity>
     	<activity android:name=".Database" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditActor" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapBase" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapActorInstance" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".SelectorMapObjectInstance" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapRegion" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapPoint" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorActivitySwitch" android:screenOrientation="landscape"></activity>
