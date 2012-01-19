@@ -47,7 +47,7 @@ public class ObjectBody extends PlatformBody {
 		super(viewport, world, id, startX, startY, onDisposeCallback);
 
 		this.object = object;
-		object.zoom = 1f;
+		//object.zoom = 1f;
 
 		Bitmap bitmap = Data.loadObject(object.imageName);
 		this.sprite = new Sprite(viewport, bitmap);

@@ -67,7 +67,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 				int actorClass = map.getActorType(i, j);
 
 				if (actorClass > -1) {
-					Bitmap bmp = actors[actorClass];
+					Bitmap bmp = mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
 					float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
 					float sy = (tileset.tileHeight - bmp.getHeight()) / 2f;
 					float dx = x + getOffX() + sx;

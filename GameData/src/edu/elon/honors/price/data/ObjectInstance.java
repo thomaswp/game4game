@@ -7,9 +7,12 @@ public class ObjectInstance implements Serializable {
 	
 	public int id;
 	public int classIndex;
+	public int startX, startY;
 	
-	public ObjectInstance(int id, int classIndex) {
+	public ObjectInstance(int id, int classIndex, int startX, int startY) {
 		this.id = id;
 		this.classIndex = classIndex;
+		this.startX = startX;
+		this.startY = startY;
 	}
 }

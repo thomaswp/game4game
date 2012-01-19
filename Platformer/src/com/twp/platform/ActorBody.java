@@ -174,13 +174,6 @@ public class ActorBody extends PlatformBody {
 		lastVelocity.set(getVelocity());
 	}
 
-	public void updateSprite(Vector offset) {
-		setSpritePosition(sprite, body, offset);
-		if (!actor.fixedRotation) {
-			sprite.setRotation(body.getAngle() * 180 / (float)Math.PI);
-		}
-	}
-
 	public void doBehaviorWall() {
 		doBehavior(actor.wallBehavior, null);
 	}

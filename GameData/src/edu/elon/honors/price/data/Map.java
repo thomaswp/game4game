@@ -9,7 +9,7 @@ public class Map implements Serializable{
 	public int tilesetId;
 	public MapLayer[] layers;
 	public MapLayer actorLayer;
-	public MapLayer objectLayer;
+//	public MapLayer objectLayer;
 	public ArrayList<ActorInstance> actors; 
 	public ArrayList<ObjectInstance> objects;
 	public Event[] events;
@@ -31,11 +31,11 @@ public class Map implements Serializable{
 		actors.add(null);
 		setActor(0, 0, 0);
 
-		objectLayer = new MapLayer("objects", rows, columns, false);
-		objectLayer.setAll(-1);
+//		objectLayer = new MapLayer("objects", rows, columns, false);
+//		objectLayer.setAll(-1);
 		
 		objects = new ArrayList<ObjectInstance>();
-		setObject(1, 1, 1);
+		//addObject(0, 20, 20);
 		
 		
 		events = new Event[3];
@@ -51,35 +51,41 @@ public class Map implements Serializable{
 		layers[2] = layer;
 	}
 	
-	public int getObjectType(int row, int column) {
-		int id = objectLayer.tiles[row][column];
-		return id >= 0 ? objects.get(id).classIndex : -1;
+	public int addObject(int classIndex, int startX, int startY) {
+		int id = objects.size();
+		objects.add(new ObjectInstance(id, classIndex, startX, startY));
+		return id;
 	}
 	
-	public ObjectInstance getObjectInstance(int row, int column) {
-		return objects.get(objectLayer.tiles[row][column]);
-	}
-	
-	public int setObject(int row, int column, int type) {
-		int previousId = objectLayer.tiles[row][column];
-		if (type == -1) {
-			if (previousId >= 0) {
-				//Remove old instance?
-			}
-			objectLayer.tiles[row][column] = -1;
-			return -1;
-		} else {
-			if (previousId > -1) {
-				if (objects.get(previousId).classIndex == type) {
-					return previousId;
-				}
-			}
-			ObjectInstance instance = new ObjectInstance(objects.size(), type);
-			objects.add(instance);
-			objectLayer.tiles[row][column] = instance.id;
-			return instance.id;
-		}
-	}
+//	public int getObjectType(int row, int column) {
+//		int id = objectLayer.tiles[row][column];
+//		return id >= 0 ? objects.get(id).classIndex : -1;
+//	}
+//	
+//	public ObjectInstance getObjectInstance(int row, int column) {
+//		return objects.get(objectLayer.tiles[row][column]);
+//	}
+//	
+//	public int setObject(int row, int column, int type) {
+//		int previousId = objectLayer.tiles[row][column];
+//		if (type == -1) {
+//			if (previousId >= 0) {
+//				//Remove old instance?
+//			}
+//			objectLayer.tiles[row][column] = -1;
+//			return -1;
+//		} else {
+//			if (previousId > -1) {
+//				if (objects.get(previousId).classIndex == type) {
+//					return previousId;
+//				}
+//			}
+//			ObjectInstance instance = new ObjectInstance(objects.size(), type);
+//			objects.add(instance);
+//			objectLayer.tiles[row][column] = instance.id;
+//			return instance.id;
+//		}
+//	}
 	
 	public int getActorType(int row, int column) {
 		int id = actorLayer.tiles[row][column];

@@ -22,10 +22,10 @@ public class Database extends DatabaseActivity {
 		super.onCreate(savedInstanceState);
 
 		pages = new Page[] { 
+				new PageTest(this),
 				new PageEvents(this),
 				new PageActors(this),
-				new PageHero(this),
-				new PageTest(this)
+				new PageHero(this)
 			};
 		
 		
@@ -104,6 +104,12 @@ public class Database extends DatabaseActivity {
 	}
 	
 	private void selectPage(int page) {
+		if (page >= pages.length) {
+			page = pages.length - 1;
+		}
+		if (page < 0) {
+			page = 0;
+		}
 		if (selectedPage >= 0) {
 			pages[selectedPage].onPause();
 		}

@@ -78,15 +78,20 @@ public class PlatformGame implements Serializable {
 		hero.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_STUN;
 		actors[0] = hero;
 		
-		objects = new ObjectClass[2];
-		objects[0] = new ObjectClass();
-		objects[0].name = "Rock";
-		objects[0].imageName = "rock.png";
-		objects[0].zoom = 0.5f;
+		objects = new ObjectClass[10];
+
 		
-		objects[1] = new ObjectClass();
-		objects[1].name = "Triangle";
-		objects[1].imageName = "triangle.png";
+		for (int i = 0; i < 5; i++) {
+			objects[i * 2] = new ObjectClass();
+			objects[i * 2].name = "Rock";
+			objects[i * 2].imageName = "rock.png";
+			objects[i * 2].zoom = (float)Math.random() * 2;
+			
+			objects[i * 2 + 1] = new ObjectClass();
+			objects[i * 2 + 1].name = "Triangle";
+			objects[i * 2 + 1].imageName = "triangle.png";
+			objects[i * 2 + 1].zoom = (float)Math.random() * 2;
+		}
 	}
 	
 	public Map getSelectedMap() {

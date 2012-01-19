@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.input.Input;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,6 +21,8 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 	public BasicCanvasView(Context context) {
 		super(context);
 		getHolder().addCallback(this);
+		Input.setVibrator((Vibrator)getContext().
+				getSystemService(Context.VIBRATOR_SERVICE));
 	}
 	
 	public boolean onTouchEvent(MotionEvent event) {
@@ -38,6 +41,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 	public void surfaceCreated(SurfaceHolder holder) {
 		this.width = holder.getSurfaceFrame().width();
 		this.height = holder.getSurfaceFrame().height();
+		initializeGraphics();
 		running = true;
 		thread = new Thread(new Runnable() {
 			@Override
@@ -62,11 +66,16 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		}
 	}	
 	
+	protected void initializeGraphics() {
+		
+	}
+	
 	private void updateThread() {
 		long timeElapsed = System.currentTimeMillis() - lastUpdate;
 		lastUpdate += timeElapsed;
-		
+		Input.update(timeElapsed);
 		update(timeElapsed);
+		
 		Canvas c = getHolder().lockCanvas();
 		try {
 			onDraw(c);

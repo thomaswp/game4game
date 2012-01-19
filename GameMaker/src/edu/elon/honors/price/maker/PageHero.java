@@ -106,7 +106,6 @@ public class PageHero extends Page {
 				}
 				forceSelect = true;
 				behaviorSpinner.setSelection(select);
-				Game.debug(select);
 				forceSelect = false;
 			}
 
