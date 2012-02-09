@@ -2,6 +2,7 @@ package com.twp.platform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
@@ -41,6 +42,7 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.UILayout;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.AnimatedSprite;
@@ -59,8 +61,6 @@ public class PlatformLogic implements Logic {
 	public static final float GRAVITY = 10f;
 
 	private static final int BORDER = 130;
-	private static final int BSIZE = 50;
-	private static final int BBORDER = 15;
 
 	public static final float SCALE = 50;
 
@@ -74,8 +74,8 @@ public class PlatformLogic implements Logic {
 
 	BackgroundSprite background, sky;
 	Tilemap[] layers;
-	JoyStick stick;
-	Button button;
+	LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
+	LinkedList<Button> buttons = new LinkedList<Button>();
 	AnimatedSprite hero;
 	Vector p = new Vector();
 	private World world;
@@ -138,11 +138,20 @@ public class PlatformLogic implements Logic {
 		skyStartY = startOceanY - Graphics.getHeight();
 		sky = new BackgroundSprite(bmp, new Rect(0, skyStartY, Graphics.getWidth(), startOceanY), -5);
 
-		stick = new JoyStick(BSIZE + BBORDER + 10, Graphics.getHeight() - BSIZE - BBORDER, 
-				BBORDER, BSIZE, Color.argb(150, 0, 0, 255));
-		button = new Button(Graphics.getWidth() - BSIZE - BBORDER - 10, 
-				Graphics.getHeight() - BSIZE - BBORDER, BBORDER, 
-				BSIZE, Color.argb(150, 255, 0, 0));
+		for (int i = 0; i < game.uiLayout.buttons.size(); i++) {
+			UILayout.Button button = game.uiLayout.buttons.get(i);
+			int x = button.x >= 0 ? button.x : Graphics.getWidth() + button.x;
+			int y = button.y >= 0 ? button.y : Graphics.getHeight() + button.y;
+			buttons.add(new Button(x, y, 0, 
+					button.radius, button.color));
+		}
+		for (int i = 0; i < game.uiLayout.joysticks.size(); i++) {
+			UILayout.JoyStick joystick = game.uiLayout.joysticks.get(i);
+			int x = joystick.x >= 0 ? joystick.x : Graphics.getWidth() + joystick.x;
+			int y = joystick.y >= 0 ? joystick.y : Graphics.getHeight() + joystick.y;
+			joysticks.add(new JoyStick(x, y, 0, 
+					joystick.radius, joystick.color));
+		}
 
 		offset = new Vector();
 
@@ -312,24 +321,27 @@ public class PlatformLogic implements Logic {
 			return;
 		}
 
-		stick.update();
-		button.update();
-
-
-		if (!heroBody.isStunned()) {
-			if (button.isTapped()) {
-				heroBody.jump(true);
-			}
-
-			if (heroBody.isOnLadder()) {
-				heroBody.setVelocityY(stick.getPull().getY() * heroBody.getActor().speed);
-				antiGravity.set(0, -GRAVITY * heroBody.getBody().getMass());
-				heroBody.getBody().applyForce(antiGravity, zeroVector);
-			}
-			else {
-				heroBody.setVelocityX(stick.getPull().getX() * heroBody.getActor().speed);
-			}
+		for (int i = 0; i < buttons.size(); i++) {
+			buttons.get(i).update();
 		}
+		for (int i = 0; i < joysticks.size(); i++) {
+			joysticks.get(i).update();
+		}
+
+//		if (!heroBody.isStunned()) {
+//			if (button.isTapped()) {
+//				heroBody.jump(true);
+//			}
+//
+//			if (heroBody.isOnLadder()) {
+//				heroBody.setVelocityY(stick.getPull().getY() * heroBody.getActor().speed);
+//				antiGravity.set(0, -GRAVITY * heroBody.getBody().getMass());
+//				heroBody.getBody().applyForce(antiGravity, zeroVector);
+//			}
+//			else {
+//				heroBody.setVelocityX(stick.getPull().getX() * heroBody.getActor().speed);
+//			}
+//		}
 
 		for (int i = 0; i < platformBodies.size(); i++) {
 			if (platformBodies.get(i) != null) {
@@ -637,6 +649,10 @@ public class PlatformLogic implements Logic {
 		skyScroll = scroll;
 	}
 
+	public ObjectBody addObjectBody(ObjectAddable object) {
+		return addObjectBody(object.object, -1, object.startX, object.startY);
+	}
+	
 	private ObjectBody addObjectBody(ObjectClass object, int id, float startX, float startY) {
 		if (id < 0) {
 			id = objectBodies.size();
@@ -783,6 +799,17 @@ public class PlatformLogic implements Logic {
 			this.startX = startX;
 			this.startY = startY;
 			this.startDir = startDir;
+		}
+	}
+	
+	public static class ObjectAddable {
+		public ObjectClass object;
+		public float startX, startY;
+
+		public ObjectAddable(ObjectClass object, float startX, float startY) {
+			this.object = object;
+			this.startX = startX;
+			this.startY = startY;
 		}
 	}
 

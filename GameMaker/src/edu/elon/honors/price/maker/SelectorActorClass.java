@@ -19,12 +19,14 @@ public class SelectorActorClass extends Spinner implements IPopulatable {
 	
 	private PlatformGame game;
 	private OnActorClassChangedListener onActorClassChangedListener;
+	private int id;
 
 	public int getSelectedActorId() {
-		return getSelectedItemPosition() + 1;
+		return id;
 	}
 	
 	public void setSelectedActorId(int id) {
+		this.id = id;
 		setSelection(id - 1);
 	}
 	
@@ -79,10 +81,13 @@ public class SelectorActorClass extends Spinner implements IPopulatable {
 				if (onActorClassChangedListener != null) {
 					onActorClassChangedListener.onActorClassChanged(position + 1);
 				}
+				SelectorActorClass.this.id = position + 1;
 			}
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) { }
 		});
+		
+		setSelectedActorId(id);
 	}
 	
 	public static abstract class OnActorClassChangedListener {

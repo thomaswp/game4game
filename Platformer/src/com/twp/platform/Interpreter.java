@@ -3,12 +3,14 @@ package com.twp.platform;
 import java.util.Random;
 
 import com.twp.platform.PlatformLogic.ActorAddable;
+import com.twp.platform.PlatformLogic.ObjectAddable;
 
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.physics.Vector;
 
@@ -189,6 +191,25 @@ public class Interpreter extends ActionIds {
 			if (action.id == ID_HERO_SET_LADDER) {
 				if (logic.getHero() != null) {
 					logic.getHero().setOnLadder(params.getInt() == 0);
+				}
+			}
+			
+			if (action.id == ID_CREATE_OBJECT) {
+				int x, y;
+				if (params.getInt(1) == 0) {
+					x = params.getInt(2);
+				} else {
+					x = Globals.getVariables()[params.getInt(2)];
+				}
+				if (params.getInt(1) == 0) {
+					y = params.getInt(3);
+				} else {
+					y = Globals.getVariables()[params.getInt(3)];
+				}
+				
+				ObjectClass object = logic.getGame().objects[params.getInt()];
+				if (object != null) {
+					logic.addObjectBody(new ObjectAddable(object, x, y));
 				}
 			}
 			

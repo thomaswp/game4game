@@ -125,6 +125,10 @@ public abstract class Element {
 			return new ElementString(atts, context);
 		} else if (qName.equals("region")) {
 			return new ElementRegion(atts, context);
+		} else if (qName.equals("objectInstance")) {
+			return new ElementObjectInstance(atts, context);
+		} else if (qName.equals("objectClass")) {
+			return new ElementObjectClass(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

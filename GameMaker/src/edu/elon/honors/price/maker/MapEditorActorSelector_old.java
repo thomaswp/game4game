@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class MapActorSelector extends Activity {
+public class MapEditorActorSelector_old extends Activity {
 
 	ASView view;
 
@@ -38,7 +38,7 @@ public class MapActorSelector extends Activity {
 		int id = getIntent().getExtras().getInt("id");
 		id++;
 			
-		final MapActorSelector me = this;
+		final MapEditorActorSelector_old me = this;
 		view = new ASView(this, game, id, new ASView.Poster() {
 			@Override
 			void post(int id) {

@@ -2,6 +2,9 @@ package edu.elon.honors.price.maker;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.badlogic.gdx.utils.Array;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +21,7 @@ import android.graphics.RectF;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Game;
@@ -76,8 +80,8 @@ public class MapEditorView extends MapView {
 		}
 		return "";
 	}
-	
-	public void setGame(PlatformGame game) {
+
+	public void setGame(PlatformGame game, boolean loadEditorData) {
 		updateActors(game);
 		updateObjects(game);
 		this.game = game;
@@ -86,7 +90,7 @@ public class MapEditorView extends MapView {
 				layers[i].setGame(game);
 			}
 		}
-		if (game.getSelectedMap().editorData != null) {
+		if (loadEditorData && game.getSelectedMap().editorData != null) {
 			loadMapData((EditorData)game.getSelectedMap().editorData);
 		}
 		actions.clear();
@@ -96,7 +100,7 @@ public class MapEditorView extends MapView {
 	public MapEditorView(Context context, PlatformGame game) {
 		super(context, game);
 		createDarkBitmaps();
-		
+
 		if (game.getSelectedMap().editorData != null) {
 			loadMapData((EditorData)game.getSelectedMap().editorData);
 		} else {
@@ -273,7 +277,7 @@ public class MapEditorView extends MapView {
 		doMovement();
 		doOriginBounding(width, height);
 	}
-	
+
 	protected void doScroll(float x, float y, int width, int height) {
 		if (x < SCROLL_BORDER) {
 			offX += SCROLL_TICK;
@@ -349,7 +353,10 @@ public class MapEditorView extends MapView {
 		selectingLayer = false;
 		int button = getTouchingLayerButton();
 		if (button >= 0) {
-			selectedLayer = button;
+			if (selectedLayer != button) {
+				editMode = EDIT_NORMAL;
+				selectedLayer = button;
+			}
 		}
 	}
 
@@ -489,7 +496,14 @@ public class MapEditorView extends MapView {
 		paint.setColor(Color.HSVToColor(alpha, hsv));
 
 		c.drawCircle(x, y, rad, paint);
+
+		Bitmap icon = layers[layer].getIcon();
+		float demi = (float)(rad / Math.sqrt(2));
+		destRect.set(x - demi, y - demi, x + demi, y + demi);
+		c.drawBitmap(icon, null, destRect, paint);
 	}
+	private RectF destRect = new RectF();
+
 
 	private void drawEditModeButton(Canvas c, int layer, boolean selected) {
 		int nOptions = N_EDIT_MODES;
@@ -514,13 +528,26 @@ public class MapEditorView extends MapView {
 		paint.setColor(Color.HSVToColor(alpha, hsv));
 
 		c.drawCircle(x, y, rad, paint);
+
+		Bitmap icon = layer == EDIT_NORMAL ? 
+			layers[selectedLayer].getEditIcon() : 
+			layers[selectedLayer].getEditAltIcon();
+		float demi = (float)(rad / Math.sqrt(2));
+		destRect.set(x - demi, y - demi, x + demi, y + demi);
+		c.drawBitmap(icon, null, destRect, paint);
 	}
 
 	private void updateActors(PlatformGame game) {
+		this.game.actors = Arrays.copyOf(this.game.actors, game.actors.length);
+		actors = Arrays.copyOf(actors, game.actors.length);
+		darkActors = Arrays.copyOf(darkActors, actors.length);
 		for (int i = 0; i < game.actors.length; i++) {
-			String oldName = this.game.actors[i].imageName;
-			String newName = game.actors[i].imageName;
-			if (!oldName.equals(newName)) {
+			ActorClass newActor = i == 0 ? game.hero : game.actors[i];
+			String newName = newActor.imageName;
+			ActorClass oldActor = null; String oldName = null;
+			oldActor = i == 0 ? this.game.hero : this.game.actors[i];
+			oldName = oldActor == null ? null : oldActor.imageName;
+			if (oldActor == null || !oldName.equals(newName)) {
 				actors[i] = Data.loadActor(game.actors[i].imageName);
 				actors[i] = Bitmap.createBitmap(actors[i], 0, 0, 
 						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
@@ -528,9 +555,24 @@ public class MapEditorView extends MapView {
 			}
 		}
 	}
-	
+
 	private void updateObjects(PlatformGame game) {
-		//TODO: This...
+		this.game.objects = Arrays.copyOf(this.game.objects, game.objects.length);
+		objects = Arrays.copyOf(objects, game.objects.length);
+		for (int i = 0; i < game.objects.length; i++) {
+			ObjectClass newObject = game.objects[i];
+			String newName = newObject.imageName;
+			ObjectClass oldObject = null; String oldName = null;
+			oldObject = this.game.objects[i];
+			oldName = oldObject == null ? null : oldObject.imageName;
+			if (oldObject == null || !oldName.equals(newName) || 
+					oldObject.zoom != newObject.zoom) {
+				objects[i] = Data.loadObject(newObject.imageName);
+				objects[i] = Bitmap.createScaledBitmap(objects[i],
+						(int)(objects[i].getWidth() * newObject.zoom),
+						(int)(objects[i].getHeight() * newObject.zoom), true);
+			}
+		}
 	}
 
 	private void createDarkBitmaps() {
@@ -538,13 +580,13 @@ public class MapEditorView extends MapView {
 		for (int i = 0; i < darkTiles.length; i++) {
 			darkTiles[i] = darken(tiles[i]);
 		}
-		
+
 		darkActors = new Bitmap[actors.length];
 		for (int i = 0; i < darkActors.length; i++) {
 			darkActors[i] = darken(actors[i]);
 		}
 	}
-	
+
 	private Bitmap darken(Bitmap base) {
 		if (darkPaint == null) {
 			darkPaint = new Paint();
@@ -552,7 +594,7 @@ public class MapEditorView extends MapView {
 			cm.setScale(DARK, DARK, DARK, 1);
 			darkPaint.setColorFilter(new ColorMatrixColorFilter(cm));
 		}
-		
+
 		Bitmap bmp = Bitmap.createBitmap(base.getWidth(), 
 				base.getHeight(), base.getConfig());
 		new Canvas(bmp).drawBitmap(base, 0, 0, darkPaint);
@@ -560,7 +602,7 @@ public class MapEditorView extends MapView {
 	}
 
 	public void selectActor() {
-		Intent intent = new Intent(getContext(), MapActorSelector.class);
+		Intent intent = new Intent(getContext(), MapEditorActorSelector.class);
 		intent.putExtra("game", game);
 		intent.putExtra("id", actorSelection);
 
@@ -605,14 +647,14 @@ public class MapEditorView extends MapView {
 		Intent intent = new Intent(getContext(), MapEditorObjectSelector.class);
 		intent.putExtra("game", game);
 		intent.putExtra("id", objectSelection);
-		
+
 		getEditor().returnResponse = new ReturnResponse() {
 			@Override
 			public void onReturn(Intent data) {
 				objectSelection =  data.getExtras().getInt("id");
 			}
 		};
-		
+
 		getEditor().startActivityForResult(intent, REQ_SELECTOR);
 	}
 
@@ -637,7 +679,7 @@ public class MapEditorView extends MapView {
 		actions.get(actionIndex).redo(game);
 		actionIndex++;
 	}
-	
+
 	public static class EditorData implements Serializable {
 		private static final long serialVersionUID = 1L;
 

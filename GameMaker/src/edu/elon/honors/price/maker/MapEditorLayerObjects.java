@@ -12,6 +12,7 @@ import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.MapEditorLayer.Action;
 import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,6 +21,7 @@ import android.graphics.RectF;
 
 public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstance> {
 
+	
 	public MapEditorLayerObjects(MapEditorView parent) {
 		super(parent);
 	}
@@ -123,5 +125,23 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 	@Override
 	protected void add(ObjectInstance item) {
 		game.getSelectedMap().objects.add(item);
+	}
+
+	@Override
+	public Bitmap loadIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(), 
+				R.drawable.layerobject);
+	}
+
+	@Override
+	protected Bitmap loadEditIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(),
+				R.drawable.edit);
+	}
+
+	@Override
+	protected Bitmap loadEditAltIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(),
+				R.drawable.select);
 	}
 }

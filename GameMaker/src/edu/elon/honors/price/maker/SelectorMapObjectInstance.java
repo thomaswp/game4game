@@ -54,11 +54,12 @@ public class SelectorMapObjectInstance extends SelectorMapBase {
 			super.surfaceCreated(holder);
 			
 			Map map = game.getSelectedMap();
-			Tileset tileset = game.getMapTileset(map);
-			ObjectInstance instance = map.objects.get(selectedId);
-			offX = -instance.startX;
-			offY = -instance.startY;
-			doOriginBounding(width, height);
+			if (selectedId >= 0) {
+				ObjectInstance instance = map.objects.get(selectedId);
+				offX = -instance.startX;
+				offY = -instance.startY;
+				doOriginBounding(width, height);
+			}
 		}
 
 		@Override 

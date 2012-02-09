@@ -49,4 +49,11 @@
     <string name="theRegion">the region</string>
     <string name="addEvents">Add Event</string>
     <string name="category">Category:</string>
+    <string name="objects">Objects</string>
+    <string name="addObject">Add Object</string>
+    <string name="editObject">Edit Object</string>
+    <string name="zoom">Zoom:</string>
+    <string name="contacts">Contacts:</string>
+    <string name="editUI">Edit User Interface</string>
+    <string name="ui">User Interface</string>
 </resources>

@@ -514,8 +514,8 @@ public class Sprite implements Comparable<Sprite> {
 	 * Centers the origin of this Sprite.
 	 */
 	public void centerOrigin() {
-		originX = getWidth() / 2;
-		originY = getHeight() / 2;
+		originX = bitmap.getWidth() / 2;
+		originY = bitmap.getHeight() / 2;
 	}
 
 	@Override
@@ -739,6 +739,8 @@ public class Sprite implements Comparable<Sprite> {
 			dx = mpx - mX; dy = mpy - mY;
 			double radThat = dx * dx + dy * dy;
 			if (radThis <= radThat + 1) {
+				//xs[i] = (float)((xs[i] - mX) * (radThat + 1) / radThis + mX);
+				//ys[i] = (float)((ys[i] - mY) * (radThat + 1) / radThis + mY);
 				xs[i] = -1;
 				ys[i] = -1;
 				pts--;

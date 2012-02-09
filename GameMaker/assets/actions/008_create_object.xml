@@ -1,0 +1,22 @@
+<action id="8" name="Create Object">
+
+	<text text="Create a" />
+	<objectClass />
+	<text text="at" />
+	
+	<radio>
+		<choice text="the exact point">
+			<point />		
+		</choice>
+		<choice text="the variable point">
+			<line>
+				<text text="(" />
+				<variable />
+				<text text=", " />
+				<variable />
+				<text text=")" />
+			</line>
+		</choice>
+	</radio>
+
+</action>

@@ -20,7 +20,7 @@ import edu.elon.honors.price.maker.MapEditorView;
 public class MapEditorLayerActors extends MapEditorLayer {
 
 	private Bitmap[] actors, darkActors;
-	
+
 	public MapEditorLayerActors(MapEditorView parent) {
 		super(parent);
 		this.actors = parent.actors;
@@ -28,37 +28,37 @@ public class MapEditorLayerActors extends MapEditorLayer {
 		paint.setTextSize(12);
 		paint.setAntiAlias(true);
 	}
-	
+
 	@Override
 	public void drawContent(Canvas c) {
 		if (touchDown && showPreview) {
 			Tileset tileset = game.getMapTileset(map);
 			int tileWidth = tileset.tileWidth;
 			int tileHeight = tileset.tileHeight;
-			
+
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Style.FILL);
 			Bitmap bmp = parent.actorImage;
-			
+
 			int x = (int)(touchX - bmp.getWidth() / 2);
 			int edgeX = (int)parent.offX % tileWidth;
 			x = (x - edgeX + tileWidth / 2) / tileWidth;
 			x = x * tileWidth + edgeX + (tileWidth - bmp.getWidth()) / 2;
-			
+
 			int y = (int)(touchY - bmp.getHeight() / 2);
 			int edgeY = (int)parent.offY % tileHeight;
 			y = (y - edgeY + tileHeight / 2) / tileHeight;
 			y = y * tileHeight + edgeY  + (tileHeight- bmp.getHeight()) / 2;
-			
+
 			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
 			c.drawBitmap(bmp, x, y, paint);
 		}
 	}
-	
+
 	@Override
 	public void drawLayer(Canvas c, DrawMode mode) {
 		Tileset tileset = game.tilesets[map.tilesetId];
-		
+
 		for (int i = 0; i < map.actorLayer.rows; i++) {
 			for (int j = 0; j < map.actorLayer.columns; j++) {
 				float x = j * tileset.tileWidth;
@@ -107,38 +107,38 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	@Override
 	public void onTouchUp(float x, float y) {
 		super.onTouchUp(x, y);
-		
+
 		Tileset tileset = game.getMapTileset(map);
 		int tileWidth = tileset.tileWidth;
 		int tileHeight = tileset.tileHeight;
 		Bitmap bmp = parent.actorImage;
-		
+
 		final int newClass = parent.actorSelection;
 		final int row = (int)(y - parent.offY - bmp.getHeight() / 2 + tileHeight / 2) / tileHeight;
 		final int col = (int)(x - parent.offX - bmp.getWidth() / 2 + tileWidth / 2) / tileWidth;
 		final int oldClass = map.getActorType(row, col);
-		
+
 		//int previousId = game.getSelectedMap().actorLayer.tiles[row][col];
-		
+
 		if (newClass == oldClass) {
 			return;
 		}
 		if (oldClass == 0) {
 			return;
 		}
-		
+
 		Action action;
 		if (newClass == 0) {
 			final int heroRow = map.getHeroRow();
 			final int heroCol = map.getHeroCol();
-			
+
 			action = new Action() {
 				@Override
 				public void undo(PlatformGame game) {
 					map.setActor(row, col, oldClass);
 					map.setActor(heroRow, heroCol, 0);
 				}
-				
+
 				@Override
 				public void redo(PlatformGame game) {
 					map.setActor(heroRow, heroCol, -1);
@@ -151,7 +151,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 				public void undo(PlatformGame game) {
 					map.setActor(row, col, oldClass);
 				}
-				
+
 				@Override
 				public void redo(PlatformGame game) {
 					map.setActor(row, col, newClass);
@@ -159,5 +159,23 @@ public class MapEditorLayerActors extends MapEditorLayer {
 			};
 		}
 		parent.doAction(action);
+	}
+
+	@Override
+	protected Bitmap loadIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(), 
+				R.drawable.layeractor);
+	}
+
+	@Override
+	protected Bitmap loadEditIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(),
+				R.drawable.edit);
+	}
+
+	@Override
+	protected Bitmap loadEditAltIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(),
+				R.drawable.edit);
 	}
 }

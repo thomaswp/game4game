@@ -24,10 +24,11 @@
         </activity>
 
     	<activity android:name=".MapTextureSelector" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".MapActorSelector" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".MapEditorActorSelector" android:screenOrientation="landscape"></activity>
     	<activity android:name=".MapEditorObjectSelector" android:screenOrientation="landscape"></activity>
     	<activity android:name=".Database" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditActor" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".DatabaseEditObjectClass" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapBase" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapActorInstance" android:screenOrientation="landscape"></activity>
     	<activity android:name=".SelectorMapObjectInstance" android:screenOrientation="landscape"></activity>
@@ -40,6 +41,7 @@
     	<activity android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditTriggerActor" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditTriggerRegion" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".DatabaseEditUI" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseNewAction" android:screenOrientation="landscape"></activity>
     	<activity android:name=".DatabaseEditAction" android:screenOrientation="landscape"></activity>
     	

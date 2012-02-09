@@ -10,7 +10,8 @@ public class ActionIds {
 		"Move Actor",
 		"Trigger Actor Behavior",
 		"Set Hero On/Off Ladder",
-		"If..."
+		"If...",
+		"Create Object"
 	};
 	
 	/**
@@ -57,6 +58,14 @@ public class ActionIds {
 	 * P0: On | Off
 	 */
 	public static final int ID_HERO_SET_LADDER = 6;
+	
+	/**
+	 * P0: Id
+	 * P1: Value | Variable
+	 * P2: X Value/Id
+	 * P4: Y Value/Id
+	 */
+	public static final int ID_CREATE_OBJECT = 8;
 	
 	/**
 	 * P0: Text | Switch | Variable

@@ -308,7 +308,11 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			//				addView(indent);
 			//			}
 
+			LinearLayout.LayoutParams params = new LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			params.weight = 1;
 			TextView tv = createTextView();
+			tv.setLayoutParams(params);
 			addView(tv);
 
 			Button buttonOptions = new Button(context);

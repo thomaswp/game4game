@@ -240,8 +240,8 @@ public class MainMenu extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					deleteFile(selectedMap);
-					String name = selectedMap.substring(PREFIX.length());
-					deleteFile(name + MapEditorLogic.DATA);
+					//String name = selectedMap.substring(PREFIX.length());
+					//deleteFile(name + MapEditorLogic.DATA);
 					loadMaps();
 				}
 
