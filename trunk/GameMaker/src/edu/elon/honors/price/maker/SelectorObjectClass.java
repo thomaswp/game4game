@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.SelectorActorClass.OnActorClassChangedListener;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ public class SelectorObjectClass  extends Spinner implements IPopulatable {
 	
 	private PlatformGame game;
 	private OnObjectClassChangedListener onObjectClassChangedListener;
+	private int id;
 	
 	public SelectorObjectClass(Context context) {
 		super(context);
@@ -32,10 +34,11 @@ public class SelectorObjectClass  extends Spinner implements IPopulatable {
 	}
 
 	public int getSelectedObjectId() {
-		return getSelectedItemPosition();
+		return id;
 	}
 	
 	public void setSelectedObjectId(int id) {
+		this.id = id;
 		setSelection(id);
 	}
 	
@@ -58,7 +61,7 @@ public class SelectorObjectClass  extends Spinner implements IPopulatable {
 		
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
-		for (int i = 1; i < game.objects.length; i++) {
+		for (int i = 0; i < game.objects.length; i++) {
 			labels.add(game.objects[i].name);
 			String name = game.objects[i].imageName;
 			Bitmap bitmap = Data.loadObject(name); 
@@ -91,10 +94,13 @@ public class SelectorObjectClass  extends Spinner implements IPopulatable {
 				if (onObjectClassChangedListener != null) {
 					onObjectClassChangedListener.onObjectClassChanged(position);
 				}
+				SelectorObjectClass.this.id = position;
 			}
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) { }
 		});
+		
+		setSelectedObjectId(id);
 	}
 	
 	public static abstract class OnObjectClassChangedListener {

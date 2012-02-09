@@ -225,7 +225,7 @@ public abstract class Game extends Activity {
 	}
 	
 	public static void debug(Object o) {
-		debug(o.toString());
+		debug(o == null ? "null" : o.toString());
 	}
 
 	public static void debug(float x) {

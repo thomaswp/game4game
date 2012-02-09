@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.maker.MapEditorView;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -33,7 +34,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 			Tileset tileset = game.getMapTileset(map);
 			int tileWidth = tileset.tileWidth;
 			int tileHeight = tileset.tileHeight;
-			
+
 			paint.setColor(Color.WHITE);
 			Bitmap bmp = parent.tilesetImage;
 			int x = (int)(touchX - bmp.getWidth() / 2);
@@ -104,31 +105,31 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		super.onTouchUp(x, y);
 		placeTiles(x, y);
 	}
-	
+
 	@Override
 	public void onTouchDrag(float x, float y, boolean showPreview) {
 		super.onTouchDrag(x, y, showPreview);
-		
+
 		if (parent.editMode == MapEditorView.EDIT_ALT) {
 			placeTiles(x, y);
 		}
 	}
-	
+
 	private void placeTiles(float x, float y) {
 		Tileset tileset = game.getMapTileset(map);
 		int tileWidth = tileset.tileWidth;
 		int tileHeight = tileset.tileHeight;
 		Bitmap bmp = parent.tilesetImage;
 		Rect rect = parent.tilesetSelection;
-		
+
 		int row = (int)(y - parent.offY - bmp.getHeight() / 2 + tileHeight / 2) / tileHeight;
 		int col = (int)(x - parent.offX - bmp.getWidth() / 2 + tileWidth / 2) / tileWidth;
-		
+
 		MapLayer layer = map.layers[this.layer];
-		
+
 		TileAction action = new TileAction(this.layer);
 		boolean changed = false;
-		
+
 		for (int i = 0; i < rect.height(); i++) {
 			for (int j = 0; j < rect.width(); j++) {
 				int destRow = row + i;
@@ -143,25 +144,25 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 				}
 			}
 		}
-		
+
 		if (changed) {
 			parent.doAction(action);
 		}
 	}
-	
+
 	public static class TileAction extends Action {
 		private ArrayList<Placement> placements;
 		private int layer;
-		
+
 		public TileAction(int layer) {
 			this.layer = layer;
 			placements = new ArrayList<Placement>();
 		}
-		
+
 		public void addPlacement(int row, int col, int redoId, int undoId) {
 			placements.add(new Placement(row, col, redoId, undoId));
 		}
-		
+
 		@Override
 		public void undo(PlatformGame game) {
 			for (int i = 0; i < placements.size(); i++) {
@@ -177,7 +178,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 				game.getSelectedMap().layers[layer].tiles[p.row][p.col] = p.redoId; 
 			}
 		}
-		
+
 		private static class Placement { 
 			public int row, col, undoId, redoId;
 			public Placement(int row, int col, int redoId, int undoId) {
@@ -185,5 +186,31 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 				this.redoId = redoId; this.undoId = undoId;
 			}
 		}
+	}
+
+	@Override
+	protected Bitmap loadIcon() {
+		switch (layer) {
+		case 0: return BitmapFactory.decodeResource(parent.getResources(), 
+				R.drawable.layer1);
+		case 1: return BitmapFactory.decodeResource(parent.getResources(), 
+				R.drawable.layer2);
+		case 2: return BitmapFactory.decodeResource(parent.getResources(), 
+				R.drawable.layer3);
+		}
+		return null;
+
+	}
+
+	@Override
+	protected Bitmap loadEditIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(),
+				R.drawable.edit);
+	}
+
+	@Override
+	protected Bitmap loadEditAltIcon() {
+		return BitmapFactory.decodeResource(parent.getResources(),
+				R.drawable.paint);
 	}
 }

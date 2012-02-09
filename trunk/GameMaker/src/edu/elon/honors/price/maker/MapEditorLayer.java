@@ -21,6 +21,7 @@ public abstract class MapEditorLayer {
 	protected boolean touchDown;
 	protected float touchX, touchY;
 	protected boolean showPreview;
+	protected Bitmap icon, editIcon, editAltIcon;
 	
 	public boolean isTouchDown() {
 		return touchDown;
@@ -51,6 +52,24 @@ public abstract class MapEditorLayer {
 	public abstract void refreshSelection();
 	public abstract Bitmap getSelection();
 	public abstract void onSelect();
+	protected abstract Bitmap loadIcon();
+	protected abstract Bitmap loadEditIcon();
+	protected abstract Bitmap loadEditAltIcon();
+	
+	public Bitmap getIcon() {
+		if (icon == null) icon = loadIcon();
+		return icon;
+	}
+	
+	public Bitmap getEditIcon() {
+		if (editIcon == null) editIcon = loadEditIcon();
+		return editIcon;
+	}
+	
+	public Bitmap getEditAltIcon() {
+		if (editAltIcon == null) editAltIcon = loadEditAltIcon();
+		return editAltIcon;
+	}
 	
 	public void onTouchDown(float x, float y) {
 		touchDown = true;

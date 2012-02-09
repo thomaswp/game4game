@@ -16,6 +16,8 @@ public class PlatformGame implements Serializable {
 
 	public ArrayList<Map> maps;
 	public int startMapId;
+	
+	public UILayout uiLayout;
 
 	public Tileset[] tilesets;
 	public ActorClass[] actors;
@@ -78,10 +80,10 @@ public class PlatformGame implements Serializable {
 		hero.actorContactBehaviors[ActorClass.RIGHT] = ActorClass.BEHAVIOR_STUN;
 		actors[0] = hero;
 		
-		objects = new ObjectClass[10];
+		objects = new ObjectClass[2];
 
 		
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 1; i++) {
 			objects[i * 2] = new ObjectClass();
 			objects[i * 2].name = "Rock";
 			objects[i * 2].imageName = "rock.png";
@@ -92,6 +94,8 @@ public class PlatformGame implements Serializable {
 			objects[i * 2 + 1].imageName = "triangle.png";
 			objects[i * 2 + 1].zoom = (float)Math.random() * 2;
 		}
+		
+		uiLayout = new UILayout();
 	}
 	
 	public Map getSelectedMap() {

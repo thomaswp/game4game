@@ -148,7 +148,7 @@ public class MapEditor extends MapActivityBase {
 	private void load() {
 		try {
 			game = (PlatformGame) Data.loadGame(gameName, this);
-			((MapEditorView)view).setGame(game);
+			((MapEditorView)view).setGame(game, true);
 			PlatformGame gameCopy = (PlatformGame) Data.loadGame(gameName, this);
 			getIntent().putExtra("game", gameCopy);
 			refresh();
@@ -165,7 +165,7 @@ public class MapEditor extends MapActivityBase {
 		if (resultCode == RESULT_OK) {
 			if (requestCode == DatabaseActivity.REQUEST_RETURN_GAME) {
 				game = (PlatformGame)data.getExtras().getSerializable("game");
-				((MapEditorView)view).setGame(game);
+				((MapEditorView)view).setGame(game, false);
 			} else {
 				if (returnResponse != null) {
 					returnResponse.onReturn(data);

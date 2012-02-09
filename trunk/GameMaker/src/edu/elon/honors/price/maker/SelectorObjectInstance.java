@@ -18,44 +18,55 @@ import android.widget.Button;
 public class SelectorObjectInstance extends Button implements IPopulatable {
 
 	protected final static int MAX_IMAGE_SIZE = 100;
-	
+
 	private PlatformGame game;
-	private int id = 0;
-	
+	private int id = -1;
+
+	public int getSelectedInstance() {
+		return id;
+	}
+
 	public void setSelectedInstance(int id) {
 		this.id = id;
-		
-		ObjectInstance instance = game.getSelectedMap().objects.get(id);
-		ObjectClass objectClass = game.objects[instance.classIndex];
-		Bitmap bitmap = Data.loadObject(objectClass.imageName);
-		float zoom = objectClass.zoom;
-		int width = (int)(bitmap.getWidth() * zoom);
-		if (width > MAX_IMAGE_SIZE) {
-			zoom *= (float)MAX_IMAGE_SIZE / width;
+
+		if (id >= 0) {
+			ObjectInstance instance = game.getSelectedMap().objects.get(id);
+			ObjectClass objectClass = game.objects[instance.classIndex];
+			Bitmap bitmap = Data.loadObject(objectClass.imageName);
+			float zoom = objectClass.zoom;
+			int width = (int)(bitmap.getWidth() * zoom);
+			if (width > MAX_IMAGE_SIZE) {
+				zoom *= (float)MAX_IMAGE_SIZE / width;
+			}
+			int height = (int)(bitmap.getHeight() * zoom);
+			if (height > MAX_IMAGE_SIZE) {
+				zoom *= (float)MAX_IMAGE_SIZE / width;
+			}
+			width = (int)(bitmap.getWidth() * zoom);
+			height = (int)(bitmap.getHeight() * zoom);
+			bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+			BitmapDrawable drawable = new BitmapDrawable(bitmap);
+			//String text = String.format("%03d: ", id) + objectClass.name;
+			String text = objectClass.name;
+
+			setText(text);
+			setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+		} else {
+			setText("None");
+			setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 		}
-		int height = (int)(bitmap.getHeight() * zoom);
-		if (height > MAX_IMAGE_SIZE) {
-			zoom *= (float)MAX_IMAGE_SIZE / width;
-		}
-		width = (int)(bitmap.getWidth() * zoom);
-		height = (int)(bitmap.getHeight() * zoom);
-		bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-		BitmapDrawable drawable = new BitmapDrawable(bitmap);
-		//String text = String.format("%03d: ", id) + objectClass.name;
-		String text = objectClass.name;
-		
-		setText(text);
-		setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 	}
-	
+
+
+
 	public SelectorObjectInstance(Context context) {
 		super(context);
 	}
-	
+
 	public SelectorObjectInstance(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
-	
+
 	@Override
 	public void populate(final PlatformGame game) {
 		this.game = game; 

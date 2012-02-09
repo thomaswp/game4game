@@ -37,7 +37,7 @@ public class Button {
 		dragStart = new Vector();
 		this.radius = radius;
 
-		paint.setColor(color);		
+		paint.setColor(color);
 		outer = new Sprite(viewport, x, y, radius * 2, radius * 2);
 		outer.centerOrigin();
 		outer.getBitmapCanvas().drawCircle(radius, radius, radius, paint);
