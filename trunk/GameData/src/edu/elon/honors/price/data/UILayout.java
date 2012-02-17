@@ -22,6 +22,7 @@ public class UILayout implements Serializable {
 		public int x, y;
 		public int radius, color;
 		public boolean defaultAction;
+		public String name;
 		
 		public CircleControl(int x, int y, int radius, int color,
 				boolean defaultAction) {
@@ -32,6 +33,48 @@ public class UILayout implements Serializable {
 			this.color = color;
 			this.defaultAction = defaultAction;
 		}
+		
+		public int getRealX(int width) {
+			return x >= 0 ? x : width + x;
+		}
+		
+		public int getRealY(int height) {
+			return y >= 0 ? y : height+ y;
+		}
+		
+		public void setRealX(int newX, int width) {
+			if (newX < 0) newX = 0;
+			if (newX > width - 1) newX = width - 1;
+			
+			x = newX > width / 2 ? newX - width : newX;
+		}
+		
+		public void setRealY(int newY, int height) {
+			if (newY < 0) newY = 0;
+			if (newY > height - 1) newY = height - 1;
+			
+			y = newY > height / 2 ? newY - height : newY;
+		}
+
+		public void setRelX(int newX, int width) {
+			if (newX < -width / 2) {
+				x = width + newX;
+			} else if (newX > width / 2) {
+				x  = -width + newX;
+			} else {
+				x = newX;
+			}
+		}
+
+		public void setRelY(int newY, int height) {
+			if (newY < -height/ 2) {
+				y = height + newY;
+			} else if (newY > height / 2) {
+				y  = -height + newY;
+			} else {
+				y = newY;
+			}
+		}
 	}
 	
 	public static class Button extends CircleControl {
@@ -40,6 +83,7 @@ public class UILayout implements Serializable {
 		public Button(int x, int y, int radius, int color,
 				boolean defaultAction) {
 			super(x, y, radius, color, defaultAction);
+			name = "New Button";
 		}
 	}
 	
@@ -49,6 +93,7 @@ public class UILayout implements Serializable {
 		public JoyStick(int x, int y, int radius, int color,
 				boolean defaultAction) {
 			super(x, y, radius, color, defaultAction);
+			name = "New Joy Stick";
 		}
 	}
 

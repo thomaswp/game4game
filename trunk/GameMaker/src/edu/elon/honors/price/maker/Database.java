@@ -22,11 +22,11 @@ public class Database extends DatabaseActivity {
 		super.onCreate(savedInstanceState);
 
 		pages = new Page[] { 
-				new PageUI(this),
+				new PageEvents(this),
 				new PageActors(this),
 				new PageHero(this),
 				new PageObjects(this),
-				new PageEvents(this),
+				new PageUI(this),
 				new PageTest(this)
 			};
 		

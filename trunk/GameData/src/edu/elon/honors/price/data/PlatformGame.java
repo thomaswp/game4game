@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.graphics.Rect;
 
@@ -164,9 +165,9 @@ public class PlatformGame implements Serializable {
 			for (Field field : c.getDeclaredFields()) {
 				//Game.debug("Field:" + field.getName());
 				try {
-					if (o1.getClass() == ArrayList.class) {
-						ArrayList<?> a1 = (ArrayList<?>)o1;
-						ArrayList<?> a2 = (ArrayList<?>)o2;
+					if (o1 instanceof List) {
+						List<?> a1 = (List<?>)o1;
+						List<?> a2 = (List<?>)o2;
 						if (a1.size() != a2.size()) return false;
 						for (int i = 0; i < a1.size(); i++) {
 							if (!areEqual(a1.get(i), a2.get(i)))

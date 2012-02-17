@@ -7,6 +7,7 @@ import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Event.Action;
+import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.ActorTrigger;
 import edu.elon.honors.price.data.Event.RegionTrigger;
@@ -46,7 +47,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		"Switch Trigger",
 		"Variable Trigger",
 		"Actor Trigger",
-		"Region Trigger"
+		"Region Trigger",
+		"UI Trigger"
 	};
 
 	public static final String COLOR_VARIABLE = "#00CC00";
@@ -166,6 +168,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					intent = new Intent(DatabaseEditEvent.this,
 							DatabaseEditTriggerRegion.class);
 					break;
+				case 4:
+					intent = new Intent(DatabaseEditEvent.this,
+							DatabaseEditTriggerUI.class);
 				}
 
 				if (intent != null) {
@@ -527,7 +532,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				return DatabaseEditTriggerActor.class;
 			} else if (trigger instanceof RegionTrigger) {
 				return DatabaseEditTriggerRegion.class;
-			} 
+			} else if (trigger instanceof UITrigger) {
+				return DatabaseEditTriggerUI.class;
+			}
 
 			return null;
 		}
@@ -557,6 +564,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				text = getTriggerText((ActorTrigger)trigger);
 			} else if (trigger instanceof RegionTrigger) {
 				text = getTriggerText((RegionTrigger)trigger);
+			} else if (trigger instanceof UITrigger) {
+				text = getTriggerText((UITrigger)trigger);
 			}
 
 			tv.setText(Html.fromHtml(text));
@@ -634,6 +643,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			sb.append(")");
 
 			return sb.toString();
+		}
+		
+		private String getTriggerText(UITrigger trigger) {
+			return "!";
 		}
 	}
 }

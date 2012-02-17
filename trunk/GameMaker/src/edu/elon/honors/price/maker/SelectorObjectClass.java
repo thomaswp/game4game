@@ -30,7 +30,6 @@ public class SelectorObjectClass  extends Spinner implements IPopulatable {
 	
 	public SelectorObjectClass(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getSelectedObjectId() {

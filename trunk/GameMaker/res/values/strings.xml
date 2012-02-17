@@ -56,4 +56,10 @@
     <string name="contacts">Contacts:</string>
     <string name="editUI">Edit User Interface</string>
     <string name="ui">User Interface</string>
+    <string name="defaultAction">Default Action</string>
+    <string name="editUITrigger">Edit UI Trigger</string>
+    <string name="theButton">uses the Button</string>
+    <string name="theJoystick">uses the Joystick</string>
+    <string name="touchesTheScreen">touches the Screen</string>
+    <string name="uiEventTriggered">The event is triggered when the player:</string>
 </resources>
