@@ -29,6 +29,12 @@ import edu.elon.honors.price.input.Input;
 
 public abstract class MapActivityBase extends Activity {
 
+	public static final int SELECTION_FILL_COLOR = 
+		Color.argb(200, 150, 150, 255);
+	public static final int SELECTION_BORDER_COLOR = 
+		Color.argb(255, 50, 50, 255);
+	public static final int SELECTION_BORDER_WIDTH = 2;
+	
 	protected PlatformGame game;
 	protected MapView view;
 
@@ -50,9 +56,9 @@ public abstract class MapActivityBase extends Activity {
 
 	protected abstract static class MapView extends BasicCanvasView {
 
-		protected int selectionFillColor = Color.argb(200, 150, 150, 255);
-		protected int selectionBorderColor = Color.argb(255, 50, 50, 255);
-		protected int selectionBorderWidth = 2;
+		protected int selectionFillColor = SELECTION_FILL_COLOR;
+		protected int selectionBorderColor = SELECTION_BORDER_COLOR;
+		protected int selectionBorderWidth = SELECTION_BORDER_WIDTH;
 
 		protected PlatformGame game;
 		protected Paint paint;

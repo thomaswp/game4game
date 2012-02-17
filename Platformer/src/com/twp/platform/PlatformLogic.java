@@ -77,7 +77,7 @@ public class PlatformLogic implements Logic {
 	LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
 	LinkedList<Button> buttons = new LinkedList<Button>();
 	AnimatedSprite hero;
-	Vector p = new Vector();
+	Vector p = new Vector(), joystickPull = new Vector();
 	private World world;
 	private ActorBody heroBody;
 	private Vector offset;
@@ -142,14 +142,14 @@ public class PlatformLogic implements Logic {
 			UILayout.Button button = game.uiLayout.buttons.get(i);
 			int x = button.x >= 0 ? button.x : Graphics.getWidth() + button.x;
 			int y = button.y >= 0 ? button.y : Graphics.getHeight() + button.y;
-			buttons.add(new Button(x, y, 0, 
+			buttons.add(new Button(x, y, 10, 
 					button.radius, button.color));
 		}
 		for (int i = 0; i < game.uiLayout.joysticks.size(); i++) {
 			UILayout.JoyStick joystick = game.uiLayout.joysticks.get(i);
 			int x = joystick.x >= 0 ? joystick.x : Graphics.getWidth() + joystick.x;
 			int y = joystick.y >= 0 ? joystick.y : Graphics.getHeight() + joystick.y;
-			joysticks.add(new JoyStick(x, y, 0, 
+			joysticks.add(new JoyStick(x, y, 10, 
 					joystick.radius, joystick.color));
 		}
 
@@ -328,20 +328,30 @@ public class PlatformLogic implements Logic {
 			joysticks.get(i).update();
 		}
 
-//		if (!heroBody.isStunned()) {
-//			if (button.isTapped()) {
-//				heroBody.jump(true);
-//			}
-//
-//			if (heroBody.isOnLadder()) {
-//				heroBody.setVelocityY(stick.getPull().getY() * heroBody.getActor().speed);
-//				antiGravity.set(0, -GRAVITY * heroBody.getBody().getMass());
-//				heroBody.getBody().applyForce(antiGravity, zeroVector);
-//			}
-//			else {
-//				heroBody.setVelocityX(stick.getPull().getX() * heroBody.getActor().speed);
-//			}
-//		}
+		if (!heroBody.isStunned()) {
+			for (int i = 0; i < buttons.size(); i++) {
+				if (game.uiLayout.buttons.get(i).defaultAction &&
+						buttons.get(i).isTapped()) {
+					heroBody.jump(true);
+				}
+			}
+			
+			joystickPull.set(0, 0);
+			for (int i = 0; i < joysticks.size(); i++) {
+				if (game.uiLayout.joysticks.get(i).defaultAction) {
+					joystickPull.set(joysticks.get(i).getPull());
+				}
+			}
+			
+			if (heroBody.isOnLadder()) {
+				heroBody.setVelocityY(joystickPull.getY() * heroBody.getActor().speed);
+				antiGravity.set(0, -GRAVITY * heroBody.getBody().getMass());
+				heroBody.getBody().applyForce(antiGravity, zeroVector);
+			}
+			else {
+				heroBody.setVelocityX(joystickPull.getX() * heroBody.getActor().speed);
+			}
+		}
 
 		for (int i = 0; i < platformBodies.size(); i++) {
 			if (platformBodies.get(i) != null) {
@@ -652,7 +662,7 @@ public class PlatformLogic implements Logic {
 	public ObjectBody addObjectBody(ObjectAddable object) {
 		return addObjectBody(object.object, -1, object.startX, object.startY);
 	}
-	
+
 	private ObjectBody addObjectBody(ObjectClass object, int id, float startX, float startY) {
 		if (id < 0) {
 			id = objectBodies.size();
@@ -801,7 +811,7 @@ public class PlatformLogic implements Logic {
 			this.startDir = startDir;
 		}
 	}
-	
+
 	public static class ObjectAddable {
 		public ObjectClass object;
 		public float startX, startY;

@@ -423,4 +423,15 @@ public class Event implements Serializable {
 			}
 		}
 	}
+	
+	public static class UITrigger extends Trigger {
+		public static int CONTROL_BUTTON = 0;
+		public static int CONTROL_JOY = 1;
+		
+		public int index;
+		public int controlType;
+		
+		public transient boolean lastButtonDown, lasyJoyDown;
+		public transient float lastJoyX, lastJoyY;
+	}
 }

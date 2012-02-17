@@ -23,6 +23,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		getHolder().addCallback(this);
 		Input.setVibrator((Vibrator)getContext().
 				getSystemService(Context.VIBRATOR_SERVICE));
+		Input.setMultiTouch(false);
 	}
 	
 	public boolean onTouchEvent(MotionEvent event) {

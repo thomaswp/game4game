@@ -92,7 +92,7 @@ public class ObjectBody extends PlatformBody {
 						(xs[i] - bitmap.getWidth() / 2) / SCALE * object.zoom, 
 						(ys[i] - bitmap.getHeight() / 2) / SCALE * object.zoom
 				);
-				Game.debug(points[pi]);
+				//Game.debug(points[pi]);
 				pi--;
 			}
 		}
