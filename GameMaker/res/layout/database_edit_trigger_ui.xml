@@ -60,17 +60,113 @@
 
             </RadioGroup>
 
-            <edu.elon.honors.price.maker.SelectorUIControl
-                android:id="@+id/selectorUIControlButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/linearLayoutButton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                 />
+                android:orientation="vertical" >
+
+                <edu.elon.honors.price.maker.SelectorUIControl
+                    android:id="@+id/selectorUIControlButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroupButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/radioButtonPressed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/isPressed" />
+
+                    <RadioButton
+                        android:id="@+id/radioButtonRleased"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/isReleased" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutJoystick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <edu.elon.honors.price.maker.SelectorUIControl
+                    android:id="@+id/selectorUIControlJoystick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-            <edu.elon.honors.price.maker.SelectorUIControl
-                android:id="@+id/selectorUIControlJoystick"
-                android:layout_width="wrap_content"
+                <RadioGroup
+                    android:id="@+id/radioGroupJoy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/radioJoyPressed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/isPressed" />
+
+                    <RadioButton
+                        android:id="@+id/radioJoyReleased"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/isReleased" />
+
+                    <RadioButton
+                        android:id="@+id/radioJoyMoved"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/isMoved" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutScreen"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:orientation="vertical" >
+
+                <RadioGroup
+                    android:id="@+id/radioGroupScreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/RadioButton03"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/isPressed" />
+
+                    <RadioButton
+                        android:id="@+id/RadioButton02"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/isReleased" />
+
+                    <RadioButton
+                        android:id="@+id/RadioButton01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/isMoved" />
+                </RadioGroup>
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

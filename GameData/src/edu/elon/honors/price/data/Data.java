@@ -37,6 +37,7 @@ public final class Data {
 	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
+	public final static String BACKGROUNDS_DIR = GRAPHICS + "/backgrounds/";
 	
 	private static Context defaultParent;
 	
@@ -175,9 +176,13 @@ public final class Data {
 	 * @return The bitmap.
 	 */
 	public static Bitmap loadTileset(String name, Context parent) {
-		return loadBitmap(TILESETS_DIR + name, getDefaultParent());
+		return loadBitmap(TILESETS_DIR + name, parent);
 	}
 
+	public static Bitmap loadBackground(String name) {
+		return loadBitmap(BACKGROUNDS_DIR + name, getDefaultParent());
+	}
+	
 	/**
 	 * Used to load game data stored in the GameMaker namespace. Can
 	 * be used outside of this namespace.

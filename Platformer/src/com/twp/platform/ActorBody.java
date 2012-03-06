@@ -256,4 +256,9 @@ public class ActorBody extends PlatformBody {
 		
 		return false;
 	}
+
+	@Override
+	public void onTouchGround() {
+		this.onLadder = false;
+	}
 }

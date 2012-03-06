@@ -21,13 +21,13 @@
 		<choice text="add" />
 		<choice text="subtract" />
 		<choice text="multiply" />
-		<choice text="divide" />
+		<choice text="divide by" />
 		<choice text="mod by" />	
 	</radio>
 
 	<radio>
 		<choice text="the value">
-			<number />
+			<exactNumber />
 		</choice>
 		<choice text="a variable">
 			<variable />
@@ -35,9 +35,9 @@
 		<choice text="a random number">
 			<group>
 				<text text="between" />
-				<number />
+				<exactNumber />
 				<text text="and" />
-				<number />
+				<exactNumber />
 			</group>
 		</choice>
 		<choice text="an actor property">

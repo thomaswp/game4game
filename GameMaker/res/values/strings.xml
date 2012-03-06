@@ -58,8 +58,14 @@
     <string name="ui">User Interface</string>
     <string name="defaultAction">Default Action</string>
     <string name="editUITrigger">Edit UI Trigger</string>
-    <string name="theButton">uses the Button</string>
-    <string name="theJoystick">uses the Joystick</string>
-    <string name="touchesTheScreen">touches the Screen</string>
-    <string name="uiEventTriggered">The event is triggered when the player:</string>
+    <string name="theButton">the Button</string>
+    <string name="theJoystick">the Joystick</string>
+    <string name="touchesTheScreen">the Screen</string>
+    <string name="uiEventTriggered">The event is triggered when:</string>
+    <string name="isTapped">is tapped</string>
+    <string name="isPressed">is pressed</string>
+    <string name="isHeld">is held</string>
+    <string name="isReleased">is released</string>
+    <string name="isMoved">is moved</string>
+    <string name="anyObject">any object</string>
 </resources>

@@ -34,6 +34,7 @@ import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
+import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.ObjectClass;
@@ -59,10 +60,9 @@ import edu.elon.honors.price.physics.Vector;
 public class PlatformLogic implements Logic {
 
 	public static final float GRAVITY = 10f;
-
 	private static final int BORDER = 130;
-
 	public static final float SCALE = 50;
+	public static final int TRANS_GROUND = 215;
 
 	private boolean test = false;
 
@@ -88,7 +88,7 @@ public class PlatformLogic implements Logic {
 	private ArrayList<ActorAddable> toAdd = new ArrayList<ActorAddable>();
 	private ArrayList<QueuedContact> contacts = new ArrayList<PlatformLogic.QueuedContact>();
 
-	private HashMap<Fixture, ActorBody> bodyMap = new HashMap<Fixture, ActorBody>();
+	private HashMap<Fixture, PlatformBody> bodyMap = new HashMap<Fixture, PlatformBody>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
 	private Interpreter interpreter;
@@ -126,17 +126,21 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void initialize() {
+		Globals.setInstance(new Globals());
+
 		if (game == null) game = new PlatformGame();
 		map = game.maps.get(game.startMapId);
 
-		Bitmap bmp = Game.loadBitmap(R.drawable.ocean);
-		startOceanY = Graphics.getHeight() - bmp.getHeight();
+		Bitmap bmp = Data.loadBackground(map.groundImageName);
+		startOceanY = map.groundY - TRANS_GROUND;
 		background = new BackgroundSprite(bmp, new Rect(0, startOceanY, 
 				Graphics.getWidth(), Graphics.getHeight()), -5);
 
-		bmp = Game.loadBitmap(R.drawable.sky);
-		skyStartY = startOceanY - Graphics.getHeight();
-		sky = new BackgroundSprite(bmp, new Rect(0, skyStartY, Graphics.getWidth(), startOceanY), -5);
+		bmp = Data.loadBackground(map.skyImageName);
+		Game.debug("%dx%d", bmp.getWidth(), bmp.getHeight());
+		skyStartY = map.groundY - Graphics.getHeight();
+		sky = new BackgroundSprite(bmp, new Rect(0, skyStartY, Graphics.getWidth(), map.groundY), -6);
+		sky.scroll(0, Graphics.getHeight() - bmp.getHeight());
 
 		for (int i = 0; i < game.uiLayout.buttons.size(); i++) {
 			UILayout.Button button = game.uiLayout.buttons.get(i);
@@ -176,10 +180,10 @@ public class PlatformLogic implements Logic {
 				if (!(bodyMap.containsKey(fixtureA) && bodyMap.containsKey(fixtureB)))
 					return true;
 
-				ActorBody bodyA = bodyMap.get(fixtureA);
-				ActorBody bodyB = bodyMap.get(fixtureB);
+				PlatformBody bodyA = bodyMap.get(fixtureA);
+				PlatformBody bodyB = bodyMap.get(fixtureB);
 
-				return ActorBody.collides(bodyA, bodyB);
+				return PlatformBody.collides(bodyA, bodyB);
 			}
 		};
 		world.setContactFilter(filter);
@@ -335,21 +339,25 @@ public class PlatformLogic implements Logic {
 					heroBody.jump(true);
 				}
 			}
-			
+
+			boolean joyFound = false;
 			joystickPull.set(0, 0);
 			for (int i = 0; i < joysticks.size(); i++) {
 				if (game.uiLayout.joysticks.get(i).defaultAction) {
 					joystickPull.set(joysticks.get(i).getPull());
+					joyFound = true;
 				}
 			}
-			
+
 			if (heroBody.isOnLadder()) {
 				heroBody.setVelocityY(joystickPull.getY() * heroBody.getActor().speed);
 				antiGravity.set(0, -GRAVITY * heroBody.getBody().getMass());
 				heroBody.getBody().applyForce(antiGravity, zeroVector);
 			}
 			else {
-				heroBody.setVelocityX(joystickPull.getX() * heroBody.getActor().speed);
+				if (joyFound) {
+					heroBody.setVelocityX(joystickPull.getX() * heroBody.getActor().speed);
+				}
 			}
 		}
 
@@ -371,7 +379,7 @@ public class PlatformLogic implements Logic {
 		checkBehaviors();
 
 		for (int i = 0; i < toRemove.size(); i++) {
-			removeActorBody(toRemove.get(i));
+			removePlatformBody(toRemove.get(i));
 		}
 		toRemove.clear();
 		for (int i = 0; i < toAdd.size(); i++) {
@@ -386,7 +394,6 @@ public class PlatformLogic implements Logic {
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -395,7 +402,17 @@ public class PlatformLogic implements Logic {
 	}
 
 	public ActorBody getActorBodyFromId(int id) {
+		if (id < 0 || id >= actorBodies.size()) {
+			return null;
+		}
 		return actorBodies.get(id);
+	}
+
+	public ObjectBody getObjectBodyFromId(int id) {
+		if (id < 0 || id >= objectBodies.size()) {
+			return null;
+		}
+		return objectBodies.get(id);
 	}
 
 	public void queueActor(ActorAddable actor) {
@@ -405,6 +422,7 @@ public class PlatformLogic implements Logic {
 	private void checkTriggers() {
 		for (int i = 0; i < map.events.length; i++) {
 			Event event = map.events[i];
+			event.clearTriggerInfo();
 			boolean triggered = false;
 
 			for (int j = 0; j < event.triggers.size(); j++) {
@@ -498,7 +516,7 @@ public class PlatformLogic implements Logic {
 						@Override
 						public boolean reportFixture(Fixture fixture) {
 							if (bodyMap.containsKey(fixture)) {
-								ActorBody body = bodyMap.get(fixture);
+								PlatformBody body = bodyMap.get(fixture);
 								int index = -1;
 								boolean inRegion = inRegion(body, trigger);
 								for (int k = 0; k < trigger.contacts.size(); k++) {
@@ -509,7 +527,6 @@ public class PlatformLogic implements Logic {
 										RegionTrigger.Contact.STATE_TOUCHING;
 									int event = inRegion ? RegionTrigger.MODE_CONTAIN :
 										RegionTrigger.MODE_TOUCH;
-									Game.debug("add %d", event);
 									trigger.contacts.add(new RegionTrigger.Contact(body, state, event));
 								} else {
 									RegionTrigger.Contact contact = trigger.contacts.get(index);
@@ -539,7 +556,6 @@ public class PlatformLogic implements Logic {
 					for (int k = 0; k < trigger.contacts.size(); k++) {
 						RegionTrigger.Contact contact = trigger.contacts.get(k);
 
-
 						int contactEvent = contact.event;
 
 						if (!contact.checked) {
@@ -548,18 +564,96 @@ public class PlatformLogic implements Logic {
 							k--;
 						}
 
-						if (contactEvent >= 0 && ((ActorBody)contact.object).isHero())
-							Game.debug(contactEvent);
-
 						if (trigger.mode == contactEvent) {
-							if ((trigger.onlyHero && ((ActorBody)contact.object).isHero())
-									|| !trigger.onlyHero) {
-								triggered = true;
+							if (contact.object instanceof ActorBody) {
+								ActorBody body = (ActorBody)contact.object;
+								if (trigger.who == RegionTrigger.WHO_ACTOR) {
+									triggered = true;
+									event.tActor = body;
+								} else if (trigger.who == RegionTrigger.WHO_HERO &&
+										body.isHero()) {
+									triggered = true;
+									event.tActor = body;
+								}
+							} else {
+								if (trigger.who == RegionTrigger.WHO_OBJECT) {
+									ObjectBody body = (ObjectBody)contact.object;
+									triggered = true;
+									event.tObject = body;
+								}
 							}
 						}
 
 
 					}
+				}
+				else if (generic instanceof UITrigger) {
+					UITrigger trigger = (UITrigger)generic;
+					if (trigger.controlType == UITrigger.CONTROL_BUTTON) {
+						Button button = buttons.get(trigger.index);
+						if (button.isTapped() && trigger.condition == 
+							UITrigger.CONDITION_PRESS) {
+							triggered = true;
+						}
+						if (button.isReleased() && trigger.condition == 
+							UITrigger.CONDITION_RELEASE) {
+							triggered = true;
+						}
+					} else if (trigger.controlType == UITrigger.CONTROL_JOY) {
+						JoyStick joy = joysticks.get(trigger.index);
+						if (joy.isTapped() && trigger.condition == 
+							UITrigger.CONDITION_PRESS) {
+							triggered = true;
+						}
+						if (joy.isReleased() && trigger.condition == 
+							UITrigger.CONDITION_RELEASE) {
+							triggered = true;
+						}
+						if (joy.isPressed() && trigger.condition == 
+							UITrigger.CONDITION_MOVE) {
+							triggered = true;
+						}
+						if (triggered) {
+							event.tVector = joy.getPull();
+						}
+					} else {
+						if (Input.isTapped()) {
+							int pid = Input.getTappedPointer();
+							boolean inUse = false;
+							for (int k = 0; k < buttons.size(); k++) {
+								if (buttons.get(k).getPID() == pid) {
+									inUse = true;
+								}
+							}
+							for (int k = 0; k < joysticks.size(); k++) {
+								if (joysticks.get(k).getPID() == pid) {
+									inUse = true;
+								}
+							}
+							if (!inUse) {
+								touchPID = pid;
+								if (trigger.condition == UITrigger.CONDITION_PRESS) {
+									triggered = true;	
+								}
+							}
+						}
+						if (touchPID >= 0) {
+							if (Input.isTouchDown(touchPID)) {
+								if (trigger.condition == UITrigger.CONDITION_MOVE) {
+									triggered = true;
+								}
+							} else {
+								if (trigger.condition == UITrigger.CONDITION_RELEASE) {
+									triggered = true;	
+								}
+								touchPID = -1;
+							}
+						}
+					}
+				}
+
+				if (triggered) {
+					break;
 				}
 			}
 			if (triggered) {
@@ -569,9 +663,10 @@ public class PlatformLogic implements Logic {
 		}
 	}
 	Sprite s;
+	private int touchPID = -1;
 
 	private RectF regionRect = new RectF();
-	private boolean inRegion(ActorBody body, RegionTrigger trigger) {
+	private boolean inRegion(PlatformBody body, RegionTrigger trigger) {
 		regionRect.set(trigger.left, trigger.top, trigger.right, trigger.bottom);
 		regionRect.offset(offset.getX(), offset.getY());
 		return regionRect.contains(body.getSprite().getRect());
@@ -586,7 +681,7 @@ public class PlatformLogic implements Logic {
 					{
 						ActorBody bodyB = (ActorBody)bodyA.getCollidedBodies().get(j);
 
-						Game.debug("%s v %s", bodyA.getActor().name, bodyB.getActor().name);
+						//Game.debug("%s v %s", bodyA.getActor().name, bodyB.getActor().name);
 
 						int dir = ActorBody.getCollisionDirection(bodyA, bodyB);
 						if (bodyB.isHero())
@@ -645,7 +740,8 @@ public class PlatformLogic implements Logic {
 		mapX += p.getX(); mapY += p.getY();
 		mapY = Math.min(0, mapY);
 
-		p.multiply(0.7f);
+		//p.multiply(0.7f);
+		p.setX(p.getX() * 0.7f);
 
 		bgX += p.getX(); bgY += p.getY();
 		bgY = Math.min(0, bgY);
@@ -676,8 +772,13 @@ public class PlatformLogic implements Logic {
 				platformBodies.remove(body);
 			}
 		});
+		while (objectBodies.size() < id + 1) objectBodies.add(null);
 		objectBodies.set(id, body);
 		platformBodies.add(body);
+
+		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
+			bodyMap.put(body.getBody().getFixtureList().get(i), body);
+		}
 
 		return body;
 	}
@@ -717,7 +818,7 @@ public class PlatformLogic implements Logic {
 		return body;
 	}
 
-	private void removeActorBody(ActorBody body) {
+	private void removePlatformBody(PlatformBody body) {
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			bodyMap.remove(body.getBody().getFixtureList().get(i));
 		}
@@ -734,10 +835,10 @@ public class PlatformLogic implements Logic {
 
 		if (bodyMap.containsKey(fixtureA)) {
 
-			ActorBody bodyA = bodyMap.get(fixtureA);
+			PlatformBody bodyA = bodyMap.get(fixtureA);
 
 			if (bodyMap.containsKey(fixtureB)) {
-				ActorBody bodyB = bodyMap.get(fixtureB);
+				PlatformBody bodyB = bodyMap.get(fixtureB);
 				if (!bodyA.getTouchingBodies().contains(bodyB)) {
 					bodyA.getCollidedBodies().add(bodyB);
 					bodyA.getTouchingBodies().add(bodyB);
@@ -761,7 +862,7 @@ public class PlatformLogic implements Logic {
 					}
 				}
 
-				bodyA.setOnLadder(false);
+				bodyA.onTouchGround();
 			}
 
 		}
@@ -777,9 +878,9 @@ public class PlatformLogic implements Logic {
 
 	private void doEndContact(Fixture fixtureA, Fixture fixtureB, boolean anti) {
 		if (bodyMap.containsKey(fixtureA)) {
-			ActorBody bodyA = bodyMap.get(fixtureA);
+			PlatformBody bodyA = bodyMap.get(fixtureA);
 			if (bodyMap.containsKey(fixtureB)) {
-				ActorBody bodyB = bodyMap.get(fixtureB);
+				PlatformBody bodyB = bodyMap.get(fixtureB);
 				bodyA.getTouchingBodies().remove(bodyB);
 			} else if (levelMap.containsKey(fixtureB)) {
 				if (bodyA.getTouchingWalls().contains(fixtureB)) {

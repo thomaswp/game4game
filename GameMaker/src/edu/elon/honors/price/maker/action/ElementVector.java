@@ -2,61 +2,61 @@ package edu.elon.honors.price.maker.action;
 
 import org.xml.sax.Attributes;
 
-import edu.elon.honors.price.data.ActorInstance;
-import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.data.Event.Trigger;
-import edu.elon.honors.price.maker.DatabaseEditEvent;
-import edu.elon.honors.price.maker.SelectorActorClass;
-import edu.elon.honors.price.maker.SelectorActorInstance;
-import edu.elon.honors.price.maker.SelectorSwitch;
-import edu.elon.honors.price.maker.TextUtils;
-
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.maker.DatabaseEditEvent;
+import edu.elon.honors.price.maker.SelectorObjectClass;
+import edu.elon.honors.price.maker.SelectorObjectInstance;
+import edu.elon.honors.price.maker.SelectorVector;
+import edu.elon.honors.price.maker.TextUtils;
 
-public class ElementActorInstance extends Element {
+public class ElementVector extends Element {
 
-	private SelectorActorInstance selectorActorInstance;
+	private SelectorVector selectorVector;
 	private RadioButton radioInstance, radioTriggering;
-
+	
 	@Override
 	protected String getDefaultColor() {
-		return DatabaseEditEvent.COLOR_VARIABLE;
+		return DatabaseEditEvent.COLOR_VALUE;
 	}
-
-	public ElementActorInstance(Attributes atts, Context context) {
+	
+	public ElementVector(Attributes atts, Context context) {
 		super(atts, context);
 	}
-
+	
 	@Override
 	protected void addParameters(Parameters params) {
 		int mode = radioInstance.isChecked() ? 0 : 1;
 		Parameters ps = new Parameters();
 		ps.addParam(mode);
 		if (mode == 0) {
-			ps.addParam(selectorActorInstance.getSelectedInstance());
+			ps.addParam(selectorVector.getVectorX());
+			ps.addParam(selectorVector.getVectorY());
 		}
 		params.addParam(ps);
 	}
-
+	
 	@Override
-	protected int readParameters(final Parameters params, final int index) {
+	protected int readParameters(Parameters params, int index) {
 		final Parameters ps = params.getParameters(index);
 		int mode = ps.getInt();
 		if (mode == 0) {
 			radioInstance.setChecked(true);
-			selectorActorInstance.post(new Runnable() {
+			selectorVector.post(new Runnable() {
 				@Override
 				public void run() {
-					selectorActorInstance.setSelectedInstance(ps.getInt(1));
+					selectorVector.setVector(ps.getInt(1), ps.getInt(2));
 				}
 			});
 		} else {
@@ -64,34 +64,33 @@ public class ElementActorInstance extends Element {
 		}
 		return index + 1;
 	}
-
+	
 	@Override
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		layout.setOrientation(LinearLayout.HORIZONTAL);
 		RadioGroup group = new RadioGroup(context);
 		radioInstance = new RadioButton(context);
-		radioInstance.setText("the specific actor");
+		radioInstance.setText("the specific vector");
 		radioTriggering = new RadioButton(context);
-		radioTriggering.setText("the triggering actor");
+		radioTriggering.setText("the triggering Joystick's vector");
 
 		group.addView(radioInstance);
 		group.addView(radioTriggering);
 		layout.addView(group);
 		radioInstance.setChecked(true);
-		selectorActorInstance = new SelectorActorInstance(context);
-		selectorActorInstance.setGravity(Gravity.CENTER);
+		selectorVector = new SelectorVector(context);
 		LayoutParams lps = new LayoutParams(200, LayoutParams.WRAP_CONTENT);
 		lps.leftMargin = 10;
 		lps.gravity = Gravity.CENTER;
-		layout.addView(selectorActorInstance, lps);
+		layout.addView(selectorVector, lps);
 		main = layout;
-		
+
 		radioInstance.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
-					selectorActorInstance.setVisibility(View.VISIBLE);
+					selectorVector.setVisibility(View.VISIBLE);
 				}
 			}
 		});
@@ -99,7 +98,7 @@ public class ElementActorInstance extends Element {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
-					selectorActorInstance.setVisibility(View.GONE);
+					selectorVector.setVisibility(View.GONE);
 				}
 			}
 		});
@@ -109,20 +108,17 @@ public class ElementActorInstance extends Element {
 	public String getDescription(PlatformGame game) {
 		StringBuilder sb = new StringBuilder();
 		if (radioInstance.isChecked()) {
-			int index = selectorActorInstance.getSelectedInstance();
-			ActorInstance instance = game.getSelectedMap().actors.get(index);
-			String actorString;
-			if (instance.classIndex > 0)
-				actorString = String.format("%s %03d", 
-						game.actors[instance.classIndex].name, instance.id);
-			else
-				actorString = game.hero.name;
-			TextUtils.addColoredText(sb, actorString, color);
+			sb.append("[");
+			TextUtils.addColoredText(sb, selectorVector.getVectorX(), color);
+			sb.append(", ");
+			TextUtils.addColoredText(sb, selectorVector.getVectorX(), color);
+			sb.append("]");
 		} else {
-			TextUtils.addColoredText(sb, "the triggering actor", 
+			TextUtils.addColoredText(sb, "the triggering Joystick's vector", 
 					DatabaseEditEvent.COLOR_MODE);
 		}
 		return sb.toString();
 	}
 
 }
+

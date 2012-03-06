@@ -22,10 +22,28 @@ public class ActorClass implements Serializable, Cloneable {
 	public final static int BEHAVIOR_STUN = 6;
 	public final static int BEHAVIOR_DIE = 7;
 	
+	public final static String[] BEHAVIORS = new String[] {
+		"Nothing",
+		"Stop",
+		"Turn around",
+		"Jump",
+		"Jump and turn",
+		"Toggle Start/Stop",
+		"Become stunned",
+		"Die"
+	};
+	
 	public static final int ABOVE = 0;
 	public static final int BELOW = 1;
 	public static final int LEFT = 2;
 	public static final int RIGHT = 3;
+	
+	public final static String[] DIRECTIONS = new String[] {
+		"Above this actor",
+		"Below this actor",
+		"Left of this actor",
+		"Right of this actor",
+	};
 
 	public String name = "";
 	public String imageName = "ghost.png";

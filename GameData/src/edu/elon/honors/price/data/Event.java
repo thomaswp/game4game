@@ -20,6 +20,8 @@ public class Event implements Serializable {
 	public String name = "";
 	public ArrayList<Action> actions = new ArrayList<Event.Action>();
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
+	
+	public transient Object tActor, tObject, tVector;
 
 	/**
 	 * Creates a new event with the given list of Actions.
@@ -47,6 +49,11 @@ public class Event implements Serializable {
 		this("New Event");
 	}
 
+	public void clearTriggerInfo() {
+		tActor = null;
+		tObject = null;
+	}
+	
 	/**
 	 * Represents an action carried out by this event. Actions have an
 	 * id, chosen from the constants in the EventIds class, as well as a
@@ -360,7 +367,7 @@ public class Event implements Serializable {
 	}
 
 	public static class RegionTrigger extends Trigger {
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 2L;
 
 		public static final String[] MODES = new String[] {
 			"begins to enter",
@@ -373,28 +380,32 @@ public class Event implements Serializable {
 		public static final int MODE_CONTAIN = 1;
 		public static final int MODE_LOSE_CONTAIN = 2;
 		public static final int MODE_LOSE_TOUCH = 3;
+		
+		public static final int WHO_ACTOR = 0;
+		public static final int WHO_OBJECT = 1;
+		public static final int WHO_HERO = 2;
 
 		public transient ArrayList<Contact> contacts;
 
 		public int left, right, top, bottom;
 		public int mode;
-		public boolean onlyHero;
+		public int who;
 
-		public RegionTrigger(Rect rect, int mode, boolean onlyHero) {
-			this(rect.left, rect.top, rect.right, rect.bottom, mode, onlyHero);
+		public RegionTrigger(Rect rect, int mode, int who) {
+			this(rect.left, rect.top, rect.right, rect.bottom, mode, who);
 		}
 
-		public RegionTrigger(int left, int top, int right, int bottom, int mode, boolean onlyHero) {
+		public RegionTrigger(int left, int top, int right, int bottom, int mode, int who) {
 			this.left = left;
 			this.top = top;
 			this.right = right;
 			this.bottom = bottom;
-			this.onlyHero = onlyHero;
+			this.who = who;
 			this.mode = mode;
 		}
 
 		public RegionTrigger() {
-			this(0, 0, 0, 0, 0, false);
+			this(0, 0, 0, 0, 0, 0);
 		}
 
 		public boolean equals(RegionTrigger o) {
@@ -403,7 +414,7 @@ public class Event implements Serializable {
 			o.right == right &&
 			o.bottom == bottom && 
 			o.mode == mode &&
-			o.onlyHero == onlyHero;
+			o.who == who;
 		}
 
 		public static class Contact {
@@ -425,13 +436,36 @@ public class Event implements Serializable {
 	}
 	
 	public static class UITrigger extends Trigger {
-		public static int CONTROL_BUTTON = 0;
-		public static int CONTROL_JOY = 1;
+		private static final long serialVersionUID = 1L;
 		
-		public int index;
+		public static final int CONTROL_BUTTON = 0;
+		public static final int CONTROL_JOY = 1;
+		public static final int CONTROL_TOUCH = 2;
+		
+		public static final int CONDITION_PRESS = 0;
+		public static final int CONDITION_RELEASE = 1;
+		public static final int CONDITION_MOVE = 2;
+		
 		public int controlType;
+		public int index;
+		public int condition;
+		
+		public UITrigger() {
+			this(2, 0);
+		}
+		
+		public UITrigger(int controlType, int condition) {
+			this.controlType = controlType;
+			this.condition = condition;
+		}
 		
 		public transient boolean lastButtonDown, lasyJoyDown;
 		public transient float lastJoyX, lastJoyY;
+		
+		public boolean equals(UITrigger o) {
+			return controlType == o.controlType &&
+			index == o.index &&
+			condition == o.condition;
+		}
 	}
 }

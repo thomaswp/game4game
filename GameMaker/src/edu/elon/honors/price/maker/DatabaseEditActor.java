@@ -91,25 +91,11 @@ public class DatabaseEditActor extends DatabaseActivity {
 				"Touches another actor"
 		}));
 
+		directionSpinner.setAdapter(new ArrayAdapter<String>(
+				this, R.layout.spinner_text, ActorClass.DIRECTIONS));
 
-		directionSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_text, new String[] {
-				"Above this actor",
-				"Below this actor",
-				"Left of this actor",
-				"Right of this actor",
-		}));
-
-		
-		behaviorSpinner.setAdapter(new ArrayAdapter<String>(this, R.layout.spinner_text, new String[] {
-				"Nothing",
-				"Stop",
-				"Turn around",
-				"Jump",
-				"Jump and turn",
-				"Toggle Start/Stop",
-				"Become stunned",
-				"Die"
-		}));
+		behaviorSpinner.setAdapter(new ArrayAdapter<String>(
+				this, R.layout.spinner_text, ActorClass.BEHAVIORS));
 		
 		eventSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
