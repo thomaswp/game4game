@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -153,6 +154,16 @@ public class SelectorRegion extends LinearLayout implements IPopulatable {
 		}
 	}
 	
+	
+	@Override
+	public void clearFocus() {
+		super.clearFocus();
+		for (int i = 0; i < coords.length; i++) {
+			if (coords[i] != null && coords[i].hasFocus()) {
+				coords[i].clearFocus();
+			}
+		}
+	}
 
 	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {

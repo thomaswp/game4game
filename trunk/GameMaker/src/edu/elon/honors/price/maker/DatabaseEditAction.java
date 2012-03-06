@@ -82,7 +82,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 		Action action = new Action(id, params);
 		action.description = rootElement.getDescription(game);
 		intent.putExtra("action", action);
-		Game.debug(params);
+		//Game.debug(params);
 	}
 	
 	@Override

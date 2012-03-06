@@ -17,7 +17,7 @@ public class SelectorUIControl extends Spinner implements IPopulatable {
 	private PlatformGame game;
 	private int id;
 	private int controlType;
-	private OnObjectClassChangedListener onObjectClassChangedListener;
+	private OnControlChangedListener onControlChangedListener;
 	
 	public static int CONTROL_BUTTON = 0;
 	public static int CONTROL_JOY = 1;
@@ -28,11 +28,25 @@ public class SelectorUIControl extends Spinner implements IPopulatable {
 	
 	public void setSelectedControlId(int id) {
 		this.id = id;
-		setSelection(id);
+		if (id >= 0 && id < getCount())
+			setSelection(id);
 	}
 
-	public void setOnActorClassChangedListenter(OnObjectClassChangedListener onObjectClassChangedListener) {
-		this.onObjectClassChangedListener = onObjectClassChangedListener;
+	public void setOnControlChangedListenter(OnControlChangedListener onControlChangedListener) {
+		this.onControlChangedListener = onControlChangedListener;
+	}
+	
+	public void setControlType(int controlType) {
+		if (this.controlType != controlType) {
+			this.controlType = controlType;
+			id = 0;
+			if (game != null) {
+				populate(game);
+			} else {
+				setSelectedControlId(id);
+			}
+		}
+		
 	}
 	
 	public SelectorUIControl(Context context, AttributeSet attrs) {
@@ -73,8 +87,8 @@ public class SelectorUIControl extends Spinner implements IPopulatable {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
-				if (onObjectClassChangedListener != null) {
-					onObjectClassChangedListener.onObjectClassChanged(position);
+				if (onControlChangedListener != null) {
+					onControlChangedListener.onObjectClassChanged(position);
 				}
 				SelectorUIControl.this.id = position;
 			}
@@ -88,7 +102,7 @@ public class SelectorUIControl extends Spinner implements IPopulatable {
 		return false;
 	}
 	
-	public static abstract class OnObjectClassChangedListener {
+	public static abstract class OnControlChangedListener {
 		public abstract void onObjectClassChanged(int newId);
 	}
 }

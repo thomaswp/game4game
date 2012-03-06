@@ -22,6 +22,7 @@ public abstract class Element {
 	protected View main;
 	protected ViewGroup host;
 	protected String color;
+	protected Attributes attributes;
 
 	protected String getDefaultColor() {
 		return null;
@@ -29,6 +30,7 @@ public abstract class Element {
 	
 	public Element(Attributes atts, Context context) {
 		this.context = context;
+		this.attributes = atts;
 		readAttributes(atts);
 		genView();
 	}
@@ -111,13 +113,13 @@ public abstract class Element {
 			return new ElementVariable(atts, context);
 		} else if (qName.equals("description")) {
 			return new ElementDescription(atts, context);
-		} else if (qName.equals("number")) {
-			return new ElementNumber(atts, context);
+		} else if (qName.equals("exactNumber")) {
+			return new ElementExactNumber(atts, context);
 		} else if (qName.equals("actorInstance")) {
 			return new ElementActorInstance(atts, context);
 		} else if (qName.equals("actorClass")) {
 			return new ElementActorClass(atts, context);
-		} else if (qName.equals("point")) {
+		} else if (qName.equals("exactPoint")) {
 			return new ElementPoint(atts, context);
 		} else if (qName.equals("line")) {
 			return new ElementLine(atts, context);
@@ -129,6 +131,14 @@ public abstract class Element {
 			return new ElementObjectInstance(atts, context);
 		} else if (qName.equals("objectClass")) {
 			return new ElementObjectClass(atts, context);
+		} else if (qName.equals("actorBehavior")) {
+			return new ElementActorBehavior(atts, context);
+		} else if (qName.equals("point")) {
+			return new ElementPoint(atts, context);
+		} else if (qName.equals("vector")) {
+			return new ElementVector(atts, context);
+		} else if (qName.equals("number")) {
+			return new ElementNumber(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

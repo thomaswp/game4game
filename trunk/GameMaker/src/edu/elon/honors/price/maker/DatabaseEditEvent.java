@@ -625,10 +625,12 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		private String getTriggerText(RegionTrigger trigger) {
 			StringBuilder sb = new StringBuilder();
 
-			if (trigger.onlyHero) {
+			if (trigger.who == RegionTrigger.WHO_HERO) {
 				TextUtils.addColoredText(sb, game.hero.name, COLOR_VARIABLE);
-			} else {
+			} else if (trigger.who == RegionTrigger.WHO_ACTOR) {
 				sb.append("An actor");
+			} else {
+				sb.append("An object");
 			}
 			sb.append(" ");
 			TextUtils.addColoredText(sb, RegionTrigger.MODES[trigger.mode], COLOR_MODE);
@@ -646,7 +648,36 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		}
 		
 		private String getTriggerText(UITrigger trigger) {
-			return "!";
+			StringBuilder sb = new StringBuilder();
+			
+			switch (trigger.controlType) {
+			case UITrigger.CONTROL_BUTTON: 
+				TextUtils.addColoredText(sb, "The button ", COLOR_MODE);
+				TextUtils.addColoredText(sb, 
+						game.uiLayout.buttons.get(trigger.index).name, 
+						COLOR_VARIABLE);
+				break;
+			case UITrigger.CONTROL_JOY: 
+				TextUtils.addColoredText(sb, "The joystick ", COLOR_MODE);
+				TextUtils.addColoredText(sb, 
+						game.uiLayout.joysticks.get(trigger.index).name, 
+						COLOR_VARIABLE);
+				break;
+			case UITrigger.CONTROL_TOUCH: 
+				TextUtils.addColoredText(sb, "The screen", COLOR_MODE);
+				break;
+			}
+			sb.append(" is ");
+			switch (trigger.condition) {
+			case UITrigger.CONDITION_PRESS:
+				TextUtils.addColoredText(sb, "pressed", COLOR_MODE); break;
+			case UITrigger.CONDITION_RELEASE:
+				TextUtils.addColoredText(sb, "released", COLOR_MODE); break;
+			case UITrigger.CONDITION_MOVE:
+				TextUtils.addColoredText(sb, "moved", COLOR_MODE); break;
+			}
+			
+			return sb.toString();
 		}
 	}
 }

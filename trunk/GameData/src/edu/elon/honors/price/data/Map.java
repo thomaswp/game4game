@@ -15,11 +15,18 @@ public class Map implements Serializable{
 	public Event[] events;
 	public int rows, columns;
 	public Serializable editorData;
+	public int groundY;
+	public String groundImageName;
+	public String skyImageName;
 	
 	public Map() {
 		
 		rows = 8;
 		columns = 30;
+		
+		groundY = 6 * 48;
+		groundImageName = "bgmntgrnd.png";
+		skyImageName = "bgmntsky.jpg";
 		
 		tilesetId = 0;
 		

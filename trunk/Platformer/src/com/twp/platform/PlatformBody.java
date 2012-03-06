@@ -178,6 +178,8 @@ public abstract class PlatformBody {
 	protected abstract boolean collidesWith(PlatformBody body);
 	public abstract void update(long timeElapsed, Vector offset);
 	
+	public void onTouchGround() { }
+	
 	public static abstract class DisposeCallback {
 		public abstract void onDispose(PlatformBody body);
 	}

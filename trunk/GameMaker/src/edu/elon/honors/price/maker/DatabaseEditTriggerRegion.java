@@ -3,11 +3,16 @@ package edu.elon.honors.price.maker;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -19,7 +24,8 @@ import edu.elon.honors.price.game.Game;
 public class DatabaseEditTriggerRegion extends DatabaseActivity {
 	private RegionTrigger trigger;
 	
-	private RadioButton radioAnyActor, radioHero;
+	private RadioButton radioAnyActor, radioHero, radioObject;
+	private RadioGroup radioGroupType;
 	private Spinner spinnerMode;
 	private SelectorRegion selectorRegion;
 	
@@ -40,23 +46,38 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 		
 		radioAnyActor = (RadioButton)findViewById(R.id.radioAnyActor);
 		radioHero = (RadioButton)findViewById(R.id.radioHero);
+		radioObject = (RadioButton)findViewById(R.id.radioAnyObject);
+		radioGroupType = (RadioGroup)findViewById(R.id.radioGroupType);
 		spinnerMode = (Spinner)findViewById(R.id.spinnerMode);
 		selectorRegion = (SelectorRegion)findViewById(R.id.selectorRegion1);
+		
+		//Must set one view inside scroll to focusableInTouchMode
+		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
+		scroll.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				selectorRegion.clearFocus();
+				return false;
+			}
+		});
 		
 		spinnerMode.setAdapter(new ArrayAdapter<String>(this, 
 				android.R.layout.simple_spinner_item, RegionTrigger.MODES));
 		selectorRegion.populate(game);
 		
-		radioAnyActor.setChecked(!trigger.onlyHero);
-		radioHero.setChecked(trigger.onlyHero);
+//		radioAnyActor.setChecked(trigger.who == RegionTrigger.WHO_ACTOR);
+//		radioHero.setChecked(trigger.who == RegionTrigger.WHO_HERO);
+//		radioObject.setChecked(trigger.who == RegionTrigger.WHO_OBJECT);
+		((RadioButton)radioGroupType.getChildAt(trigger.who)).setChecked(true);
 		spinnerMode.setSelection(trigger.mode);
-		selectorRegion.setRect(new Rect(trigger.top, trigger.left, 
+		selectorRegion.setRect(new Rect(trigger.left, trigger.top, 
 				trigger.right, trigger.bottom));
 		
-		radioAnyActor.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		radioGroupType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				trigger.onlyHero = !isChecked;
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				trigger.who = radioGroupType.indexOfChild(
+						group.findViewById(checkedId));
 			}
 		});
 		

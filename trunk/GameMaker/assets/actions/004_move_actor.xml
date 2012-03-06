@@ -4,20 +4,7 @@
 	<actorInstance />
 	<text text="to" />
 	
-	<radio>
-		<choice text="the exact point">
-			<point />		
-		</choice>
-		<choice text="the variable point">
-			<line>
-				<text text="(" />
-				<variable />
-				<text text=", " />
-				<variable />
-				<text text=")" />
-			</line>
-		</choice>
-	</radio>
+	<point />
 	
 	<text text="facing" />
 	<radio>

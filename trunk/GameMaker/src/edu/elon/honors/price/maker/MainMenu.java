@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+
 import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
@@ -43,7 +44,7 @@ public class MainMenu extends Activity {
 		setContentView(R.layout.main_menu);
 
 		createDirs();
-		
+
 		loadMaps();
 		loadButtons();
 
@@ -57,7 +58,7 @@ public class MainMenu extends Activity {
 				dirs.add(Data.ACTORS_DIR);
 				dirs.add(Data.TILESETS_DIR);
 				dirs.add("export/");
-				
+
 				for (int i = 0; i < dirs.size(); i++) {
 					File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + dirs.get(i));
 					if (!file.exists()) {
@@ -144,29 +145,29 @@ public class MainMenu extends Activity {
 				newGame();
 			}
 		});
-		
+
 		copy.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				new AlertDialog.Builder(MainMenu.this)
-		        .setIcon(android.R.drawable.ic_dialog_alert)
-		        .setTitle("Import/Export")
-		        .setPositiveButton("Import", new DialogInterface.OnClickListener() {
-		            @Override
-		            public void onClick(DialogInterface dialog, int which) {
-		            	importGames();
-		            }
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setTitle("Import/Export")
+				.setPositiveButton("Import", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						importGames();
+					}
 
-		        })
-		        .setNeutralButton("Export", new DialogInterface.OnClickListener() {
-		            @Override
-		            public void onClick(DialogInterface dialog, int which) {
-		            	exportGames();
-		            }
+				})
+				.setNeutralButton("Export", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						exportGames();
+					}
 
-		        })
-		        .show();	
+				})
+				.show();	
 			}
 		});
 	}
@@ -177,41 +178,41 @@ public class MainMenu extends Activity {
 		for (String file : dir.list()) {
 			if (file.indexOf(PREFIX) == 0) {
 				try {
-    				FileInputStream fis = new FileInputStream(new File(dir, file));
-    				ObjectInputStream ois = new ObjectInputStream(fis);
-    				PlatformGame game = (PlatformGame)ois.readObject();
-    				FileOutputStream fos = openFileOutput(file, MODE_WORLD_WRITEABLE);
-    				ObjectOutputStream oos = new ObjectOutputStream(fos);
-    				oos.writeObject(game);
-    				loadMaps();
+					FileInputStream fis = new FileInputStream(new File(dir, file));
+					ObjectInputStream ois = new ObjectInputStream(fis);
+					PlatformGame game = (PlatformGame)ois.readObject();
+					FileOutputStream fos = openFileOutput(file, MODE_WORLD_WRITEABLE);
+					ObjectOutputStream oos = new ObjectOutputStream(fos);
+					oos.writeObject(game);
+					loadMaps();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		}
 	}
-	
+
 	private void exportGames() {
 		String[] files = fileList();
 		for (String file : files) {
 			if (file.indexOf(PREFIX) == 0) {
 				try {
-    				FileInputStream fis = openFileInput(file);
-    				ObjectInputStream ois = new ObjectInputStream(fis);
-    				PlatformGame game = (PlatformGame)ois.readObject();
-    				File file2 = new File(Environment.getExternalStorageDirectory(), 
-    						Data.SD_FOLDER + "export/" + file);
-    				FileOutputStream fos = new FileOutputStream(file2);
-    				ObjectOutputStream oos = new ObjectOutputStream(fos);
-    				oos.writeObject(game);
-    				
+					FileInputStream fis = openFileInput(file);
+					ObjectInputStream ois = new ObjectInputStream(fis);
+					PlatformGame game = (PlatformGame)ois.readObject();
+					File file2 = new File(Environment.getExternalStorageDirectory(), 
+							Data.SD_FOLDER + "export/" + file);
+					FileOutputStream fos = new FileOutputStream(file2);
+					ObjectOutputStream oos = new ObjectOutputStream(fos);
+					oos.writeObject(game);
+
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		}
 	}
-	
+
 	private void newGame() {
 		String[] files = fileList();
 		int n = 0;
@@ -257,8 +258,8 @@ public class MainMenu extends Activity {
 			PlatformGame game = (PlatformGame) Data.loadGame(selectedMap, this);
 			intent.putExtra("gameName", selectedMap);
 			intent.putExtra("game", game);
-//			Intent intent = new Intent(this, MapEditor.class);
-//			intent.putExtra("map", selectedMap);
+			//			Intent intent = new Intent(this, MapEditor.class);
+			//			intent.putExtra("map", selectedMap);
 			startActivity(intent);
 		}
 	}
