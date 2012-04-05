@@ -13,6 +13,8 @@ import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.GraphicsRenderer;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.GraphicsView;
+import edu.elon.honors.price.graphics.MessageSprite;
+import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.input.Input;
 
 import android.app.Activity;
@@ -236,6 +238,10 @@ public abstract class Game extends Activity {
 		debug(String.format(format, args));
 	}
 	
+	public static void debug(Exception e) {
+		e.printStackTrace();
+	}
+	
 	/**
 	 * A method to write specially formatted debug text.
 	 * 
@@ -260,6 +266,10 @@ public abstract class Game extends Activity {
 			"()" ;
 		}
 		Log.d(tag, msg);
+	}
+	
+	public static void showMessage(String message) {
+		new MessageSprite(message);
 	}
 
 	public void showAlert(String message) {

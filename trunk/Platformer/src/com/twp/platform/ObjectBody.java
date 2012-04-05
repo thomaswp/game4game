@@ -1,35 +1,18 @@
 package com.twp.platform;
 
-import java.util.ArrayList;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.RectF;
-import android.graphics.Paint.Style;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.twp.platform.PlatformBody.DisposeCallback;
 
-import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Sprite;
-import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
-import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.physics.Vector;
 
 public class ObjectBody extends PlatformBody {
@@ -42,9 +25,9 @@ public class ObjectBody extends PlatformBody {
 		return object;
 	}
 
-	public ObjectBody(Viewport viewport, World world, ObjectClass object, int id, 
-			float startX, float startY, DisposeCallback onDisposeCallback) {
-		super(viewport, world, id, startX, startY, onDisposeCallback);
+	public ObjectBody(Viewport viewport, PhysicsHandler physics, ObjectClass object, int id, 
+			float startX, float startY) {
+		super(viewport, physics, id, startX, startY);
 
 		this.object = object;
 		//object.zoom = 1f;
@@ -59,7 +42,7 @@ public class ObjectBody extends PlatformBody {
 		actorDef.position.set(spriteToVect(sprite, null));
 		actorDef.type = BodyType.DynamicBody;
 		actorDef.fixedRotation = object.fixedRotation;
-		body = world.createBody(actorDef);
+		body = physics.getWorld().createBody(actorDef);
 
 		float[] xs = new float[8]; float[] ys = new float[8];
 		int pts = sprite.convexHull(xs, ys);

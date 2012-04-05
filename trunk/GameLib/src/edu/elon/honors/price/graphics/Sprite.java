@@ -25,6 +25,8 @@ public class Sprite implements Comparable<Sprite> {
 
 	private Bitmap bitmap;
 	private Viewport viewport;
+	
+	private Object tag;
 
 	private float x, y, originX, originY, rotation, zoomX, zoomY;
 	private int z;
@@ -417,6 +419,14 @@ public class Sprite implements Comparable<Sprite> {
 
 	public void setGrid(Grid grid) {
 		this.grid = grid;
+	}
+	
+	public Object getTag() {
+		return tag;
+	}
+	
+	public void setTag(Object tag) {
+		this.tag = tag;
 	}
 	
 	public boolean isBitmapModified() {

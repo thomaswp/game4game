@@ -28,6 +28,7 @@ public class Viewport implements Comparable<Viewport> {
 	private ArrayList<Sprite> sprites;
 
 	public static Viewport DefaultViewport = new Viewport(0, 0, STRETCH, STRETCH);
+	public static Viewport DebugViewport = new Viewport(0, 0, STRETCH, STRETCH);
 
 	/**
 	 * Gets the X coordinate of the Viewport
@@ -303,6 +304,11 @@ public class Viewport implements Comparable<Viewport> {
 
 	@Override
 	public int compareTo(Viewport another) {
+		if (this == DebugViewport) {
+			return -1;
+		} else if (another == DebugViewport) {
+			return 1;
+		}
 		return ((Integer)z).compareTo(another.z);
 	}
 

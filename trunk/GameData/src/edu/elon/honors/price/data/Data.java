@@ -38,6 +38,8 @@ public final class Data {
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
 	public final static String BACKGROUNDS_DIR = GRAPHICS + "/backgrounds/";
+	public final static String FOREGROUNDS_DIR = GRAPHICS + "/foregrounds/";
+	public final static String MIDGROUNDS_DIR = GRAPHICS + "/midgrounds/";
 	
 	private static Context defaultParent;
 	
@@ -61,6 +63,7 @@ public final class Data {
 					ContentResolver cr = parent.getContentResolver();
 					AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, name), "r");
 					InputStream is = afd.createInputStream();
+					//BitmapFactory.Options options = new Options();
 					Bitmap bmp = BitmapFactory.decodeStream(is);
 					Cache.RegisterBitmap(name, bmp);
 					return bmp;
@@ -181,6 +184,14 @@ public final class Data {
 
 	public static Bitmap loadBackground(String name) {
 		return loadBitmap(BACKGROUNDS_DIR + name, getDefaultParent());
+	}
+	
+	public static Bitmap loadForeground(String name) {
+		return loadBitmap(FOREGROUNDS_DIR + name, getDefaultParent());
+	}
+	
+	public static Bitmap loadMidground(String name) {
+		return loadBitmap(MIDGROUNDS_DIR + name, getDefaultParent());
 	}
 	
 	/**

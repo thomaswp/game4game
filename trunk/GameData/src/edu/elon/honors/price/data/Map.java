@@ -2,6 +2,7 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Map implements Serializable{
 	private static final long serialVersionUID = 9L;
@@ -18,6 +19,7 @@ public class Map implements Serializable{
 	public int groundY;
 	public String groundImageName;
 	public String skyImageName;
+	public LinkedList<String> midGrounds = new LinkedList<String>();
 	
 	public Map() {
 		
@@ -25,8 +27,8 @@ public class Map implements Serializable{
 		columns = 30;
 		
 		groundY = 6 * 48;
-		groundImageName = "bgmntgrnd.png";
-		skyImageName = "bgmntsky.jpg";
+		groundImageName = "ground.png";
+		skyImageName = "sky.png";
 		
 		tilesetId = 0;
 		

@@ -21,7 +21,7 @@ public class PlatformGame implements Serializable {
 
 	private transient Rect mapRect = new Rect();
 
-	protected int _VERSION_ = 1;
+	protected int _VERSION_ = 2;
 
 	public ArrayList<Map> maps;
 	public int startMapId;

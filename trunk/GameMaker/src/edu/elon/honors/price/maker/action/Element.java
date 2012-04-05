@@ -139,6 +139,20 @@ public abstract class Element {
 			return new ElementVector(atts, context);
 		} else if (qName.equals("number")) {
 			return new ElementNumber(atts, context);
+		} else if (qName.equals("exactActorInstance")) {
+			return new ElementExactActorInstance(atts, context);
+		} else if (qName.equals("variablePoint")) {
+			return new ElementVariablePoint(atts, context);
+		} else if (qName.equals("joystick")) {
+			return new ElementJoystick(atts, context);
+		} else if (qName.equals("button")) {
+			return new ElementButton(atts, context);
+		} else if (qName.equals("ui")) {
+			return new ElementUI(atts, context);
+		} else if (qName.equals("boolean")) {
+			return new ElementBoolean(atts, context);
+		} else if (qName.equals("color")) {
+			return new ElementColor(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

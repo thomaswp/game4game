@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import edu.elon.honors.price.data.Event.ActorTrigger;
+import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;

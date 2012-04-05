@@ -16,6 +16,7 @@
 package com.badlogic.gdx.math;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 
 /**
@@ -29,6 +30,9 @@ public class Vector2 implements Serializable {
 	/** static temporary vector **/
 	private final static Vector2 tmp = new Vector2();
 
+	private final static LinkedList<Vector2> freeTemps = new LinkedList<Vector2>();
+	private final static LinkedList<Vector2> usedTemps = new LinkedList<Vector2>();
+	
 	/** the x-component of this vector **/
 	public float x;
 	/** the y-component of this vector **/
@@ -225,6 +229,28 @@ public class Vector2 implements Serializable {
 		return tmp.set(this);
 	}
 
+	public Vector2 tempCopy() {
+		if (freeTemps.size() == 0) {
+			freeTemps.add(new Vector2());
+		}
+		Vector2 temp = freeTemps.remove();
+		usedTemps.add(temp);
+		if (usedTemps.size() > 1000) {
+			throw new RuntimeException("Memory Leak in temp variables!");
+		}
+		return temp.set(this);
+	}
+	
+	public void releaseTemp() {
+		usedTemps.remove(this);
+		freeTemps.add(this);
+	}
+	
+	public static void releaseTemps() {
+		freeTemps.addAll(usedTemps);
+		usedTemps.clear();
+	}
+	
 	/**
 	 * Multiplies this vector by the given matrix
 	 * @param mat the matrix

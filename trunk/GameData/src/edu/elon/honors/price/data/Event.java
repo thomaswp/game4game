@@ -330,39 +330,46 @@ public class Event implements Serializable {
 		}
 	}
 
-	public static class ActorTrigger extends Trigger {
+	public static class ActorOrObjectTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 
 		public static final String[] ACTIONS = new String[] {
 			"collides with an actor",
 			"collides with the Hero",
+			"collides with an object",
 			"collides with a wall",
-			"dies"
+			"is destroyed"
 		};
 
 		public static final int ACTION_COLLIDES_ACTOR = 0;
 		public static final int ACTION_COLLIDES_HERO = 1;
-		public static final int ACTION_COLLIDES_WALL = 2;
-		public static final int ACTION_DIES = 3;
+		public static final int ACTION_COLLIDES_OBJECT = 2;
+		public static final int ACTION_COLLIDES_WALL = 3;
+		public static final int ACTION_DIES = 4;
+		
+		public static final int MODE_ACTOR_INSTANCE = 0;
+		public static final int MODE_ACTOR_CLASS = 1;
+		public static final int MODE_OBJECT_INSTANCE = 2;
+		public static final int MODE_OBJECT_CLASS= 3;
 
 		public int id;
 		public int action;
-		public boolean forInstance;
+		public int mode;
 
-		public ActorTrigger(boolean forInstance, int id, int action) {
-			this.forInstance = forInstance;
+		public ActorOrObjectTrigger(int mode, int id, int action) {
+			this.mode = mode;
 			this.id = id;
 			this.action = action;
 		}
 
-		public ActorTrigger() {
-			this(true, 1, 0);
+		public ActorOrObjectTrigger() {
+			this(0, 1, 0);
 		}
 
-		public boolean equals(ActorTrigger o) {
+		public boolean equals(ActorOrObjectTrigger o) {
 			return o.id == id &&
 			o.action == action &&
-			o.forInstance == forInstance;
+			o.mode == mode;
 		}
 	}
 
