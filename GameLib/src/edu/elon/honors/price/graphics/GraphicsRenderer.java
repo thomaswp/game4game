@@ -144,7 +144,7 @@ public class GraphicsRenderer implements Renderer {
 		flush = false;
 	}
 
-	
+	Sprite last;
 	long times = 0;
 	int frame = 0;
 	/**
@@ -214,6 +214,7 @@ public class GraphicsRenderer implements Renderer {
 									if (textures.containsKey(bmp)) {
 										sprite.setTextureId(textures.get(bmp));
 									} else {
+										last = sprite;
 										int rid = loadBitmap(gl, sprite.getBitmap());
 										resources.add(rid);
 										sprite.setTextureId(rid);
@@ -376,18 +377,25 @@ public class GraphicsRenderer implements Renderer {
 			while (targetHeight < height) targetHeight *= 2;
 			if ((width != targetWidth || height != targetHeight)) {
 				
-				//Game.debug(targetWidth + ", " + targetHeight);
-				int[] bmpPixels = new int[targetWidth * targetHeight];
-				bitmap.getPixels(bmpPixels, 0, targetWidth, 0, 0, width, height);
-				for (int i = 0; i < bmpPixels.length; i++) {
-					int c = bmpPixels[i];
-					bmpPixels[i] =
-						((c >> 16) & 0xff) +
-						((c & 0xff) << 16) +
-						(c & 0xff00ff00);
-				}
-				IntBuffer pixels = IntBuffer.wrap(bmpPixels);
-				gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, targetWidth, targetHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixels);
+				//Game.debug("%s: %dx%d", last.getTag(), targetWidth, targetHeight);
+//				int[] bmpPixels = new int[targetWidth * targetHeight];
+//				bitmap.getPixels(bmpPixels, 0, targetWidth, 0, 0, width, height);
+//				for (int i = 0; i < bmpPixels.length; i++) {
+//					int c = bmpPixels[i];
+//					bmpPixels[i] =
+//						((c >> 16) & 0xff) +
+//						((c & 0xff) << 16) +
+//						(c & 0xff00ff00);
+//				}
+//				IntBuffer pixels = IntBuffer.wrap(bmpPixels);
+//				gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, targetWidth, targetHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixels);
+				
+				int pixels[] = new int[width * height];
+				bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+				//Bitmap newBmp = Bitmap.createBitmap(pixels, 0, targetWidth, targetWidth, targetHeight, bitmap.getConfig());
+				Bitmap newBmp = Bitmap.createBitmap(targetWidth, targetHeight, bitmap.getConfig());
+				newBmp.setPixels(pixels, 0, width, 0, 0, width, height);
+				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, newBmp, 0);
 
 			} else {
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);

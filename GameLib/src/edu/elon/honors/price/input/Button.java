@@ -13,6 +13,7 @@ public class Button {
 	private Sprite outer, top;
 	private int pid = -1;
 	private boolean tapped;
+	private boolean released;
 	
 	private static Paint paint = new Paint();
 
@@ -22,6 +23,14 @@ public class Button {
 	
 	public boolean isTapped() {
 		return tapped;
+	}
+	
+	public boolean isReleased() {
+		return released;
+	}
+	
+	public int getPID() {
+		return pid;
 	}
 	
 	public Button(int x, int y, int z, int radius, int color) {
@@ -50,6 +59,7 @@ public class Button {
 
 	public void update() {
 		this.tapped = false;
+		this.released = false;
 		if (Input.isTapped() && pid < 0) {
 			int tapped = Input.getTappedPointer();
 			touch.set(Input.getLastTouchX(tapped), Input.getLastTouchY(tapped));
@@ -72,9 +82,16 @@ public class Button {
 			}
 			//Game.debug(pull);
 		} else {
+			if (pid >= 0) {
+				released = true;
+			}
 			top.setVisible(false);
 			pull.set(0, 0);
 			pid = -1;
 		}
+	}
+	
+	public void setVisible(boolean visible) {
+		outer.setVisible(visible);
 	}
 }

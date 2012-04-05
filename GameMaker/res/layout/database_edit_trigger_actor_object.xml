@@ -16,12 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
-            <TextView
+            <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
-                android:text="@string/editActorTrigger"
+                android:text="@string/editActorObjectTrigger"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -31,13 +31,13 @@
                 android:layout_marginBottom="10dip"
                 android:text="@string/eventTriggeredWhen"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <RadioGroup
                 android:id="@+id/radioGroupType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
-                android:orientation="horizontal" >
+                android:orientation="vertical" >
 
                 <RadioButton
                     android:id="@+id/radioInstance"
@@ -45,12 +45,24 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:text="@string/specificActor" />
+
+                <RadioButton
+                    android:id="@+id/RadioButton02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/anyActorWithTheClass" />
+
+                <RadioButton
+                    android:id="@+id/RadioButton01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="the specific object" />
 
                 <RadioButton
                     android:id="@+id/radioClass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/anyActorWithTheClass" />
+                    android:text="any object with the class" />
 
             </RadioGroup>
 
@@ -65,6 +77,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SelectorActorInstance" />
+
+            <edu.elon.honors.price.maker.SelectorObjectInstance
+                android:id="@+id/selectorObjectInstance1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SelectorObjectInstance" />
+
+            <edu.elon.honors.price.maker.SelectorObjectClass
+                android:id="@+id/selectorObjectClass1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
                 
             <LinearLayout
                 android:id="@+id/linearLayout3"

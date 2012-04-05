@@ -26,14 +26,7 @@
 				<choice text="&lt;" />
 				<choice text="≤" />
 			</radio>
-			<radio>
-				<choice text="the variable" mute="true">
-					<variable />
-				</choice>
-				<choice text="the value" mute="true">
-					<number />
-				</choice>
-			</radio>
+			<number />
 		</choice>
 		<choice text="the actor" mute="true">
 			<actorInstance />

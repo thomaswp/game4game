@@ -130,35 +130,43 @@ public class DatabaseNewAction extends DatabaseActivity {
 		private static ArrayList<Category> createCategories() {
 			ArrayList<Category> categories = new ArrayList<Category>();
 
-			categories.add(new Category("Switch/Variable Actions", new int[] {
+			categories.add(new Category("Switch/Variable", new int[] {
 					ID_SET_SWITCH,
-					ID_SET_VARIABLE
+					ID_SET_VARIABLE,
+					ID_POINT_OPERATION
 			}));
 
-			categories.add(new Category("Actor Actions", new int[] {
+			categories.add(new Category("Actor", new int[] {
 					ID_CREATE_ACTOR,
 					ID_MOVE_ACTOR,
 					ID_ACTOR_BEHAVIOR
 			}));
 
-//			categories.add(new Category("Hero Actions", new int[] {
-//					ID_HERO_SET_LADDER
-//			}));
-			
-			categories.add(new Category("Object Actions", new int[] {
+			//			categories.add(new Category("Hero Actions", new int[] {
+			//					ID_HERO_SET_LADDER
+			//			}));
+
+			categories.add(new Category("Object", new int[] {
 					ID_CREATE_OBJECT,
-					ID_MOVE_OBJECT
-			}));
-			
-//			categories.add(new Category("Control", new int[] {
-//					ID_IF
-//			}));
-			
-			categories.add(new Category("Physics", new int[] {
-				ID_SET_VELOCITY	
+					ID_MOVE_OBJECT,
+					ID_DESTROY_OBJECT
 			}));
 
-			categories.add(new Category("Debug Actions", new int[] {
+			categories.add(new Category("Control", new int[] {
+					ID_IF
+			}));
+
+			categories.add(new Category("Physics", new int[] {
+					ID_SET_VELOCITY	,
+					ID_CHANGE_GRAVITY
+			}));
+
+			categories.add(new Category("UI", new int[] {
+					ID_UI_ACTION,
+					ID_DRAW_TO_SCREEN
+			}));
+			
+			categories.add(new Category("Debug", new int[] {
 					ID_DEBUG_BOX,
 					ID_DEBUG_MESSAGE
 			}));

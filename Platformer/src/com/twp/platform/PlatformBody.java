@@ -21,8 +21,7 @@ public abstract class PlatformBody {
 	protected Body body;
 	protected Sprite sprite;
 	protected int id;
-	protected DisposeCallback onDisposeCallback;
-	protected World world;
+	protected PhysicsHandler physics;
 	protected Vector2 lastVelocity = new Vector2();
 	protected Vector scaledPosition = new Vector();
 	protected ArrayList<PlatformBody> touchingBodies = new ArrayList<PlatformBody>();
@@ -30,6 +29,7 @@ public abstract class PlatformBody {
 	protected ArrayList<Fixture> touchingFloors = new ArrayList<Fixture>();
 	protected ArrayList<PlatformBody> collidedBodies = new ArrayList<PlatformBody>();
 	protected boolean collidedWall;
+	protected boolean disposed;
 	
 	public ArrayList<PlatformBody> getCollidedBodies() {
 		return collidedBodies;
@@ -37,6 +37,10 @@ public abstract class PlatformBody {
 
 	public boolean isCollidedWall() {
 		return collidedWall;
+	}
+	
+	public boolean isDisposed() {
+		return disposed;
 	}
 	
 	public void setCollidedWall(boolean collidedWall) {
@@ -78,6 +82,10 @@ public abstract class PlatformBody {
 	public void setVelocity(float vx, float vy) {
 		body.setLinearVelocity(vx, vy);
 	}
+	
+	public void setVelocity(Vector2 velocity) {
+		body.setLinearVelocity(velocity);
+	}
 
 	public void setVelocityX(float vx) {
 		setVelocity(vx, getVelocity().y);
@@ -101,19 +109,16 @@ public abstract class PlatformBody {
 		return sprite;
 	}
 	
-	public PlatformBody(Viewport viewport, World world, int id, 
-			float startX, float startY, DisposeCallback onDisposeCallback) {
+	public PlatformBody(Viewport viewport, PhysicsHandler physics, int id, 
+			float startX, float startY) {
+		this.physics = physics;
 		this.id = id;
-		this.onDisposeCallback = onDisposeCallback;
-		this.world = world;
 	}
 	
 	public void dispose() {
 		this.sprite.dispose();
-		this.world.destroyBody(body);
-		if (onDisposeCallback != null) {
-			onDisposeCallback.onDispose(this);
-		}
+		physics.destroyBody(this);
+		disposed = true;
 	}
 	
 	public void updateSprite(Vector offset) {
@@ -179,8 +184,4 @@ public abstract class PlatformBody {
 	public abstract void update(long timeElapsed, Vector offset);
 	
 	public void onTouchGround() { }
-	
-	public static abstract class DisposeCallback {
-		public abstract void onDispose(PlatformBody body);
-	}
 }

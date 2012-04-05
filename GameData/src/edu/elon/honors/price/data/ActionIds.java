@@ -14,7 +14,12 @@ public class ActionIds {
 		"Create Object",
 		"Move Object",
 		"Set Velocity",
-		"Show Debug Message"
+		"Show Debug Message",
+		"Point Operation",
+		"Change Gravity",
+		"UI Action",
+		"Destroy Object",
+		"Draw to Screen"
 	};
 	
 	/**
@@ -41,6 +46,18 @@ public class ActionIds {
 	 * P2: Left | Right
 	 */
 	public static final int ID_CREATE_ACTOR = 2;
+	
+	/**
+	 * P0: Var Point X
+	 * P1: Var Point Y
+	 * P2: Set | Add | Subtract
+	 * P3: Point | Vector | Actor | Object
+	 * P4: Point/Vector/Actor/Object
+	 * P5: -/Magnitude/-/-
+	 */
+	public static final int ID_POINT_OPERATION = 12;
+	
+	
 	/**
 	 * P0: Actor Instance
 	 * P1: Point
@@ -71,6 +88,11 @@ public class ActionIds {
 	public static final int ID_MOVE_OBJECT = 9;
 	
 	/**
+	 * P0: Object Instance
+	 */
+	public static final int ID_DESTROY_OBJECT = 15;
+	
+	/**
 	 * P0: Text | Switch | Variable
 	 * P1: Text/Id/Id
 	 */
@@ -94,4 +116,22 @@ public class ActionIds {
 	 */
 	public static final int ID_SET_VELOCITY = 10;
 	
+	/**
+	 * P0: Vector
+	 * P1: Magnitude
+	 */
+	public static final int ID_CHANGE_GRAVITY = 13;
+	
+	/**
+	 * P0: UI Control
+	 * P1: Visibility | Default Behavior
+	 * P2: Boolean
+	 */
+	public static final int ID_UI_ACTION = 14;
+	
+	/**
+	 * P0: Clear | Draw
+	 * 
+	 */
+	public static final int ID_DRAW_TO_SCREEN = 16;
 }

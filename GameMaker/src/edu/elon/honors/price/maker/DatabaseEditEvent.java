@@ -8,8 +8,9 @@ import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.UITrigger;
+import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Event.ActorTrigger;
+import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
@@ -46,7 +47,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	private static final String[] TRIGGER_TYPES = new String[] {
 		"Switch Trigger",
 		"Variable Trigger",
-		"Actor Trigger",
+		"Actor/Object Trigger",
 		"Region Trigger",
 		"UI Trigger"
 	};
@@ -528,7 +529,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				return DatabaseEditTriggerSwitch.class;
 			} else if (trigger instanceof VariableTrigger) {
 				return DatabaseEditTriggerVariable.class;
-			} else if (trigger instanceof ActorTrigger) {
+			} else if (trigger instanceof ActorOrObjectTrigger) {
 				return DatabaseEditTriggerActor.class;
 			} else if (trigger instanceof RegionTrigger) {
 				return DatabaseEditTriggerRegion.class;
@@ -560,8 +561,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				text = getTriggerText((SwitchTrigger)trigger);
 			} else if (trigger instanceof VariableTrigger) {
 				text = getTriggerText((VariableTrigger)trigger);
-			} else if (trigger instanceof ActorTrigger) {
-				text = getTriggerText((ActorTrigger)trigger);
+			} else if (trigger instanceof ActorOrObjectTrigger) {
+				text = getTriggerText((ActorOrObjectTrigger)trigger);
 			} else if (trigger instanceof RegionTrigger) {
 				text = getTriggerText((RegionTrigger)trigger);
 			} else if (trigger instanceof UITrigger) {
@@ -598,10 +599,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			return sb.toString();
 		}
 
-		private String getTriggerText(ActorTrigger trigger) {
+		private String getTriggerText(ActorOrObjectTrigger trigger) {
 			StringBuilder sb = new StringBuilder();
 
-			if (trigger.forInstance) {
+			if (trigger.mode == ActorOrObjectTrigger.MODE_ACTOR_INSTANCE) {
 				ActorInstance instance = game.getSelectedMap().actors.get(trigger.id);
 
 				String actorString;
@@ -612,12 +613,18 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					actorString = game.hero.name;
 
 				TextUtils.addColoredText(sb, actorString, COLOR_VARIABLE);
-			} else {
+			} else if (trigger.mode == ActorOrObjectTrigger.MODE_ACTOR_CLASS) {
 				sb.append("A ");
 				TextUtils.addColoredText(sb, game.actors[trigger.id].name, COLOR_VARIABLE);
+			} else if (trigger.mode == ActorOrObjectTrigger.MODE_OBJECT_INSTANCE) {
+				ObjectInstance instance = game.getSelectedMap().objects.get(trigger.id);
+				TextUtils.addColoredText(sb, game.objects[instance.classIndex].name, COLOR_VARIABLE);
+			} else {
+				sb.append("A ");
+				TextUtils.addColoredText(sb, game.objects[trigger.id].name, COLOR_VARIABLE);
 			}
 			sb.append(" ");
-			TextUtils.addColoredText(sb, ActorTrigger.ACTIONS[trigger.action], COLOR_MODE);
+			TextUtils.addColoredText(sb, ActorOrObjectTrigger.ACTIONS[trigger.action], COLOR_MODE);
 
 			return sb.toString();
 		}

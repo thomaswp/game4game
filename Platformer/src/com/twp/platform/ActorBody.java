@@ -1,25 +1,22 @@
 package com.twp.platform;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.twp.platform.PlatformBody.DisposeCallback;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.RectF;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
-import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.input.Input;
@@ -37,8 +34,8 @@ public class ActorBody extends PlatformBody {
 	private boolean stopped;
 	private int lastBehaviorTime;
 	private int stun;
-	private World world;
 	private boolean onLadder;
+	private World world;
 	
 	private int animationFrames = 4;
 
@@ -81,10 +78,9 @@ public class ActorBody extends PlatformBody {
 		return sprite;
 	}
 
-	public ActorBody(Viewport viewport, World world, ActorClass actor, int id, 
-			float startX, float startY, int startDir, 
-			boolean isHero, DisposeCallback onDisposeCallback) {
-		super(viewport, world, id, startX, startY, onDisposeCallback);
+	public ActorBody(Viewport viewport, PhysicsHandler physics, ActorClass actor, int id, 
+			float startX, float startY, int startDir, boolean isHero) {
+		super(viewport, physics, id, startX, startY);
 		
 		this.actor = actor;
 		this.directionX = startDir;
@@ -109,7 +105,7 @@ public class ActorBody extends PlatformBody {
 		this.sprite.setZoom(actor.zoom);
 		super.sprite = sprite;
 		this.isHero = isHero;
-		this.world = world;
+		world = physics.getWorld();
 
 		BodyDef actorDef = new BodyDef();
 		actorDef.position.set(spriteToVect(sprite, null));
@@ -140,6 +136,23 @@ public class ActorBody extends PlatformBody {
 		stun -= timeElapsed;
 		collidedBodies.clear();
 		collidedWall = false;
+		
+		if (actor.fixedRotation) {
+			float pi = (float)Math.PI;
+			float gAngle = world.getGravity().angle() *	pi / 180 + 3 * pi / 2;
+			float bAngle = body.getAngle();
+			if (Math.abs(bAngle - gAngle) > 0) {
+				if (bAngle - gAngle > pi) {
+					gAngle += 2 * pi;
+				}
+				if (gAngle - bAngle > pi) {
+					bAngle += 2 * pi;
+				}
+				bAngle = bAngle * 0.9f + gAngle * 0.1f;
+			}
+			body.setTransform(body.getPosition().x, 
+					body.getPosition().y, bAngle);
+		}
 		
 		if (isHero) {
 			directionX = (int)Math.signum(getVelocity().x);
@@ -236,10 +249,38 @@ public class ActorBody extends PlatformBody {
 		onLadder = false;
 	}
 	
+	public void setHorizontalVelocity(float hv) {
+		Vector2 velocity = getVelocity();
+		Vector2 gHat = world.getGravity().tempCopy().nor();
+		//Project b onto gravity to erase horizontal velocity
+		velocity.set(gHat.mul(gHat.dot(velocity)));
+		//Game.debug("%f, %f", newVelocity.x, newVelocity.y);
+		Vector2 horizontal = world.getGravity().tempCopy().rotate(-90);
+		horizontal.mul(hv / horizontal.len());
+		velocity.add(horizontal);
+		
+		setVelocity(velocity);
+		Vector2.releaseTemps();
+	}
+	
+	public void setVerticalVelocity(float hv) {
+		Vector2 velocity = getVelocity();
+		Vector2 gHat = world.getGravity().tempCopy().nor().rotate(-90);
+		//Project b onto gravity to erase horizontal velocity
+		velocity.set(gHat.mul(gHat.dot(velocity)));
+		//Game.debug("%f, %f", newVelocity.x, newVelocity.y);
+		Vector2 vertical = world.getGravity().tempCopy().rotate(180);
+		vertical.mul(hv / vertical.len());
+		velocity.add(vertical);
+		
+		setVelocity(velocity);
+		Vector2.releaseTemps();
+	}
+	
 	public void jump(boolean checkGrounded) {
 		///if (!checkGrounded || isGrounded() || isOnLadder()) {
-			setVelocity(getVelocity().x, -actor.jumpVelocity);
-			onLadder = false;
+		setVerticalVelocity(actor.jumpVelocity);	
+		onLadder = false;
 		//}
 	}
 
@@ -260,5 +301,50 @@ public class ActorBody extends PlatformBody {
 	@Override
 	public void onTouchGround() {
 		this.onLadder = false;
+	}
+	
+	public void checkBehavior() {
+		for (int j = 0; j < collidedBodies.size(); j++) {
+			if (collidedBodies.get(j) instanceof ActorBody)
+			{
+				ActorBody bodyB = (ActorBody)collidedBodies.get(j);
+				
+				int dir = getCollisionDirection(this, bodyB);
+				if (bodyB.isHero())
+					doBehaviorCollideHero(dir, bodyB);
+				else
+					doBehavoirCollideActor(dir, bodyB);
+			}
+		}
+		if (collidedWall) {
+			doBehaviorWall();
+		}
+		if (getDirectionX() != 0) {
+			float y = getPosition().y + (sprite.getHeight() / 2 + 5) / SCALE;
+			float x = getPosition().x + (sprite.getWidth() / 2 + 5) * getDirectionX() / SCALE;
+			FixtureCallback callback = new FixtureCallback(physics);
+			world.QueryAABB(callback, x, y, x + 3 / SCALE, y + 3 / SCALE);
+			if (!callback.contact && isGrounded()) {
+				doBehaviorEdge();
+			}
+		}
+	}
+	
+	private static class FixtureCallback implements QueryCallback {
+		public boolean contact = false;
+		public PhysicsHandler physics;
+
+		private FixtureCallback(PhysicsHandler physics) {
+			this.physics = physics;
+		}
+
+		@Override
+		public boolean reportFixture(Fixture fixture) {
+			if (physics.getFixtureTile(fixture) != null) {
+				contact = true;
+				return false;
+			}
+			return true;
+		}
 	}
 }

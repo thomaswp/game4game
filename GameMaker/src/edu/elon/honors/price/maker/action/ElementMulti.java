@@ -4,8 +4,12 @@ import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.maker.DatabaseEditEvent;
+import edu.elon.honors.price.maker.R;
+import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -89,6 +93,19 @@ public abstract class ElementMulti extends Element {
 			layout.addView(oLayout, lps);
 		}
 
+		layout.setBackgroundDrawable(
+				context.getResources().getDrawable(
+						R.drawable.border_white));
+		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, 
+				LayoutParams.WRAP_CONTENT);
+//		params.setMargins(10, 0, 0, 0);
+		layout.setLayoutParams(params);
+//		int width = 0;
+//		for (int i = 0; i < layout.getChildCount(); i++) {
+//			width = Math.max(width, layout.getChildAt(i).getWidth());
+//		}
+//		layout.setMinimumWidth(width);
+
 		main = layout;
 	}
 
@@ -146,5 +163,37 @@ public abstract class ElementMulti extends Element {
 			sb.append(element.getDescription(game));
 		}
 
+	}
+	
+	protected static class OptionEmpty extends Option {
+
+		private String description;
+		private String color;
+		
+		public OptionEmpty(Context context, String text, String description) {
+			this(context, text, description, DatabaseEditEvent.COLOR_MODE);
+		}
+		
+		public OptionEmpty(Context context, String text, String description, String color) {
+			super(new LinearLayout(context), text);
+			this.description = description;
+			this.color = color;
+		}
+
+		@Override
+		public void readParams(Parameters params, int index) { }
+
+		@Override
+		public void addParams(Parameters params) { }
+
+		@Override
+		public void writeDescription(StringBuilder sb, PlatformGame game) {
+			if (color == null) {
+				sb.append(description);
+			} else {
+				TextUtils.addColoredText(sb, description, color);
+			}
+		}
+		
 	}
 }
