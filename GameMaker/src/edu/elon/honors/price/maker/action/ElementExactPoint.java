@@ -26,8 +26,8 @@ public class ElementExactPoint extends Element {
 	
 	@Override
 	protected void addParameters(Parameters params) {
-		params.addParam(selectorPoint.getX());
-		params.addParam(selectorPoint.getY());
+		params.addParam(selectorPoint.getPointX());
+		params.addParam(selectorPoint.getPointY());
 	}
 	
 	@Override
@@ -50,9 +50,9 @@ public class ElementExactPoint extends Element {
 	public String getDescription(PlatformGame game) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
-		TextUtils.addColoredText(sb, selectorPoint.getX(), color);
+		TextUtils.addColoredText(sb, selectorPoint.getPointX(), color);
 		sb.append(", ");
-		TextUtils.addColoredText(sb, selectorPoint.getY(), color);
+		TextUtils.addColoredText(sb, selectorPoint.getPointY(), color);
 		sb.append(")");
 		return sb.toString();
 	}

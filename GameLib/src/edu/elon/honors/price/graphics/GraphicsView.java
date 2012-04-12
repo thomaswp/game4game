@@ -6,6 +6,7 @@ import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.input.Input;
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -79,7 +80,7 @@ public class GraphicsView extends GLSurfaceView {
 				return Input.onTouch(v, event);
 			}
 		});
-
+		
 		//Add the surface holder
 		final SurfaceHolder surfaceHolder = getHolder();
 		surfaceHolder.addCallback(this);

@@ -50,6 +50,10 @@ public abstract class Page {
 		return parent.game;
 	}
 	
+	protected void setGame(PlatformGame game) {
+		parent.game = game;
+	}
+	
 	/**
 	 * Calls the parent's findViewById method.
 	 * @param id The id of the view to find.

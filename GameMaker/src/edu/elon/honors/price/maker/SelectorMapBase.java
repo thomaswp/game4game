@@ -68,7 +68,7 @@ public class SelectorMapBase extends MapActivityBase {
 		finish();
 	}
 	
-	protected static class SelectorMapView extends MapView {
+	public static class SelectorMapView extends MapView {
 		protected final static int MODE_MOVE = 0;
 		protected final static int MODE_SELECT = 1;
 		protected int mode;

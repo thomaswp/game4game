@@ -24,11 +24,11 @@ public class SelectorPoint extends LinearLayout implements IPopulatable {
 	protected EditText[] coords;
 	protected Button select;
 	
-	public int getX() {
+	public int getPointX() {
 		return x;
 	}
 	
-	public int getY() {
+	public int getPointY() {
 		return y;
 	}
 	

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/host"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/map"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/buttonEditBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/editBackground" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <SlidingDrawer
+            android:id="@+id/slidingDrawer1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:content="@+id/content"
+            android:handle="@+id/handle" >
+
+            <Button
+                android:id="@+id/handle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Handle" />
+
+            <LinearLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" >
+
+                <com.ericharlow.DragNDrop.DragNDropListView
+                    android:id="@+id/dragNDropListView1"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_white" >
+                </com.ericharlow.DragNDrop.DragNDropListView>
+
+                <com.ericharlow.DragNDrop.DragNDropListView
+                    android:id="@+id/dragNDropListView2"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border_white" >
+                </com.ericharlow.DragNDrop.DragNDropListView>
+            </LinearLayout>
+        </SlidingDrawer>
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="86dp"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/button1"
+            android:layout_below="@+id/button1"
+            android:layout_marginRight="22dp"
+            android:layout_weight="1"
+            android:text="Button" />
+
+    </RelativeLayout>
+
+</LinearLayout>

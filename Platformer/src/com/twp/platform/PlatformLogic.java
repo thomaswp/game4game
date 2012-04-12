@@ -1,52 +1,21 @@
 package com.twp.platform;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactFilter;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.QueryCallback;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.twp.platform.PhysicsHandler.BodyCallback;
 
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Region;
+import android.graphics.Bitmap.Config;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.data.ActorInstance;
-import edu.elon.honors.price.data.Event;
-import edu.elon.honors.price.data.Event.Action;
-import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
-import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.data.Event.RegionTrigger;
-import edu.elon.honors.price.data.Event.SwitchTrigger;
-import edu.elon.honors.price.data.Event.Trigger;
-import edu.elon.honors.price.data.Event.UITrigger;
-import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.ObjectClass;
-import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.data.UILayout;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
@@ -54,7 +23,6 @@ import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.BackgroundSprite;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
-import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
@@ -95,7 +63,7 @@ public class PlatformLogic implements Logic {
 	private boolean paused;
 
 	private String mapName;
-
+	
 	public PlatformGame getGame() {
 		return game;
 	}
@@ -176,7 +144,7 @@ public class PlatformLogic implements Logic {
 				bmp = Data.loadMidground(path);
 				Game.debug("%dx%d", bmp.getWidth(), bmp.getHeight());
 				if (mid == null) {
-					mid = bmp;//.copy(bmp.getConfig(), true);
+					mid = bmp.copy(bmp.getConfig(), true);
 				} else {
 					Canvas c = new Canvas(mid);
 					c.drawBitmap(bmp, 0, 0, paint);
@@ -270,7 +238,8 @@ public class PlatformLogic implements Logic {
 		}
 
 		physics.update(timeElapsed, offset);
-
+		updateWorldSprites();
+		
 		triggerHandler.checkTriggers();
 
 		physics.checkBehaviors();
@@ -280,7 +249,67 @@ public class PlatformLogic implements Logic {
 
 		updateScroll();
 	}
-
+	
+	private void updateWorldSprites() {
+		for (int i = 0; i < drawWorldSprites.size(); i++) {
+			drawWorldSprites.get(i).setOriginX(offset.getX());
+			drawWorldSprites.get(i).setOriginY(offset.getY());
+		}
+	}
+	
+	public void clearDrawScreen() {
+		for (int i = 0; i < drawScreenSprites.size(); i++) {
+			drawScreenSprites.get(i).dispose();
+		}
+		drawScreenSprites.clear();
+		for (int i = 9; i < drawWorldSprites.size(); i++) {
+			drawWorldSprites.get(i).dispose();
+		}
+		drawWorldSprites.clear();
+	}
+	
+	public void drawLine(Paint paint, int x1, int y1, int x2, int y2, boolean world) {
+		int left = Math.min(x1, x2), top = Math.min(y1, y2);
+		int right = Math.max(x1, x2), bot = Math.max(y1, y2);
+		int width = right - left, height = bot - top;
+		Bitmap bmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		Sprite s = new Sprite(drawViewport, bmp);
+		s.getBitmapCanvas().drawLine(x1 - left, y1 - top, x2 - left, y2 - top, paint);
+		s.setX(left);
+		s.setY(top);
+		addDrawSprite(s, world);
+	}
+	
+	public void drawCircle(Paint paint, int x, int y, int rad, boolean world) {
+		Game.debug("Draw: %d %d %d", x, y, rad);
+		Bitmap bmp = Bitmap.createBitmap(rad * 2, rad * 2, Config.ARGB_8888);
+		Sprite s = new Sprite(drawViewport, bmp);
+		s.getBitmapCanvas().drawCircle(rad, rad, rad, paint);
+		s.setX(x - rad);
+		s.setY(y - rad);
+		addDrawSprite(s, world);
+	}
+	
+	public void drawBox(Paint paint, int x1, int y1, int x2, int y2, boolean world) {
+		int left = Math.min(x1, x2), top = Math.min(y1, y2);
+		int right = Math.max(x1, x2), bot = Math.max(y1, y2);
+		int width = right - left, height = bot - top;
+		Bitmap bmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		Sprite s = new Sprite(drawViewport, bmp);
+		s.getBitmapCanvas().drawRect(0, 0, width, height, paint);
+		s.setX(left);
+		s.setY(top);
+		addDrawSprite(s, world);
+	}
+	
+	private void addDrawSprite(Sprite s, boolean world) {
+		if (world) {
+			drawWorldSprites.add(s);
+		} else {
+			drawScreenSprites.add(s);
+		}
+	}
+	
 	@Override
 	public void save() {
 	}
