@@ -14,11 +14,10 @@ public class Upgrader {
 				map.skyImageName = "sky.png";
 				map.midGrounds = new LinkedList<String>();
 				map.midGrounds.add("whiteclouds.png");
-				//map.midGrounds.add("mountain.png");!!!
-				//map.midGrounds.add("trees.png");
+				map.midGrounds.add("mountain.png");
+				map.midGrounds.add("trees.png");
 //				map.groundImageName = "bgnitegrnd.png";
 //				map.skyImageName = "bgnitesky.jpg";
-				Game.debug(map.groundImageName);
 				
 				game.objects[0].imageName = "rock.png";
 				game.objects[0].zoom = 0.5f;

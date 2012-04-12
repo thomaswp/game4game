@@ -9,13 +9,16 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
+import edu.elon.honors.price.R;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
+import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
@@ -29,6 +32,7 @@ public class GraphicsRenderer implements Renderer {
 	private int[] rTexture = new int[1];
 	private int lastBGC;
 	private int framesRendered = 0;
+	private Game game;
 
 	private Logic logic;
 
@@ -55,10 +59,11 @@ public class GraphicsRenderer implements Renderer {
 		this.logic = logic;
 	}
 	
-	public GraphicsRenderer() {
+	public GraphicsRenderer(Game game) {
 		mTextureNameWorkspace = new int[1];
 		mCropWorkspace = new int[4];
 		resources = new LinkedList<Integer>();
+		this.game = game;
 	}
 	
 	@Override
@@ -78,7 +83,9 @@ public class GraphicsRenderer implements Renderer {
 
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glEnable(GL10.GL_BLEND);
-		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		//gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		//Helps correct messed up alpha for clouds, etc.
+		gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 	}
@@ -305,6 +312,7 @@ public class GraphicsRenderer implements Renderer {
 					gl.glPopMatrix();
 
 				}
+				
 				Grid.endDrawing(gl);
 			}
 		}
@@ -330,6 +338,12 @@ public class GraphicsRenderer implements Renderer {
 		fpsBitmap.eraseColor(Color.TRANSPARENT);
 		canvas.drawText(Graphics.getFpsDraw() + "/" + Graphics.getFpsGame(), 0, 12, paint);
 		Graphics.setFPSBitmapRefresh(false);
+		
+//		if (fpsBitmap == null) {
+//			
+//			fpsBitmap = BitmapFactory.decodeResource(game.getResources(), 
+//					R.drawable.whiteclouds);
+//		}
 	}
 	
 	private Grid createNewGrid(Bitmap bitmap) {
@@ -389,7 +403,6 @@ public class GraphicsRenderer implements Renderer {
 //				}
 //				IntBuffer pixels = IntBuffer.wrap(bmpPixels);
 //				gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, targetWidth, targetHeight, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixels);
-				
 				int pixels[] = new int[width * height];
 				bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 				//Bitmap newBmp = Bitmap.createBitmap(pixels, 0, targetWidth, targetWidth, targetHeight, bitmap.getConfig());
@@ -398,7 +411,7 @@ public class GraphicsRenderer implements Renderer {
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, newBmp, 0);
 
 			} else {
-				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, bitmap, GL10.GL_UNSIGNED_BYTE, 0);
 			}
 
 			mCropWorkspace[0] = 0;

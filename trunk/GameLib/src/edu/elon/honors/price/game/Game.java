@@ -74,7 +74,7 @@ public abstract class Game extends Activity {
 		Input.setVibrator((Vibrator)getSystemService(VIBRATOR_SERVICE));
 
 		view = new GraphicsView(this);
-		view.setRenderer(new GraphicsRenderer());
+		view.setRenderer(new GraphicsRenderer(this));
 		this.setContentView(view);
 	}
 

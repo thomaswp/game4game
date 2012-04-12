@@ -29,8 +29,8 @@ public class SelectorMapPoint extends SelectorMapBase {
 	@Override
 	protected boolean hasChanged() {
 		PointView view = (PointView)this.view;
-		int x = view.getX();
-		int y = view.getY();
+		int x = view.getPointX();
+		int y = view.getPointY();
 		return x != originalX || y != originalY;
 	}
 
@@ -38,8 +38,8 @@ public class SelectorMapPoint extends SelectorMapBase {
 	protected void finishOk() {
 		PointView view = (PointView)this.view;
 		Intent intent = new Intent();
-		int x = view.getX();
-		int y = view.getY();
+		int x = view.getPointX();
+		int y = view.getPointY();
 		intent.putExtra("x", x);
 		intent.putExtra("y", y);
 		setResult(RESULT_OK, intent);
@@ -54,11 +54,11 @@ public class SelectorMapPoint extends SelectorMapBase {
 		protected int x, y;
 		protected Paint paint;
 
-		public int getX() {
+		public int getPointX() {
 			return x;
 		}
 		
-		public int getY() {
+		public int getPointY() {
 			return y;
 		}
 

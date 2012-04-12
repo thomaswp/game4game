@@ -69,4 +69,11 @@
     <string name="isMoved">is moved</string>
     <string name="anyObject">any object</string>
     <string name="editActorObjectTrigger">Edit Actor/Object Trigger</string>
+    <string name="map">Map</string>
+    <string name="editBackground">Edit Background</string>
+    <string name="sky">Sky</string>
+    <string name="ground">Ground</string>
+    <string name="decorations">Decorations</string>
+    <string name="decorationsUnused">Decorations (unused)</string>
+    <string name="preview">Preview:</string>
 </resources>

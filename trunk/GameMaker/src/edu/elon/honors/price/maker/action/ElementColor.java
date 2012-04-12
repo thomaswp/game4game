@@ -38,7 +38,7 @@ public class ElementColor extends Element {
 	@Override
 	public String getDescription(PlatformGame game) {
 		int color = selectorColor.getColor();
-		return String.format("#%2X%2X%2X", Color.red(color), Color.green(color),
+		return String.format("#%02X%02X%02X", Color.red(color), Color.green(color),
 				Color.blue(color));
 	}
 }

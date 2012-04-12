@@ -54,7 +54,7 @@ public abstract class MapActivityBase extends Activity {
 
 	protected abstract MapView getMapView(PlatformGame game);
 
-	protected abstract static class MapView extends BasicCanvasView {
+	public abstract static class MapView extends BasicCanvasView {
 
 		protected int selectionFillColor = SELECTION_FILL_COLOR;
 		protected int selectionBorderColor = SELECTION_BORDER_COLOR;
@@ -180,7 +180,8 @@ public abstract class MapActivityBase extends Activity {
 			if (grid == null) createGrid();
 
 			c.drawColor(Color.WHITE);
-
+			
+			drawBackground(c);
 			drawContent(c);
 			drawGrid(c);
 			drawButtons(c);
@@ -188,6 +189,43 @@ public abstract class MapActivityBase extends Activity {
 
 		protected abstract void drawContent(Canvas c);
 
+		protected int getBackgroundTransparency() {
+			return 80;
+		}
+		
+		protected void drawBackground(Canvas c) {
+			Map map = game.getSelectedMap();
+			Tileset tileset = game.tilesets[map.tilesetId];
+			int mapWidth = tileset.tileWidth * map.columns;
+			int mapHeight = tileset.tileHeight * map.rows;
+			
+			float paralax = 0.7f;
+			int pOffX = (int)(paralax * offX);
+			int pOffY = (int)(paralax * offY);
+			
+			paint.reset();
+			paint.setAlpha(getBackgroundTransparency());
+			Bitmap foreground = Data.loadForeground(map.groundImageName);
+			int fgHeight = mapHeight - map.groundY;
+			for (int i = 0; i < mapWidth; i += foreground.getWidth()) {
+				c.drawBitmap(foreground, i + pOffX, fgHeight + pOffY, paint);
+			}
+			Bitmap background = Data.loadBackground(map.skyImageName);
+			int bgHeight = fgHeight - background.getHeight();
+			for (int i = 0; i < mapWidth; i += background.getWidth()) {
+				for (int j = bgHeight; j > -mapHeight; j -= background.getHeight()) {
+					c.drawBitmap(background, i + pOffX, j + pOffY, paint);
+				}
+			}
+			int mgHeight = bgHeight + 80;
+			for (int j = 0; j < map.midGrounds.size(); j++) {
+				Bitmap midground = Data.loadMidground(map.midGrounds.get(j));
+				for (int i = 0; i < mapWidth; i += midground.getWidth()) {
+					c.drawBitmap(midground, i + pOffX, mgHeight + pOffY, paint);
+				}
+			}
+		}
+		
 		protected void drawButtons(Canvas c) {
 			for (int i = 0; i < buttons.size(); i++) {
 				Button button = buttons.get(i);

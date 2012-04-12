@@ -2,7 +2,11 @@ package com.twp.platform;
 
 import java.util.Random;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Paint.Style;
 
 import com.twp.platform.PlatformLogic.ActorAddable;
 import com.twp.platform.PlatformLogic.ObjectAddable;
@@ -15,6 +19,7 @@ import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
 import edu.elon.honors.price.physics.Vector;
@@ -31,6 +36,7 @@ public class Interpreter extends ActionIds {
 
 	private Point point = new Point();
 	private Vector vector = new Vector();
+	private Paint paint = new Paint();
 
 
 	public Interpreter(PlatformLogic logic) {
@@ -377,7 +383,29 @@ public class Interpreter extends ActionIds {
 				if (action.id == ID_DRAW_TO_SCREEN) {
 					int mode = params.getInt();
 					if (mode == 0) {
-						
+						logic.clearDrawScreen();
+					} else if (mode == 1) {
+						paint.reset();
+						paint.setColor(params.getInt(1));
+						if (params.getInt(2) == 0) {
+							paint.setStyle(Style.STROKE);
+							paint.setStrokeWidth(3);
+						} else {
+							paint.setStyle(Style.FILL);
+						}
+						boolean world = params.getInt(6) == 0;
+						int shape = params.getInt(3);
+						if (shape == 0) {
+							readPoint(params, 4, event, point);
+							int x1 = point.x, y1 = point.y;
+							readPoint(params, 5, event, point);
+							int x2 = point.x, y2 = point.y;
+							logic.drawLine(paint, x1, y1, x2, y2, world);
+						} else if (shape == 1) {
+							readPoint(params, 4, event, point);
+							int rad = readNumber(params, 5, event);
+							logic.drawCircle(paint, point.x, point.y, rad, world);
+						}
 					}
 				}
 				
