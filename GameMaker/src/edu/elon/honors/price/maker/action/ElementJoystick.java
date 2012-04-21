@@ -28,6 +28,7 @@ public class ElementJoystick extends Element {
 		params.addParam(selectorJoystick.getSelectedControlId());
 	}
 	
+	@Override
 	protected int readParameters(Parameters params, int index) {
 		final int id = params.getInt(index);
 		selectorJoystick.post(new Runnable() {

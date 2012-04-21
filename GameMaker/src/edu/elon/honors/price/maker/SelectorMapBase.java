@@ -1,29 +1,18 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.data.ActorInstance;
-import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Cache;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.maker.MapActivityBase.MapView;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Paint.Style;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 
 public class SelectorMapBase extends MapActivityBase {
 	
@@ -162,6 +151,7 @@ public class SelectorMapBase extends MapActivityBase {
 
 		protected void onLeftButtonPressed() { }
 		
+		@Override
 		protected void doUpdate(int width, int height, float x, float y) {
 			doReleaseTouch(x, y);
 
@@ -192,6 +182,7 @@ public class SelectorMapBase extends MapActivityBase {
 			rightButton.text = getRightButtonText();
 		}
 		
+		@Override
 		protected void drawContent(Canvas c) {
 			drawTiles(c);
 			drawActors(c);

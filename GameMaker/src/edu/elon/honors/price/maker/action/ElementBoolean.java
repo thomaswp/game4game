@@ -2,8 +2,6 @@ package edu.elon.honors.price.maker.action;
 
 import org.xml.sax.Attributes;
 
-import edu.elon.honors.price.game.Game;
-
 import android.content.Context;
 
 public class ElementBoolean extends ElementMulti {

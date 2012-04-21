@@ -4,13 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.badlogic.gdx.utils.Array;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -20,7 +16,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;

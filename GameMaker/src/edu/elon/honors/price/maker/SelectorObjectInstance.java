@@ -1,6 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
@@ -12,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class SelectorObjectInstance extends Button implements IPopulatable {

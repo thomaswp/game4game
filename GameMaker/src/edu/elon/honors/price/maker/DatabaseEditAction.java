@@ -1,13 +1,6 @@
 package edu.elon.honors.price.maker;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.xml.sax.SAXException;
-
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
@@ -25,7 +18,6 @@ import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 public class DatabaseEditAction extends DatabaseActivity {
 	
@@ -35,6 +27,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 	
 	private LinearLayout linearLayoutHost;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_action);

@@ -2,8 +2,6 @@ package com.twp.platform;
 
 import java.util.Random;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Paint.Style;
@@ -19,7 +17,6 @@ import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
 import edu.elon.honors.price.physics.Vector;
@@ -59,7 +56,7 @@ public class Interpreter extends ActionIds {
 
 			Parameters params = action.params;
 
-			Game.debug("%s: %s", Action.ACTION_NAMES[action.id], params.toString());
+			Game.debug("%s: %s", ActionIds.ACTION_NAMES[action.id], params.toString());
 
 			try {
 				//003 Debug Box

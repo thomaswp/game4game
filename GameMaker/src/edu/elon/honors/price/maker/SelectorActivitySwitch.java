@@ -1,6 +1,6 @@
 package edu.elon.honors.price.maker;
 
-import android.os.Bundle;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -20,6 +20,7 @@ public class SelectorActivitySwitch extends SelectorActivityIndex {
 		game.switchNames[id] = name;
 	}
 	
+	@Override
 	protected void setId(int id) {
 		super.setId(id);
 		if (game.switchValues[id])
@@ -30,6 +31,7 @@ public class SelectorActivitySwitch extends SelectorActivityIndex {
 		textViewId.setText(String.format("%03d", id));
 	}
 
+	@Override
 	protected String makeRadioButtonText(int id) {
 		return String.format("%03d: %s", id, game.switchNames[id]);
 	}
@@ -38,7 +40,7 @@ public class SelectorActivitySwitch extends SelectorActivityIndex {
 	protected void setupSelectors() {
 		RelativeLayout host = (RelativeLayout)findViewById(R.id.relativeLayoutDefault);
 		radioGroupDefaultValue = new RadioGroup(this);
-		radioGroupDefaultValue.setOrientation(RadioGroup.HORIZONTAL);
+		radioGroupDefaultValue.setOrientation(LinearLayout.HORIZONTAL);
 		host.addView(radioGroupDefaultValue);
 		
 		radioOn = new RadioButton(this);

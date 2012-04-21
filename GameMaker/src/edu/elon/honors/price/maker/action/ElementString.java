@@ -3,12 +3,11 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import android.content.Context;
+import android.text.InputFilter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.maker.SelectorSwitch;
-import edu.elon.honors.price.maker.TextUtils;
 
 public class ElementString extends Element {
 	
@@ -40,6 +39,9 @@ public class ElementString extends Element {
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		editText = new EditText(context);
+		editText.setFilters(new InputFilter[] {
+			new InputFilter.LengthFilter(length)	
+		});
 		layout.addView(editText);
 		editText.setWidth(200);
 		main = layout;

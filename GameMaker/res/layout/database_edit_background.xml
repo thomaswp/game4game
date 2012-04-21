@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
@@ -21,84 +21,99 @@
         <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:baselineAligned="false" >
 
-            <ScrollView
-                android:id="@+id/scrollView1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" >
+            <RelativeLayout
+                android:id="@+id/relativeLayout1"
+                android:layout_width="225dip"
+                android:layout_height="wrap_content" >
 
-                <LinearLayout
-                    android:id="@+id/linearLayout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" >
+                <ScrollView
+                    android:id="@+id/scrollView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" >
 
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/sky" 
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <RadioGroup
-                        android:id="@+id/radioGroupSky"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-                    </RadioGroup>
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ground"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <RadioGroup
-                        android:id="@+id/radioGroupGround"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-                    </RadioGroup>
-
-                    <TextView
-                        android:id="@+id/textView4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/decorations"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
                     <LinearLayout
-                        android:id="@+id/linearLayoutUsed"
+                        android:id="@+id/linearLayout2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" >
 
-                    </LinearLayout>
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sky"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                    <TextView
-                        android:id="@+id/textView5"
+                        <RadioGroup
+                            android:id="@+id/radioGroupSky"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" >
+                        </RadioGroup>
+
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ground"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <RadioGroup
+                            android:id="@+id/radioGroupGround"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" >
+                        </RadioGroup>
+                    </LinearLayout>
+                </ScrollView>
+                
+                <SlidingDrawer
+                    android:id="@+id/slidingDrawer1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:content="@+id/content"
+                    android:handle="@+id/handle" >
+
+                    <Button
+                        android:id="@+id/handle"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/decorationsUnused"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:layout_height="40dip"
+                        android:text="Handle" />
 
                     <LinearLayout
-                        android:id="@+id/linearLayoutUnused"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
                         android:orientation="vertical" >
 
+                        <com.ericharlow.DragNDrop.ScrollContainer
+                            android:id="@+id/scrollContainerUsed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dip" 
+                            android:layout_weight="1">
+                        </com.ericharlow.DragNDrop.ScrollContainer>
+                        
+                         <com.ericharlow.DragNDrop.ScrollContainer
+                            android:id="@+id/scrollContainerUnused"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dip" 
+                            android:layout_weight="1" >
+                        </com.ericharlow.DragNDrop.ScrollContainer>
+                        
                     </LinearLayout>
+                </SlidingDrawer>
 
-                </LinearLayout>
-            </ScrollView>
-
+                
+            </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/linearLayout5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
-
+                android:orientation="vertical" 
+                android:layout_weight="1">
+
                 <TextView
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
@@ -113,7 +128,6 @@
                     android:background="@drawable/border_white"
                     android:orientation="vertical" >
                 </LinearLayout>
-
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -128,17 +142,16 @@
             android:id="@+id/buttonOk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ok" 
             android:layout_marginRight="20dip"
+            android:text="@string/ok"
             android:width="100dip" />
 
         <Button
             android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel" 
+            android:text="@string/cancel"
             android:width="100dip" />
-
     </LinearLayout>
 
 </LinearLayout>

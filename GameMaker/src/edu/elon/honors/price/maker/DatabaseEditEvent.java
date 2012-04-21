@@ -3,36 +3,27 @@ package edu.elon.honors.price.maker;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.ObjectInstance;
-import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.game.Game;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
@@ -66,6 +57,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		return game.getSelectedMap().events[id];
 	}
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -117,6 +109,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		populateViews();
 	}
 
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -233,8 +226,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				layout.setOrientation(LinearLayout.VERTICAL);
 				LinearLayout.LayoutParams lp = 
 					new LinearLayout.LayoutParams(
-							LinearLayout.LayoutParams.FILL_PARENT, 
-							LinearLayout.LayoutParams.FILL_PARENT);
+							android.view.ViewGroup.LayoutParams.FILL_PARENT, 
+							android.view.ViewGroup.LayoutParams.FILL_PARENT);
 				lp.setMargins(20, 0, 0, 0);
 				layout.setLayoutParams(lp);
 				hosts.push(layout);
@@ -315,7 +308,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			//			}
 
 			LinearLayout.LayoutParams params = new LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+					android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.weight = 1;
 			TextView tv = createTextView();
 			tv.setLayoutParams(params);
@@ -452,7 +445,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		}
 
 		private TextView createTextView() {
-			LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
 			TextView tv = new TextView(getContext());
@@ -544,7 +537,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			Trigger trigger = getTrigger();
 
 
-			LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
 			TextView tv = new TextView(getContext());

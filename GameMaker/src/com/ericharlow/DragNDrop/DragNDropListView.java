@@ -16,7 +16,6 @@
 
 package com.ericharlow.DragNDrop;
 
-import edu.elon.honors.price.game.Game;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -234,8 +233,8 @@ public class DragNDropListView extends ListView {
 		mWindowParams.x = x - mDragPointOffsetX;
 		mWindowParams.y = y - mDragPointOffsetY;
 
-		mWindowParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-		mWindowParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+		mWindowParams.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+		mWindowParams.width = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 		mWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
 		| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
 		| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON

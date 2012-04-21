@@ -3,21 +3,12 @@ package edu.elon.honors.price.maker;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
-import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
-import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.UITrigger;
-import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.maker.SelectorActorClass.OnActorClassChangedListener;
 import edu.elon.honors.price.maker.SelectorUIControl.OnControlChangedListener;
 
 public class DatabaseEditTriggerUI extends DatabaseActivity {
@@ -34,6 +25,7 @@ public class DatabaseEditTriggerUI extends DatabaseActivity {
 		return new UITrigger();
 	}
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_trigger_ui);
@@ -145,10 +137,12 @@ public class DatabaseEditTriggerUI extends DatabaseActivity {
 		selectorUIJoystick.populate(game);
 	}
 
+	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("trigger", trigger);
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		UITrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() ||

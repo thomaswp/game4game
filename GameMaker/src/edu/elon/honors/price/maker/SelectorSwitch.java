@@ -1,8 +1,6 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +33,7 @@ public class SelectorSwitch extends Button implements IPopulatable{
 		super(context, attrs);
 	}
 	
+	@Override
 	public void populate(PlatformGame game) {
 		this.game = game;
 		setOnClickListener(new OnClickListener() {
@@ -52,6 +51,7 @@ public class SelectorSwitch extends Button implements IPopulatable{
 		setSwitchId(switchId);
 	}
 
+	@Override
 	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
 			setSwitchId(data.getExtras().getInt("id"));

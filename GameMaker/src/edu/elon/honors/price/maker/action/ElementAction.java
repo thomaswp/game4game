@@ -3,12 +3,10 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,6 +33,7 @@ public class ElementAction extends Element {
 		color = DatabaseEditEvent.COLOR_ACTION;
 	}
 	
+	@Override
 	protected void readAttributes(Attributes atts) {
 		super.readAttributes(atts);
 		id = Integer.parseInt(atts.getValue("id"));

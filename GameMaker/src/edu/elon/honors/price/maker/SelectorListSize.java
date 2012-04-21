@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;

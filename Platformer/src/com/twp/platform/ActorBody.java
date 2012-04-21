@@ -1,7 +1,5 @@
 package com.twp.platform;
 
-import java.util.Set;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -15,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
@@ -74,6 +71,7 @@ public class ActorBody extends PlatformBody {
 		return (sprite.getFrame() / 4) == 1 ? -1 : 1;
 	}
 
+	@Override
 	public AnimatedSprite getSprite() {
 		return sprite;
 	}

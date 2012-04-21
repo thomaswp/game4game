@@ -5,7 +5,6 @@ import org.xml.sax.Attributes;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
-import edu.elon.honors.price.maker.SelectorSwitch;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
@@ -13,7 +12,6 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class ElementExactNumber extends Element {
 

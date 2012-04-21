@@ -2,10 +2,10 @@ package com.ericharlow.DragNDrop;
 
 import java.util.LinkedList;
 
-import edu.elon.honors.price.game.Game;
-
 public class DragNDropGroup {
 
+	int[] loc = new int[2];
+	
 	public LinkedList<DragNDropListView> listViews =
 		new LinkedList<DragNDropListView>();
 
@@ -15,9 +15,12 @@ public class DragNDropGroup {
 	}
 
 	public boolean canDrop(DragNDropListView view, int x, int y) {
+		view.getLocationOnScreen(loc);
+		int vx = loc[0], vy = loc[1];
 		for (DragNDropListView to : listViews) {
-			int nx = x + view.getLeft() - to.getLeft();
-			int ny = y + view.getTop() - to.getTop();
+			to.getLocationOnScreen(loc);
+			int nx = x + vx - loc[0];
+			int ny = y + vy - loc[1];
 			if (to.canDrop(nx, ny)) {
 				return true;
 			}
@@ -26,9 +29,12 @@ public class DragNDropGroup {
 	}
 	
 	public void drop(DragNDropListView view, int x, int y, String item) {
+		view.getLocationOnScreen(loc);
+		int vx = loc[0], vy = loc[1];
 		for (DragNDropListView to : listViews) {
-			int nx = x + view.getLeft() - to.getLeft();
-			int ny = y + view.getTop() - to.getTop();
+			to.getLocationOnScreen(loc);
+			int nx = x + vx - loc[0];
+			int ny = y + vy - loc[1];
 			if (to.canDrop(nx, ny)) {
 				to.drop(nx, ny, item);
 				return;

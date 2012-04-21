@@ -1,6 +1,5 @@
 package edu.elon.honors.price.data;
 
-import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -10,11 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.elon.honors.price.game.Game;
-
 import android.graphics.Rect;
-import android.test.IsolatedContext;
-import android.util.Log;
 
 public class PlatformGame implements Serializable {
 	private static final long serialVersionUID = 3L;

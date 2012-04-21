@@ -8,10 +8,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 import android.content.Context;
-import android.view.View;
-
-import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.game.Game;
 
 public class ActionParser implements ContentHandler {
 	

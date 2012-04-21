@@ -1,7 +1,6 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.ObjectClass;
-import edu.elon.honors.price.data.PlatformGame;
 import android.os.Bundle;
 import android.widget.EditText;
 
@@ -13,6 +12,7 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 	private EditText editTextObjectName;
 	private SelectorObjectImage selectorObjectImage;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		

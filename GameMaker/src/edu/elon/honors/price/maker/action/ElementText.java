@@ -3,11 +3,9 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.TextView;
 
 public class ElementText extends Element {

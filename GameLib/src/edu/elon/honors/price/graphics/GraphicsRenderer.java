@@ -1,6 +1,5 @@
 package edu.elon.honors.price.graphics;
 
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -9,16 +8,13 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
-import edu.elon.honors.price.R;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
-import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;

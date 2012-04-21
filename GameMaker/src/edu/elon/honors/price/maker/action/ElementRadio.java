@@ -7,7 +7,6 @@ import edu.elon.honors.price.data.Event.Parameters;
 
 import android.content.Context;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
@@ -70,7 +69,7 @@ public class ElementRadio extends Element {
 		LinearLayout layout = new LinearLayout(context);
 		layout.setOrientation(LinearLayout.VERTICAL);
 		group = new RadioGroup(context);
-		group.setOrientation(RadioGroup.HORIZONTAL);
+		group.setOrientation(LinearLayout.HORIZONTAL);
 		layout.addView(group);
 		main = layout;
 		host = layout;

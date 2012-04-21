@@ -3,12 +3,8 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import android.content.Context;
-import android.widget.LinearLayout;
-
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.maker.DatabaseEditEvent;
-import edu.elon.honors.price.maker.TextUtils;
 
 public class ElementGroup extends Element {
 

@@ -33,6 +33,7 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 		return new ActorOrObjectTrigger();
 	}
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_trigger_actor_object);
@@ -131,6 +132,7 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 		selectorObjectClass.populate(game);
 	}
 	
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -146,10 +148,12 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 		}
 	}
 
+	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("trigger", trigger);
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		ActorOrObjectTrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() ||

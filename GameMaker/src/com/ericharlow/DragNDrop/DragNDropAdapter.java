@@ -17,6 +17,8 @@
 package com.ericharlow.DragNDrop;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +31,9 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
 	private int[] mIds;
     private int[] mLayouts;
     private LayoutInflater mInflater;
-    private ArrayList<String> mContent;
+    private List<String> mContent;
 
-    public DragNDropAdapter(Context context, ArrayList<String> content) {
+    public DragNDropAdapter(Context context, List<String> content) {
         init(context,new int[]{android.R.layout.simple_list_item_1},new int[]{android.R.id.text1}, content);
     }
     
@@ -39,7 +41,7 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
     	init(context,itemLayouts,itemIDs, content);
     }
 
-    private void init(Context context, int[] layouts, int[] ids, ArrayList<String> content) {
+    private void init(Context context, int[] layouts, int[] ids, List<String> content) {
     	// Cache the LayoutInflate to avoid asking for a new one each time.
     	mInflater = LayoutInflater.from(context);
     	mIds = ids;
@@ -51,7 +53,8 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
      * The number of items in the list
      * @see android.widget.ListAdapter#getCount()
      */
-    public int getCount() {
+    @Override
+	public int getCount() {
         return mContent.size();
     }
 
@@ -63,7 +66,8 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
      *
      * @see android.widget.ListAdapter#getItem(int)
      */
-    public String getItem(int position) {
+    @Override
+	public String getItem(int position) {
         return mContent.get(position);
     }
 
@@ -71,7 +75,8 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
      * Use the array index as a unique id.
      * @see android.widget.ListAdapter#getItemId(int)
      */
-    public long getItemId(int position) {
+    @Override
+	public long getItemId(int position) {
         return position;
     }
 
@@ -81,7 +86,8 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
      * @see android.widget.ListAdapter#getView(int, android.view.View,
      *      android.view.ViewGroup)
      */
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @Override
+	public View getView(int position, View convertView, ViewGroup parent) {
         // A ViewHolder keeps references to children views to avoid unneccessary calls
         // to findViewById() on each row.
         ViewHolder holder;
@@ -114,6 +120,7 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
         TextView text;
     }
 
+	@Override
 	public void onRemove(int which) {
 		if (which < 0 || which > mContent.size()) return;		
 		mContent.remove(which);

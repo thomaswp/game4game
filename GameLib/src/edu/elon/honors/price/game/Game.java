@@ -14,7 +14,6 @@ import edu.elon.honors.price.graphics.GraphicsRenderer;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.GraphicsView;
 import edu.elon.honors.price.graphics.MessageSprite;
-import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.input.Input;
 
 import android.app.Activity;

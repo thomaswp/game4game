@@ -1,12 +1,8 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
-import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.game.Game;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
@@ -26,6 +22,7 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 		return new SwitchTrigger();
 	}
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -51,6 +48,7 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 		});
 	}
 	
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
@@ -62,10 +60,12 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 		}
 	}
 	
+	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("trigger", trigger);
 	}
 	
+	@Override
 	protected boolean hasChanged() {
 		SwitchTrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() || 

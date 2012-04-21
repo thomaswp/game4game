@@ -15,6 +15,7 @@ public class ElementDescription extends Element {
 		super(atts, context);
 	}
 	
+	@Override
 	protected void readAttributes(Attributes atts) {
 		super.readAttributes(atts);
 		text = atts.getValue("text");

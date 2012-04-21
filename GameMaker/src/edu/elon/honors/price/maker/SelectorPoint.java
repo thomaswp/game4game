@@ -2,11 +2,9 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -67,6 +65,7 @@ public class SelectorPoint extends LinearLayout implements IPopulatable {
 		setup();
 	}
 	
+	@Override
 	public void populate(final PlatformGame game) {
 		this.game = game;
 		setPoint(x, y);
@@ -136,6 +135,7 @@ public class SelectorPoint extends LinearLayout implements IPopulatable {
 	}
 	
 
+	@Override
 	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
 			x = data.getIntExtra("x", 0);

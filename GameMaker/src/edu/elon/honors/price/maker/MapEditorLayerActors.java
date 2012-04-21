@@ -4,17 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Bitmap.Config;
 import android.graphics.Paint.Style;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.graphics.Sprite;
-import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
 import edu.elon.honors.price.maker.MapEditorView;
 
 public class MapEditorLayerActors extends MapEditorLayer {
