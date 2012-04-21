@@ -1,6 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.game.Game;
 import android.content.Intent;
@@ -35,6 +34,7 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 		return new VariableTrigger();
 	}
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_trigger_variable);
@@ -114,6 +114,7 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 		selectorVariableTo.populate(game);
 	}
 
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -129,10 +130,12 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 		}
 	}
 
+	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("trigger", trigger);
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		VariableTrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() ||

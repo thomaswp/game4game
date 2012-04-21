@@ -5,7 +5,6 @@ import org.xml.sax.Attributes;
 import android.content.Context;
 
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.TextUtils;
 

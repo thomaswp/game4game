@@ -48,6 +48,7 @@ public class SelectorActivityVariable extends SelectorActivityIndex {
 		});
 	}
 	
+	@Override
 	protected void setId(int id) {
 		super.setId(id);
 		editTextItemName.setText(game.variableNames[id]);

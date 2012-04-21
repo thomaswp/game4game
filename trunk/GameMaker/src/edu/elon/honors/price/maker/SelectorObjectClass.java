@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.maker.SelectorActorClass.OnActorClassChangedListener;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,7 +12,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SelectorObjectClass  extends Spinner implements IPopulatable {
 
@@ -50,6 +47,7 @@ public class SelectorObjectClass  extends Spinner implements IPopulatable {
 		this.onObjectClassChangedListener = onObjectClassChangedListener;
 	}
 	
+	@Override
 	public void populate(PlatformGame game) {
 		Context context = getContext();
 		

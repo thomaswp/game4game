@@ -3,7 +3,6 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -57,6 +56,7 @@ public class SelectorActorInstance extends Button implements IPopulatable {
 		super(context);
 	}
 
+	@Override
 	public void populate(final PlatformGame game) {
 		this.game = game; 
 		setSelectedInstance(id);
@@ -72,6 +72,7 @@ public class SelectorActorInstance extends Button implements IPopulatable {
 		});
 	}
 
+	@Override
 	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
 			setSelectedInstance(data.getExtras().getInt("id"));

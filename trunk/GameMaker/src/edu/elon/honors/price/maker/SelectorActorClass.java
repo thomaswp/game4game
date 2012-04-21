@@ -13,7 +13,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SelectorActorClass extends Spinner implements IPopulatable {
 	
@@ -47,6 +46,7 @@ public class SelectorActorClass extends Spinner implements IPopulatable {
 		super(context, attrs);
 	}
 	
+	@Override
 	public void populate(PlatformGame game) {
 		Context context = getContext();
 		

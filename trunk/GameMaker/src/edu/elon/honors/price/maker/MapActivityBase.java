@@ -3,9 +3,7 @@ package edu.elon.honors.price.maker;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,14 +15,11 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Cache;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public abstract class MapActivityBase extends Activity {
@@ -176,6 +171,7 @@ public abstract class MapActivityBase extends Activity {
 			doUpdate(width, height, x, y);
 		}
 
+		@Override
 		public void onDraw(Canvas c) {
 			if (grid == null) createGrid();
 

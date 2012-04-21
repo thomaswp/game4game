@@ -7,17 +7,14 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.R;
-import edu.elon.honors.price.maker.SelectorActorClass;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 public class ElementActorBehavior extends Element {
 

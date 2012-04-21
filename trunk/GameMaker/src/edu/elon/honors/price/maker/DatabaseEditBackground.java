@@ -1,33 +1,27 @@
 package edu.elon.honors.price.maker;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import android.database.DataSetObserver;
-import android.graphics.Canvas;
+import com.ericharlow.DragNDrop.DragNDropAdapter;
+import com.ericharlow.DragNDrop.DragNDropGroup;
+import com.ericharlow.DragNDrop.DragNDropListView;
+import com.ericharlow.DragNDrop.ScrollContainer;
+
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.maker.MapActivityBase.MapView;
 import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
 
 public class DatabaseEditBackground extends DatabaseActivity {
 
 	RadioGroup groupGround, groupSky;
-	LinearLayout layoutUsed, layoutUnused;
+	DragNDropListView listUsed, listUnused;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,10 +45,10 @@ public class DatabaseEditBackground extends DatabaseActivity {
 		};
 		ll.addView(mv);
 
-		layoutUsed = (LinearLayout)findViewById(R.id.linearLayoutUsed);
-		layoutUnused = (LinearLayout)findViewById(R.id.linearLayoutUnused);
 		groupSky = (RadioGroup)findViewById(R.id.radioGroupSky);
 		groupGround = (RadioGroup)findViewById(R.id.radioGroupGround);
+		listUsed = ((ScrollContainer)findViewById(R.id.scrollContainerUsed)).getListView();
+		listUnused = ((ScrollContainer)findViewById(R.id.scrollContainerUnused)).getListView();
 
 		final Map map = game.getSelectedMap();
 
@@ -111,20 +105,12 @@ public class DatabaseEditBackground extends DatabaseActivity {
 			groupGround.addView(radio);
 		}
 
-		for (String mg : used) {
-			final String fmg = mg;
-			TextView tv = new TextView(this);
-			tv.setText(mg);
-			tv.setTextSize(20);
-			layoutUsed.addView(tv);
-		}
-
-		for (String mg : mgs) {
-			TextView tv = new TextView(this);
-			tv.setText(mg);
-			tv.setTextSize(20);
-			layoutUnused.addView(tv);
-		}
+		DragNDropGroup group = new DragNDropGroup();
+		group.addListView(listUsed);
+		group.addListView(listUnused);
+		
+		listUsed.setAdapter(new DragNDropAdapter(this, used));
+		listUnused.setAdapter(new DragNDropAdapter(this, mgs));
 	}
 }
 

@@ -1,17 +1,13 @@
 package edu.elon.honors.price.maker;
 
-import java.util.ArrayList;
-
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
-import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Hero;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 
 public class PageHero extends Page {

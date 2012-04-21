@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import edu.elon.honors.price.data.Data;
 
 public class ImageAdapter extends ArrayAdapter<String> {
 	private ArrayList<Bitmap> images;

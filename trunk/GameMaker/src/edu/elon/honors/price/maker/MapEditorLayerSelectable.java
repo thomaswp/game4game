@@ -3,19 +3,14 @@ package edu.elon.honors.price.maker;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.maker.MapEditorLayer.Action;
-import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.Paint.Style;
 

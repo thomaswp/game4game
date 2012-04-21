@@ -3,9 +3,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     
-    <TextView android:layout_alignParentBottom="true"
-            android:id="@+id/spacer" android:text="Spacer"
-            style="@layout/drawer_button" />
+    <TextView android:layout_alignParentBottom="true" android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+            android:id="@+id/spacer" android:text="Spacer" />
     <ListView 
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -20,7 +20,8 @@
         android:id="@+id/drawer" android:handle="@+id/drawer_button"
         android:content="@+id/drawer_content" 
         android:layout_height="wrap_content" android:layout_alignParentBottom="true">
-        <TextView android:id="@id/drawer_button" style="@layout/drawer_button" 
+        <TextView android:id="@id/drawer_button" android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:gravity="right|center_vertical" android:text="Handle"
             ></TextView>
         <ListView

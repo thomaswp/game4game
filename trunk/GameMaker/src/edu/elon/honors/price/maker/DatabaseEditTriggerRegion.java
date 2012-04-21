@@ -9,22 +9,16 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import edu.elon.honors.price.data.Event.RegionTrigger;
-import edu.elon.honors.price.data.Event.SwitchTrigger;
-import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.game.Game;
 
 public class DatabaseEditTriggerRegion extends DatabaseActivity {
 	private RegionTrigger trigger;
 	
-	private RadioButton radioAnyActor, radioHero, radioObject;
+	//private RadioButton radioAnyActor, radioHero, radioObject;
 	private RadioGroup radioGroupType;
 	private Spinner spinnerMode;
 	private SelectorRegion selectorRegion;
@@ -37,6 +31,7 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 		return new RegionTrigger();
 	}
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_trigger_region);
@@ -44,9 +39,9 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 		
 		trigger = getOriginalTrigger();
 		
-		radioAnyActor = (RadioButton)findViewById(R.id.radioAnyActor);
-		radioHero = (RadioButton)findViewById(R.id.radioHero);
-		radioObject = (RadioButton)findViewById(R.id.radioAnyObject);
+//		radioAnyActor = (RadioButton)findViewById(R.id.radioAnyActor);
+//		radioHero = (RadioButton)findViewById(R.id.radioHero);
+//		radioObject = (RadioButton)findViewById(R.id.radioAnyObject);
 		radioGroupType = (RadioGroup)findViewById(R.id.radioGroupType);
 		spinnerMode = (Spinner)findViewById(R.id.spinnerMode);
 		selectorRegion = (SelectorRegion)findViewById(R.id.selectorRegion1);
@@ -93,6 +88,7 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 		});
 	}
 	
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -109,10 +105,12 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 		}
 	}
 
+	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("trigger", trigger);
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		RegionTrigger originalTrigger = getOriginalTrigger();
 		return super.hasChanged() ||

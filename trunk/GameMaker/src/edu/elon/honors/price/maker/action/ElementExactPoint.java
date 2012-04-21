@@ -8,7 +8,6 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorPoint;
-import edu.elon.honors.price.maker.SelectorSwitch;
 import edu.elon.honors.price.maker.TextUtils;
 
 public class ElementExactPoint extends Element {

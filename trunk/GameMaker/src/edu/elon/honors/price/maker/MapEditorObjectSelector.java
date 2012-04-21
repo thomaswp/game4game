@@ -2,25 +2,17 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.input.Input;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Shader;
-import android.graphics.Paint.Style;
 import android.os.Bundle;
-import android.view.SurfaceHolder;
 import android.view.Window;
 import android.view.WindowManager;
 
 public class MapEditorObjectSelector extends Activity {
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);

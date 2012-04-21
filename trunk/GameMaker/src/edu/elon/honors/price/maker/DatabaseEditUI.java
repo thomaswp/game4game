@@ -15,13 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.UILayout;
 import edu.elon.honors.price.data.UILayout.CircleControl;
 import edu.elon.honors.price.data.UILayout.JoyStick;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 

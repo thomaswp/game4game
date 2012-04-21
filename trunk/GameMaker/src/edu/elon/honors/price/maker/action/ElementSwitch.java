@@ -9,7 +9,6 @@ import edu.elon.honors.price.maker.SelectorSwitch;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.LinearLayout;
 
 public class ElementSwitch extends Element {

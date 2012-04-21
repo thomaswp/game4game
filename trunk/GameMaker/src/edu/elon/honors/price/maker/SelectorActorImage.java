@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;

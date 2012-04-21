@@ -12,13 +12,13 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public class SelectorMapRegion extends SelectorMapBase {
 
 	private Rect originalSelection;
 
+	@Override
 	protected MapView getMapView(PlatformGame game) {
 		Bundle extras = getIntent().getExtras();
 		originalSelection = new Rect(
@@ -100,12 +100,14 @@ public class SelectorMapRegion extends SelectorMapBase {
 			return true;
 		}
 
+		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			super.surfaceCreated(holder);
 			offX = -selection.centerX() + width / 2;
 			offY = -selection.centerY() + height / 2;
 		}
 
+		@Override
 		protected boolean doSelection() {
 			float x = Input.getLastTouchX();
 			float y = Input.getLastTouchY();
@@ -119,6 +121,7 @@ public class SelectorMapRegion extends SelectorMapBase {
 			return false;
 		}
 
+		@Override
 		protected void updateSelection() {
 			if (Input.isTouchDown() && !leftButton.down && !rightButton.down) {
 				float x = Input.getLastTouchX();
@@ -143,6 +146,7 @@ public class SelectorMapRegion extends SelectorMapBase {
 			}
 		}
 
+		@Override
 		public void drawGrid(Canvas c) {
 			super.drawGrid(c);
 

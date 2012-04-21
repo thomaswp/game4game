@@ -5,22 +5,13 @@ import org.xml.sax.Attributes;
 import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
-import edu.elon.honors.price.maker.SelectorActorClass;
 import edu.elon.honors.price.maker.SelectorActorInstance;
-import edu.elon.honors.price.maker.SelectorSwitch;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 public class ElementExactActorInstance extends Element {
 
@@ -56,7 +47,7 @@ public class ElementExactActorInstance extends Element {
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		selectorActorInstance = new SelectorActorInstance(context);
-		LayoutParams lps = new LayoutParams(200, LayoutParams.WRAP_CONTENT);
+		LayoutParams lps = new LayoutParams(200, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 		layout.addView(selectorActorInstance, lps);
 		main = layout;
 	}

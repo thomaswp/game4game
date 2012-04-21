@@ -3,21 +3,9 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import android.content.Context;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
-import edu.elon.honors.price.maker.SelectorObjectClass;
-import edu.elon.honors.price.maker.SelectorObjectInstance;
 import edu.elon.honors.price.maker.SelectorVector;
 import edu.elon.honors.price.maker.TextUtils;
 

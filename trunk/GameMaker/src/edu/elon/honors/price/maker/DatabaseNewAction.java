@@ -1,28 +1,21 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.Event.Action;
-import edu.elon.honors.price.game.Game;
 
 public class DatabaseNewAction extends DatabaseActivity {
 	private final static ArrayList<Category> categories =
@@ -32,6 +25,7 @@ public class DatabaseNewAction extends DatabaseActivity {
 	private LinearLayout linearLayoutActions;
 	private Action action;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 

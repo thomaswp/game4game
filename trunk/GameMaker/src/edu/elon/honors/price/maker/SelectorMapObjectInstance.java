@@ -11,10 +11,7 @@ import android.view.SurfaceHolder;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.maker.MapActivityBase.MapView;
-import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
 
 public class SelectorMapObjectInstance extends SelectorMapBase {
 	private int originalId;
@@ -50,6 +47,7 @@ public class SelectorMapObjectInstance extends SelectorMapBase {
 			paint = new Paint();
 		}
 		
+		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			super.surfaceCreated(holder);
 			
@@ -68,6 +66,7 @@ public class SelectorMapObjectInstance extends SelectorMapBase {
 			super.drawObjects(c);
 		}
 		
+		@Override
 		protected void drawGrid(Canvas c) {
 			super.drawGrid(c);
 			if (!selectedRect.isEmpty()) {
@@ -91,6 +90,7 @@ public class SelectorMapObjectInstance extends SelectorMapBase {
 			super.drawObject(c, instance, x, y, bitmap, paint);
 		}
 
+		@Override
 		protected boolean doSelection() {
 			if (Input.isTapped()) {
 				Map map = game.getSelectedMap();

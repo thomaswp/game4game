@@ -101,6 +101,7 @@ public class ObjectBody extends PlatformBody {
 		lastVelocity.set(getVelocity());
 	}
 
+	@Override
 	public void updateSprite(Vector offset) {
 		setSpritePosition(sprite, body, offset);
 		if (!object.fixedRotation) {

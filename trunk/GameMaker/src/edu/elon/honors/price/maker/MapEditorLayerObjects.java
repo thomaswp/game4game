@@ -1,22 +1,11 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-
-import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.maker.MapEditorLayer.Action;
-import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.RectF;
 
 public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstance> {
@@ -26,6 +15,7 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 		super(parent);
 	}
 
+	@Override
 	public void drawContentNormal(Canvas c) {
 		if (touchDown && showPreview) {
 			Bitmap bitmap = parent.objectImage;
@@ -67,6 +57,7 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 		return parent.objectImage;
 	}
 
+	@Override
 	protected void onTouchUpNormal(float x, float y) {
 		int startX = (int)(touchX - getOffX());
 		int startY = (int)(touchY - getOffY());

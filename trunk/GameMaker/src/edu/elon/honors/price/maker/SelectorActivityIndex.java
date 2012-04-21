@@ -36,6 +36,7 @@ public abstract class SelectorActivityIndex extends DatabaseActivity {
 		this.id = id;
 	}
  
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -94,10 +95,12 @@ public abstract class SelectorActivityIndex extends DatabaseActivity {
 		});
 	}
 	
+	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("id", id);
 	}
 	
+	@Override
 	protected boolean hasChanged() {
 		return super.hasChanged() || id != originalId;
 	}

@@ -5,20 +5,17 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Paint.Style;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
-import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public class SelectorMapPoint extends SelectorMapBase {
 
 	private int originalX, originalY;
 
+	@Override
 	protected MapView getMapView(PlatformGame game) {
 		Bundle extras = getIntent().getExtras();
 		originalX = extras.getInt("x");
@@ -74,12 +71,14 @@ public class SelectorMapPoint extends SelectorMapBase {
 			return true;
 		}
 
+		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			super.surfaceCreated(holder);
 			offX = -x + width / 2;
 			offY = -y + height / 2;
 		}
 
+		@Override
 		protected boolean doSelection() {
 			float x = Input.getLastTouchX();
 			float y = Input.getLastTouchY();
@@ -93,6 +92,7 @@ public class SelectorMapPoint extends SelectorMapBase {
 			return false;
 		}
 
+		@Override
 		protected void updateSelection() {
 			if (Input.isTouchDown() && !leftButton.down && !rightButton.down) {
 				float x = Input.getLastTouchX();
@@ -128,6 +128,7 @@ public class SelectorMapPoint extends SelectorMapBase {
 			if (y > bottom) y = bottom;
 		}
 
+		@Override
 		public void drawGrid(Canvas c) {
 			super.drawGrid(c);
 

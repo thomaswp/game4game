@@ -76,4 +76,5 @@
     <string name="decorations">Decorations</string>
     <string name="decorationsUnused">Decorations (unused)</string>
     <string name="preview">Preview:</string>
+    <string name="leftArrow">&lt;--</string>
 </resources>

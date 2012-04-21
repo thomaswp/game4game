@@ -9,7 +9,6 @@ import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -86,7 +85,7 @@ public abstract class ElementMulti extends Element {
 			View oLayout = option.view;
 			//oLayout.setVisibility(View.GONE);
 			LayoutParams lps = new LayoutParams(
-					LayoutParams.WRAP_CONTENT,
+					android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
 					option.width);
 			lps.leftMargin = 10;
 			lps.gravity = Gravity.CENTER;
@@ -96,8 +95,8 @@ public abstract class ElementMulti extends Element {
 		layout.setBackgroundDrawable(
 				context.getResources().getDrawable(
 						R.drawable.border_white));
-		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, 
-				LayoutParams.WRAP_CONTENT);
+		LayoutParams params = new LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 
+				android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 //		params.setMargins(10, 0, 0, 0);
 		layout.setLayoutParams(params);
 //		int width = 0;
@@ -127,7 +126,7 @@ public abstract class ElementMulti extends Element {
 		public Option(View view, String text) {
 			this.view = view;
 			this.text = text;
-			this.width = LayoutParams.WRAP_CONTENT;
+			this.width = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 		}
 
 		public abstract void readParams(Parameters params, int index);

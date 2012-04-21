@@ -26,6 +26,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		Input.setMultiTouch(false);
 	}
 	
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		Input.onTouch(this, event);
 		return true;//super.onTouchEvent(event);
