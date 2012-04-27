@@ -509,7 +509,7 @@ public class Interpreter extends ActionIds {
 		Parameters ps = params.getParameters(index);
 		int type = ps.getInt();
 		if (type == 0) {
-			vector.set(ps.getInt(1), ps.getInt(2));
+			vector.set(ps.getFloat(1), ps.getFloat(2));
 		} else if (type == 1) {
 			if (event.tVector == null) {
 				throw new ParameterException("No triggering vector");

@@ -79,12 +79,14 @@ public class MapEditorView extends MapView {
 	public void setGame(PlatformGame game, boolean loadEditorData) {
 		updateActors(game);
 		updateObjects(game);
+		updateTileset(game);
 		this.game = game;
 		if (layers != null) {
 			for (int i = 0; i < layers.length; i++) {
 				layers[i].setGame(game);
 			}
 		}
+		layers[selectedLayer].refreshSelection();
 		if (loadEditorData && game.getSelectedMap().editorData != null) {
 			loadMapData((EditorData)game.getSelectedMap().editorData);
 		}
@@ -94,7 +96,7 @@ public class MapEditorView extends MapView {
 
 	public MapEditorView(Context context, PlatformGame game) {
 		super(context, game);
-		createDarkBitmaps();
+		createDarkTiles();
 
 		if (game.getSelectedMap().editorData != null) {
 			loadMapData((EditorData)game.getSelectedMap().editorData);
@@ -532,18 +534,18 @@ public class MapEditorView extends MapView {
 		c.drawBitmap(icon, null, destRect, paint);
 	}
 
-	private void updateActors(PlatformGame game) {
-		this.game.actors = Arrays.copyOf(this.game.actors, game.actors.length);
-		actors = Arrays.copyOf(actors, game.actors.length);
+	private void updateActors(PlatformGame newGame) {
+		this.game.actors = Arrays.copyOf(this.game.actors, newGame.actors.length);
+		actors = Arrays.copyOf(actors, newGame.actors.length);
 		darkActors = Arrays.copyOf(darkActors, actors.length);
-		for (int i = 0; i < game.actors.length; i++) {
-			ActorClass newActor = i == 0 ? game.hero : game.actors[i];
+		for (int i = 0; i < newGame.actors.length; i++) {
+			ActorClass newActor = i == 0 ? newGame.hero : newGame.actors[i];
 			String newName = newActor.imageName;
 			ActorClass oldActor = null; String oldName = null;
 			oldActor = i == 0 ? this.game.hero : this.game.actors[i];
 			oldName = oldActor == null ? null : oldActor.imageName;
 			if (oldActor == null || !oldName.equals(newName)) {
-				actors[i] = Data.loadActor(game.actors[i].imageName);
+				actors[i] = Data.loadActor(newGame.actors[i].imageName);
 				actors[i] = Bitmap.createBitmap(actors[i], 0, 0, 
 						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
 				darkActors[i] = darken(actors[i]);
@@ -551,11 +553,11 @@ public class MapEditorView extends MapView {
 		}
 	}
 
-	private void updateObjects(PlatformGame game) {
-		this.game.objects = Arrays.copyOf(this.game.objects, game.objects.length);
-		objects = Arrays.copyOf(objects, game.objects.length);
-		for (int i = 0; i < game.objects.length; i++) {
-			ObjectClass newObject = game.objects[i];
+	private void updateObjects(PlatformGame newGame) {
+		this.game.objects = Arrays.copyOf(this.game.objects, newGame.objects.length);
+		objects = Arrays.copyOf(objects, newGame.objects.length);
+		for (int i = 0; i < newGame.objects.length; i++) {
+			ObjectClass newObject = newGame.objects[i];
 			String newName = newObject.imageName;
 			ObjectClass oldObject = null; String oldName = null;
 			oldObject = this.game.objects[i];
@@ -569,8 +571,17 @@ public class MapEditorView extends MapView {
 			}
 		}
 	}
+	
+	private void updateTileset(PlatformGame newGame) {
+		if (game.getSelectedMap().tilesetId != 
+			newGame.getSelectedMap().tilesetId) {
+			Tileset t = newGame.tilesets[newGame.getSelectedMap().tilesetId];
+			tiles = createTiles(t, getContext());
+			createDarkTiles();
+		}
+	}
 
-	private void createDarkBitmaps() {
+	private void createDarkTiles() {
 		darkTiles = new Bitmap[tiles.length];
 		for (int i = 0; i < darkTiles.length; i++) {
 			darkTiles[i] = darken(tiles[i]);

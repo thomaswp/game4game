@@ -18,6 +18,13 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 	private int layer;
 	private Bitmap[] tiles, darkTiles;
 
+	@Override
+	public void setGame(PlatformGame game) {
+		super.setGame(game);
+		tiles = parent.tiles;
+		darkTiles = parent.tiles;
+	}
+	
 	public MapEditorLayerTiles(MapEditorView parent, int layer) {
 		super(parent);
 		this.layer = layer;

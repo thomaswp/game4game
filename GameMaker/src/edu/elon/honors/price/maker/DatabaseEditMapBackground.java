@@ -18,7 +18,7 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
 
-public class DatabaseEditBackground extends DatabaseActivity {
+public class DatabaseEditMapBackground extends DatabaseActivity {
 
 	RadioGroup groupGround, groupSky;
 	DragNDropListView listUsed, listUnused;
@@ -27,22 +27,12 @@ public class DatabaseEditBackground extends DatabaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.database_edit_background);
+		setContentView(R.layout.database_edit_map_background);
 
 		setDefaultButtonActions();
 
 		LinearLayout ll = (LinearLayout)findViewById(R.id.linearLayoutMap);
-		SelectorMapView mv = new SelectorMapView(this, game) {
-			@Override
-			protected boolean showRightButton() {
-				return false;
-			}
-
-			@Override
-			protected int getBackgroundTransparency() {
-				return 255;
-			}
-		};
+		SelectorMapPreview mv = new SelectorMapPreview(this, game);
 		ll.addView(mv);
 
 		groupSky = (RadioGroup)findViewById(R.id.radioGroupSky);

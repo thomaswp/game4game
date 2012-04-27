@@ -40,7 +40,7 @@ public class PlatformLogic implements Logic {
 
 	private PhysicsHandler physics;
 	private TriggerHandler triggerHandler;
-	
+
 	private BackgroundSprite foreground, background, midground;
 	private LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
 	private LinkedList<Button> buttons = new LinkedList<Button>();
@@ -57,13 +57,13 @@ public class PlatformLogic implements Logic {
 	private Vector2 antiGravity = new Vector2(0, -PhysicsHandler.GRAVITY),
 	zeroVector = new Vector2();
 
-	private float mapX, mapY, bgX, bgY, skyScroll;
+	private float bgX, bgY, skyScroll;
 	private int startBackgroundY, startForegroundY, startMidgroundY;
 
 	private boolean paused;
 
 	private String mapName;
-	
+
 	public PlatformGame getGame() {
 		return game;
 	}
@@ -71,23 +71,23 @@ public class PlatformLogic implements Logic {
 	public Map getMap() {
 		return map;
 	}
-	
+
 	public PhysicsHandler getPhysics() {
 		return physics;
 	}
-	
+
 	public Interpreter getInterpreter() {
 		return interpreter;
 	}
-	
+
 	public Vector getOffset() {
 		return offset;
 	}
-	
+
 	public List<JoyStick> getJoysticks() {
 		return joysticks;
 	}
-	
+
 	public List<Button> getButtons() {
 		return buttons;
 	}
@@ -108,7 +108,7 @@ public class PlatformLogic implements Logic {
 			return null;
 		return buttons.get(index);
 	}
-	
+
 	public PlatformLogic(String mapName, Game host) {
 		this.mapName = mapName;
 		//this.test = mapName.equals("final-Map_1");
@@ -134,7 +134,7 @@ public class PlatformLogic implements Logic {
 		background = new BackgroundSprite(bmp, new Rect(0, startBackgroundY, 
 				Graphics.getWidth(), startForegroundY), -7);
 		background.scroll(0, Graphics.getHeight() - bmp.getHeight());		
-		
+
 		if (map.midGrounds.size() > 0) {
 			Bitmap mid = null;
 			Paint paint = new Paint();
@@ -155,7 +155,7 @@ public class PlatformLogic implements Logic {
 					startMidgroundY, Graphics.getWidth(), startMidgroundY + 
 					mid.getHeight()), -5);
 		}
-		
+
 		drawViewport = new Viewport();
 		drawViewport.setZ(5);
 
@@ -180,7 +180,7 @@ public class PlatformLogic implements Logic {
 		hero = physics.getHero().getSprite();
 		this.interpreter = new Interpreter(this);
 		triggerHandler = new TriggerHandler(this);
-		
+
 		Viewport.DefaultViewport.setZ(3);
 
 		update(1);
@@ -239,7 +239,7 @@ public class PlatformLogic implements Logic {
 
 		physics.update(timeElapsed, offset);
 		updateWorldSprites();
-		
+
 		triggerHandler.checkTriggers();
 
 		physics.checkBehaviors();
@@ -249,14 +249,14 @@ public class PlatformLogic implements Logic {
 
 		updateScroll();
 	}
-	
+
 	private void updateWorldSprites() {
 		for (int i = 0; i < drawWorldSprites.size(); i++) {
 			drawWorldSprites.get(i).setOriginX(offset.getX());
 			drawWorldSprites.get(i).setOriginY(offset.getY());
 		}
 	}
-	
+
 	public void clearDrawScreen() {
 		for (int i = 0; i < drawScreenSprites.size(); i++) {
 			drawScreenSprites.get(i).dispose();
@@ -267,7 +267,7 @@ public class PlatformLogic implements Logic {
 		}
 		drawWorldSprites.clear();
 	}
-	
+
 	public void drawLine(Paint paint, int x1, int y1, int x2, int y2, boolean world) {
 		int left = Math.min(x1, x2), top = Math.min(y1, y2);
 		int right = Math.max(x1, x2), bot = Math.max(y1, y2);
@@ -279,7 +279,7 @@ public class PlatformLogic implements Logic {
 		s.setY(top);
 		addDrawSprite(s, world);
 	}
-	
+
 	public void drawCircle(Paint paint, int x, int y, int rad, boolean world) {
 		Game.debug("Draw: %d %d %d", x, y, rad);
 		Bitmap bmp = Bitmap.createBitmap(rad * 2, rad * 2, Config.ARGB_8888);
@@ -289,7 +289,7 @@ public class PlatformLogic implements Logic {
 		s.setY(y - rad);
 		addDrawSprite(s, world);
 	}
-	
+
 	public void drawBox(Paint paint, int x1, int y1, int x2, int y2, boolean world) {
 		int left = Math.min(x1, x2), top = Math.min(y1, y2);
 		int right = Math.max(x1, x2), bot = Math.max(y1, y2);
@@ -301,7 +301,7 @@ public class PlatformLogic implements Logic {
 		s.setY(top);
 		addDrawSprite(s, world);
 	}
-	
+
 	private void addDrawSprite(Sprite s, boolean world) {
 		if (world) {
 			drawWorldSprites.add(s);
@@ -309,7 +309,7 @@ public class PlatformLogic implements Logic {
 			drawScreenSprites.add(s);
 		}
 	}
-	
+
 	@Override
 	public void save() {
 	}
@@ -322,6 +322,9 @@ public class PlatformLogic implements Logic {
 	private void updateScroll() {
 		p.clear();
 
+		int mHeight = game.tilesets[map.tilesetId].tileHeight * map.rows;
+		int maxBgY = mHeight - Graphics.getHeight() - 96; 
+
 		RectF heroRect = hero.getRect();
 		if (heroRect.left < BORDER) {
 			p.setX(BORDER - heroRect.left);
@@ -333,13 +336,13 @@ public class PlatformLogic implements Logic {
 			p.setY(BORDER - heroRect.top);
 		}
 		if (heroRect.bottom > Graphics.getHeight() - BORDER) {
-			if (bgY < 0)
+			if (bgY < maxBgY)
 				p.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
 		}
 
 		offset.add(p);
 
-		
+
 		physics.updateScroll(offset);
 		for (int i = 0; i < drawScreenSprites.size(); i++) {
 			Sprite sprite = drawScreenSprites.get(i);
@@ -348,21 +351,20 @@ public class PlatformLogic implements Logic {
 		}
 
 		p.multiply(-1);
-		
-		mapX += p.getX(); mapY += p.getY();
-		mapY = Math.min(0, mapY);
 
 		p.multiply(0.7f);
 		p.setX(p.getX() * 0.7f);
 
 		bgX += p.getX(); bgY += p.getY();
-		bgY = Math.min(0, bgY);
+		bgY = Math.min(maxBgY, bgY);
 
 		foreground.scroll(p.getX(), 0);
 		foreground.setY(startForegroundY - bgY);
-		
-		midground.scroll(p.getX(), 0);
-		midground.setY(startMidgroundY - bgY);
+
+		if (midground != null) {
+			midground.scroll(p.getX(), 0);
+			midground.setY(startMidgroundY - bgY);
+		}
 
 		background.setY(Math.min(0, startBackgroundY - bgY));
 		float scroll = Math.min(0, background.getY() + bgY);

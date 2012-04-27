@@ -9,19 +9,25 @@ public class Upgrader {
 		int version = game._VERSION_;
 		if (version < 4) {
 			for (Map map : game.maps) {
-				map.groundY = 48*4;
-				map.groundImageName = "ground.png";
-				map.skyImageName = "sky.png";
+//				map.groundY = 48*4;
+//				map.groundImageName = "ground.png";
+//				map.skyImageName = "sky.png";
 				map.midGrounds = new LinkedList<String>();
 				map.midGrounds.add("whiteclouds.png");
 				map.midGrounds.add("mountain.png");
 				map.midGrounds.add("trees.png");
 //				map.groundImageName = "bgnitegrnd.png";
 //				map.skyImageName = "bgnitesky.jpg";
-				
-				game.objects[0].imageName = "rock.png";
-				game.objects[0].zoom = 0.5f;
+//				
+//				game.objects[0].imageName = "rock.png";
+//				game.objects[0].zoom = 0.5f;
+				map.actorLayer.defaultValue = -1;
 			}
+			//game.tilesets[0].bitmapName = "grass.png";
+			game.tilesets = new Tileset[3];
+			game.tilesets[0] = new Tileset("Default", "tiles.png", 48, 48, 8, 8);
+			game.tilesets[1] = new Tileset("Ice", "ice.png", 48, 48, 8, 8);
+			game.tilesets[2] = new Tileset("Grass", "grass.png", 48, 48, 8, 8);
 			//upgraded(game);
 		}
 	}
