@@ -11,12 +11,31 @@
         android:layout_height="wrap_content"
         android:text="@string/map"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/buttonEditBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editBackground" />
 
-    <Button
-        android:id="@+id/buttonEditBackground"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/editBackground" />
+        <Button
+            android:id="@+id/buttonEditMapSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editMapSize" />
+
+        <Button
+            android:id="@+id/buttonEditTileset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editTileset" />
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"

@@ -194,7 +194,21 @@ public class PhysicsHandler {
 						Body tileBody = world.createBody(tileDef);
 						PolygonShape tileShape = new PolygonShape();
 						int tileId = map.layers[k].tiles[i][j]; 
-						if (tileId == 28) {
+						if (tileId == 14) {
+							Vector2[] vertices = new Vector2[] {
+									new Vector2(-width / 2, height / 2),
+									new Vector2(width / 2, -height / 2),
+									new Vector2(width / 2, height / 2)
+							};
+							tileShape.set(vertices);
+						} else if (tileId == 22) {
+							Vector2[] vertices = new Vector2[] {
+									new Vector2(-width / 2, height / 2),
+									new Vector2(-width / 2, -height / 2),
+									new Vector2(width / 2, height / 2)
+							};
+							tileShape.set(vertices);
+						} else if (tileId == 28) {
 							Vector2[] vertices = new Vector2[] {
 									new Vector2(-width / 2, height / 2),
 									new Vector2(-width / 2, -height / 2),

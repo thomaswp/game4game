@@ -16,4 +16,10 @@ public class TextUtils {
 		.append(text)
 		.append("</font>");
 	}
+
+	public static void addColoredText(StringBuilder sb, float text,
+			String color) {
+		addColoredText(sb, String.format("%.02f", text), color);
+		
+	}
 }

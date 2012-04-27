@@ -9,12 +9,19 @@ public class MapLayer implements Serializable{
 	public int rows, columns;
 	public int[][] tiles;
 	public boolean active;
+	public int defaultValue;
 	
-	public MapLayer(String name, int rows, int columns, boolean active) {
+	public MapLayer(String name, int rows, int columns, boolean active,
+			int defaultValue) {
 		this.rows = rows;
 		this.columns = columns;
 		this.active = active;
 		this.tiles = new int[rows][columns];
+		this.defaultValue = defaultValue;
+		
+		if (defaultValue != 0) {
+			setAll(defaultValue);
+		}
 	}
 
 	public void setAll(int id) {

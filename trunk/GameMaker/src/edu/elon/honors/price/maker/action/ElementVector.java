@@ -25,15 +25,15 @@ public class ElementVector extends ElementMulti {
 				TextUtils.addColoredText(sb, selectorVector.getVectorX(), 
 						DatabaseEditEvent.COLOR_VALUE);
 				sb.append(", ");
-				TextUtils.addColoredText(sb, selectorVector.getVectorX(), 
+				TextUtils.addColoredText(sb, selectorVector.getVectorY(), 
 						DatabaseEditEvent.COLOR_VALUE);
 				sb.append("]");
 			}
 			
 			@Override
 			public void readParams(Parameters params, int index) {
-				final int x = params.getInt(index);
-				final int y = params.getInt(index + 1);
+				final float x = params.getFloat(index);
+				final float y = params.getFloat(index + 1);
 				selectorVector.post(new Runnable() {
 					@Override
 					public void run() {
@@ -45,7 +45,7 @@ public class ElementVector extends ElementMulti {
 			@Override
 			public void addParams(Parameters params) {
 				params.addParam(selectorVector.getVectorX());
-				params.addParam(selectorVector.getVectorY());
+				params.addParam(1f);//selectorVector.getVectorY());
 			}
 		};
 		

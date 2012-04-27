@@ -20,6 +20,7 @@ import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Cache;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public abstract class MapActivityBase extends Activity {
@@ -29,7 +30,7 @@ public abstract class MapActivityBase extends Activity {
 	public static final int SELECTION_BORDER_COLOR = 
 		Color.argb(255, 50, 50, 255);
 	public static final int SELECTION_BORDER_WIDTH = 2;
-	
+
 	protected PlatformGame game;
 	protected MapView view;
 
@@ -173,14 +174,18 @@ public abstract class MapActivityBase extends Activity {
 
 		@Override
 		public void onDraw(Canvas c) {
+			if (width == 0 || height == 0) return;
 			if (grid == null) createGrid();
 
 			c.drawColor(Color.WHITE);
-			
-			drawBackground(c);
-			drawContent(c);
-			drawGrid(c);
-			drawButtons(c);
+
+
+			synchronized (game) {
+				drawBackground(c);
+				drawContent(c);
+				drawGrid(c);
+				drawButtons(c);
+			}
 		}
 
 		protected abstract void drawContent(Canvas c);
@@ -188,17 +193,17 @@ public abstract class MapActivityBase extends Activity {
 		protected int getBackgroundTransparency() {
 			return 80;
 		}
-		
+
 		protected void drawBackground(Canvas c) {
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 			int mapWidth = tileset.tileWidth * map.columns;
 			int mapHeight = tileset.tileHeight * map.rows;
-			
+
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
 			int pOffY = (int)(paralax * offY);
-			
+
 			paint.reset();
 			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
@@ -221,7 +226,7 @@ public abstract class MapActivityBase extends Activity {
 				}
 			}
 		}
-		
+
 		protected void drawButtons(Canvas c) {
 			for (int i = 0; i < buttons.size(); i++) {
 				Button button = buttons.get(i);
@@ -280,7 +285,7 @@ public abstract class MapActivityBase extends Activity {
 						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
 			}
 		}
-		
+
 		private void createObjects() {
 			objects = new Bitmap[game.objects.length];
 			for (int i = 0; i < objects.length; i++) {
@@ -307,7 +312,13 @@ public abstract class MapActivityBase extends Activity {
 			c.drawText(text, dx, dy + bmp.getHeight(), paint);
 		}
 
-		private static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
+		protected static Bitmap[] createTiles(Tileset tileset, Context context) {
+			Bitmap bmp = Data.loadTileset(tileset.bitmapName, context);
+			return createTiles(bmp, tileset.tileWidth, 
+					tileset.tileHeight, tileset.tileSpacing);
+		}
+		
+		protected static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
 			if ((tilesBitmap.getWidth() + tileSpacing) % (tileWidth + tileSpacing) != 0) {
 				throw new RuntimeException("Impropper tile width: " + tileWidth + "x + " + tileSpacing + " != " + tilesBitmap.getWidth());
 			}

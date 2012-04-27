@@ -43,7 +43,29 @@ public class PageMap extends Page {
 		buttonEditBackground.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(parent, DatabaseEditBackground.class);
+				Intent intent = new Intent(parent, DatabaseEditMapBackground.class);
+				intent.putExtra("game", getGame());
+				parent.startActivityForResult(intent, 
+						DatabaseActivity.REQUEST_RETURN_GAME);
+			}
+		});
+		
+		Button buttonEditMapSize = (Button)findViewById(R.id.buttonEditMapSize);
+		buttonEditMapSize.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(parent, DatabaseEditMapSize.class);
+				intent.putExtra("game", getGame());
+				parent.startActivityForResult(intent, 
+						DatabaseActivity.REQUEST_RETURN_GAME);
+			}
+		});
+		
+		Button buttonEditTileset = (Button)findViewById(R.id.buttonEditTileset);
+		buttonEditTileset.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(parent, DatabaseEditMapTileset.class);
 				intent.putExtra("game", getGame());
 				parent.startActivityForResult(intent, 
 						DatabaseActivity.REQUEST_RETURN_GAME);
