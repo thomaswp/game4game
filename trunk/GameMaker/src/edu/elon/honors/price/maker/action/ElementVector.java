@@ -45,7 +45,7 @@ public class ElementVector extends ElementMulti {
 			@Override
 			public void addParams(Parameters params) {
 				params.addParam(selectorVector.getVectorX());
-				params.addParam(1f);//selectorVector.getVectorY());
+				params.addParam(selectorVector.getVectorY());
 			}
 		};
 		

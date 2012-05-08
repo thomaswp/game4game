@@ -61,7 +61,9 @@ public class DatabaseNewAction extends DatabaseActivity {
 		if (resultCode == RESULT_OK) {
 			if (data.getExtras().containsKey("action")) {
 				action = (Action)data.getExtras().getSerializable("action");
-				this.finishOk();
+				if (!data.getExtras().containsKey("finishAll")) {
+					this.finishOk();
+				}
 			}
 		}
 	}
@@ -147,7 +149,8 @@ public class DatabaseNewAction extends DatabaseActivity {
 			}));
 
 			categories.add(new Category("Control", new int[] {
-					ID_IF
+					ID_IF,
+					ID_LOOP
 			}));
 
 			categories.add(new Category("Physics", new int[] {

@@ -32,6 +32,9 @@ public class PlatformGame implements Serializable {
 	public boolean[] switchValues;
 	public String[] variableNames;
 	public int[] variableValues;
+	
+
+	public Object copyData;
 
 	public int getVersion() {
 		return _VERSION_;

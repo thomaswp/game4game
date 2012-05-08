@@ -1,6 +1,8 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 import edu.elon.honors.price.data.ActorInstance;
@@ -13,22 +15,32 @@ import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
+import edu.elon.honors.price.game.Game;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -52,6 +64,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	private EditText editTextName;
 	private LinearLayout linearLayoutTriggers, linearLayoutActions;
 	private ReturnResponse returnResponse;
+	private LinearLayout linearLayoutMain;
+	private RelativeLayout selectionLayout;
+	private ScrollView scrollView;
+	private LinkedList<ActionView> actionViews = new LinkedList<ActionView>();
+
+	private boolean selecting;
+	private LinkedList<Action> copy = new LinkedList<Event.Action>();
+	private LinearLayout selection;
+	private Rect selectionRect = new Rect();
 
 	private Event getEvent() {
 		return game.getSelectedMap().events[id];
@@ -69,17 +90,30 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		editTextName = (EditText)findViewById(R.id.editTextName);
 		linearLayoutTriggers = (LinearLayout)findViewById(R.id.linearLayoutTriggers);
 		linearLayoutActions = (LinearLayout)findViewById(R.id.linearLayoutActions);
+		selectionLayout = (RelativeLayout)findViewById(R.id.relativeLayout);
 		Button buttonNewTrigger = (Button)findViewById(R.id.buttonNewTrigger);
 		Button buttonNewAction = (Button)findViewById(R.id.buttonNewAction);
 
+		linearLayoutMain = (LinearLayout)findViewById(R.id.linearLayoutMain);
+		selection = new LinearLayout(this);
+		selection.setVisibility(View.INVISIBLE);
+		selection.setBackgroundResource(R.drawable.border_white);
+		selectionLayout.addView(selection);
+
 		//Must set one view to focusableInTouchMode
-		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
-		scroll.setOnTouchListener(new OnTouchListener() {
+		scrollView = (ScrollView)findViewById(R.id.scrollView1);
+		scrollView.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (editTextName.hasFocus()) {
 					editTextName.clearFocus();
 				}
+
+				if (selecting) {
+					updateSelection(event);
+					return true;
+				}
+
 				return false;
 			}
 		});
@@ -106,6 +140,194 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 		});
 
+		populateViews();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add("Select");
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		if (item.getTitle().equals("Select")) {
+			startSelection();
+		}
+
+		return true; 
+	}
+
+	private void startSelection() {
+		selecting = true;
+	}
+
+
+	private boolean selectionNeedUpdate;
+	private void updateSelection(MotionEvent event) {
+		selectionNeedUpdate = true;
+		updateSelection(event.getX(), event.getY(), event.getAction());
+	}
+
+
+	private void updateSelection(final float x, final float y, 
+			final int action) {
+		if (!selectionNeedUpdate) {
+			return;
+		}
+		selectionNeedUpdate = false;
+
+		int rX = (int)x;
+		int rY = (int)y + scrollView.getScrollY();
+
+		if (action == MotionEvent.ACTION_DOWN) {
+			selection.setVisibility(LinearLayout.VISIBLE);
+			selectionRect.set(rX, rY, rX, rY);
+		}
+
+		selectionRect.right = rX;
+		selectionRect.bottom = rY;
+
+		RelativeLayout.LayoutParams lps = 
+			(RelativeLayout.LayoutParams)selection.getLayoutParams();
+		lps.leftMargin = Math.min(selectionRect.left, selectionRect.right);
+		lps.topMargin = Math.min(selectionRect.top, selectionRect.bottom);
+		lps.width = Math.max(1, Math.abs(selectionRect.width()));
+		lps.height = Math.max(1, Math.abs(selectionRect.height()));
+		selection.setLayoutParams(lps);
+		selection.invalidate();
+
+		if (checkScroll(y)) {
+			if (action == MotionEvent.ACTION_MOVE) {
+				selectionNeedUpdate = true;
+				scrollView.post(new Runnable() {
+					@Override
+					public void run() {
+						updateSelection(x, y, action);
+					}
+				});
+			}
+		}
+
+		updateViewSelection();
+
+		if (action == MotionEvent.ACTION_UP) {
+			endSelection();
+		}
+	}
+
+	private boolean checkScroll(float lastTouchY) {
+		int border = 30;
+		boolean recurse = false;
+		if (lastTouchY < border) {
+			scrollView.scrollBy(0, -1);
+			recurse = true;
+		}
+		if (lastTouchY > scrollView.getHeight() - border) {
+			if (scrollView.getHeight() + scrollView.getScrollY() < 
+					linearLayoutMain.getHeight()) {
+				scrollView.scrollBy(0, 1);
+				recurse = true;
+			}
+		}
+
+		return recurse;
+	}
+
+	private int[] loc = new int[2];
+	private void updateViewSelection() {
+		int indent = -1;
+		for (ActionView view : actionViews) {
+
+			view.getLocationOnScreen(loc);
+			int viewTop = loc[1], viewBot = viewTop + view.getHeight();
+			selection.getLocationOnScreen(loc);
+			int locTop = loc[1], locBot = locTop + selection.getHeight();
+
+			boolean topIn = viewTop > locTop && viewTop < locBot;
+			boolean bottomIn = viewBot > locTop && viewTop < locBot;
+
+			Game.debug("%d, %d", viewTop, locTop);
+
+			if (topIn || bottomIn) {
+				if (indent == -1) {
+					indent = view.getAction().indent;
+				}
+				if (view.getAction().indent < indent) {
+					view.setHighlight(false);
+				} else {
+					view.setHighlight(true);
+				}
+			} else {
+				view.setHighlight(false);
+			}
+		}
+	}
+
+	private void endSelection() {
+		selecting = false;
+		selection.setVisibility(LinearLayout.GONE);
+
+		new AlertDialog.Builder(this)
+		.setTitle("Action?")
+		.setItems(new String[] {
+				"Cut",
+				"Copy",
+				"Delete"
+		}, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case 0: cutSelection(); break;
+				case 1: copySelection(); break;
+				case 2: deleteSelection(); break;
+				}
+
+				for (ActionView view : actionViews) {
+					view.setHighlight(false);
+				}
+			}
+		})
+		.setOnCancelListener(new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				for (ActionView view : actionViews) {
+					view.setHighlight(false);
+				}
+			}
+		})
+		.show();
+	}
+
+	private void cutSelection() {
+		copySelection();
+		deleteSelection();
+	}
+
+	private void copySelection() {
+		LinkedList<Action> actions = new LinkedList<Event.Action>();
+		int indent = -1;
+		for (ActionView view : actionViews) {
+			if (view.getHighlight()) {
+				Action a = view.getAction().copy();
+				if (indent == -1) {
+					indent = a.indent;
+				}
+				a.indent -= indent;
+				if (a.indent >= 0) {
+					actions.add(view.getAction());
+				}
+			}
+		}
+		Game.debug(actions);
+	}
+
+	private void deleteSelection() {
+		for (ActionView view : actionViews) {
+			if (view.getHighlight()) {
+				getEvent().actions.remove(view.getAction());
+			}
+		}
 		populateViews();
 	}
 
@@ -198,6 +420,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		}
 
 		linearLayoutActions.removeAllViews();
+		actionViews.clear();
 		Stack<LinearLayout> hosts = new Stack<LinearLayout>();
 		hosts.add(linearLayoutActions);
 
@@ -212,6 +435,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 
 			ActionView av = new ActionView(this, i);
+			actionViews.add(av);
 			hosts.peek().addView(av);
 			if (hosts.peek().getChildCount() == 1 && hosts.size() > 1) {
 				int res = hosts.size() % 2 == 0 ?
@@ -288,9 +512,30 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 	private class ActionView extends LinearLayout {
 		private int index;
+		private Drawable lastBackground;
+		private boolean highlight;
 
 		public Action getAction() {
 			return getEvent().actions.get(index);
+		}
+
+		public boolean getHighlight() {
+			return highlight;
+		}
+
+		public void setHighlight(boolean highlight) {
+			if (highlight == this.highlight) {
+				return;
+			}
+
+			if (highlight) {
+				lastBackground = getBackground();
+				setBackgroundResource(R.drawable.border_selected);
+			} else {
+				setBackgroundDrawable(lastBackground);
+			}
+
+			this.highlight = highlight;
 		}
 
 		public ActionView(final Context context, int actionIndex) {
@@ -299,13 +544,6 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			index = actionIndex;
 
 			setGravity(Gravity.CENTER_VERTICAL);
-
-			//			for (int i = 0; i < getAction().indent; i++) {
-			//				TextView indent = new TextView(context);
-			//				indent.setTextSize(20);
-			//				indent.setText("\u21B3");
-			//				addView(indent);
-			//			}
 
 			LinearLayout.LayoutParams params = new LayoutParams(
 					android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -321,56 +559,64 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				@Override
 				public void onClick(View v) {
 					new AlertDialog.Builder(context).setItems(
-							new String[] { "Edit", "Insert", "Delete" },
-							new AlertDialog.OnClickListener() {
+							new String[] { "Edit", "Insert", "Delete",
+									"Cut", "Copy", "Paste"},
+									new AlertDialog.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
 									switch (which) {
-										case 0: edit();	break;
-										case 1: insert(); break;
-										case 2: delete(); break;
+									case 0: edit();	break;
+									case 1: insert(); break;
+									case 2: delete(); break;
+									case 3: cut(); break;
+									case 4: copy(); break;
+									case 5: paste(); break;
 									}
 								}
 							}
 					).show();
 				}
 			});
-			
+
 			addView(buttonOptions);
 
-			//			Button buttonEdit = new Button(context);
-			//			buttonEdit.setText("Edit");
-			//			buttonEdit.setWidth(100);
-			//			buttonEdit.setOnClickListener(new OnClickListener() {
-			//				@Override
-			//				public void onClick(View v) {
-			//					edit();
-			//				}
-			//			});
-			//			addView(buttonEdit);
-			//
-			//			Button buttonInsert = new Button(context);
-			//			buttonInsert.setText("Insert");
-			//			buttonInsert.setWidth(100);
-			//			buttonInsert.setOnClickListener(new OnClickListener() {
-			//				@Override
-			//				public void onClick(View v) {
-			//					insert();
-			//				}
-			//			});
-			//			addView(buttonInsert);
-			//
-			//			Button buttonDelete = new Button(context);
-			//			buttonDelete.setText("Delete");
-			//			buttonDelete.setWidth(100);
-			//			buttonDelete.setOnClickListener(new OnClickListener() {
-			//				@Override
-			//				public void onClick(View v) {
-			//					delete();
-			//				}
-			//			});
-			//			addView(buttonDelete);
+		}
 
+		private void cut() {
+			copy();
+			delete();
+		}
+
+		private void copy() {
+			LinkedList<Action> actions = new LinkedList<Event.Action>();
+			int indent = getAction().indent;
+			for (int i = index; i < getEvent().actions.size(); i++) {
+				Action action = getEvent().actions.get(i);
+				if (i > index && action.indent <= indent) {
+					break;
+				}
+				Action copy = action.copy();
+				copy.indent -= indent;
+				actions.add(copy);
+			}
+			game.copyData = actions;
+		}
+
+		private void paste() {
+			if (game.copyData != null && 
+					game.copyData instanceof List<?>) {
+				List<?> list = ((List<?>)game.copyData);
+				int indent = getAction().indent;
+				for (int i = 0; i < list.size(); i++) {
+					if (!(list.get(i) instanceof Action)) {
+						return;
+					}
+					Action action = ((Action)list.get(i)).copy();
+					action.indent += indent;
+					getEvent().actions.add(i + 1, action);
+				}
+				populateViews();
+			}
 		}
 
 		private void edit() {
@@ -646,10 +892,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 			return sb.toString();
 		}
-		
+
 		private String getTriggerText(UITrigger trigger) {
 			StringBuilder sb = new StringBuilder();
-			
+
 			switch (trigger.controlType) {
 			case UITrigger.CONTROL_BUTTON: 
 				TextUtils.addColoredText(sb, "The button ", COLOR_MODE);
@@ -676,7 +922,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			case UITrigger.CONDITION_MOVE:
 				TextUtils.addColoredText(sb, "moved", COLOR_MODE); break;
 			}
-			
+
 			return sb.toString();
 		}
 	}

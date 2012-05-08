@@ -2,10 +2,10 @@
 
 	<text text="Set the velocity of the" />
 	<radio>
-		<choice text="actor">
+		<choice text="actor" mute="true">
 			<actorInstance />
 		</choice>
-		<choice text="object">
+		<choice text="object" mute="true">
 			<objectInstance />
 		</choice>
 	</radio>

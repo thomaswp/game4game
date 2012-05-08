@@ -30,12 +30,10 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 	}
 
 	@Override
-	protected void finishOk() {
+	protected void finishOk(Intent intent) {
 		ActorInstanceView view = (ActorInstanceView)this.view;
-		Intent intent = new Intent();
 		intent.putExtra("id", view.selectedId);
-		setResult(RESULT_OK, intent);
-		super.finishOk();
+		super.finishOk(intent);
 	}
 
 	private static class ActorInstanceView extends SelectorMapView {

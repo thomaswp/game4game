@@ -32,15 +32,13 @@ public class SelectorMapPoint extends SelectorMapBase {
 	}
 
 	@Override
-	protected void finishOk() {
+	protected void finishOk(Intent intent) {
 		PointView view = (PointView)this.view;
-		Intent intent = new Intent();
 		int x = view.getPointX();
 		int y = view.getPointY();
 		intent.putExtra("x", x);
 		intent.putExtra("y", y);
-		setResult(RESULT_OK, intent);
-		super.finishOk();
+		super.finishOk(intent);
 	}
 
 	protected static class PointView extends SelectorMapView {

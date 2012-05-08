@@ -41,16 +41,14 @@ public class SelectorMapRegion extends SelectorMapBase {
 	}
 
 	@Override
-	protected void finishOk() {
+	protected void finishOk(Intent intent) {
 		RegionView view = (RegionView)this.view;
-		Intent intent = new Intent();
 		Rect rect = view.getNormSelection();
 		intent.putExtra("left", rect.left);
 		intent.putExtra("top", rect.top);
 		intent.putExtra("right", rect.right);
 		intent.putExtra("bottom", rect.bottom);
-		setResult(RESULT_OK, intent);
-		super.finishOk();
+		super.finishOk(intent);
 	}
 
 	protected static class RegionView extends SelectorMapView {

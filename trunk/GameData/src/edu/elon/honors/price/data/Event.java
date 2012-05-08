@@ -3,6 +3,9 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.game.Game;
 import android.graphics.Rect;
 
 /**
@@ -80,7 +83,19 @@ public class Event implements Serializable {
 		}
 		
 		public boolean canHaveChildren() {
-			return id == ID_IF;
+			return id == ID_IF ||
+				id == ID_LOOP;
+		}
+		
+		public Action copy() {
+			Action a = new Action(id, params.copy());
+			a.indent = indent;
+			a.description = description;
+			return a;
+		}
+		
+		public String toString() {
+			return String.format("[%d] %s", indent, ActionIds.ACTION_NAMES[id]);
 		}
 	}
 
@@ -108,7 +123,7 @@ public class Event implements Serializable {
 		public Object getObject() { return getObject(0); }
 
 		public Object getObject(int index) {
-			return params.get(0);
+			return params.get(index);
 		}
 
 		/**
@@ -192,13 +207,16 @@ public class Event implements Serializable {
 			if (o.getSize() != getSize())
 				return false;
 
-			boolean equal = true;
 			try {
 				for (int i = 0; i < o.params.size(); i++) {
 					if (params.get(i) instanceof Parameters) {
-						equal &= getParameters(i).equals(o.getParameters(i));
+						if (!getParameters(i).equals(o.getParameters(i))) {
+							return false;
+						}
 					} else {
-						equal &= getObject(i).equals(o.getObject(i));
+						if (!getObject(i).equals(o.getObject(i))) {
+							return false;
+						}
 					}
 				}
 			}
@@ -206,7 +224,19 @@ public class Event implements Serializable {
 				return false;
 			}
 
-			return equal;
+			return true;
+		}
+
+		public Parameters copy() {
+			Parameters o = new Parameters();
+			for (int i = 0; i < params.size(); i++) {
+				if (params.get(i) instanceof Parameters) {
+					o.addParam(getParameters(i).copy());
+				} else {
+					o.addParam(params.get(i));
+				}
+			}
+			return o;
 		}
 	}
 

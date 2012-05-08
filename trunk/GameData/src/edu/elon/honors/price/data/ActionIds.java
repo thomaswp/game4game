@@ -19,7 +19,8 @@ public class ActionIds {
 		"Change Gravity",
 		"UI Action",
 		"Destroy Object",
-		"Draw to Screen"
+		"Draw to Screen",
+		"Loop..."
 	};
 	
 	/**
@@ -110,6 +111,11 @@ public class ActionIds {
 	public static final int ID_IF = 7;
 	
 	/**
+	 * 
+	 */
+	public static final int ID_LOOP = 17;
+	
+	/**
 	 * P0: Actor or Object
 	 * P1: Actor/Object
 	 * P2: Vector
@@ -135,3 +141,4 @@ public class ActionIds {
 	 */
 	public static final int ID_DRAW_TO_SCREEN = 16;
 }
+

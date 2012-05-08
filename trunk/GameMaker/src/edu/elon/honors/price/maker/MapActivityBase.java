@@ -23,7 +23,7 @@ import edu.elon.honors.price.game.Cache;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
-public abstract class MapActivityBase extends Activity {
+public abstract class MapActivityBase extends SaveableActivity {
 
 	public static final int SELECTION_FILL_COLOR = 
 		Color.argb(200, 150, 150, 255);
