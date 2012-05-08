@@ -1,0 +1,5 @@
+<action id="17" name="Loop...">
+	<text text="Do this" />
+	<number />
+	<text text="times" />
+</action>

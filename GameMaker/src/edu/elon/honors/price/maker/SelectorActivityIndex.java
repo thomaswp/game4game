@@ -79,20 +79,8 @@ public abstract class SelectorActivityIndex extends DatabaseActivity {
 				return false;
 			}
 		});
-		
-		buttonCancel.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();		
-			}
-		});
-		
-		buttonOk.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finishOk();
-			}
-		});
+
+		setDefaultButtonActions();
 	}
 	
 	@Override

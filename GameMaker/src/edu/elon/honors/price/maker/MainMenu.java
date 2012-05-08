@@ -41,7 +41,7 @@ public class MainMenu extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		setContentView(R.layout.main_menu);
-
+		
 		createDirs();
 
 		loadMaps();

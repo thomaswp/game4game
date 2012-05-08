@@ -17,44 +17,8 @@ import android.graphics.Paint;
 public class SelectorMapBase extends MapActivityBase {
 	
 	@Override
-	public void onBackPressed() {
-		if (hasChanged()) {
-			new AlertDialog.Builder(this)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setTitle("Keep Changes?")
-			.setMessage("Do you want to keep the changes you made to this page?")
-			.setPositiveButton("Keep Changes", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					finishOk();
-				}
-
-			})
-			.setNeutralButton("Discard Changes", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					finish();
-				}
-
-			})
-			.setNegativeButton("Stay Here", null)
-			.show();	
-		} else {
-			finish();
-		}
-	}
-	
-	@Override
 	protected MapView getMapView(PlatformGame game) {
 		return new SelectorMapView(this, game);
-	}
-	
-	protected boolean hasChanged() {
-		return false;
-	}
-
-	protected void finishOk() {
-		finish();
 	}
 	
 	public static class SelectorMapView extends MapView {

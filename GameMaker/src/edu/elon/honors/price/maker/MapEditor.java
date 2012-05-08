@@ -30,14 +30,19 @@ public class MapEditor extends MapActivityBase {
 		return new MapEditorView(this, game);
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
 		return !PlatformGame.areEqual(oldGame, game);
 	}
-
-	protected void finishOk() {
+	
+	protected void finishOk(Intent data) {
+		save();
 		finish();
 	}
+	
+	@Override
+	protected void finishOkAll() { }
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -157,35 +162,6 @@ public class MapEditor extends MapActivityBase {
 				}
 			}
 			refresh();
-		}
-	}
-
-	@Override
-	public void onBackPressed() {
-		if (hasChanged()) {
-			new AlertDialog.Builder(this)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setTitle("Save?")
-			.setMessage("Do you want to save before quitting?")
-			.setPositiveButton("Save and Quit", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					save();
-					MapEditor.this.finish(); 
-				}
-
-			})
-			.setNeutralButton("Quit", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					MapEditor.this.finish(); 
-				}
-
-			})
-			.setNegativeButton("Cancel", null)
-			.show();	
-		} else {
-			finish();
 		}
 	}
 	

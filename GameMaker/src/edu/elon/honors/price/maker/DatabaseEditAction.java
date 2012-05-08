@@ -20,21 +20,22 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 public class DatabaseEditAction extends DatabaseActivity {
-	
+
 	private int id;
 	private int nextId = 100;
 	private Element rootElement;
-	
+	private Parameters originalParameters;
+
 	private LinearLayout linearLayoutHost;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_action);
 		setDefaultButtonActions();
-		
+
 		id = getIntent().getExtras().getInt("id");
-		
+
 		linearLayoutHost = (LinearLayout)findViewById(R.id.linearLayoutHost);
 		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
 		scroll.setOnTouchListener(new OnTouchListener() {
@@ -44,16 +45,16 @@ public class DatabaseEditAction extends DatabaseActivity {
 				return false;
 			}
 		});
-		
+
 		ActionParser parser = new ActionParser(this);
-		
+
 		try {
 			InputStream is = Data.loadAction(id, this);
 			Xml.parse(is, Xml.Encoding.UTF_8, parser);
 		} catch (Exception e) {
 			Game.debug(e);
 		}
-		
+
 		rootElement = parser.getLayout();
 
 		if (getIntent().getExtras().containsKey("params")) {
@@ -61,13 +62,25 @@ public class DatabaseEditAction extends DatabaseActivity {
 				(Parameters)getIntent().getExtras().getSerializable("params");
 			rootElement.setParameters(params);
 		}
-		
+
 		linearLayoutHost.addView(rootElement.getView());
-		
+
+		rootElement.getView().post(new Runnable() {
+			@Override
+			public void run() {
+				rootElement.getView().post(new Runnable() {
+					@Override
+					public void run() {
+						originalParameters = rootElement.getParameters().copy();
+					}
+				});
+			}
+		});
+
 		setIds();
 		populate();
 	}
-	
+
 	@Override
 	protected void putExtras(Intent intent) {
 		super.putExtras(intent);
@@ -77,23 +90,21 @@ public class DatabaseEditAction extends DatabaseActivity {
 		intent.putExtra("action", action);
 		//Game.debug(params);
 	}
-	
+
 	@Override
 	protected boolean hasChanged() {
-		if (getIntent().getExtras().containsKey("params")) {
-			Parameters params = 
-				(Parameters)getIntent().getExtras().getSerializable("params");
-			return super.hasChanged() || 
-				!rootElement.getParameters().equals(params);
-		}
-		return true;
+		if (originalParameters == null)
+			return false;
+
+		return super.hasChanged() || 
+		!rootElement.getParameters().equals(originalParameters);
 	}
-	
+
 	@Override
 	public void startActivityForResult(Intent intent, int requestCode) {
 		super.startActivityForResult(intent, requestCode);
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -105,11 +116,11 @@ public class DatabaseEditAction extends DatabaseActivity {
 			}
 		}
 	}
-	
+
 	private void removeFocus() {
 		removeFocus(linearLayoutHost);
 	}
-	
+
 	private void removeFocus(View v) {
 		if (v instanceof EditText) {
 			if (v.hasFocus()) {
@@ -123,11 +134,11 @@ public class DatabaseEditAction extends DatabaseActivity {
 			}
 		}
 	}
-	
+
 	private void setIds() {
 		setIds(linearLayoutHost);
 	}
-	
+
 	private void setIds(View v) {
 		if (v instanceof IPopulatable) {
 			v.setId(nextId);
@@ -140,11 +151,11 @@ public class DatabaseEditAction extends DatabaseActivity {
 			}
 		}
 	}
-	
+
 	private void populate() {
 		populate(linearLayoutHost);
 	}
-	
+
 	private void populate(View v) {
 		if (v instanceof IPopulatable) {
 			((IPopulatable)v).populate(game);
