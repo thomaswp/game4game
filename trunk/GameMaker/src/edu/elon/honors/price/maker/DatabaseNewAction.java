@@ -107,6 +107,8 @@ public class DatabaseNewAction extends DatabaseActivity {
 						DatabaseEditAction.class);
 				intent.putExtra("game", game);
 				intent.putExtra("id", id);
+				intent.putExtra("eventContext", 
+						getIntent().getSerializableExtra("eventContext"));
 				startActivityForResult(intent, REQUEST_RETURN_GAME);
 			}
 		});

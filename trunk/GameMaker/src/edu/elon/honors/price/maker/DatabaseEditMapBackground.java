@@ -32,7 +32,8 @@ public class DatabaseEditMapBackground extends DatabaseActivity {
 		setDefaultButtonActions();
 
 		LinearLayout ll = (LinearLayout)findViewById(R.id.linearLayoutMap);
-		SelectorMapPreview mv = new SelectorMapPreview(this, game);
+		SelectorMapPreview mv = new SelectorMapPreview(this, game, 
+				null);
 		ll.addView(mv);
 
 		groupSky = (RadioGroup)findViewById(R.id.radioGroupSky);

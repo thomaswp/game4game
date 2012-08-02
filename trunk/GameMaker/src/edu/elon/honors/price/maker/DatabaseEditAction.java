@@ -1,10 +1,13 @@
 package edu.elon.honors.price.maker;
 
 import java.io.InputStream;
+
+import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.maker.action.EventContext;
 import edu.elon.honors.price.maker.action.ActionParser;
 import edu.elon.honors.price.maker.action.Element;
 
@@ -27,6 +30,12 @@ public class DatabaseEditAction extends DatabaseActivity {
 	private Parameters originalParameters;
 
 	private LinearLayout linearLayoutHost;
+	
+	private EventContext eventContext;
+	
+	public EventContext getEventContext() {
+		return eventContext;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +44,8 @@ public class DatabaseEditAction extends DatabaseActivity {
 		setDefaultButtonActions();
 
 		id = getIntent().getExtras().getInt("id");
+		eventContext = (EventContext)getIntent().getExtras()
+		.getSerializable("eventContext");
 
 		linearLayoutHost = (LinearLayout)findViewById(R.id.linearLayoutHost);
 		ScrollView scroll = (ScrollView)findViewById(R.id.scrollView1);
@@ -57,28 +68,40 @@ public class DatabaseEditAction extends DatabaseActivity {
 
 		rootElement = parser.getLayout();
 
-		if (getIntent().getExtras().containsKey("params")) {
-			Parameters params = 
-				(Parameters)getIntent().getExtras().getSerializable("params");
-			rootElement.setParameters(params);
-		}
-
 		linearLayoutHost.addView(rootElement.getView());
-
-		rootElement.getView().post(new Runnable() {
-			@Override
-			public void run() {
-				rootElement.getView().post(new Runnable() {
-					@Override
-					public void run() {
-						originalParameters = rootElement.getParameters().copy();
-					}
-				});
-			}
-		});
+		
+		if (savedInstanceState != null) {
+			Parameters params =
+				(Parameters)savedInstanceState.getSerializable("params");
+			rootElement.setParameters(params);
+			originalParameters = 
+				(Parameters)getIntent().getExtras().getSerializable("params");
+		} else if (getIntent().getExtras().containsKey("params")) {
+			originalParameters = 
+				(Parameters)getIntent().getExtras().getSerializable("params");
+			rootElement.setParameters(originalParameters);
+		} else {
+			rootElement.getView().post(new Runnable() {
+				@Override
+				public void run() {
+					rootElement.getView().post(new Runnable() {
+						@Override
+						public void run() {
+							originalParameters = rootElement.getParameters().copy();
+						}
+					});
+				}
+			});
+		}		
 
 		setIds();
 		populate();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("params", rootElement.getParameters());
 	}
 
 	@Override
@@ -88,7 +111,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 		Action action = new Action(id, params);
 		action.description = rootElement.getDescription(game);
 		intent.putExtra("action", action);
-		//Game.debug(params);
+		Game.debug(params);
 	}
 
 	@Override

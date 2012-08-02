@@ -7,7 +7,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
+import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.game.Game;
 
 import android.graphics.Rect;
 
@@ -16,7 +20,7 @@ public class PlatformGame implements Serializable {
 
 	private transient Rect mapRect = new Rect();
 
-	protected int _VERSION_ = 2;
+	protected int _VERSION_ = 3;
 
 	public ArrayList<Map> maps;
 	public int startMapId;
@@ -33,11 +37,22 @@ public class PlatformGame implements Serializable {
 	public String[] variableNames;
 	public int[] variableValues;
 	
+	public LinkedList<Behavior> mapBehaviors, 
+	actorBehaviors, objectBehaviors;
 
 	public Object copyData;
 
 	public int getVersion() {
 		return _VERSION_;
+	}
+	
+	public LinkedList<Behavior> getBehaviors(BehaviorType type) {
+		switch (type) {
+		case Map:  return mapBehaviors;
+		case Actor: return actorBehaviors;
+		case Object: return objectBehaviors;
+		}
+		return null;
 	}
 	
 	public PlatformGame() {
@@ -109,6 +124,10 @@ public class PlatformGame implements Serializable {
 		}
 
 		uiLayout = new UILayout();
+		
+		mapBehaviors = new LinkedList<Behavior>();
+		actorBehaviors = new LinkedList<Behavior>();
+		objectBehaviors = new LinkedList<Behavior>();
 	}
 
 	private void readObject(java.io.ObjectInputStream in)
@@ -154,14 +173,13 @@ public class PlatformGame implements Serializable {
 	public static boolean areEqual(Object o1, Object o2) {
 
 		Class<?> c = o1.getClass();
-		//Game.debug("Class:" + o1.getClass().getName());
 		
 		if (o1 == null || o2 == null)
 			return (o1 == o2);
 
 		if (c != o2.getClass())
 			return false;
-
+		
 		for (int i = 0; i < shallow.length; i++) {
 			if (shallow[i].equals(c)) {
 				if (o1.equals(o2)) {
@@ -172,6 +190,10 @@ public class PlatformGame implements Serializable {
 			}
 		}
 
+		if (c.isEnum()) {
+			return o1.equals(o2);
+		}
+		
 		if (c.isArray()) {
 			if (Array.getLength(o1) != Array.getLength(o2))
 				return false;

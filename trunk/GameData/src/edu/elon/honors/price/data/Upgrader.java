@@ -2,9 +2,11 @@ package edu.elon.honors.price.data;
 
 import java.util.LinkedList;
 
+import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.game.Game;
 
 public class Upgrader {
+	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
 		int version = game._VERSION_;
 		if (version < 4) {
@@ -29,6 +31,23 @@ public class Upgrader {
 			game.tilesets[1] = new Tileset("Ice", "ice.png", 48, 48, 8, 8);
 			game.tilesets[2] = new Tileset("Grass", "grass.png", 48, 48, 8, 8);
 			//upgraded(game);
+		}
+		
+		if (version == 2) {
+			game.mapBehaviors = new LinkedList<Behavior>();
+			game.objectBehaviors = new LinkedList<Behavior>();
+			game.actorBehaviors = new LinkedList<Behavior>();
+			int i = 0;
+			for (Map map : game.maps) {
+				map.behaviors = new LinkedList<BehaviorInstance>();
+			}
+			for (ActorClass actor : game.actors) {
+				actor.behaviors = new LinkedList<BehaviorInstance>();
+			}
+			for (ObjectClass object : game.objects) {
+				object.behaviors = new LinkedList<BehaviorInstance>();
+			}
+			upgraded(game);
 		}
 	}
 	

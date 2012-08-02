@@ -8,8 +8,15 @@ import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorVector;
 import edu.elon.honors.price.maker.TextUtils;
+import edu.elon.honors.price.maker.action.EventContext.Scope;
+import edu.elon.honors.price.maker.action.EventContext.TriggerType;
 
 public class ElementVector extends ElementMulti {
+	
+	@Override
+	protected String getGroupName() {
+		return "Vector";
+	}
 	
 	public ElementVector(Attributes atts, Context context) {
 		super(atts, context);
@@ -49,14 +56,18 @@ public class ElementVector extends ElementMulti {
 			}
 		};
 		
-		return new Option[] {
+		Option[] options = new Option[] {
 				optionExact,
 				new OptionEmpty(context, "the triggering vector", 
 						"the triggering vector"),
 				new OptionElement("a joystick's vector",
 						new ElementJoystick(attributes, context))
 		};
+		
+		options[1].enabled = eventContext.hasTrigger(TriggerType.UITrigger);
+		options[2].visible = eventContext.getScope() == Scope.MapEvent;
+		
+		return options;
 	}
-
 }
 

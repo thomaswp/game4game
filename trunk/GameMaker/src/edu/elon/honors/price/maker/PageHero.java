@@ -8,6 +8,7 @@ import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Hero;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 
 public class PageHero extends Page {
@@ -48,6 +49,7 @@ public class PageHero extends Page {
 
 	@Override
 	public void onPause() {
+		Game.debug(actor);
 		actor.imageName = (String)imageSpinner.getSelectedItem();
 		actor.speed = speed.getProgress() / speedScale;
 		actor.jumpVelocity = jump.getProgress() / jumpScale;

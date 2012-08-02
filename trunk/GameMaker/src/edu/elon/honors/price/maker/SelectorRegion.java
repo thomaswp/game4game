@@ -27,6 +27,10 @@ public class SelectorRegion extends LinearLayout implements IPopulatable {
 		return rect;
 	}
 	
+	public void setHasMap(boolean hasMap) {
+		select.setEnabled(hasMap);
+	}
+	
 	public void setRect(Rect rect) {
 		this.rect = rect;
 		

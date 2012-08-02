@@ -1,12 +1,15 @@
 package edu.elon.honors.price.maker;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
 import edu.elon.honors.price.data.ActorInstance;
+import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.ObjectInstance;
@@ -16,6 +19,8 @@ import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.maker.MapEditor.ReturnResponse;
+import edu.elon.honors.price.maker.action.EventContext;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -55,12 +60,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		"UI Trigger"
 	};
 
-	public static final String COLOR_VARIABLE = "#00CC00";
-	public static final String COLOR_MODE = "#FFCC00";
-	public static final String COLOR_VALUE = "#5555FF";
-	public static final String COLOR_ACTION = "#8800FF";
+	public static final String COLOR_VARIABLE = 
+		TextUtils.COLOR_VARIABLE;
+	public static final String COLOR_MODE = 
+		TextUtils.COLOR_MODE;
+	public static final String COLOR_VALUE = 
+		TextUtils.COLOR_VALUE;
+	public static final String COLOR_ACTION = 
+		TextUtils.COLOR_ACTION;
 
-	private int id;
 	private EditText editTextName;
 	private LinearLayout linearLayoutTriggers, linearLayoutActions;
 	private ReturnResponse returnResponse;
@@ -70,19 +78,39 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	private LinkedList<ActionView> actionViews = new LinkedList<ActionView>();
 
 	private boolean selecting;
-	private LinkedList<Action> copy = new LinkedList<Event.Action>();
+	//private LinkedList<Action> copy = new LinkedList<Event.Action>();
 	private LinearLayout selection;
 	private Rect selectionRect = new Rect();
 
+	private Event event;
+	private Behavior behavior;
+	
 	private Event getEvent() {
-		return game.getSelectedMap().events[id];
+		//return game.getSelectedMap().events[id];
+		return event;
+	}
+	
+	private Event readEvent(Bundle savedInstanceState) {
+		Bundle extras = savedInstanceState == null ?
+				getIntent().getExtras(): savedInstanceState;
+		return (Event)extras.getSerializable("event");
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		id = getIntent().getExtras().getInt("id");
+		event = readEvent(savedInstanceState);
+		if (getIntent().getExtras().containsKey("behavior")) {
+			behavior = (Behavior)getIntent().getExtras()
+			.getSerializable("behavior");
+		}
+		
+		if (savedInstanceState != null) {
+			returnResponse = (ReturnResponse)savedInstanceState
+			.getSerializable("returnResponse");
+		}
+		
 		setContentView(R.layout.database_edit_event);
 
 		setDefaultButtonActions();
@@ -142,7 +170,27 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 		populateViews();
 	}
+	
+	@Override
+	protected void putExtras(Intent intent) {
+		intent.putExtra("event", getEvent());
+	}
+	
+	@Override
+	protected boolean hasChanged() {
+		Event event = readEvent(null);
+		
+		return !PlatformGame.areEqual(event, this.event) ||
+			super.hasChanged();
+	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) { 
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("returnResponse", returnResponse);
+		outState.putSerializable("event", event);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Select");
@@ -334,9 +382,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
+		
 		if (resultCode == RESULT_OK && returnResponse != null) {
-			returnResponse.run(data);
+			returnResponse.run(this, data);
 			returnResponse = null;
 		}
 	}
@@ -345,18 +393,23 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		Intent intent = new Intent(DatabaseEditEvent.this, 
 				DatabaseNewAction.class);
 		intent.putExtra("game", game);
+		intent.putExtra("eventContext", 
+				new EventContext(getEvent(), behavior));
 
-		returnResponse = new ReturnResponse() {
-			@Override
-			void run(Intent data) {
-				Action action = (Action)data.getExtras().
-				getSerializable("action");
-				getEvent().actions.add(action);
-				populateViews();
-			}
-		};
-
+		returnResponse = new NewActionReturnResponse();
 		startActivityForResult(intent, REQUEST_RETURN_GAME);
+	}
+	
+	private static class NewActionReturnResponse extends ReturnResponse {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		void run(DatabaseEditEvent me, Intent data) {
+			Action action = (Action)data.getExtras().
+			getSerializable("action");
+			me.getEvent().actions.add(action);
+			me.populateViews();
+		}
 	}
 
 	private void newTrigger() {
@@ -391,21 +444,24 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 				if (intent != null) {
 					intent.putExtra("game", game);
-
-					returnResponse = new ReturnResponse() {
-						@Override
-						void run(Intent data) {
-							Trigger trigger = (Trigger)data.getExtras().
-							getSerializable("trigger");
-							getEvent().triggers.add(trigger);
-							populateViews();
-						}
-					};
+					returnResponse = new NewTriggerReturnResponse();
 					startActivityForResult(intent, REQUEST_RETURN_GAME);
 				}
 			}
 		})
 		.show();
+	}
+	
+	private static class NewTriggerReturnResponse extends ReturnResponse {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		void run(DatabaseEditEvent me, Intent data) {
+			Trigger trigger = (Trigger)data.getExtras().
+			getSerializable("trigger");
+			me.getEvent().triggers.add(trigger);
+			me.populateViews();
+		}
 	}
 
 	private void populateViews() {
@@ -489,25 +545,38 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		return layout;
 	}
 
-	private void newIndentAction(final int index, final int indent) {
-		returnResponse = new ReturnResponse() {
-			@Override
-			void run(Intent data) {
-				Action a = (Action)data.getExtras()
-				.getSerializable("action");
-				a.indent = indent;
-				getEvent().actions.add(index, a);
-				populateViews();
-			}
-		};
+	private void newIndentAction(int index, int indent) {
+		returnResponse = new NewIndentReturnResponse(index, indent);
 		Intent intent = new Intent(DatabaseEditEvent.this, 
 				DatabaseNewAction.class);
 		intent.putExtra("game", game);
+		intent.putExtra("eventContext", 
+				new EventContext(getEvent(), behavior));
 		startActivityForResult(intent, REQUEST_RETURN_GAME);
 	}
+	
+	private static class NewIndentReturnResponse extends ReturnResponse {
+		private int indent, index;
+		public NewIndentReturnResponse(int index, int indent) {
+			this.index = index;
+			this.indent = indent;
+		}
+		
+		private static final long serialVersionUID = 1L;
+		@Override
+		void run(DatabaseEditEvent me, Intent data) {
+			Action a = (Action)data.getExtras()
+			.getSerializable("action");
+			a.indent = indent;
+			me.getEvent().actions.add(index, a);
+			me.populateViews();
+		}
+	}
 
-	private abstract static class ReturnResponse {
-		abstract void run(Intent data);
+	private static abstract class ReturnResponse implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		abstract void run(DatabaseEditEvent me, Intent data);
 	}
 
 	private class ActionView extends LinearLayout {
@@ -620,22 +689,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		}
 
 		private void edit() {
-			returnResponse = new ReturnResponse() {
-				@Override
-				void run(Intent data) {
-					Action action = (Action)data.getExtras()
-					.getSerializable("action");
-					action.indent = getAction().indent;
-					getEvent().actions.remove(index);
-					getEvent().actions.add(index, action);
-					populateViews();
-				}
-			};
+			returnResponse = new EditActionReturnResponse(index);
 			Intent intent = new Intent(DatabaseEditEvent.this, 
 					DatabaseEditAction.class);
 			intent.putExtra("game", game);
 			intent.putExtra("id", getAction().id);
 			intent.putExtra("params", getAction().params);
+			intent.putExtra("eventContext", 
+					new EventContext(getEvent(), behavior));
 			startActivityForResult(intent, REQUEST_RETURN_GAME);
 		}
 
@@ -643,17 +704,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			Intent intent = new Intent(DatabaseEditEvent.this, 
 					DatabaseNewAction.class);
 			intent.putExtra("game", game);
+			intent.putExtra("eventContext", 
+					new EventContext(getEvent(), behavior));
 
-			returnResponse = new ReturnResponse() {
-				@Override
-				void run(Intent data) {
-					Action action = (Action)data.getExtras().
-					getSerializable("action");
-					action.indent = getAction().indent;
-					getEvent().actions.add(index, action);
-					populateViews();
-				}
-			};
+			returnResponse = new InsertActionReturnResponse(index);
 
 			startActivityForResult(intent, REQUEST_RETURN_GAME);
 		}
@@ -705,6 +759,64 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			return tv;
 		}
 	}
+	
+	private static class EditActionReturnResponse extends ReturnResponse {
+		private static final long serialVersionUID = 1L;
+
+		private int index;
+		
+		public EditActionReturnResponse(int index) {
+			this.index = index;
+		}
+		
+		@Override
+		void run(DatabaseEditEvent me, Intent data) {
+			Action action = (Action)data.getExtras()
+			.getSerializable("action");
+			action.indent = me.getEvent().actions.get(index).indent;
+			me.getEvent().actions.remove(index);
+			me.getEvent().actions.add(index, action);
+			me.populateViews();
+		}
+	}
+	
+	private static class InsertActionReturnResponse extends ReturnResponse {
+		private static final long serialVersionUID = 1L;
+
+		private int index;
+		
+		public InsertActionReturnResponse(int index) {
+			this.index = index;
+		}
+		
+		@Override
+		void run(DatabaseEditEvent me, Intent data) {
+			Action action = (Action)data.getExtras().
+			getSerializable("action");
+			action.indent = me.getEvent().actions.get(index).indent;
+			me.getEvent().actions.add(index, action);
+			me.populateViews();
+		}
+	}
+	
+	private static class EditTriggerReturnResponse extends ReturnResponse {
+		private static final long serialVersionUID = 1L;
+
+		private int index;
+		
+		public EditTriggerReturnResponse(int index) {
+			this.index = index;
+		}
+		
+		@Override
+		void run(DatabaseEditEvent me, Intent data) {
+			Trigger trigger = (Trigger)data.getExtras().getSerializable("trigger");
+			ArrayList<Trigger> triggers = me.getEvent().triggers;
+			triggers.remove(index);
+			triggers.add(index, trigger);
+			me.populateViews();
+		}
+	}
 
 	private class TriggerView extends LinearLayout {
 
@@ -730,16 +842,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			buttonEdit.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					returnResponse = new ReturnResponse() {
-						@Override
-						void run(Intent data) {
-							Trigger trigger = (Trigger)data.getExtras().getSerializable("trigger");
-							ArrayList<Trigger> triggers = getEvent().triggers;
-							triggers.remove(index);
-							triggers.add(index, trigger);
-							populateViews();
-						}
-					};
+					returnResponse = new EditTriggerReturnResponse(index);
 					Intent intent = new Intent(getContext(), getEditorClass());
 					intent.putExtra("game", game);
 					intent.putExtra("trigger", getTrigger());
@@ -856,8 +959,12 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				sb.append("A ");
 				TextUtils.addColoredText(sb, game.actors[trigger.id].name, COLOR_VARIABLE);
 			} else if (trigger.mode == ActorOrObjectTrigger.MODE_OBJECT_INSTANCE) {
-				ObjectInstance instance = game.getSelectedMap().objects.get(trigger.id);
-				TextUtils.addColoredText(sb, game.objects[instance.classIndex].name, COLOR_VARIABLE);
+				if (trigger.id >= 0) {
+					ObjectInstance instance = game.getSelectedMap().objects.get(trigger.id);
+					TextUtils.addColoredText(sb, game.objects[instance.classIndex].name, COLOR_VARIABLE);
+				} else {
+					sb.append("[None]");
+				}
 			} else {
 				sb.append("A ");
 				TextUtils.addColoredText(sb, game.objects[trigger.id].name, COLOR_VARIABLE);

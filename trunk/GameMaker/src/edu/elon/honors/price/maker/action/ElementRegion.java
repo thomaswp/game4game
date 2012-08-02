@@ -10,6 +10,7 @@ import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorRegion;
 import edu.elon.honors.price.maker.TextUtils;
+import edu.elon.honors.price.maker.action.EventContext.Scope;
 
 public class ElementRegion extends Element {
 	
@@ -52,6 +53,8 @@ public class ElementRegion extends Element {
 		LinearLayout layout = new LinearLayout(context);
 		layout.setFocusableInTouchMode(true);
 		selectorRegion = new SelectorRegion(context);
+		selectorRegion.setHasMap(
+				eventContext.getScope() == Scope.MapEvent);
 		layout.addView(selectorRegion);
 		main = layout;
 	}

@@ -1,6 +1,7 @@
 package edu.elon.honors.price.data;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 /**
  * Represents an Actor Class, defining characteristics
@@ -60,6 +61,7 @@ public class ActorClass implements Serializable, Cloneable {
 	public boolean collidesWithActors = true;
 	public boolean collidesWithHero = true;
 	public boolean collidesWithObjects = true;
+	public LinkedList<BehaviorInstance> behaviors;
 	
 	@Override
 	public ActorClass clone() {

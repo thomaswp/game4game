@@ -8,6 +8,11 @@ public class ElementBoolean extends ElementMulti {
 
 	private String onString, offString;
 	
+	@Override
+	protected String getGroupName() {
+		return onString + "/" + offString;
+	}
+	
 	public ElementBoolean(Attributes atts, Context context) {
 		super(atts, context);
 	}

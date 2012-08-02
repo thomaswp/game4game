@@ -1,6 +1,9 @@
 package edu.elon.honors.price.maker;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,11 +34,52 @@ public class DatabaseActivity extends SaveableActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		game = (PlatformGame)getIntent().getExtras().
-		getSerializable("game");
+		if (savedInstanceState != null && savedInstanceState.containsKey("game")) {
+			game = (PlatformGame)savedInstanceState.getSerializable("game");
+		}
+		if (game == null) {
+			game = (PlatformGame)getIntent().getExtras().
+				getSerializable("game");
+		}
 
 
 		super.onCreate(savedInstanceState);
+	}
+	
+	protected void autoAssign() {
+		Field[] fields = this.getClass().getDeclaredFields();
+		boolean typeAnnotation = 
+			this.getClass().getAnnotation(AutoAssign.class) != null;
+		for (Field field : fields) {
+			if (!View.class.isAssignableFrom(field.getType())) {
+				continue;
+			}
+			AutoAssign aa = field.getAnnotation(AutoAssign.class);
+			if (aa != null || typeAnnotation) {
+				String name;
+				if (aa != null && aa.name().length() > 0) {
+					name = aa.name();
+				} else {
+					name = field.getName();
+				}
+				
+				try {
+					Field id = R.id.class.getField(name);
+					int lid = (Integer)id.get(null);
+					View view = findViewById(lid);
+					if (view != null && 
+							field.getType().isAssignableFrom(view.getClass())) {
+						field.setAccessible(true);
+						field.set(this, view);
+					}
+					//Game.debug("%s successfully assigned!", field.getName());
+				} catch (Exception e) {
+					Game.debug("Problem with AutoAssign for field %s in class %s",
+							field.getName(), this.getClass().getName());
+					Game.debug(e);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -44,6 +88,7 @@ public class DatabaseActivity extends SaveableActivity {
 		super.onBackPressed();
 	}
 
+	@Override
 	protected boolean hasChanged() {
 		//long time = System.currentTimeMillis();
 		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
@@ -53,16 +98,28 @@ public class DatabaseActivity extends SaveableActivity {
 		return r;
 	}
 
-	protected void finishOk(Intent intent) {
+	protected final void finishOk(Intent intent) {
 		onFinishing();
 		intent.putExtra("game", game);
 		putExtras(intent);
 		super.finishOk(intent);
 	}	
 
+	/**
+	 * Called before the game is Serialized.
+	 * This is an activity's opportunity to
+	 * save any form data to the game.
+	 */
 	protected void onFinishing() { }
 
 	protected void putExtras(Intent intent) { }
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) { 
+		super.onSaveInstanceState(outState);
+		onFinishing();
+		outState.putSerializable("game", game);
+	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

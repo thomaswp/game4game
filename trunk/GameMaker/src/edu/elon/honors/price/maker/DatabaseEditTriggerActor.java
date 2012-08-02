@@ -96,21 +96,21 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 			break;
 		}
 		
-
-		selectorActorClass.setOnActorClassChangedListenter(new OnActorClassChangedListener() {
-			@Override
-			public void onActorClassChanged(int newId) {
-				trigger.id = newId;
-				
-			}
-		});
-		
-		selectorObjectClass.setOnActorClassChangedListenter(new OnObjectClassChangedListener() {
-			@Override
-			public void onObjectClassChanged(int newId) {
-				trigger.id = newId;
-			}
-		});
+//
+//		selectorActorClass.setOnActorClassChangedListenter(new OnActorClassChangedListener() {
+//			@Override
+//			public void onActorClassChanged(int newId) {
+//				trigger.id = newId;
+//				
+//			}
+//		});
+//		
+//		selectorObjectClass.setOnActorClassChangedListenter(new OnObjectClassChangedListener() {
+//			@Override
+//			public void onObjectClassChanged(int newId) {
+//				trigger.id = newId;
+//			}
+//		});
 		
 		spinnerAction.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -138,16 +138,34 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 
 		populate();
 
-		if (resultCode == RESULT_OK) {
-			if (selectorActorInstance.onActivityResult(requestCode, data)) {
-				trigger.id = selectorActorInstance.getSelectedInstance();
-			}
-			if (selectorObjectInstance.onActivityResult(requestCode, data)) {
-				trigger.id = selectorObjectInstance.getSelectedInstance();
-			}
-		}
+//		if (resultCode == RESULT_OK) {
+//			if (selectorActorInstance.onActivityResult(requestCode, data)) {
+//				trigger.id = selectorActorInstance.getSelectedInstance();
+//			}
+//			if (selectorObjectInstance.onActivityResult(requestCode, data)) {
+//				trigger.id = selectorObjectInstance.getSelectedInstance();
+//			}
+//		}
 	}
 
+	@Override
+	protected void onFinishing() {
+		switch (trigger.mode) {
+		case ActorOrObjectTrigger.MODE_ACTOR_INSTANCE:
+			trigger.id = selectorActorInstance.getSelectedInstance();
+			break;
+		case ActorOrObjectTrigger.MODE_ACTOR_CLASS:
+			trigger.id = selectorActorClass.getSelectedActorId();
+			break;
+		case ActorOrObjectTrigger.MODE_OBJECT_INSTANCE:
+			trigger.id = selectorObjectInstance.getSelectedInstance();
+			break;
+		case ActorOrObjectTrigger.MODE_OBJECT_CLASS:
+			trigger.id = selectorObjectClass.getSelectedObjectId();
+			break;
+		}
+	}
+	
 	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("trigger", trigger);

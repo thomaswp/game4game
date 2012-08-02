@@ -88,7 +88,7 @@ public class PageMap extends Page {
 		group.addListView(lv1);
 		group.addListView(lv2);
 		
-		SelectorMapView mv = new SelectorMapView(parent, getGame()) {
+		SelectorMapView mv = new SelectorMapView(parent, getGame(), null) {
 			@Override
 			protected boolean showRightButton() {
 				return false;

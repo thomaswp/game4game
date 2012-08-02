@@ -1,25 +1,24 @@
 package edu.elon.honors.price.data;
 
 import java.io.Serializable;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-
-import org.apache.http.impl.conn.DefaultClientConnection;
 
 import edu.elon.honors.price.game.Game;
 
 public class Map implements Serializable{
 	private static final long serialVersionUID = 9L;
 
+	
+	
+	public Event[] events;
 	public int tilesetId;
 	public MapLayer[] layers;
 	public MapLayer actorLayer;
-	//	public MapLayer objectLayer;
 	public ArrayList<ActorInstance> actors; 
 	public ArrayList<ObjectInstance> objects;
-	public Event[] events;
+	public LinkedList<BehaviorInstance> behaviors;
 	public int rows, columns;
 	public Serializable editorData;
 	public int groundY;

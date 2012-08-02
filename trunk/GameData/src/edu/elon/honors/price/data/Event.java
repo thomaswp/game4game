@@ -392,6 +392,15 @@ public class Event implements Serializable {
 		public ActorOrObjectTrigger() {
 			this(0, 1, 0);
 		}
+		
+		public boolean isActorTrigger() {
+			return mode == MODE_ACTOR_CLASS || 
+			mode == MODE_ACTOR_INSTANCE;
+		}
+		
+		public boolean isObjectTrigger() {
+			return !isActorTrigger();
+		}
 
 		public boolean equals(ActorOrObjectTrigger o) {
 			return o.id == id &&

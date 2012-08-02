@@ -4,7 +4,6 @@
 
 	<radio>
 		<choice text="one variable">
-			<text text="width the id" />
 			<variable />
 		</choice>
 		<choice text="all variables from">

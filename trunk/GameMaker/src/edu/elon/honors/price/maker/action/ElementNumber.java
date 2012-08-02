@@ -6,6 +6,11 @@ import android.content.Context;
 
 public class ElementNumber extends ElementMulti {
 
+	@Override
+	protected String getGroupName() {
+		return "Number";
+	}
+	
 	public ElementNumber(Attributes atts, Context context) {
 		super(atts, context);
 	}

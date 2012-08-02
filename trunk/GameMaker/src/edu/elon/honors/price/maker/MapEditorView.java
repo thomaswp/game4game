@@ -14,6 +14,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Bundle;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
@@ -94,8 +95,9 @@ public class MapEditorView extends MapView {
 		actionIndex = 0;
 	}
 
-	public MapEditorView(Context context, PlatformGame game) {
-		super(context, game);
+	public MapEditorView(Context context, PlatformGame game, 
+			Bundle savedInstanceState) {
+		super(context, game, savedInstanceState);
 		createDarkTiles();
 
 		if (game.getSelectedMap().editorData != null) {

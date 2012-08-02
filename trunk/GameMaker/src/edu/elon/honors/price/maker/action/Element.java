@@ -6,6 +6,8 @@ import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.maker.DatabaseEditAction;
+import edu.elon.honors.price.maker.DatabaseEditBehavior;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 
 import android.content.Context;
@@ -22,6 +24,7 @@ public abstract class Element {
 	protected ViewGroup host;
 	protected String color;
 	protected Attributes attributes;
+	protected EventContext eventContext;
 
 	protected String getDefaultColor() {
 		return null;
@@ -30,6 +33,10 @@ public abstract class Element {
 	public Element(Attributes atts, Context context) {
 		this.context = context;
 		this.attributes = atts;
+		if (context instanceof DatabaseEditAction) {
+			eventContext = 
+				((DatabaseEditAction) context).getEventContext();
+		}
 		readAttributes(atts);
 		genView();
 	}
