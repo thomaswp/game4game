@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import java.io.Serializable;
 
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,8 +18,14 @@ import android.widget.Button;
 
 public class SaveableActivity extends Activity {
 	
-
 	private Handler finishHandler = new Handler();
+	
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null) {
+			//Game.debug("RESTORING INSTANCE!!!");
+		}
+	}
 	
 	@Override
 	public void onBackPressed() {

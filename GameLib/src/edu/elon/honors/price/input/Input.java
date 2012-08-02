@@ -1,6 +1,8 @@
 package edu.elon.honors.price.input;
 
 import java.util.ArrayList;
+
+import edu.elon.honors.price.game.Game;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -277,6 +279,7 @@ public final class Input {
 		keyMap[keycode] = KeyStates.Triggered;
 	}
 
+	
 	/**
 	 * Records a TouchEvent.
 	 * @param v The View the was touched
@@ -287,6 +290,7 @@ public final class Input {
 		//dumpEvent(event);
 		synchronized(touchEvents) {
 			synchronized (event) {
+				
 				for (int i = 0; i < event.getPointerCount(); i++) {
 					int pid = event.getPointerId(i);
 
@@ -314,6 +318,7 @@ public final class Input {
 					}
 				}
 			}
+			touchEvents.notify();
 		}
 		return true;
 	}
@@ -349,8 +354,9 @@ public final class Input {
 	private static void handleTouchEvents() {
 		//process the touch event
 		String out = "";
-
+		
 		synchronized (touchEvents) {
+			
 			for (int i = 0; i < touchEvents.size(); i++) {
 
 				ArrayList<Input.TouchEvent> touchEventList = touchEvents.get(i);
@@ -358,11 +364,13 @@ public final class Input {
 				TouchState touchState = touchStates.get(i);
 				
 				if (touchEventList.size() == 0) {
+					touchState.tapped = false;
 					continue;
 				}
-
+				
 				TouchEvent event = touchEventList.get(0);
 
+				
 				if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
 					//User just touched the screen
 					touchState.touchDown = true;

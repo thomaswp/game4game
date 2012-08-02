@@ -23,7 +23,7 @@ public class DatabaseEditMapSize extends DatabaseActivity {
 		
 		setContentView(R.layout.database_edit_map_size);
 		
-		preview = new SelectorMapPreview(this, game);
+		preview = new SelectorMapPreview(this, game, null);
 		LinearLayout layoutMap = (LinearLayout)findViewById(R.id.linearLayoutMap);
 		layoutMap.addView(preview);
 		

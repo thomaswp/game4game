@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public class SelectorMapRegion extends SelectorMapBase {
@@ -19,7 +20,8 @@ public class SelectorMapRegion extends SelectorMapBase {
 	private Rect originalSelection;
 
 	@Override
-	protected MapView getMapView(PlatformGame game) {
+	protected MapView getMapView(PlatformGame game, 
+			Bundle savedInstanceState) {
 		Bundle extras = getIntent().getExtras();
 		originalSelection = new Rect(
 				extras.getInt("left"),
@@ -27,7 +29,8 @@ public class SelectorMapRegion extends SelectorMapBase {
 				extras.getInt("right"),
 				extras.getInt("bottom")
 		);
-		return new RegionView(this, game, originalSelection);
+		return new RegionView(this, game, 
+				savedInstanceState, originalSelection);
 	}
 
 	@Override
@@ -84,13 +87,35 @@ public class SelectorMapRegion extends SelectorMapBase {
 			return normSelection;
 		}
 
-		public RegionView(Context context, PlatformGame game, Rect selection) {
-			super(context, game);
-			this.selection = new Rect();
-			this.selection.set(selection);
+		public RegionView(Context context, PlatformGame game, 
+				Bundle savedInstanceState, Rect selection) {
+			super(context, game, savedInstanceState);
+			if (this.selection == null) {
+				this.selection = new Rect();
+				this.selection.set(selection);
+			}
 			normSelection = new Rect();
 			selectionF = new RectF();
 			paint = new Paint();
+		}
+		
+		@Override
+		protected void onLoadInstanceState(Bundle savedInstanceState) {
+			super.onLoadInstanceState(savedInstanceState);
+			this.selection = 
+				(Rect)savedInstanceState.getParcelable("selection");
+			Game.debug("load: %f,%f",
+					savedInstanceState.getFloat("offX"),
+					savedInstanceState.getFloat("offY"));
+		}
+		
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			super.onSaveInstanceState(outState);
+			outState.putParcelable("selection", selection);
+			Game.debug("save: %f,%f",
+					outState.getFloat("offX"),
+					outState.getFloat("offY"));
 		}
 		
 		@Override
@@ -101,8 +126,11 @@ public class SelectorMapRegion extends SelectorMapBase {
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			super.surfaceCreated(holder);
-			offX = -selection.centerX() + width / 2;
-			offY = -selection.centerY() + height / 2;
+			Game.debug("Surface: %f,%f", offX, offY);
+			if (offX == 0 && offY == 0) {
+				offX = -selection.centerX() + width / 2;
+				offY = -selection.centerY() + height / 2;
+			}
 		}
 
 		@Override

@@ -82,4 +82,16 @@
     <string name="editMapSize">Edit Map Size</string>
     <string name="empty"></string>
     <string name="editTileset">Edit Tileset</string>
+    <string name="behaviors">Behaviors</string>
+    <string name="myBehaviors">My Behaviors</string>
+    <string name="type">Type:</string>
+    <string name="editBehavior">Edit Behavior</string>
+    <string name="variables">Variables:</string>
+    <string name="switches">Switches:</string>
+    <string name="parameters">Parameters:</string>
+    <string name="events_colon">Events:</string>
+    <string name="value">Value:</string>
+    <string name="startValue">Start Value:</string>
+    <string name="switch_">Switch</string>
+    <string name="variable">Variable</string>
 </resources>

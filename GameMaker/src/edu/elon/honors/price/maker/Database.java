@@ -12,7 +12,7 @@ import android.widget.RelativeLayout;
 public class Database extends DatabaseActivity {
 
 	private Page[] pages;
-	private int selectedPage = -1;
+	private int selectedPage;
 	
 	private Button next, prev;
 	
@@ -20,7 +20,8 @@ public class Database extends DatabaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		pages = new Page[] { 
+		pages = new Page[] {
+				new PageBehaviors(this),
 				new PageEvents(this),
 				new PageActors(this),
 				new PageHero(this),
@@ -36,7 +37,17 @@ public class Database extends DatabaseActivity {
 		prev = (Button)findViewById(R.id.buttonPrevious);
 		
 		setButtonEvents();
-		selectPage(0);
+		
+		selectedPage = -1;
+		if (savedInstanceState != null && 
+				savedInstanceState.containsKey("page")) {
+			int page = savedInstanceState.getInt("page");
+			selectPage(page);
+		} else {
+			selectPage(0);
+		}
+		
+		
 	}
 
 	@Override
@@ -51,6 +62,12 @@ public class Database extends DatabaseActivity {
 			pages[selectedPage].onPause();
 		}
 		super.onPause();
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("page", selectedPage);
 	}
 	
 	@Override

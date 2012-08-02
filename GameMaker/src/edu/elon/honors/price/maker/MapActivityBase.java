@@ -41,14 +41,27 @@ public abstract class MapActivityBase extends SaveableActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		game = (PlatformGame)getIntent().getExtras().getSerializable("game");
-		view = getMapView(game);
+		if (savedInstanceState != null && savedInstanceState.containsKey("game")) {
+			game = (PlatformGame)savedInstanceState.getSerializable("game");
+		}
+		
+		if (game == null) {
+			game = (PlatformGame)getIntent().getExtras().getSerializable("game");
+		}
+		view = getMapView(game, savedInstanceState);
 		setContentView(view);
 
 		super.onCreate(savedInstanceState);
 	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("game", game);
+		view.onSaveInstanceState(outState);
+	}
 
-	protected abstract MapView getMapView(PlatformGame game);
+	protected abstract MapView getMapView(PlatformGame game, Bundle savedInstanceState);
 
 	public abstract static class MapView extends BasicCanvasView {
 
@@ -74,7 +87,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			return getButtonRad() / 4;
 		}
 
-		public MapView(Context context, PlatformGame game) {
+		public MapView(Context context, PlatformGame game, Bundle savedInstanceState) {
 			super(context);
 			this.game = game;
 			paint = new Paint();
@@ -84,6 +97,20 @@ public abstract class MapActivityBase extends SaveableActivity {
 			tiles = createTiles(tilesetBmp, tileset.tileWidth, tileset.tileHeight, 0);
 			createActors();
 			createObjects();
+			
+			if (savedInstanceState != null) {
+				onLoadInstanceState(savedInstanceState);
+			}
+		}
+		
+		protected void onLoadInstanceState(Bundle savedInstanceState) {
+			offX = savedInstanceState.getFloat("offX");
+			offY = savedInstanceState.getFloat("offY");
+		}
+		
+		public void onSaveInstanceState(Bundle outState) {
+			outState.putFloat("offX", offX);
+			outState.putFloat("offY", offY);
 		}
 
 		protected void doReleaseTouch(float x, float y) {

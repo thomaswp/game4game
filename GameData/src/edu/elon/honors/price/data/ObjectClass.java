@@ -1,6 +1,7 @@
 package edu.elon.honors.price.data;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 public class ObjectClass implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -9,4 +10,5 @@ public class ObjectClass implements Serializable {
 	public String imageName = "rock.png";
 	public float zoom = 1;
 	public boolean fixedRotation = false;
+	public LinkedList<BehaviorInstance> behaviors;
 }

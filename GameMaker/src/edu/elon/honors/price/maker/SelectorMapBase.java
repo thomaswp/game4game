@@ -13,12 +13,14 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 
 public class SelectorMapBase extends MapActivityBase {
 	
 	@Override
-	protected MapView getMapView(PlatformGame game) {
-		return new SelectorMapView(this, game);
+	protected MapView getMapView(PlatformGame game, 
+			Bundle savedInstanceState) {
+		return new SelectorMapView(this, game, savedInstanceState);
 	}
 	
 	public static class SelectorMapView extends MapView {
@@ -28,8 +30,9 @@ public class SelectorMapBase extends MapActivityBase {
 		protected Button leftButton, rightButton;
 		
 		
-		public SelectorMapView(Context context, PlatformGame game) {
-			super(context, game);
+		public SelectorMapView(Context context, PlatformGame game, 
+				Bundle savedInstanceState) {
+			super(context, game, savedInstanceState);
 		}
 		
 		@Override

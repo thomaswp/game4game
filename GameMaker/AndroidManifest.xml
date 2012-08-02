@@ -25,37 +25,40 @@
                   android:label="@string/app_name" android:screenOrientation="landscape">
         </activity>
         <activity android:name=".MapEditor"
-                  android:label="@string/app_name" android:screenOrientation="landscape">
+                  android:label="@string/app_name" android:screenOrientation="landscape"
+                  android:configChanges="keyboardHidden|orientation">
         </activity>
-    	<activity android:name=".MapTextureSelector" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".MapEditorActorSelector" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".MapEditorObjectSelector" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".Database" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditActor" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditObjectClass" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorMapBase" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorMapActorInstance" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorMapObjectInstance" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorMapRegion" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorMapPoint" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorActivitySwitch" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorActivityVariable" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".SelectorActivityVector" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditEvent" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditTriggerSwitch" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditTriggerActor" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditTriggerRegion" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditTriggerUI" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditUI" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseNewAction" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditAction" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditMapBackground" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditMapSize" android:screenOrientation="landscape"></activity>
-    	<activity android:name=".DatabaseEditMapTileset" android:screenOrientation="landscape"></activity>
+    	<activity android:name=".MapTextureSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".Database" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditActor" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditObjectClass" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorMapBase" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorMapActorInstance" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorMapObjectInstance" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorMapRegion" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorMapPoint" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorActivitySwitch" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorActivityVariable" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorActivityVector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditEvent" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditTriggerSwitch" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditTriggerActor" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditTriggerRegion" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditTriggerUI" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditUI" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseNewAction" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditAction" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditMapBackground" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditMapSize" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditMapTileset" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditBehavior" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	
     	<activity android:name="com.twp.platform.Platformer"
-                  android:label="@string/app_name" android:screenOrientation="landscape">
+                  android:label="@string/app_name" android:screenOrientation="landscape"
+                  android:configChanges="keyboardHidden|orientation">
         </activity>
     	
     	<provider android:name="ResourceProvider"  

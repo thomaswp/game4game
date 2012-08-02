@@ -15,7 +15,7 @@ import android.widget.ListView;
 public class PageEvents extends Page {
 
 	private ListView listViewEvents;
-	private int selectedId;
+	private int selectedId = -1;
 
 	public PageEvents(Database parent) {
 		super(parent);
@@ -42,7 +42,7 @@ public class PageEvents extends Page {
 				if (selectedId >= 0) {
 					Intent intent = new Intent(parent, DatabaseEditEvent.class);
 					intent.putExtra("game", getGame());
-					intent.putExtra("id", selectedId);
+					intent.putExtra("event", getGame().getSelectedMap().events[selectedId]);
 					parent.startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
 				}
 			}
@@ -91,8 +91,13 @@ public class PageEvents extends Page {
 	}
 
 	@Override
-	public void onResume() {
-		populateListView();
+	public void onActivityResult(int requestCode, Intent data) {
+		super.onActivityResult(requestCode, data);
+		if (selectedId >= 0) {
+			getGame().getSelectedMap().events[selectedId] = 
+				(Event)data.getExtras().getSerializable("event");
+		}
+		//populateListView();
 	}
 
 	private void populateListView() {
@@ -103,7 +108,12 @@ public class PageEvents extends Page {
 			names.add(event.name);
 		}
 		listViewEvents.setAdapter(new CheckableArrayAdapter(parent, R.layout.checkable_array_adapter_row, names));
-		listViewEvents.setSelection(0);
+		//doesn't work...
+		listViewEvents.setSelection(selectedId);
 	}
 
+	@Override
+	public void onResume() {
+		populateListView();
+	}
 }

@@ -26,8 +26,8 @@ public class MapEditor extends MapActivityBase {
 	}
 
 	@Override
-	protected MapView getMapView(PlatformGame game) {
-		return new MapEditorView(this, game);
+	protected MapView getMapView(PlatformGame game, Bundle savedInstanceState) {
+		return new MapEditorView(this, game, savedInstanceState);
 	}
 
 	@Override

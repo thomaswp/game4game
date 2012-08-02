@@ -16,11 +16,13 @@ public class SelectorMapPoint extends SelectorMapBase {
 	private int originalX, originalY;
 
 	@Override
-	protected MapView getMapView(PlatformGame game) {
+	protected MapView getMapView(PlatformGame game, 
+			Bundle savedInstanceState) {
 		Bundle extras = getIntent().getExtras();
 		originalX = extras.getInt("x");
 		originalY = extras.getInt("y");
-		return new PointView(this, game, originalX, originalY);
+		return new PointView(this, game, 
+				savedInstanceState, originalX, originalY);
 	}
 
 	@Override
@@ -57,8 +59,9 @@ public class SelectorMapPoint extends SelectorMapBase {
 			return y;
 		}
 
-		public PointView(Context context, PlatformGame game, int x, int y) {
-			super(context, game);
+		public PointView(Context context, PlatformGame game, 
+				Bundle savedInstanceState, int x, int y) {
+			super(context, game, savedInstanceState);
 			this.x = x;
 			this.y = y;
 			paint = new Paint();

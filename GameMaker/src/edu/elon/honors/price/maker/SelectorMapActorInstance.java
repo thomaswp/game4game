@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Paint.Style;
+import android.os.Bundle;
 import android.view.SurfaceHolder;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
@@ -18,9 +19,11 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 	private int originalId;
 	
 	@Override
-	protected MapView getMapView(PlatformGame game) {
+	protected MapView getMapView(PlatformGame game, 
+			Bundle savedInstanceState) {
 		originalId = getIntent().getExtras().getInt("id");
-		return new ActorInstanceView(this, game, originalId);
+		return new ActorInstanceView(this, game, 
+				savedInstanceState, originalId);
 	}
 	
 	@Override
@@ -40,8 +43,9 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 		private int selectedId;
 		private RectF selectedRect = new RectF();
 		
-		public ActorInstanceView(Context context, PlatformGame game, int selectedId) {
-			super(context, game);
+		public ActorInstanceView(Context context, PlatformGame game, 
+				Bundle savedInstanceState, int selectedId) {
+			super(context, game, savedInstanceState);
 			this.selectedId = selectedId;
 			paint = new Paint();
 		}

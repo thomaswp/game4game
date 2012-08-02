@@ -28,7 +28,7 @@ public class DatabaseEditMapTileset extends DatabaseActivity {
 			(LinearLayout)findViewById(R.id.linearLayoutPreview);
 		RadioGroup group = (RadioGroup)findViewById(R.id.radioGroupTilesets);
 		imageViewPreivew = (ImageView)findViewById(R.id.imageViewPreview);
-		selectorMapPreview = new SelectorMapPreview(this, game);
+		selectorMapPreview = new SelectorMapPreview(this, game, null);
 		//selectorMapPreview.setBackgroundResource(R.drawable.border_white);
 		
 		layoutPreview.addView(selectorMapPreview);
