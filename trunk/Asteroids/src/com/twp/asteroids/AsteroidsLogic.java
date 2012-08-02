@@ -15,7 +15,6 @@ import android.graphics.Region;
 import android.graphics.Region.Op;
 import android.media.MediaPlayer;
 import edu.elon.honors.price.audio.Audio;
-import edu.elon.honors.price.game.Data;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Graphics;
@@ -129,14 +128,14 @@ public class AsteroidsLogic implements Logic {
 	}
 
 	@Override
-	public void save(Activity parent) {
-		Data.saveObject("ast", parent, data);		
+	public void save() {
+		Game.saveObject("ast", data);		
 	}
 
 	@Override
-	public void load(Activity parent) {
+	public void load() {
 		//(this is called before initialize)
-		AsteroidsData d = (AsteroidsData)Data.loadObject("ast", parent);
+		AsteroidsData d = (AsteroidsData)Game.loadObject("ast");
 		if (d != null) {
 			//if the load didn't fail we have data
 			//so this isn't a new game
@@ -424,12 +423,12 @@ public class AsteroidsLogic implements Logic {
 
 	private void loadSprites() {
 		//load each sprite
-		Bitmap bmp = Data.loadBitmap(R.drawable.ship);
+		Bitmap bmp = Game.loadBitmap(R.drawable.ship);
 		ship = new Sprite(Viewport.DefaultViewport, bmp);
 		ship.centerOrigin();
 		ship.setZ(20);
 
-		Bitmap sBmp = Data.loadBitmap(R.drawable.thrust);
+		Bitmap sBmp = Game.loadBitmap(R.drawable.thrust);
 		thrust = new Sprite(Viewport.DefaultViewport, sBmp);
 		thrust.centerOrigin();
 		thrust.setVisible(false);
@@ -514,7 +513,7 @@ public class AsteroidsLogic implements Logic {
 		//create the background - tile if necessary
 		Sprite s = new Sprite(Viewport.DefaultViewport, 0, 0, 
 				Graphics.getWidth(), Graphics.getHeight());
-		Bitmap bg = Data.loadBitmap(R.drawable.stars);
+		Bitmap bg = Game.loadBitmap(R.drawable.stars);
 		int bgWidth = bg.getWidth(), bgHeight = bg.getHeight();
 		Paint p = new Paint();
 		for (int i = 0; i < s.getWidth(); i += bgWidth) {
@@ -553,7 +552,7 @@ public class AsteroidsLogic implements Logic {
 
 	private Sprite getNewAsteroid() {
 		//Create an asteroid sprite
-		Bitmap aBmp = Data.loadBitmap(R.drawable.rock);
+		Bitmap aBmp = Game.loadBitmap(R.drawable.rock);
 		Sprite s = new Sprite(Viewport.DefaultViewport, aBmp);
 		s.centerOrigin();
 		return s;
@@ -570,7 +569,7 @@ public class AsteroidsLogic implements Logic {
 	private void createExpAnimation() {
 		//Create the 16-frame explosion animation
 		expAnimation = new Bitmap[16];
-		Bitmap exp = Data.loadBitmap(R.drawable.exp);
+		Bitmap exp = Game.loadBitmap(R.drawable.exp);
 		Matrix m = new Matrix();
 		int width = exp.getWidth(), height = exp.getHeight();
 		int k = 0;
