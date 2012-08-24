@@ -16,6 +16,9 @@ import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.Switch;
+import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
@@ -65,17 +68,39 @@ public class TriggerHandler {
 	}
 
 	private void checkTrigger(SwitchTrigger trigger, Event event) {
-		if (Globals.getSwitches()[trigger.switchId] == trigger.value) {
-			trigger(event);
+		Switch tSwitch = trigger.triggerSwitch;
+		if (tSwitch.scope == DataScope.Global) {
+			if (Globals.getSwitches()[tSwitch.id] == trigger.value) {
+				trigger(event);
+			}			
+		} else {
+			//TODO: finish
 		}
 	}
 
 	private void checkTrigger(VariableTrigger trigger, Event event) {
+		Variable variable = trigger.variable;
 
-
-		int value1 = Globals.getVariables()[trigger.variableId];
-		int value2 = trigger.with == VariableTrigger.WITH_VALUE ? trigger.valueOrId :
-			Globals.getVariables()[trigger.valueOrId];
+		int value1;
+		if (variable.scope == DataScope.Global) {
+			value1 = Globals.getVariables()[variable.id];	
+		} else {
+			value1 = 0;
+			//TODO: finish
+		}
+		
+		int value2;
+		if (trigger.with == VariableTrigger.WITH_VALUE) {
+			value2 = trigger.withValue;
+		} else {
+			variable = trigger.withVariable;
+			if (variable.scope == DataScope.Global) {
+				value2 = Globals.getVariables()[variable.id];	
+			} else {
+				value2 = 0;
+				//TODO: finish
+			}
+		}
 
 		boolean result = false;
 		switch (trigger.test) {

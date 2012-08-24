@@ -6,6 +6,7 @@ import android.content.Context;
 import android.widget.LinearLayout;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorPoint;
 import edu.elon.honors.price.maker.TextUtils;
@@ -30,10 +31,9 @@ public class ElementExactPoint extends Element {
 	}
 	
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		selectorPoint.setPoint(params.getInt(index), 
-				params.getInt(index + 1));
-		return index + 2;
+	protected void readParameters(Iterator params) {
+		selectorPoint.setPoint(params.getInt(), 
+				params.getInt());
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 
 import android.content.Context;
 import android.view.View;
@@ -17,6 +18,11 @@ public class ElementRadio extends Element {
 
 	private RadioGroup group;
 
+	@Override
+	public String getWarning() {
+		return children.get(getSelectedIndex()).getWarning();
+	}
+	
 	public ElementRadio(Attributes atts, Context context) {
 		super(atts, context);
 	}
@@ -58,10 +64,10 @@ public class ElementRadio extends Element {
 	}
 
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		int i = params.getInt(index);
+	protected void readParameters(Iterator params) {
+		int i = params.getInt();
 		setSelectedIndex(i);
-		return children.get(i).readParameters(params, index + 1);
+		children.get(i).readParameters(params);
 	}
 
 	@Override

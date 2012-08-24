@@ -5,6 +5,7 @@ import org.xml.sax.Attributes;
 import android.content.Context;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorVector;
 import edu.elon.honors.price.maker.TextUtils;
@@ -38,9 +39,9 @@ public class ElementVector extends ElementMulti {
 			}
 			
 			@Override
-			public void readParams(Parameters params, int index) {
-				final float x = params.getFloat(index);
-				final float y = params.getFloat(index + 1);
+			public void readParams(Iterator params) {
+				final float x = params.getFloat();
+				final float y = params.getFloat();
 				selectorVector.post(new Runnable() {
 					@Override
 					public void run() {

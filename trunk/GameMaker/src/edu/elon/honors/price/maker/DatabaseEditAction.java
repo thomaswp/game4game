@@ -11,6 +11,8 @@ import edu.elon.honors.price.maker.action.EventContext;
 import edu.elon.honors.price.maker.action.ActionParser;
 import edu.elon.honors.price.maker.action.Element;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Xml;
@@ -96,6 +98,26 @@ public class DatabaseEditAction extends DatabaseActivity {
 
 		setIds();
 		populate();
+	}
+	
+	@Override
+	protected boolean onSaving() {
+		String warning = rootElement.getWarning(); 
+		if (warning != null) {
+			new AlertDialog.Builder(this)
+			.setTitle("Warning")
+			.setMessage(warning)
+			.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finishOk();
+				}
+			})
+			.setNegativeButton("Cancel", null)
+			.show();
+			return false;
+		}
+		return true;
 	}
 	
 	@Override

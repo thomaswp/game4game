@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.TextUtils;
@@ -32,6 +33,23 @@ public abstract class ElementMulti extends Element {
 				radioGroup.findViewById(
 						radioGroup.getCheckedRadioButtonId()));
 	}
+	
+	@Override
+	public String getWarning() {
+		Option selected = options[getMode()];
+		if (!selected.enabled) {
+			String warning = "Warning: the option you have chosen" + 
+			" for '" + getGroupName() + "' ('" + selected.text + 
+			"') requires this event to have a corresponding " +
+			"trigger. Please either add that trigger or choose another option. " +
+			"This action will be invalid until you do so.";
+			return warning;
+		}
+		if (!selected.visible) {
+			throw new RuntimeException("No valid options!");
+		}
+		return super.getWarning();
+	}
 
 	protected abstract String getGroupName();
 	
@@ -49,12 +67,12 @@ public abstract class ElementMulti extends Element {
 	}
 
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		Parameters ps = params.getParameters(index);
-		int mode = ps.getInt();
+	protected void readParameters(Iterator params) {
+		Parameters ps = params.getParameters();
+		Iterator iterator = ps.iterator();
+		int mode = iterator.getInt();
 		((RadioButton)radioGroup.getChildAt(mode)).setChecked(true);
-		options[mode].readParams(ps, 1);
-		return index + 1;
+		options[mode].readParams(iterator);
 	}
 
 	@Override
@@ -187,7 +205,7 @@ public abstract class ElementMulti extends Element {
 			this.width = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 		}
 
-		public abstract void readParams(Parameters params, int index);
+		public abstract void readParams(Iterator params);
 		public abstract void addParams(Parameters params);
 		public abstract void writeDescription(StringBuilder sb,
 				PlatformGame game);
@@ -206,8 +224,8 @@ public abstract class ElementMulti extends Element {
 		}
 
 		@Override
-		public void readParams(Parameters params, int index) {
-			element.readParameters(params, index);
+		public void readParams(Iterator params) {
+			element.readParameters(params);
 		}
 
 		@Override
@@ -238,7 +256,7 @@ public abstract class ElementMulti extends Element {
 		}
 
 		@Override
-		public void readParams(Parameters params, int index) { }
+		public void readParams(Iterator params) { }
 
 		@Override
 		public void addParams(Parameters params) { }

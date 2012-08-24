@@ -13,8 +13,10 @@ import android.widget.Spinner;
 import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
 import edu.elon.honors.price.maker.SelectorActorClass.OnActorClassChangedListener;
 import edu.elon.honors.price.maker.SelectorObjectClass.OnObjectClassChangedListener;
+import edu.elon.honors.price.maker.action.EventContext;
+import edu.elon.honors.price.maker.action.EventContext.Scope;
 
-public class DatabaseEditTriggerActor extends DatabaseActivity {
+public class DatabaseEditTriggerActorOrObject extends DatabaseActivity {
 
 	private ActorOrObjectTrigger trigger;
 	
@@ -30,7 +32,15 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 		if (extras.containsKey("trigger")) {
 			return (ActorOrObjectTrigger)extras.getSerializable("trigger");
 		}
-		return new ActorOrObjectTrigger();
+		
+		ActorOrObjectTrigger trigger = new ActorOrObjectTrigger();
+		//Just so that a new trigger won't be unequal to itself
+		while (radioGroupType != null &&
+				radioGroupType.getChildAt(trigger.mode)
+				.getVisibility() !=	View.VISIBLE) {
+				trigger.mode++;
+		}
+		return trigger;
 	}
 	
 	@Override
@@ -38,6 +48,11 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_trigger_actor_object);
 		setDefaultButtonActions();
+		
+		EventContext eventContext = 
+			getExtra("eventContext", EventContext.class);
+		boolean hasMap = eventContext == null ||
+		eventContext.getScope() == Scope.MapEvent;
 		
 		trigger = getOriginalTrigger();
 		
@@ -47,6 +62,14 @@ public class DatabaseEditTriggerActor extends DatabaseActivity {
 		selectorObjectInstance = (SelectorObjectInstance)findViewById(R.id.selectorObjectInstance1);
 		selectorObjectClass = (SelectorObjectClass)findViewById(R.id.selectorObjectClass1);
 		spinnerAction = (Spinner)findViewById(R.id.spinnerAction);
+		
+		if (!hasMap) {
+			radioGroupType.getChildAt(0).setVisibility(View.GONE);
+			radioGroupType.getChildAt(2).setVisibility(View.GONE);
+			if (trigger.mode == 0) {
+				trigger.mode = 1;
+			}
+		}
 		
 		populate();
 		

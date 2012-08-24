@@ -1,6 +1,12 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.Behavior.ParameterType;
+import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.Variable;
+import edu.elon.honors.price.maker.action.EventContext;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,19 +16,44 @@ import android.widget.Button;
 
 public class SelectorVariable extends Button implements IPopulatable {
 
-	private int variableId;
+	private Variable variable = new Variable();
 	private PlatformGame game;
+	private EventContext eventContext;
+	
+	public void setEventContext(EventContext eventContext) {
+		this.eventContext = eventContext;
+	}
+	
+	public DataScope getScope() {
+		return variable.scope;
+	}
+	
+	public void setScope(DataScope scope, int variableId) {
+		variable.scope = scope;
+		setVariableId(variableId);
+	}
 	
 	public int getVariableId() {
-		return variableId;
+		return variable.id;
 	}
 	
 	public void setVariableId(int variableId) {
-		this.variableId = variableId;
-		
-		if (game != null) {
-			setText(String.format("%03d: %s", variableId, game.variableNames[variableId]));
-		}
+		variable.id = variableId;
+		setVariable();
+	}
+	
+	public Variable getVariable() {
+		return variable;
+	}
+	
+	public void setVariable() {
+		setVariable(variable);
+	}
+	
+	public void setVariable(Variable variable) {
+		this.variable = variable;
+		setText(variable.getName(game, 
+				eventContext.getBehavior()));
 	}
 	
 	public SelectorVariable(Context context) {
@@ -43,18 +74,22 @@ public class SelectorVariable extends Button implements IPopulatable {
 				if (iGame != null) {
 					Intent intent = new Intent(getContext(), SelectorActivityVariable.class);
 					intent.putExtra("game", iGame);
-					intent.putExtra("id", variableId);
+					intent.putExtra("id", variable.id);
+					intent.putExtra("scope", variable.scope.toInt());
+					intent.putExtra("eventContext", eventContext);
 					((Activity)getContext()).startActivityForResult(intent, getId());
 				}
 			}
 		});
-		setVariableId(variableId);
+		setVariable();
 	}
 
 	@Override
 	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
-			setVariableId(data.getExtras().getInt("id"));
+			int scope = data.getExtras().getInt("scope");
+			int id = data.getExtras().getInt("id");
+			setScope(DataScope.fromInt(scope), id);
 			return true;
 		}
 		return false;

@@ -2,7 +2,7 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 
-public class MapLayer implements Serializable{
+public class MapLayer extends GameData {
 	private static final long serialVersionUID = 2L;
 	
 	public String name;

@@ -5,6 +5,7 @@ import org.xml.sax.Attributes;
 import android.content.Context;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 
 public class ElementGroup extends Element {
 
@@ -20,10 +21,9 @@ public class ElementGroup extends Element {
 	}
 	
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		Parameters childPs = params.getParameters(index);
-		super.readParameters(childPs, 0);
-		return index + 1;
+	protected void readParameters(Iterator params) {
+		Parameters childPs = params.getParameters();
+		super.readParameters(childPs.iterator());
 	}
 
 	@Override

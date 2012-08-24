@@ -3,7 +3,7 @@ package edu.elon.honors.price.data;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class BehaviorInstance {
+public class BehaviorInstance extends GameData {
 	public Behavior behavior;
 	public HashMap<String, Object> parameters = new HashMap<String, Object>();
 	public transient LinkedList<Integer> variables = new LinkedList<Integer>();

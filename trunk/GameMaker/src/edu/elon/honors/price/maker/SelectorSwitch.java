@@ -1,6 +1,12 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.Behavior;
+import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.Behavior.ParameterType;
+import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.Switch;
+import edu.elon.honors.price.maker.action.EventContext;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,21 +16,47 @@ import android.widget.Button;
 
 public class SelectorSwitch extends Button implements IPopulatable{
 
-	private int switchId;
+	private Switch _switch = new Switch();
 	private PlatformGame game;
+	private EventContext eventContext;
+	
+	public void setEventContext(EventContext eventContext) {
+		this.eventContext = eventContext;
+	}
 	
 	public int getSwitchId() {
-		return switchId;
+		return _switch.id;
+	}
+	
+	public DataScope getScope() {
+		return _switch.scope;
+	}
+	
+	public void setScope(DataScope scope, int switchId) {
+		_switch.scope = scope;
+		setSwitchId(switchId);
 	}
 	
 	public void setSwitchId(int switchId) {
-		this.switchId = switchId;
+		_switch.id = switchId;
+		setSwitch(_switch);
 		
-		if (game != null) {
-			setText(String.format("%03d: %s", switchId, game.switchNames[switchId]));
-		}
 	}
 	
+	public Switch getSwitch() {
+		return _switch;
+	}
+	
+	public void setSwitch() {
+		setSwitch(_switch);
+	}
+	
+	public void setSwitch(Switch aSwitch) {
+		_switch = aSwitch;
+		setText(_switch.getName(game, 
+				eventContext.getBehavior()));
+	}
+		
 	public SelectorSwitch(Context context) {
 		super(context);
 	}
@@ -43,18 +75,23 @@ public class SelectorSwitch extends Button implements IPopulatable{
 				if (iGame != null) {
 					Intent intent = new Intent(getContext(), SelectorActivitySwitch.class);
 					intent.putExtra("game", iGame);
-					intent.putExtra("id", switchId);
+					intent.putExtra("id", _switch.id);
+					intent.putExtra("scope", _switch.scope.toInt());
+					intent.putExtra("eventContext", eventContext);
 					((Activity)getContext()).startActivityForResult(intent, getId());
 				}
 			}
 		});
-		setSwitchId(switchId);
+		
+		setSwitch();
 	}
 
 	@Override
 	public boolean onActivityResult(int requestCode, Intent data) {
 		if (requestCode == getId()) {
-			setSwitchId(data.getExtras().getInt("id"));
+			int scope = data.getExtras().getInt("scope");
+			int id = data.getExtras().getInt("id");
+			setScope(DataScope.fromInt(scope), id);
 			return true;
 		}
 		return false;

@@ -5,11 +5,12 @@
       android:versionName="1.0.1"  
 	  android:installLocation="auto">
 
-    <!-- <uses-sdk android:targetSdkVersion="10"/> -->
-    
-    <supports-screens android:smallScreens="true" android:normalScreens="true" 
-        android:largeScreens="false" 
-        android:xlargeScreens="false"  />
+    <!--
+    There should be a way to force screen compatibility,
+    but I haven't found it.
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10"/>
+    <supports-screens android:largeScreens="false" android:xlargeScreens="false" android:resizeable="true" /> 
+     -->
     
 	<uses-permission android:name="android.permission.VIBRATE"/>
     <application android:icon="@drawable/icon" android:label="@string/app_name">
@@ -45,7 +46,7 @@
     	<activity android:name=".DatabaseEditEvent" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditTriggerSwitch" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
-    	<activity android:name=".DatabaseEditTriggerActor" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditTriggerActorOrObject" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditTriggerRegion" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditTriggerUI" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditUI" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
@@ -55,6 +56,7 @@
     	<activity android:name=".DatabaseEditMapSize" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditMapTileset" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditBehavior" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".TestActivity" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	
     	<activity android:name="com.twp.platform.Platformer"
                   android:label="@string/app_name" android:screenOrientation="landscape"

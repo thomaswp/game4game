@@ -2,7 +2,7 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 
-public class Tileset implements Serializable {
+public class Tileset extends GameData {
 	private static final long serialVersionUID = 2L;
 
 	public int tileWidth, tileHeight, tileSpacing, rows, columns;

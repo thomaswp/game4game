@@ -116,6 +116,7 @@ public class MainMenu extends Activity {
 		Button play = (Button)findViewById(R.id.buttonPlay);
 		Button delete = (Button)findViewById(R.id.buttonDelete);
 		Button copy = (Button)findViewById(R.id.buttonCopy);
+		Button test = (Button)findViewById(R.id.buttonTest);
 
 		edit.setOnClickListener(new OnClickListener() {
 			@Override
@@ -167,6 +168,19 @@ public class MainMenu extends Activity {
 
 				})
 				.show();	
+			}
+		});
+		
+		test.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (selectedMap != null) {
+					Intent intent = new Intent(MainMenu.this, TestActivity.class);
+					PlatformGame game = (PlatformGame) Data.loadGame(selectedMap, MainMenu.this);
+					intent.putExtra("gameName", selectedMap);
+					intent.putExtra("game", game);
+					startActivity(intent);
+				}
 			}
 		});
 	}

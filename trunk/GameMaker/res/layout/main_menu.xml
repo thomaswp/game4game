@@ -17,6 +17,13 @@
     <Button android:layout_height="wrap_content" android:text="@string/newgame" android:id="@+id/buttonNewGame" android:layout_width="100dip"></Button>
     <Button android:layout_height="wrap_content" android:text="@string/delete" android:id="@+id/buttonDelete" android:layout_width="100dip"></Button>
     <Button android:layout_height="wrap_content" android:text="@string/copy" android:id="@+id/buttonCopy" android:layout_width="100dip"></Button>
+
+    <Button
+        android:id="@+id/buttonTest"
+        android:layout_width="100dip"
+        android:layout_height="wrap_content"
+        android:text="@string/test" />
+
 </LinearLayout>
 <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout3">
 </LinearLayout>

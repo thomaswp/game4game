@@ -3,8 +3,13 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.Switch;
+import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.game.Game;
 import android.graphics.Rect;
 
@@ -14,7 +19,7 @@ import android.graphics.Rect;
  * once one of its triggers' conditions are met.
  *
  */
-public class Event implements Serializable {
+public class Event extends GameData {
 	private static final long serialVersionUID = 2L;
 
 	public String name = "";
@@ -98,16 +103,45 @@ public class Event implements Serializable {
 			return String.format("[%d] %s", indent, ActionIds.ACTION_NAMES[id]);
 		}
 	}
-
+	
 	/**
 	 * Represents a set of parameters for an action.
 	 *
 	 */
-	public static class Parameters implements Serializable {
+	public static class Parameters implements Serializable, Iterable<Object> {
 		private static final long serialVersionUID = 1L;
 
 		private ArrayList<Object> params = new ArrayList<Object>();
-
+		private Object tag;
+		
+		public void setTag(Object tag) {
+			this.tag = tag;
+		}
+		
+		public Object getTag() {
+			return tag;
+		}
+		
+		public <T> List<T> getAllByClass(Class<T> c) {
+			ArrayList<T> list = new ArrayList<T>();
+			addAllByClass(c, list);
+			return list;
+		}
+		
+		private <T> void addAllByClass(Class<T> c, List<T> list) {
+			for (Object param : params) {
+				if (param instanceof Parameters) {
+					((Parameters) param).addAllByClass(c, list);
+				} else if (c.isInstance(param)) {
+					list.add(c.cast(param));
+				}
+			}
+		}
+		
+		public void set(int index, Object object) {
+			params.set(index, object);
+		}
+		
 		/**
 		 * Gets the number of parameters in this set.
 		 * @return The size
@@ -182,6 +216,30 @@ public class Event implements Serializable {
 			return (Float)params.get(index);
 		}
 
+		public Double getDouble() {
+			return (Double)params.get(0);
+		}
+		
+		public Double getDouble(int index) {
+			return (Double)params.get(index);
+		}
+		
+		public Switch getSwitch() {
+			return getSwitch(0);
+		}
+		
+		public Switch getSwitch(int index) {
+			return (Switch)params.get(index);
+		}
+		
+		public Variable getVariable() {
+			return getVariable(0);
+		}
+		
+		public Variable getVariable(int index) {
+			return (Variable)params.get(index);
+		}
+		
 		/**
 		 * Gets the first parameter, cast as another set of Parameters.
 		 * This is used when a list or complex data is passed as a parameter.
@@ -197,7 +255,7 @@ public class Event implements Serializable {
 		public Parameters getParameters(int index) {
 			return (Parameters)params.get(index);
 		}
-
+		
 		@Override
 		public String toString() {
 			return Arrays.toString(params.toArray());
@@ -238,9 +296,49 @@ public class Event implements Serializable {
 			}
 			return o;
 		}
+		
+		@Override
+		public Iterator iterator() {
+			return new Iterator();
+		}
+		
+		public class Iterator implements java.util.Iterator<Object>{
+			private int index = 0;
+			private Parameters params = copy();
+
+			public int getSize() {
+				return params.getSize();
+			}
+
+			public Object getObject() { return params.getObject(index++); }
+			public boolean getBoolean() { return params.getBoolean(index++); }
+			public String getString() { return params.getString(index++); }
+			public int getInt() { return params.getInt(index++); }
+			public float getFloat() { return params.getFloat(index++); }
+			public Double getDouble() {	return params.getDouble(index++); }
+			public Parameters getParameters() { return params.getParameters(index++); }
+			public Switch getSwitch() { return params.getSwitch(index++); }
+			public Variable getVariable() { return params.getVariable(index++); }
+
+			@Override
+			public boolean hasNext() {
+				return index < getSize();
+			}
+
+			@Override
+			public Object next() {
+				return getObject();
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		}
 	}
 
-	public abstract static class Trigger implements Serializable {
+	public abstract static class Trigger extends GameData 
+	implements Serializable {
 		private static final long serialVersionUID = 1L;
 	}
 
@@ -252,7 +350,7 @@ public class Event implements Serializable {
 	public static class SwitchTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 
-		public int switchId;
+		public Switch triggerSwitch;
 		public boolean value;
 
 		/**
@@ -261,19 +359,20 @@ public class Event implements Serializable {
 		 * @param switchId The id of the switch
 		 * @param value The value 
 		 */
-		public SwitchTrigger(int switchId, boolean value) {
-			this.switchId = switchId;
+		public SwitchTrigger(int switchId, DataScope switchScope, 
+				boolean value) {
+			this.triggerSwitch = new Switch(switchId, switchScope);
 			this.value = value;
 		}
 
 		public SwitchTrigger() {
-			this(0, true);
+			this(0, DataScope.Global, true);
 		}
 
-		public boolean equals(SwitchTrigger o) {
-			return o.switchId == switchId &&
-			o.value == value;
-		}
+//		public boolean equals(SwitchTrigger o) {
+//			return o.triggerSwitch.equals(triggerSwitch) &&
+//			o.value == value;
+//		}
 	}
 
 	/**
@@ -333,28 +432,30 @@ public class Event implements Serializable {
 			"divisible by"
 		};
 
-		public int variableId;
+		public Variable variable;
 		public int test;
 		public int with;
-		public int valueOrId;
+		public int withValue;
+		public Variable withVariable;
 
-		public VariableTrigger(int variableId, int test, int with, int valueOrId) {
-			this.variableId = variableId;
+		public VariableTrigger(int variableId, DataScope variableScope, 
+				int test, int with) {
+			this.variable = new Variable(variableId, variableScope);
 			this.test = test;
 			this.with = with;
-			this.valueOrId = valueOrId;
 		}
 
 		public VariableTrigger() {
-			this(0, 0, 0, 0);
+			this(0, DataScope.Global, 0, 0);
 		}
 
-		public boolean equals(VariableTrigger o) {
-			return o.variableId == variableId &&
-			o.test == test &&
-			o.with == with &&
-			o.valueOrId == valueOrId;
-		}
+//		public boolean equals(VariableTrigger o) {
+//			return o.variable.equals(variable) &&
+//			o.test == test &&
+//			o.with == with &&
+//			o.withValue == withValue &&
+//			o.withVariableScope == withVariableScope;
+//		}
 	}
 
 	public static class ActorOrObjectTrigger extends Trigger {

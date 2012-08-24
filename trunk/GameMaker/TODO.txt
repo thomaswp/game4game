@@ -1,2 +1,7 @@
+-certain events need to not have local variable (set range, eg)
+--do this by disabling the tabs, have an attribute, pass it through
+
+-tag parameters and make them undeletable
+
 -saveInstanceState not fully implemented
 --returnResponse is problematic because it's not serializable. It needs to be changed to a constant

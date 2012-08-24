@@ -30,7 +30,7 @@ import android.widget.TextView;
 public class DatabaseEditBehavior extends DatabaseActivity {
 
 	private int REQUEST_EDIT_EVENT = 0;
-	
+
 	private Behavior behavior;
 	private EditText editTextName;
 	private TextView textViewType;
@@ -43,7 +43,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 	private ScrollView scrollView;
 
 	private Editor[] editors;
-	
+
 	private Behavior readBehavior() {
 		if (getIntent().getExtras().containsKey("behavior")) {
 			return (Behavior)getIntent().getExtras().getSerializable("behavior");
@@ -68,12 +68,12 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 
 		autoAssign();		
 		populateFileds();
-		
+
 		editors = new Editor[] {
-			new EventEditor(),
-			new SwitchEditor(),
-			new VariableEditor(),
-			new ParameterEditor()
+				new EventEditor(),
+				new SwitchEditor(),
+				new VariableEditor(),
+				new ParameterEditor()
 		};
 
 		if (savedInstanceState != null) {
@@ -95,7 +95,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 				}
 			});
 		}
-		
+
 		scrollView.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -118,24 +118,24 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		outState.putIntArray("indices", indices);
 		outState.putInt("scroll", scrollView.getScrollY());
 	}
-	
+
 	@Override
 	public void onFinishing() {
 		behavior.name = editTextName.getText().toString();
 	}
-	
+
 	@Override
 	public boolean hasChanged() {
 		return !PlatformGame.areEqual(behavior, readBehavior()) ||
-			super.hasChanged();
+		super.hasChanged();
 	}
-	
+
 	@Override
 	public void putExtras(Intent intent) {
 		super.putExtras(intent);
 		intent.putExtra("behavior", behavior);
 	}
-	
+
 	private void addButtonEvents() {
 		Button[][] buttons = new Button[][] {
 				new Button[] {
@@ -159,7 +159,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 						buttonDeleteParameter
 				},
 		};
-		
+
 		for (int i = 0; i < editors.length; i++) {
 			final Editor editor = editors[i];
 			buttons[0][i].setOnClickListener(new OnClickListener() {
@@ -182,7 +182,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 			});
 		}
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, 
 			Intent data) {
@@ -228,14 +228,14 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 	private String describeEvent(Event event) {
 		return event.name;
 	}
-	
+
 	private Spanned describeVariable(int index) {
 		String name = behavior.variableNames.get(index);
 		Integer value = behavior.variables.get(index);
 		return valueString(name, value.toString(), 
 				TextUtils.COLOR_VALUE);
 	}
-	
+
 	private Spanned describeSwitch(int index) {
 		String name = behavior.switchNames.get(index);
 		String value = behavior.switches.get(index) ?
@@ -243,12 +243,12 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		return valueString(name, value, 
 				TextUtils.COLOR_VALUE);
 	}
-	
+
 	private Spanned describeParameter(Parameter parameter) {
 		return valueString(parameter.name, 
 				parameter.type.toString(), TextUtils.COLOR_MODE);
 	}
-	
+
 	private Spanned valueString(String name, String value, String color) {
 		String cValue = TextUtils.getColoredText(
 				value, color);
@@ -259,7 +259,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 
 	private abstract class Editor {
 		protected RadioGroup radioGroup;
-		
+
 		public RadioGroup getRadioGroup() {
 			return radioGroup;
 		}
@@ -269,18 +269,18 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 
 		public void onActivityResult(Intent data) {
-			
+
 		}
 
 		protected abstract CharSequence addItem();
 		protected abstract void editItem(int index);
-		protected abstract void deleteItem(int index);
+		protected abstract boolean deleteItem(int index);
 
 		protected int getIndex() {
 			return radioGroup.indexOfChild(findViewById(
 					radioGroup.getCheckedRadioButtonId()));
 		}
-		
+
 		protected boolean indexInRange(int index) {
 			return index >= 0 && index < radioGroup.getChildCount();
 		}
@@ -291,7 +291,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 			button.setText(addItem());
 			radioGroup.addView(button);
 		}
-		
+
 
 		public void onEdit() {
 			int index = getIndex();
@@ -299,18 +299,19 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 				editItem(index);
 			}
 		}
-		
+
 		public void onDelete() {
 			int index = getIndex();
 			if (indexInRange(index)) {
-				deleteItem(index);
-				radioGroup.removeViewAt(index);
+				if (deleteItem(index)) {
+					radioGroup.removeViewAt(index);
+				}
 			}
 		}
 	}
-	
+
 	private class EventEditor extends Editor {
-		
+
 		public EventEditor() {
 			super(radioGroupEvents);
 		}
@@ -323,8 +324,9 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 
 		@Override
-		protected void deleteItem(int index) {
+		protected boolean deleteItem(int index) {
 			behavior.events.remove(index);
+			return true;
 		}
 
 		@Override
@@ -336,22 +338,22 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 			intent.putExtra("behavior", behavior);
 			startActivityForResult(intent, REQUEST_EDIT_EVENT);
 		}
-		
+
 		@Override
 		public void onActivityResult(Intent data) {
 			Event event = (Event)data.getExtras()
 			.getSerializable("event");
-			
+
 			int index = getIndex();
 			Game.debug(index);
 			behavior.events.remove(index);
 			behavior.events.add(index, event);
-			
+
 			((RadioButton)radioGroup.getChildAt(index)).setText(
 					describeEvent(event));
 		}
 	}
-	
+
 	public class SwitchEditor extends Editor {
 
 		public SwitchEditor() {
@@ -372,13 +374,13 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 				(EditText)view.findViewById(R.id.editTextName);
 			final RadioButton radioOn = 
 				(RadioButton)view.findViewById(R.id.radioOn);
-			
+
 			editTextName.setText(behavior.switchNames.get(index));
 			RadioGroup radioGroupValue = 
 				(RadioGroup)view.findViewById(R.id.radioGroupValue);
 			int radio = behavior.switches.get(index) ? 0 : 1;
 			((RadioButton)radioGroupValue.getChildAt(radio)).setChecked(true);
-			
+
 			new AlertDialog.Builder(DatabaseEditBehavior.this)
 			.setTitle("Edit Swtich")
 			.setView(view)
@@ -397,13 +399,20 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 
 		@Override
-		protected void deleteItem(int index) {
-			behavior.switches.remove(index);
-			behavior.switchNames.remove(index);
+		protected boolean deleteItem(int index) {
+			boolean success = 
+				behavior.removeSwitch(index);
+			if (!success) {
+				showAlert("Cannot Delete",
+					"This switch is currently in use " +
+					"by one or more Events in this behavior " +
+					"and cannot be deleted.");
+			}
+			return success;
 		}
-		
+
 	}
-	
+
 	public class VariableEditor extends Editor {
 
 		public VariableEditor() {
@@ -424,10 +433,10 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 				(EditText)view.findViewById(R.id.editTextName);
 			final EditText editTextValue = 
 				(EditText)view.findViewById(R.id.editTextValue);
-			
+
 			editTextName.setText(behavior.variableNames.get(index));
 			editTextValue.setText(behavior.variables.get(index).toString());
-			
+
 			new AlertDialog.Builder(DatabaseEditBehavior.this)
 			.setTitle("Edit Variable")
 			.setView(view)
@@ -451,13 +460,19 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 
 		@Override
-		protected void deleteItem(int index) {
-			behavior.variables.remove(index);
-			behavior.variableNames.remove(index);
+		protected boolean deleteItem(int index) {
+			boolean success = behavior.removeVariable(index);
+			if (!success) {
+				showAlert("Cannot Delete",
+					"This variable is currently in use " +
+					"by one or more Events in this behavior " +
+					"and cannot be deleted.");
+			}
+			return success;
 		}
-		
+
 	}
-	
+
 	public class ParameterEditor extends Editor {
 
 		public ParameterEditor() {
@@ -480,11 +495,11 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 			final RadioGroup radioGroupType = 
 				(RadioGroup)view.findViewById(R.id.radioGroupType);
 			final Parameter param = behavior.parameters.get(index);
-			
+
 			editTextName.setText(param.name);
 			int radio = param.type == ParameterType.Switch ? 0 : 1;
 			((RadioButton)radioGroupType.getChildAt(radio)).setChecked(true);
-			
+
 			new AlertDialog.Builder(DatabaseEditBehavior.this)
 			.setTitle("Edit Parameter")
 			.setView(view)
@@ -497,7 +512,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 					} else {
 						param.type = ParameterType.Variable;
 					}
-					
+
 					((RadioButton)radioGroup.getChildAt(index)).setText(
 							describeParameter(param));
 				}
@@ -507,9 +522,10 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 
 		@Override
-		protected void deleteItem(int index) {
+		protected boolean deleteItem(int index) {
 			behavior.parameters.remove(index);
+			return true;
 		}
-		
+
 	}
 }

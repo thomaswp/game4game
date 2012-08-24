@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 import edu.elon.honors.price.game.Game;
 
-public class Map implements Serializable{
+public class Map extends GameData {
 	private static final long serialVersionUID = 9L;
 
 	

@@ -14,6 +14,9 @@ import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.Switch;
+import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
@@ -340,7 +343,7 @@ public class Interpreter extends ActionIds {
 						}
 					}
 				}
-				
+
 				if (action.id == ID_CHANGE_GRAVITY) {
 					readVector(params, 0, event, vector);
 					int mag = readNumber(params, 1, event);
@@ -372,11 +375,11 @@ public class Interpreter extends ActionIds {
 						}
 					}
 				}
-				
+
 				if (action.id == ID_DESTROY_OBJECT) {
 					readObjectBody(params, 0, event).dispose();
 				}
-				
+
 				if (action.id == ID_DRAW_TO_SCREEN) {
 					int mode = params.getInt();
 					if (mode == 0) {
@@ -405,7 +408,7 @@ public class Interpreter extends ActionIds {
 						}
 					}
 				}
-				
+
 			} catch (ParameterException e) {
 				Game.debug(e.getMessage());
 			} finally {
@@ -416,20 +419,34 @@ public class Interpreter extends ActionIds {
 
 	private boolean readSwitch(Parameters params, int index) 
 	throws ParameterException {
-		int i = params.getInt(index);
-		if (i < 0 || i >= Globals.getSwitches().length) {
-			throw new ParameterException("Switch index out of bounds: " + i);
+		Switch s = params.getSwitch();
+		if (s.scope == DataScope.Global) {
+			int i = s.id;
+			if (i < 0 || i >= Globals.getSwitches().length) {
+				throw new ParameterException("Switch index out of bounds: " + i);
+			}
+			return Globals.getSwitches()[i];
+		} else if (s.scope == DataScope.Local) {
+			throw new ParameterException("Local switch not implemented");
+		} else {
+			throw new ParameterException("Parameter switch not implemented");
 		}
-		return Globals.getSwitches()[i];
 	}
 
 	private int readVariable(Parameters params, int index) 
 	throws ParameterException {
-		int i = params.getInt(index);
-		if (i < 0 || i >= Globals.getVariables().length) {
-			throw new ParameterException("Variable index out of bounds: " + i);
+		Variable v = params.getVariable();
+		if (v.scope == DataScope.Global) {
+			int i = v.id;
+			if (i < 0 || i >= Globals.getVariables().length) {
+				throw new ParameterException("Variable index out of bounds: " + i);
+			}
+			return Globals.getVariables()[i];
+		} else if (v.scope == DataScope.Local) {
+			throw new ParameterException("Local variable not implemented");
+		} else {
+			throw new ParameterException("Parameter variable not implemented");
 		}
-		return Globals.getVariables()[i];
 	}
 
 	private ActorClass readActorClass(Parameters params, int index) 
@@ -522,7 +539,7 @@ public class Interpreter extends ActionIds {
 			Game.debug(vector);
 		}
 	}
-	
+
 	private JoyStick readJoystick(Parameters params, int index) 
 	throws ParameterException {
 		JoyStick joy = logic.getJoystick(params.getInt(index));
@@ -530,7 +547,7 @@ public class Interpreter extends ActionIds {
 				"No joystick found with id " + params.getInt(index));
 		return joy;
 	}
-	
+
 	private Button readButton(Parameters params, int index) 
 	throws ParameterException {
 		Button button = logic.getButton(params.getInt(index));
@@ -549,7 +566,7 @@ public class Interpreter extends ActionIds {
 			return readVariable(ps, 1);
 		}
 	}
-	
+
 	public boolean readBoolean(Parameters params, int index)
 	throws ParameterException {
 		Parameters ps = params.getParameters(index);

@@ -431,7 +431,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					break;
 				case 2:
 					intent = new Intent(DatabaseEditEvent.this,
-							DatabaseEditTriggerActor.class);
+							DatabaseEditTriggerActorOrObject.class);
 					break;
 				case 3:
 					intent = new Intent(DatabaseEditEvent.this,
@@ -444,6 +444,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 				if (intent != null) {
 					intent.putExtra("game", game);
+					intent.putExtra("eventContext", 
+							new EventContext(getEvent(), behavior));
 					returnResponse = new NewTriggerReturnResponse();
 					startActivityForResult(intent, REQUEST_RETURN_GAME);
 				}
@@ -846,6 +848,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					Intent intent = new Intent(getContext(), getEditorClass());
 					intent.putExtra("game", game);
 					intent.putExtra("trigger", getTrigger());
+					intent.putExtra("eventContext", 
+							new EventContext(getEvent(), behavior));
 					startActivityForResult(intent, REQUEST_RETURN_GAME);
 				}
 			});
@@ -872,7 +876,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			} else if (trigger instanceof VariableTrigger) {
 				return DatabaseEditTriggerVariable.class;
 			} else if (trigger instanceof ActorOrObjectTrigger) {
-				return DatabaseEditTriggerActor.class;
+				return DatabaseEditTriggerActorOrObject.class;
 			} else if (trigger instanceof RegionTrigger) {
 				return DatabaseEditTriggerRegion.class;
 			} else if (trigger instanceof UITrigger) {
@@ -918,7 +922,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		private String getTriggerText(SwitchTrigger trigger) {
 			StringBuilder sb = new StringBuilder();
 
-			TextUtils.addColoredText(sb, game.switchNames[trigger.switchId], COLOR_VARIABLE);
+			String switchString = trigger.triggerSwitch.getName(
+					game, behavior);
+			
+			TextUtils.addColoredText(sb, switchString, COLOR_VARIABLE);
 			sb.append(" turns ");
 			TextUtils.addColoredText(sb, trigger.value ? "On" : "Off", COLOR_VALUE);
 
@@ -928,14 +935,19 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		private String getTriggerText(VariableTrigger trigger) {
 			StringBuilder sb = new StringBuilder();
 
-			TextUtils.addColoredText(sb, game.variableNames[trigger.variableId], COLOR_VARIABLE);
+			String variableString = trigger.variable.getName(
+					game, behavior);
+			
+			TextUtils.addColoredText(sb, variableString, COLOR_VARIABLE);
 			sb.append(" is ");
 			TextUtils.addColoredText(sb, VariableTrigger.OPERATORS[trigger.test], COLOR_MODE);
 			sb.append(" ");
 			if (trigger.with == VariableTrigger.WITH_VALUE) {
-				TextUtils.addColoredText(sb, trigger.valueOrId, COLOR_VALUE);
+				TextUtils.addColoredText(sb, trigger.withValue, COLOR_VALUE);
 			} else {
-				TextUtils.addColoredText(sb, game.variableNames[trigger.valueOrId], COLOR_VARIABLE);
+				variableString = trigger.withVariable.getName(
+						game, behavior);
+				TextUtils.addColoredText(sb, variableString, COLOR_VARIABLE);
 			}
 
 			return sb.toString();

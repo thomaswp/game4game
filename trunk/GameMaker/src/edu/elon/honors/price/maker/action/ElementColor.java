@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.SelectorColor;
 
 import android.content.Context;
@@ -18,9 +19,8 @@ public class ElementColor extends Element {
 	}
 	
 	@Override
-	public int readParameters(Parameters params, int index) {
-		selectorColor.setColor(params.getInt(index));
-		return index + 1;
+	protected void readParameters(Iterator params) {
+		selectorColor.setColor(params.getInt());
 	}
 	
 	@Override

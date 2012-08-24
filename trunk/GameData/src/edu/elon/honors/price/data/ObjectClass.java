@@ -3,7 +3,7 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-public class ObjectClass implements Serializable {
+public class ObjectClass extends GameData {
 	private static final long serialVersionUID = 1L;
 	
 	public String name = "New Object";
