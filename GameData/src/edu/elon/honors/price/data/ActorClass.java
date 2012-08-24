@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * such as look, speed, jump height and behaviors.
  *
  */
-public class ActorClass implements Serializable, Cloneable {
+public class ActorClass extends GameData implements Cloneable {
 	private static final long serialVersionUID = 1L;
 	
 	public final static float MAX_SPEED = 5f;

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import android.graphics.Color;
 
-public class UILayout implements Serializable {
+public class UILayout extends GameData {
 	private static final long serialVersionUID = 1L;
 	
 	public LinkedList<Button> buttons = new LinkedList<Button>();

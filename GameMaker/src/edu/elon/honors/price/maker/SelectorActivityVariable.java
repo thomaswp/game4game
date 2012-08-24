@@ -1,5 +1,9 @@
 package edu.elon.honors.price.maker;
 
+import java.util.LinkedList;
+
+import edu.elon.honors.price.data.Behavior.Parameter;
+import edu.elon.honors.price.data.Behavior.ParameterType;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.KeyEvent;
@@ -64,5 +68,47 @@ public class SelectorActivityVariable extends SelectorActivityIndex {
 	@Override
 	protected void resizeItems(int newSize) {
 		game.resizeVariables(newSize);
+	}
+	
+	@Override
+	protected String getLocalName(int id) {
+		return eventContext.getBehavior().variableNames.get(id);
+	}
+
+	@Override
+	protected String getLocalDefault(int id) {
+		return eventContext.getBehavior()
+		.variables.get(id).toString();
+	}
+
+	@Override
+	protected int getLocalSize() {
+		return eventContext.getBehavior().variableNames.size();
+	}
+
+	@Override
+	protected String getParamName(int id) {
+		LinkedList<Parameter> params = 
+			eventContext.getBehavior().parameters;
+		for (Parameter param : params) {
+			if (param.type == ParameterType.Variable) {
+				if (id == 0) return param.name;
+				id--;
+			}
+		}
+		return "<None>";
+	}
+
+	@Override
+	protected int getParamSize() {
+		int size = 0;
+		LinkedList<Parameter> params = 
+			eventContext.getBehavior().parameters;
+		for (Parameter param : params) {
+			if (param.type == ParameterType.Variable) {
+				size++;
+			}
+		}
+		return size;
 	}
 }

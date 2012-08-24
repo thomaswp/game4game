@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.TextUtils;
 
@@ -35,9 +36,8 @@ public class ElementExactNumber extends Element {
 	}
 	
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		editText.setText("" + params.getInt(index));
-		return index + 1;
+	protected void readParameters(Iterator params) {
+		editText.setText("" + params.getInt());
 	}
 	
 	@Override

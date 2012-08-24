@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorVariable;
 import edu.elon.honors.price.maker.TextUtils;
@@ -22,15 +23,14 @@ public class ElementVariablePoint extends Element {
 
 	@Override
 	protected void addParameters(Parameters params) {
-		params.addParam(selectorVarX.getVariableId());
-		params.addParam(selectorVarY.getVariableId());
+		params.addParam(selectorVarX.getVariable());
+		params.addParam(selectorVarY.getVariable());
 	}
 
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		selectorVarX.setVariableId(params.getInt(index));
-		selectorVarY.setVariableId(params.getInt(index + 1));
-		return index + 2;
+	protected void readParameters(Iterator params) {
+		selectorVarX.setVariable(params.getVariable());
+		selectorVarY.setVariable(params.getVariable());
 	}
 
 	@Override
@@ -38,7 +38,9 @@ public class ElementVariablePoint extends Element {
 		LinearLayout varLayout = new LinearLayout(context);
 		varLayout.setOrientation(LinearLayout.HORIZONTAL);
 		selectorVarX = new SelectorVariable(context);
+		selectorVarX.setEventContext(eventContext);
 		selectorVarY = new SelectorVariable(context);
+		selectorVarY.setEventContext(eventContext);
 		TextView tvLp = new TextView(context), tvRp = new TextView(context),
 		tvCom = new TextView(context);
 		tvLp.setText("("); tvRp.setText(")"); tvCom.setTag(", ");
@@ -54,11 +56,11 @@ public class ElementVariablePoint extends Element {
 	public String getDescription(PlatformGame game) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
-		String name = game.variableNames[selectorVarX.getVariableId()];
+		String name = selectorVarX.getText().toString();
 		TextUtils.addColoredText(sb, name, 
 				DatabaseEditEvent.COLOR_VARIABLE);
 		sb.append(", ");
-		name = game.variableNames[selectorVarY.getVariableId()];
+		name = selectorVarY.getText().toString();
 		TextUtils.addColoredText(sb, name,
 				DatabaseEditEvent.COLOR_VARIABLE);
 		sb.append(")");

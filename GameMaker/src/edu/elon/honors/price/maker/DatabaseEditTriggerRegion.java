@@ -14,6 +14,8 @@ import android.widget.ScrollView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import edu.elon.honors.price.data.Event.RegionTrigger;
+import edu.elon.honors.price.maker.action.EventContext;
+import edu.elon.honors.price.maker.action.EventContext.Scope;
 
 public class DatabaseEditTriggerRegion extends DatabaseActivity {
 	private RegionTrigger trigger;
@@ -39,9 +41,6 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 		
 		trigger = getOriginalTrigger();
 		
-//		radioAnyActor = (RadioButton)findViewById(R.id.radioAnyActor);
-//		radioHero = (RadioButton)findViewById(R.id.radioHero);
-//		radioObject = (RadioButton)findViewById(R.id.radioAnyObject);
 		radioGroupType = (RadioGroup)findViewById(R.id.radioGroupType);
 		spinnerMode = (Spinner)findViewById(R.id.spinnerMode);
 		selectorRegion = (SelectorRegion)findViewById(R.id.selectorRegion1);
@@ -56,18 +55,22 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 			}
 		});
 		
+		EventContext eventContext = 
+			getExtra("eventContext", EventContext.class);
+		if (eventContext != null && eventContext.getScope() !=
+			Scope.MapEvent) {
+			selectorRegion.setHasMap(false);
+		}
+		
 		spinnerMode.setAdapter(new ArrayAdapter<String>(this, 
 				android.R.layout.simple_spinner_item, RegionTrigger.MODES));
 		selectorRegion.populate(game);
 		
-//		radioAnyActor.setChecked(trigger.who == RegionTrigger.WHO_ACTOR);
-//		radioHero.setChecked(trigger.who == RegionTrigger.WHO_HERO);
-//		radioObject.setChecked(trigger.who == RegionTrigger.WHO_OBJECT);
 		((RadioButton)radioGroupType.getChildAt(trigger.who)).setChecked(true);
 		spinnerMode.setSelection(trigger.mode);
 		selectorRegion.setRect(new Rect(trigger.left, trigger.top, 
 				trigger.right, trigger.bottom));
-		
+				
 		radioGroupType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {

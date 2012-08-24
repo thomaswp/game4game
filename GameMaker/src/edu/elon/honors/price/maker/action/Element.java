@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 
+import edu.elon.honors.price.data.Behavior.Parameter;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditAction;
@@ -27,6 +29,14 @@ public abstract class Element {
 	protected EventContext eventContext;
 
 	protected String getDefaultColor() {
+		return null;
+	}
+	
+	public String getWarning() {
+		for (Element e : children) {
+			String warning = e.getWarning();
+			if (warning != null) return warning;
+		}
 		return null;
 	}
 	
@@ -59,7 +69,7 @@ public abstract class Element {
 	}
 	
 	public void setParameters(Parameters params) {
-		readParameters(params, 0);
+		readParameters(params.iterator());
 	}
 	
 	protected void addParameters(Parameters params) {
@@ -68,11 +78,10 @@ public abstract class Element {
 		}
 	}
 	
-	protected int readParameters(Parameters params, int index) {
+	protected void readParameters(Iterator params) {
 		for (int i = 0; i < children.size(); i++) {
-			index = children.get(i).readParameters(params, index);
+			children.get(i).readParameters(params);
 		}
-		return index;
 	}
 
 	protected void readAttributes(Attributes atts) { 

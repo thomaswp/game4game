@@ -7,7 +7,7 @@ import java.io.Serializable;
  * tied to specific events, but inherits most of its ActorClass.
  *
  */
-public class ActorInstance implements Serializable {
+public class ActorInstance extends GameData {
 	private static final long serialVersionUID = 1L;
 
 	public int id;

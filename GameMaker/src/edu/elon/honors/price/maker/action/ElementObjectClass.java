@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorObjectClass;
 import edu.elon.honors.price.maker.TextUtils;
@@ -31,9 +32,8 @@ public class ElementObjectClass extends Element {
 	}
 	
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		selectorObjectClass.setSelectedObjectId(params.getInt(index));
-		return index + 1;
+	protected void readParameters(Iterator params) {
+		selectorObjectClass.setSelectedObjectId(params.getInt());
 	}
 	
 	@Override

@@ -5,6 +5,7 @@ import org.xml.sax.Attributes;
 import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.SelectorActorInstance;
 import edu.elon.honors.price.maker.TextUtils;
@@ -32,15 +33,14 @@ public class ElementExactActorInstance extends Element {
 	}
 
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		final int id = params.getInt(index);
+	protected void readParameters(Iterator params) {
+		final int id = params.getInt();
 		selectorActorInstance.post(new Runnable() {
 			@Override
 			public void run() {
 				selectorActorInstance.setSelectedInstance(id);
 			}
 		});
-		return index + 1;
 	}
 
 	@Override

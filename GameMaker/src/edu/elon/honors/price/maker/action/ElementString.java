@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 
 public class ElementString extends Element {
 	
@@ -30,9 +31,8 @@ public class ElementString extends Element {
 	}
 	
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		editText.setText(params.getString(index));
-		return index + 1;
+	protected void readParameters(Iterator params) {
+		editText.setText(params.getString());
 	}
 	
 	@Override

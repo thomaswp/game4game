@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.maker.action.EventContext;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -40,10 +41,15 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 		setContentView(R.layout.database_edit_trigger_variable);
 		setDefaultButtonActions();
 
+		EventContext eventContext = 
+			getExtra("eventContext", EventContext.class);
+		
 		trigger = getOriginalTrigger();
 
 		selectorVariableSet = (SelectorVariable)findViewById(R.id.selectorVariable1);
+		selectorVariableSet.setEventContext(eventContext);
 		selectorVariableTo = (SelectorVariable)findViewById(R.id.selectorVariable2);
+		selectorVariableTo.setEventContext(eventContext);
 
 		radioValue = (RadioButton)findViewById(R.id.radioValue);
 		radioValue.setChecked(trigger.with == VariableTrigger.WITH_VALUE);
@@ -55,7 +61,7 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 
 		populate();
 
-		selectorVariableSet.setVariableId(trigger.variableId);
+		selectorVariableSet.setVariable(trigger.variable);
 
 		spinnerOperator.setAdapter(new ArrayAdapter<String>(this, 
 				android.R.layout.simple_spinner_item, VariableTrigger.OPERATORS));
@@ -81,20 +87,20 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 					VariableTrigger.WITH_VARIABLE;
 				if (isChecked) {
 					int value = Integer.parseInt(editTextValue.getText().toString());
-					trigger.valueOrId = value;
+					trigger.withValue = value;
 				} else {
-					trigger.valueOrId = selectorVariableTo.getVariableId();
+					trigger.withValue = selectorVariableTo.getVariableId();
 				}
 			}
 		});
 
 		if (trigger.with == VariableTrigger.WITH_VALUE) {
 			selectorVariableTo.setVariableId(0);
-			editTextValue.setText("" + trigger.valueOrId);
+			editTextValue.setText("" + trigger.withValue);
 			radioValue.setChecked(true);
 			selectorVariableTo.setVisibility(View.GONE);
 		} else {
-			selectorVariableTo.setVariableId(trigger.valueOrId);
+			selectorVariableTo.setVariable(trigger.withVariable);
 			editTextValue.setText("0");
 			radioVariable.setChecked(true);
 			editTextValue.setVisibility(View.GONE);
@@ -103,7 +109,7 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				int value = Integer.parseInt(v.getText().toString());
-				trigger.valueOrId = value;
+				trigger.withValue = value;
 				return false;
 			}
 		});
@@ -122,10 +128,10 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 
 		if (resultCode == RESULT_OK) {
 			if (selectorVariableSet.onActivityResult(requestCode, data)) {
-				trigger.variableId = selectorVariableSet.getVariableId();
+				trigger.variable = selectorVariableSet.getVariable();
 			}
 			if (selectorVariableTo.onActivityResult(requestCode, data)) {
-				trigger.valueOrId = selectorVariableTo.getVariableId();
+				trigger.withVariable = selectorVariableTo.getVariable();
 			}
 		}
 	}

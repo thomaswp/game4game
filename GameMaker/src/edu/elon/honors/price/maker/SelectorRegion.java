@@ -22,6 +22,7 @@ public class SelectorRegion extends LinearLayout implements IPopulatable {
 	protected Rect rect;
 	protected EditText[] coords;
 	protected Button select;
+	protected boolean hasMap;
 	
 	public Rect getRect() {
 		return rect;
@@ -29,6 +30,7 @@ public class SelectorRegion extends LinearLayout implements IPopulatable {
 	
 	public void setHasMap(boolean hasMap) {
 		select.setEnabled(hasMap);
+		this.hasMap = hasMap;
 	}
 	
 	public void setRect(Rect rect) {
@@ -45,19 +47,21 @@ public class SelectorRegion extends LinearLayout implements IPopulatable {
 	
 	private void validateRect() {
 		if (game != null) {
-			Map map = game.getSelectedMap();
-			int right = game.getMapWidth(map) - 1;
-			int bottom = game.getMapHeight(map) - 1;
 			
 			if (rect.left < 0) rect.left = 0;
 			if (rect.top < 0) rect.top = 0;
 			if (rect.right < 0) rect.right = 0;
 			if (rect.bottom < 0) rect.bottom = 0;
 			
-			if (rect.right > right) rect.right = right;
-			if (rect.bottom > bottom) rect.bottom = bottom;
-			if (rect.left > right) rect.left = right;
-			if (rect.top > bottom) rect.top = bottom;
+			if (hasMap) {
+				Map map = game.getSelectedMap();
+				int right = game.getMapWidth(map) - 1;
+				int bottom = game.getMapHeight(map) - 1;
+				if (rect.right > right) rect.right = right;
+				if (rect.bottom > bottom) rect.bottom = bottom;
+				if (rect.left > right) rect.left = right;
+				if (rect.top > bottom) rect.top = bottom;
+			}
 		}
 	}
 	

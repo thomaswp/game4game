@@ -29,9 +29,17 @@ public class TextUtils {
 		
 	}
 	
+	public static String getColoredText(String text, int color) {
+		return getColoredText(text, getColorString(color));
+	}
+	
 	public static String getColoredText(String text, String color) {
 		StringBuilder sb = new StringBuilder();
 		addColoredText(sb, text, color);
 		return sb.toString();
+	}
+	
+	public static String getColorString(int color) {
+		return "#" + Integer.toHexString(color).substring(2);
 	}
 }

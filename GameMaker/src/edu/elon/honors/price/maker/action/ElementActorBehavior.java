@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker.action;
 import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
@@ -35,9 +36,8 @@ public class ElementActorBehavior extends Element {
 	}
 	
 	@Override
-	protected int readParameters(Parameters params, int index) {
-		spinner.setSelection(params.getInt(index));
-		return index + 1;
+	protected void readParameters(Iterator params) {
+		spinner.setSelection(params.getInt());
 	}
 	
 	@Override

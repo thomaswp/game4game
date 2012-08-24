@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Event.SwitchTrigger;
+import edu.elon.honors.price.maker.action.EventContext;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.CompoundButton;
@@ -29,16 +30,20 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 		setContentView(R.layout.database_edit_trigger_switch);
 		setDefaultButtonActions();
 		
+		EventContext eventContext = 
+			getExtra("eventContext", EventContext.class);
+		
 		trigger = getOriginalTrigger();
 		
 		selectorSwitch = (SelectorSwitch)findViewById(R.id.selectorSwitch1);
+		selectorSwitch.setEventContext(eventContext);
 		radioOn = (RadioButton)findViewById(R.id.radioOn);
 		radioOn.setChecked(trigger.value);
 		radioOff = (RadioButton)findViewById(R.id.radioOff);
 		radioOff.setChecked(!trigger.value);
 		
 		selectorSwitch.populate(game);
-		selectorSwitch.setSwitchId(trigger.switchId);
+		selectorSwitch.setSwitch(trigger.triggerSwitch);
 		
 		radioOn.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -56,7 +61,7 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity {
 		
 		if (resultCode == RESULT_OK) {
 			selectorSwitch.onActivityResult(requestCode, data);
-			trigger.switchId = selectorSwitch.getSwitchId();
+			trigger.triggerSwitch = selectorSwitch.getSwitch();
 		}
 	}
 	

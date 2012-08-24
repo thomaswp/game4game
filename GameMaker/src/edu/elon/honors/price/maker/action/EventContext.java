@@ -30,6 +30,15 @@ public class EventContext implements Serializable {
 	private Scope scope;
 	private LinkedList<TriggerType> triggers = 
 		new LinkedList<TriggerType>();
+	private Behavior behavior;
+	
+	public boolean hasBehavior() {
+		return behavior != null;
+	}
+	
+	public Behavior getBehavior() {
+		return behavior;
+	}
 	
 	public Scope getScope() {
 		return scope;
@@ -44,6 +53,7 @@ public class EventContext implements Serializable {
 	}
 	
 	public EventContext(Event event, Behavior behavior) {
+		this.behavior = behavior;
 		if (behavior == null) {
 			scope = Scope.MapEvent;
 		} else {
