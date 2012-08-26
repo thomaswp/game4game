@@ -443,6 +443,8 @@ public class Event extends GameData {
 			this.variable = new Variable(variableId, variableScope);
 			this.test = test;
 			this.with = with;
+			withValue = 0;
+			withVariable = new Variable();
 		}
 
 		public VariableTrigger() {

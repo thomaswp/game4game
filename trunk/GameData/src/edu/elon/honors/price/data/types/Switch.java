@@ -5,14 +5,11 @@ import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 
-public class Switch extends GameData {
+public class Switch extends ScopedData {
 	private static final long serialVersionUID = 1L;
 
-	public int id;
-	public DataScope scope;
-	
 	public Switch(int id, DataScope scope) {
-		this.id = id; this.scope = scope;
+		super(id, scope);
 	}
 	
 	public Switch() {
@@ -26,11 +23,19 @@ public class Switch extends GameData {
 						game.switchNames[id]);
 			}
 		} else if (scope == DataScope.Local) {
-			return "[" + behavior.switchNames.get(id) + "]";
+			if (behavior != null) {
+				return "[" + behavior.switchNames.get(id) + "]";				
+			}
 		} else if (scope == DataScope.Param){
-			return "{" + behavior.getParamters(
-					ParameterType.Switch).get(id).name + "}";
+			if (behavior != null) {
+				return "{" + behavior.parameters.get(id).name + "}";
+			}
 		}
-		return "";
+		return "<None>";
+	}
+	
+	@Override 
+	public String toString() {
+		return String.format("[S[%d,%d]", id, scope.toInt());
 	}
 }

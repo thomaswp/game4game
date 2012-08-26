@@ -1,7 +1,9 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.maker.R;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +30,7 @@ public class DatabaseEditActor extends DatabaseActivity {
 	private SelectorActorImage imageSpinner;
 	private SeekBar speed, jump;
 	private boolean forceSelect;
+	private SelectorBehaviorInstances selectorBehaviors;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,11 +46,9 @@ public class DatabaseEditActor extends DatabaseActivity {
 		eventSpinner = (Spinner)findViewById(R.id.spinnerEvent);
 		directionSpinner = (Spinner)findViewById(R.id.spinnerDirection);
 		behaviorSpinner = (Spinner)findViewById(R.id.spinnerBehavior);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
+		selectorBehaviors = (SelectorBehaviorInstances)findViewById(
+				R.id.selectorBehaviorInstances);
+		selectorBehaviors.populate(game);
 		
 		actor = game.actors[actorId];
 		
@@ -160,8 +161,25 @@ public class DatabaseEditActor extends DatabaseActivity {
 
 		directionSpinner.setSelection(0);
 		eventSpinner.setSelection(0);
+		
+		selectorBehaviors.setBehaviors(actor.behaviors,
+				BehaviorType.Actor);
 
 		setDefaultButtonActions();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode,
+			Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			selectorBehaviors.populate(game);
+			selectorBehaviors.onActivityResult(requestCode, data);
+		}
 	}
 	
 	@Override
@@ -171,5 +189,6 @@ public class DatabaseEditActor extends DatabaseActivity {
 		actor.speed = speed.getProgress() / SPEED_SCALE;
 		actor.jumpVelocity = jump.getProgress() / JUMP_SCALE;
 		game.actors[actorId] = actor;
+		actor.behaviors = selectorBehaviors.getBehaviors();
 	}
 }

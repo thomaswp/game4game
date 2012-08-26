@@ -42,4 +42,19 @@ public class TextUtils {
 	public static String getColorString(int color) {
 		return "#" + Integer.toHexString(color).substring(2);
 	}
+	
+	public static String HTMLEscape(String text) {
+		return replaceEach(text, 
+				new String[]{"&", "\"", "<", ">"}, 
+				new String[]{"&amp;", "&quot;", "&lt;", "&gt;"});
+	}
+	
+	public static String replaceEach(String text, 
+			String[] replace, String[] with) {
+		for (int i = 0; i < replace.length; i++) {
+			if (i >= with.length) return text;
+			text = text.replace(replace[i], with[i]);
+		}
+		return text;
+	}
 }

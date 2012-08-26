@@ -8,9 +8,9 @@
 		</choice>
 		<choice text="all switches from">
 			<group>
-				<switch />
+				<switch scope="Global"  />
 				<text text="to" />
-				<switch />
+				<switch scope="Global"  />
 			</group>
 		</choice>
 	</radio>

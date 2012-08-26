@@ -27,7 +27,6 @@ import android.widget.ScrollView;
 public class DatabaseEditAction extends DatabaseActivity {
 
 	private int id;
-	private int nextId = 100;
 	private Element rootElement;
 	private Parameters originalParameters;
 
@@ -153,8 +152,8 @@ public class DatabaseEditAction extends DatabaseActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		populate();
 		if (resultCode == RESULT_OK) {
+			populate();
 			View v = findViewById(requestCode); 
 			if (v != null && v instanceof IPopulatable) {
 				((IPopulatable)v).onActivityResult(requestCode, data);
@@ -181,35 +180,10 @@ public class DatabaseEditAction extends DatabaseActivity {
 	}
 
 	private void setIds() {
-		setIds(linearLayoutHost);
-	}
-
-	private void setIds(View v) {
-		if (v instanceof IPopulatable) {
-			v.setId(nextId);
-			nextId++;
-		}
-		if (v instanceof ViewGroup) {
-			ViewGroup vg = (ViewGroup)v;
-			for (int i = 0; i < vg.getChildCount(); i++) {
-				setIds(vg.getChildAt(i));
-			}
-		}
+		setPopulatableViewIds(linearLayoutHost, 100);
 	}
 
 	private void populate() {
-		populate(linearLayoutHost);
-	}
-
-	private void populate(View v) {
-		if (v instanceof IPopulatable) {
-			((IPopulatable)v).populate(game);
-		}
-		if (v instanceof ViewGroup) {
-			ViewGroup vg = (ViewGroup)v;
-			for (int i = 0; i < vg.getChildCount(); i++) {
-				populate(vg.getChildAt(i));
-			}
-		}
+		populateViews(linearLayoutHost);
 	}
 }

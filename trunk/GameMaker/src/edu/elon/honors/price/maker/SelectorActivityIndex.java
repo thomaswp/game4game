@@ -53,6 +53,7 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 	
 	protected abstract String getParamName(int id);
 	protected abstract int getParamSize();
+	protected abstract boolean getParamVisible(int id);
  
 	protected void setId(int id) {
 		this.id = id;
@@ -60,6 +61,7 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 	
 	@Override
 	protected Tab[] getTabs() {
+		Bundle extras = getIntent().getExtras();
 		if (extras.containsKey("eventContext")) {
 			eventContext = (EventContext)extras.
 			getSerializable("eventContext");
@@ -74,9 +76,13 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 			tab.enabled = getLocalSize() > 0;
 			tabs.add(tab);
 			
+			int params = getParamSize();
+			for (int i = 0; i < getParamSize(); i++) {
+				if (!getParamVisible(i)) params--;
+			}
 			tab = new Tab(R.layout.selector_activity_parameter_index,
 					"Parameter " + getType());
-			tab.enabled = getParamSize() > 0;
+			tab.enabled = params > 0;
 			tabs.add(tab);
 		}
 		return tabs.toArray(new Tab[tabs.size()]);
@@ -86,6 +92,8 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Bundle extras = getIntent().getExtras();
+		
 		id = extras.getInt("id");
 		scope = extras.getInt("scope");
 		originalId = id;
@@ -179,8 +187,10 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 				public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 					setName(v.getText().toString());
 					int id = radioGroupItems.getCheckedRadioButtonId();
-					((RadioButton)radioGroupItems.findViewById(id))
-					.setText(makeRadioButtonText(id));
+					RadioButton button = 
+					((RadioButton)radioGroupItems.findViewById(id));
+					int index = radioGroupItems.indexOfChild(button);
+					button.setText(makeRadioButtonText(index));
 					return false;
 				}
 			});
@@ -237,6 +247,8 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 						}
 					}
 				});
+				button.setVisibility(getParamVisible(i) ?
+						View.VISIBLE : View.GONE);
 				radioGroupParam.addView(button);
 				if (i == 0) button.setChecked(true);
 			}

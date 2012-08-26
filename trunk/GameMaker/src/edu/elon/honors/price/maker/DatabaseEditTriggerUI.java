@@ -10,6 +10,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.maker.SelectorUIControl.OnControlChangedListener;
+import edu.elon.honors.price.maker.action.EventContext;
+import edu.elon.honors.price.maker.action.EventContext.Scope;
 
 public class DatabaseEditTriggerUI extends DatabaseActivity {
 
@@ -32,13 +34,16 @@ public class DatabaseEditTriggerUI extends DatabaseActivity {
 		setDefaultButtonActions();
 
 		trigger = getOriginalTrigger();
+		
+		EventContext eventContext = 
+			getExtra("eventContext", EventContext.class);
 
 		radioButton = (RadioButton)findViewById(R.id.radioButton);
 		radioJoystick = (RadioButton)findViewById(R.id.radioJoystick);
 		radioTouch = (RadioButton)findViewById(R.id.radioTouchScreen);
 		selectorUIButton = (SelectorUIControl)findViewById(R.id.selectorUIControlButton);
 		selectorUIJoystick = (SelectorUIControl)findViewById(R.id.selectorUIControlJoystick);
-
+		
 		selectorUIButton.setControlType(SelectorUIControl.CONTROL_BUTTON);
 		selectorUIJoystick.setControlType(SelectorUIControl.CONTROL_JOY);
 		
@@ -91,6 +96,13 @@ public class DatabaseEditTriggerUI extends DatabaseActivity {
 				}
 			}
 		});
+		
+		if (eventContext != null && 
+				eventContext.getScope() != Scope.MapEvent) {
+			radioButton.setEnabled(false);
+			radioJoystick.setEnabled(false);
+			trigger.controlType = UITrigger.CONTROL_TOUCH;
+		}
 		
 		switch (trigger.controlType) {
 		case UITrigger.CONTROL_BUTTON: 

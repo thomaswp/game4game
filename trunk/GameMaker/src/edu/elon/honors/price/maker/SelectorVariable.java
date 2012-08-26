@@ -1,6 +1,9 @@
 package edu.elon.honors.price.maker;
 
+import java.util.List;
+
 import edu.elon.honors.price.data.Behavior;
+import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.Event.Parameters;
@@ -52,8 +55,9 @@ public class SelectorVariable extends Button implements IPopulatable {
 	
 	public void setVariable(Variable variable) {
 		this.variable = variable;
-		setText(variable.getName(game, 
-				eventContext.getBehavior()));
+		Behavior behavior = eventContext == null ?
+				null : eventContext.getBehavior();
+		setText(variable.getName(game, behavior));
 	}
 	
 	public SelectorVariable(Context context) {
@@ -89,7 +93,8 @@ public class SelectorVariable extends Button implements IPopulatable {
 		if (requestCode == getId()) {
 			int scope = data.getExtras().getInt("scope");
 			int id = data.getExtras().getInt("id");
-			setScope(DataScope.fromInt(scope), id);
+			DataScope dataScope = DataScope.fromInt(scope);
+			setScope(dataScope, id);
 			return true;
 		}
 		return false;

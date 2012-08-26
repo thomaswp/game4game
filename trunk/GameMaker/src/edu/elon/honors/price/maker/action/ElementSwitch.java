@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 public class ElementSwitch extends Element {
 
 	private SelectorSwitch selectorSwitch;
+	private String scope;
 	
 	@Override
 	protected String getDefaultColor() {
@@ -25,6 +26,12 @@ public class ElementSwitch extends Element {
 	
 	public ElementSwitch(Attributes atts, Context context) {
 		super(atts, context);
+	}
+	
+	@Override
+	protected void readAttributes(Attributes atts) {
+		super.readAttributes(atts);
+		scope = atts.getValue("scope");
 	}
 	
 	@Override
@@ -45,7 +52,9 @@ public class ElementSwitch extends Element {
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		selectorSwitch = new SelectorSwitch(context);
-		selectorSwitch.setEventContext(eventContext);
+		if (scope == null || !scope.equalsIgnoreCase("global")) {
+			selectorSwitch.setEventContext(eventContext);
+		}
 		layout.addView(selectorSwitch);
 		selectorSwitch.setWidth(200);
 		main = layout;

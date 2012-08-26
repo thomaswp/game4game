@@ -47,7 +47,11 @@ public abstract class Element {
 			eventContext = 
 				((DatabaseEditAction) context).getEventContext();
 		}
-		readAttributes(atts);
+		if (atts != null) {
+			readAttributes(atts);
+		} else {
+			this.color = getDefaultColor();
+		}
 		genView();
 	}
 	
@@ -84,7 +88,7 @@ public abstract class Element {
 		}
 	}
 
-	protected void readAttributes(Attributes atts) { 
+	protected void readAttributes(Attributes atts) {
 		String color = atts.getValue("color");
 		if (color != null) {
 			if (color.equals("value")) {
@@ -109,7 +113,7 @@ public abstract class Element {
 		host = layout;
 	}
 	
-	public abstract String getDescription(PlatformGame game);
+	public abstract String getDescription(PlatformGame game);	
 
 	public static Element genElement(String qName, Attributes atts, Context context) {
 		if (qName.equals("action")) {

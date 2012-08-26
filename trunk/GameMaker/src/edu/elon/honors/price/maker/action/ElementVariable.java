@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 public class ElementVariable extends Element {
 
 	private SelectorVariable selectorVariable;
+	private String scope;
 	
 	@Override
 	protected String getDefaultColor() {
@@ -23,6 +24,12 @@ public class ElementVariable extends Element {
 	
 	public ElementVariable(Attributes atts, Context context) {
 		super(atts, context);
+	}
+	
+	@Override
+	protected void readAttributes(Attributes atts) {
+		super.readAttributes(atts);
+		scope = atts.getValue("scope");
 	}
 
 	@Override
@@ -39,7 +46,9 @@ public class ElementVariable extends Element {
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		selectorVariable = new SelectorVariable(context);
-		selectorVariable.setEventContext(eventContext);
+		if (scope == null || !scope.equalsIgnoreCase("global")) {
+			selectorVariable.setEventContext(eventContext);
+		}
 		layout.addView(selectorVariable);
 		selectorVariable.setWidth(200);
 		main = layout;
