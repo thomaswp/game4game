@@ -8,9 +8,9 @@
 		</choice>
 		<choice text="all variables from">
 			<group>
-				<variable />
+				<variable scope="Global" />
 				<text text="to" />
-				<variable />
+				<variable scope="Global" />
 			</group>
 		</choice>
 	</radio>

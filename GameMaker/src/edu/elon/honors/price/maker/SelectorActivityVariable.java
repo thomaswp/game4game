@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
+import edu.elon.honors.price.game.Game;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.KeyEvent;
@@ -90,25 +91,18 @@ public class SelectorActivityVariable extends SelectorActivityIndex {
 	protected String getParamName(int id) {
 		LinkedList<Parameter> params = 
 			eventContext.getBehavior().parameters;
-		for (Parameter param : params) {
-			if (param.type == ParameterType.Variable) {
-				if (id == 0) return param.name;
-				id--;
-			}
-		}
-		return "<None>";
+		return params.get(id).name;
 	}
 
 	@Override
 	protected int getParamSize() {
-		int size = 0;
+		return eventContext.getBehavior().parameters.size();
+	}
+	
+	@Override 
+	protected boolean getParamVisible(int id) {
 		LinkedList<Parameter> params = 
 			eventContext.getBehavior().parameters;
-		for (Parameter param : params) {
-			if (param.type == ParameterType.Variable) {
-				size++;
-			}
-		}
-		return size;
+		return params.get(id).type == ParameterType.Variable;
 	}
 }

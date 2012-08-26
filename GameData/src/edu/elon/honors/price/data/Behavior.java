@@ -3,6 +3,7 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
@@ -10,6 +11,7 @@ import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.ScopedData;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
 
@@ -94,7 +96,7 @@ public class Behavior extends GameData {
 		variables.add(value);
 	}
 	
-	public boolean removeSwitch(int index) {
+	private List<Switch> getSwitches() {
 		ArrayList<Switch> switches = new ArrayList<Switch>();
 		for (Event event : events) {
 			for (Action action : event.actions) {
@@ -107,23 +109,10 @@ public class Behavior extends GameData {
 				}
 			}
 		}
-		for (Switch s : switches) {
-			if (s.scope == DataScope.Local && s.id == index) {
-				return false;
-			}
-		}
-		for (Switch s : switches) {
-			if (s.scope == DataScope.Local && s.id > index) {
-				s.id--;
-			}
-		}
-		
-		this.switches.remove(index);
-		switchNames.remove(index);
-		return true;
+		return switches;
 	}
 	
-	public boolean removeVariable(int index) {
+	private List<Variable> getVariables() {
 		ArrayList<Variable> variables = new ArrayList<Variable>();
 		for (Event event : events) {
 			for (Action action : event.actions) {
@@ -140,15 +129,46 @@ public class Behavior extends GameData {
 				}
 			}
 		}
-		for (Variable v : variables) {
-			if (v.scope == DataScope.Local && v.id == index) {
+		return variables;
+	}
+	
+	private boolean tryRemoveScoped(List<? extends ScopedData> data,
+			DataScope scope, int index) {
+		
+		for (ScopedData d : data) {
+			if (d.scope == scope && d.id == index) {
 				return false;
 			}
 		}
-		for (Variable v : variables) {
-			if (v.scope == DataScope.Local && v.id > index) {
-				v.id--;
+		for (ScopedData d : data) {
+			if (d.scope == scope && d.id > index) {
+				d.id--;
 			}
+		}
+		return true;
+	}
+	
+	private boolean tryRemoveSwitch(DataScope scope, int index) {
+		return tryRemoveScoped(getSwitches(), scope, index);
+	}
+	
+	private boolean tryRemoveVariable(DataScope scope, int index) {
+		return tryRemoveScoped(getVariables(), scope, index);
+	}
+	
+	public boolean removeSwitch(int index) {
+		if (!tryRemoveSwitch(DataScope.Local, index)) {
+			return false;
+		}
+		
+		this.switches.remove(index);
+		switchNames.remove(index);
+		return true;
+	}
+	
+	public boolean removeVariable(int index) {
+		if (!tryRemoveVariable(DataScope.Local, index)) {
+			return false;
 		}
 		
 		this.variables.remove(index);
@@ -156,7 +176,22 @@ public class Behavior extends GameData {
 		return true;
 	}
 	
-	//TODO: remove param
+	public boolean removeParameter(int index) {
+		Parameter param = parameters.get(index);
+		if (param.type == ParameterType.Switch) {
+			if (!tryRemoveSwitch(DataScope.Param, index)) {
+				return false;
+			}
+			tryRemoveVariable(DataScope.Param, index);
+		} else if (param.type == ParameterType.Variable) {
+			if (!tryRemoveVariable(DataScope.Param, index)) {
+				return false;
+			}
+			tryRemoveSwitch(DataScope.Param, index);
+		}
+		parameters.remove(index);
+		return true;
+	}
 		
 	public static class Parameter implements Serializable {
 		private static final long serialVersionUID = 1L;

@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -35,7 +36,7 @@ public class DatabaseActivity extends SaveableActivity {
 	public static final int REQUEST_RETURN_GAME = 10;
 	
 	protected PlatformGame game;
-	protected Bundle extras;
+	//protected Bundle extras;
 	
 	/**
 	 * Creates the activity, setting the appropriate window
@@ -53,7 +54,7 @@ public class DatabaseActivity extends SaveableActivity {
 		this.getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-		extras = getIntent().getExtras();
+		Bundle  extras = getIntent().getExtras();
 		
 		if (savedInstanceState != null && savedInstanceState.containsKey("game")) {
 			game = (PlatformGame)savedInstanceState.getSerializable("game");
@@ -74,6 +75,36 @@ public class DatabaseActivity extends SaveableActivity {
 		.show();
 	}
 	
+	protected void populateViews(View root) {
+		populateViews(root, game);
+	}
+	
+	public static void populateViews(View root, PlatformGame game) {
+		if (root instanceof IPopulatable) {
+			((IPopulatable) root).populate(game);
+		}
+		if (root instanceof ViewGroup) {
+			ViewGroup vg = (ViewGroup)root;
+			for (int i = 0; i < vg.getChildCount(); i++) {
+				populateViews(vg.getChildAt(i), game);
+			}
+		}
+	}
+	
+	public static int setPopulatableViewIds(View root, int startId) {
+		if (root instanceof IPopulatable) {
+			root.setId(startId++);
+		}
+		if (root instanceof ViewGroup) {
+			ViewGroup vg = (ViewGroup)root;
+			for (int i = 0; i < vg.getChildCount(); i++) {
+				startId = setPopulatableViewIds(
+						vg.getChildAt(i), startId);
+			}
+		}
+		return startId;
+	}
+	
 	/**
 	 * Creates a new Intent with this as its context
 	 * and the given class as its class, then adds
@@ -91,7 +122,7 @@ public class DatabaseActivity extends SaveableActivity {
 	 * Wrapper for <code>extras.getSerializable(key)</code>
 	 */
 	public Serializable getExtra(String key) {
-		return extras.getSerializable(key);
+		return getIntent().getExtras().getSerializable(key);
 	}
 	
 	/**
@@ -105,7 +136,7 @@ public class DatabaseActivity extends SaveableActivity {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getExtra(String key, Class<T> c) {
-		Serializable s = extras.getSerializable(key);
+		Serializable s = getIntent().getExtras().getSerializable(key);
 		if (s == null || !c.isInstance(s)) return null;
 		return (T)s;
 	}

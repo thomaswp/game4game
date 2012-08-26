@@ -47,14 +47,15 @@ public class SelectorSwitch extends Button implements IPopulatable{
 		return _switch;
 	}
 	
-	public void setSwitch() {
+	private void setSwitch() {
 		setSwitch(_switch);
 	}
 	
 	public void setSwitch(Switch aSwitch) {
 		_switch = aSwitch;
-		setText(_switch.getName(game, 
-				eventContext.getBehavior()));
+		Behavior behavior = eventContext == null ?
+				null : eventContext.getBehavior();
+		setText(_switch.getName(game, behavior));
 	}
 		
 	public SelectorSwitch(Context context) {

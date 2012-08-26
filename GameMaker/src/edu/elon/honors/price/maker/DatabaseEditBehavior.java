@@ -523,8 +523,14 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 
 		@Override
 		protected boolean deleteItem(int index) {
-			behavior.parameters.remove(index);
-			return true;
+			boolean success = behavior.removeParameter(index);
+			if (!success) {
+				showAlert("Cannot Delete",
+					"This parameter is currently in use " +
+					"by one or more Events in this behavior " +
+					"and cannot be deleted.");
+			}
+			return success;
 		}
 
 	}

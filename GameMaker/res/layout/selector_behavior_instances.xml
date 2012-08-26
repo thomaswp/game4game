@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/llBehaviors"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginTop="5dip"
+        android:layout_weight="1"
+        android:background="@drawable/border_white"
+        android:orientation="vertical"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="200dip"
+            android:layout_height="wrap_content"
+            android:text="@string/behaviors"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupBehaviors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dip" >
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/linearLayout12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/buttonNewBehavior"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dip"
+                android:text="@string/new_" />
+
+            <Button
+                android:id="@+id/buttonEditBehavior"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:text="@string/edit" />
+
+            <Button
+                android:id="@+id/buttonDeleteBehavior"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:text="@string/delete" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

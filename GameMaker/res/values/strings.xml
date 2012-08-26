@@ -66,7 +66,7 @@
     <string name="isPressed">is pressed</string>
     <string name="isHeld">is held</string>
     <string name="isReleased">is released</string>
-    <string name="isMoved">is moved</string>
+    <string name="isMoved">is dragged</string>
     <string name="anyObject">any object</string>
     <string name="editActorObjectTrigger">Edit Actor/Object Trigger</string>
     <string name="map">Map</string>

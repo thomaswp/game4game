@@ -100,25 +100,18 @@ public class SelectorActivitySwitch extends SelectorActivityIndex {
 	protected String getParamName(int id) {
 		LinkedList<Parameter> params = 
 			eventContext.getBehavior().parameters;
-		for (Parameter param : params) {
-			if (param.type == ParameterType.Switch) {
-				if (id == 0) return param.name;
-				id--;
-			}
-		}
-		return "<None>";
+		return params.get(id).name;
 	}
 
 	@Override
 	protected int getParamSize() {
-		int size = 0;
+		return eventContext.getBehavior().parameters.size();
+	}
+	
+	@Override 
+	protected boolean getParamVisible(int id) {
 		LinkedList<Parameter> params = 
 			eventContext.getBehavior().parameters;
-		for (Parameter param : params) {
-			if (param.type == ParameterType.Switch) {
-				size++;
-			}
-		}
-		return size;
+		return params.get(id).type == ParameterType.Switch;
 	}
 }
