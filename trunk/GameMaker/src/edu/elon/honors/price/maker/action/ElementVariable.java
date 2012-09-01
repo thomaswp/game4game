@@ -42,13 +42,13 @@ public class ElementVariable extends Element {
 		selectorVariable.setVariable(params.getVariable());
 	}
 	
+	//TODO: Support multiple scopes with flags
 	@Override
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		selectorVariable = new SelectorVariable(context);
-		if (scope == null || !scope.equalsIgnoreCase("global")) {
-			selectorVariable.setEventContext(eventContext);
-		}
+		selectorVariable.setEventContext(eventContext);
+		selectorVariable.setAllowedScopes(scope);
 		layout.addView(selectorVariable);
 		selectorVariable.setWidth(200);
 		main = layout;

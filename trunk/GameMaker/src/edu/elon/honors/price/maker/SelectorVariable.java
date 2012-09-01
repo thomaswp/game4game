@@ -22,6 +22,15 @@ public class SelectorVariable extends Button implements IPopulatable {
 	private Variable variable = new Variable();
 	private PlatformGame game;
 	private EventContext eventContext;
+	private String allowedScopes;
+	
+	public String getAllowedScopes() {
+		return allowedScopes;
+	}
+	
+	public void setAllowedScopes(String allowedScopes) {
+		this.allowedScopes = allowedScopes;
+	}
 	
 	public void setEventContext(EventContext eventContext) {
 		this.eventContext = eventContext;
@@ -81,6 +90,7 @@ public class SelectorVariable extends Button implements IPopulatable {
 					intent.putExtra("id", variable.id);
 					intent.putExtra("scope", variable.scope.toInt());
 					intent.putExtra("eventContext", eventContext);
+					intent.putExtra("allowedScopes", allowedScopes);
 					((Activity)getContext()).startActivityForResult(intent, getId());
 				}
 			}

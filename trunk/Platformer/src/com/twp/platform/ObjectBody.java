@@ -1,6 +1,8 @@
 package com.twp.platform;
 
 
+import java.util.List;
+
 import android.graphics.Bitmap;
 
 import com.badlogic.gdx.math.Vector2;
@@ -9,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
+import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.graphics.Sprite;
@@ -24,6 +27,11 @@ public class ObjectBody extends PlatformBody {
 	public ObjectClass getObject() {
 		return object;
 	}
+	
+	@Override
+	public List<BehaviorInstance> getBehaviorInstances() {
+		return object.behaviors;
+	}
 
 	public ObjectBody(Viewport viewport, PhysicsHandler physics, ObjectClass object, int id, 
 			float startX, float startY) {
@@ -31,6 +39,12 @@ public class ObjectBody extends PlatformBody {
 
 		this.object = object;
 		//object.zoom = 1f;
+		
+		behaviorRuntimes = new BehaviorRuntime[object.behaviors.size()];
+		for (int i = 0; i < behaviorRuntimes.length; i++) {
+			behaviorRuntimes[i] = new BehaviorRuntime(
+					object.behaviors.get(i), physics.getGame());
+		}
 
 		Bitmap bitmap = Data.loadObject(object.imageName);
 		this.sprite = new Sprite(viewport, bitmap);

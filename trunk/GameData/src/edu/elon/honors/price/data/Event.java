@@ -26,7 +26,8 @@ public class Event extends GameData {
 	public ArrayList<Action> actions = new ArrayList<Event.Action>();
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
 	
-	public transient Object tActor, tObject, tVector;
+	public transient Object tActor, tObject, tVector, behaving;
+	public transient int behaviorIndex;
 
 	/**
 	 * Creates a new event with the given list of Actions.
@@ -291,7 +292,11 @@ public class Event extends GameData {
 				if (params.get(i) instanceof Parameters) {
 					o.addParam(getParameters(i).copy());
 				} else {
-					o.addParam(params.get(i));
+					Object param = params.get(i);
+					if (param instanceof ICopyable) {
+						param = ((ICopyable) param).copy();
+					}
+					o.addParam(param);
 				}
 			}
 			return o;

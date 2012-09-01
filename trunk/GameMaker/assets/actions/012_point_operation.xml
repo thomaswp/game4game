@@ -2,7 +2,7 @@
 
 	<text text="For the point" />
 	
-	<variablePoint />
+	<variablePoint scope="Global|Local" />
 	
 	<radio>
 		<choice text="set it to" />

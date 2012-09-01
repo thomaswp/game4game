@@ -38,4 +38,9 @@ public class Switch extends ScopedData {
 	public String toString() {
 		return String.format("[S[%d,%d]", id, scope.toInt());
 	}
+
+	@Override
+	public Switch copy() {
+		return new Switch(id, scope);
+	}
 }

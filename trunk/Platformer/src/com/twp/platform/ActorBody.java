@@ -1,5 +1,8 @@
 package com.twp.platform;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -11,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.graphics.AnimatedSprite;
@@ -35,6 +39,11 @@ public class ActorBody extends PlatformBody {
 	private World world;
 	
 	private int animationFrames = 4;
+	
+	@Override
+	public List<BehaviorInstance> getBehaviorInstances() {
+		return actor.behaviors;
+	}
 
 	public boolean isOnLadder() {
 		return onLadder;
@@ -104,6 +113,12 @@ public class ActorBody extends PlatformBody {
 		super.sprite = sprite;
 		this.isHero = isHero;
 		world = physics.getWorld();
+		
+		behaviorRuntimes = new BehaviorRuntime[actor.behaviors.size()];
+		for (int i = 0; i < behaviorRuntimes.length; i++) {
+			behaviorRuntimes[i] = new BehaviorRuntime(
+					actor.behaviors.get(i), physics.getGame());
+		}
 
 		BodyDef actorDef = new BodyDef();
 		actorDef.position.set(spriteToVect(sprite, null));

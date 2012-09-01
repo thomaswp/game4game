@@ -38,4 +38,9 @@ public class Variable extends ScopedData {
 	public String toString() {
 		return String.format("[V[%d,%d]", id, scope.toInt());
 	}
+
+	@Override
+	public Variable copy() {
+		return new Variable(id, scope);
+	}
 }
