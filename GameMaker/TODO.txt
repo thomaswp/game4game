@@ -4,6 +4,7 @@ General:
 -choose whether actors/objects/events should be deletable
 -map selector (oh yeah.. that)
 -figure out hi-res
+-server
 
 Behaviors:
 -spiff up editor (to look like the others if possible)
@@ -42,3 +43,4 @@ UI:
 
 Game:
 -implement behaviors
+-saving/pausing

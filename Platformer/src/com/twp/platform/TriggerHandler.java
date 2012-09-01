@@ -7,8 +7,12 @@ import android.graphics.RectF;
 
 import com.twp.platform.PhysicsHandler.BodyCallback;
 
+import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.Behavior;
+import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
@@ -43,26 +47,61 @@ public class TriggerHandler {
 		this.map = game.getSelectedMap();
 		this.physics = logic.getPhysics();
 		this.interpreter = logic.getInterpreter();
+		
+		
 	}
 
 	public void checkTriggers() {
 		for (int i = 0; i < map.events.length; i++) {
-			Event event = map.events[i];
-
-			for (int j = 0; j < event.triggers.size(); j++) {
-				Trigger generic = event.triggers.get(j);
-
-				if (generic instanceof SwitchTrigger) {
-					checkTrigger((SwitchTrigger)generic, event);
-				} else if (generic instanceof VariableTrigger) {
-					checkTrigger((VariableTrigger)generic, event);
-				} else if (generic instanceof ActorOrObjectTrigger) {
-					checkTrigger((ActorOrObjectTrigger)generic, event);
-				} else if (generic instanceof RegionTrigger) {
-					checkTrigger((RegionTrigger)generic, event);
-				} else if (generic instanceof UITrigger) {
-					checkTrigger((UITrigger)generic, event);
+			checkEvent(map.events[i]);
+		}
+		//TODO: fix this
+//		for (int i = 0; i < map.behaviors.size(); i++) {
+//			checkBehavior(map.behaviors.get(i));
+//		}
+		for (int i = 0; i < physics.getPlatformBodies().size(); i++) {
+			PlatformBody body = physics.getPlatformBodies().get(i);
+			List<BehaviorInstance> behaviors = null;
+			if (body instanceof ActorBody) {
+				ActorClass actor = ((ActorBody) body).getActor();
+				behaviors = actor.behaviors;
+			} else if (body instanceof ObjectBody) {
+				ObjectClass object = ((ObjectBody) body).getObject();
+				behaviors = object.behaviors;
+			}
+			if (behaviors != null) {
+				for (int j = 0; j < behaviors.size(); i++) {
+					checkBehavior(behaviors.get(j));
 				}
+			}
+		}
+	}
+	
+	private void checkBehavior(BehaviorInstance instance) {
+		Behavior behavior = instance.getBehavior(game);
+		for (int i = 0; i < behavior.events.size(); i++) {
+			checkEvent(behavior.events.get(i), instance);
+		}
+	}
+	
+	private void checkEvent(Event event) {
+		checkEvent(event, null);
+	}
+	
+	private void checkEvent(Event event, BehaviorInstance instance) {
+		for (int j = 0; j < event.triggers.size(); j++) {
+			Trigger generic = event.triggers.get(j);
+
+			if (generic instanceof SwitchTrigger) {
+				checkTrigger((SwitchTrigger)generic, event);
+			} else if (generic instanceof VariableTrigger) {
+				checkTrigger((VariableTrigger)generic, event);
+			} else if (generic instanceof ActorOrObjectTrigger) {
+				checkTrigger((ActorOrObjectTrigger)generic, event);
+			} else if (generic instanceof RegionTrigger) {
+				checkTrigger((RegionTrigger)generic, event);
+			} else if (generic instanceof UITrigger) {
+				checkTrigger((UITrigger)generic, event);
 			}
 		}
 	}

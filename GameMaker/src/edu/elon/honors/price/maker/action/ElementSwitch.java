@@ -37,24 +37,20 @@ public class ElementSwitch extends Element {
 	@Override
 	protected void addParameters(Parameters params) {
 		params.addParam(selectorSwitch.getSwitch());
-		Switch s = selectorSwitch.getSwitch();
-		Game.debug("Write: %d, %s", s.id, s.scope.toString());
 	}
 	
 	@Override
 	protected void readParameters(Iterator params) {
 		Switch s = params.getSwitch();
 		selectorSwitch.setSwitch(s);
-		Game.debug("Read: %d, %s", s.id, s.scope.toString());
 	}
 	
 	@Override
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		selectorSwitch = new SelectorSwitch(context);
-		if (scope == null || !scope.equalsIgnoreCase("global")) {
-			selectorSwitch.setEventContext(eventContext);
-		}
+		selectorSwitch.setEventContext(eventContext);
+		selectorSwitch.setAllowedScopes(scope);
 		layout.addView(selectorSwitch);
 		selectorSwitch.setWidth(200);
 		main = layout;

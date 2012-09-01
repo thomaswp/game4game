@@ -13,7 +13,7 @@ import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
 
-public abstract class PlatformBody {
+public abstract class PlatformBody implements IBehaving {
 	protected static final float SCALE = PlatformLogic.SCALE;
 
 	protected Body body;
@@ -28,6 +28,18 @@ public abstract class PlatformBody {
 	protected ArrayList<PlatformBody> collidedBodies = new ArrayList<PlatformBody>();
 	protected boolean collidedWall;
 	protected boolean disposed;
+	protected BehaviorRuntime[] behaviorRuntimes;
+	
+	@Override
+	public BehaviorRuntime[] getBehaviorRuntimes() {
+		return behaviorRuntimes;
+	}
+	
+	@Override
+	public int getBehaviorCount() {
+		if (behaviorRuntimes == null) return 0;
+		return behaviorRuntimes.length;
+	}
 	
 	public ArrayList<PlatformBody> getCollidedBodies() {
 		return collidedBodies;

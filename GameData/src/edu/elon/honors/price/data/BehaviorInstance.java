@@ -13,8 +13,6 @@ public class BehaviorInstance extends GameData {
 	public int behaviorId;
 	public BehaviorType type;
 	public List<Object> parameters = new LinkedList<Object>();
-	public transient LinkedList<Integer> variables = new LinkedList<Integer>();
-	public transient LinkedList<Boolean> switches = new LinkedList<Boolean>();
 	
 	public BehaviorInstance(int behaviorId, BehaviorType type) {
 		this.behaviorId = behaviorId;

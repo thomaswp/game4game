@@ -19,6 +19,15 @@ public class SelectorSwitch extends Button implements IPopulatable{
 	private Switch _switch = new Switch();
 	private PlatformGame game;
 	private EventContext eventContext;
+	private String allowedScopes;
+	
+	public String getAllowedScopes() {
+		return allowedScopes;
+	}
+	
+	public void setAllowedScopes(String allowedScopes) {
+		this.allowedScopes = allowedScopes;
+	}
 	
 	public void setEventContext(EventContext eventContext) {
 		this.eventContext = eventContext;
@@ -79,6 +88,7 @@ public class SelectorSwitch extends Button implements IPopulatable{
 					intent.putExtra("id", _switch.id);
 					intent.putExtra("scope", _switch.scope.toInt());
 					intent.putExtra("eventContext", eventContext);
+					intent.putExtra("allowedScopes", allowedScopes);
 					((Activity)getContext()).startActivityForResult(intent, getId());
 				}
 			}

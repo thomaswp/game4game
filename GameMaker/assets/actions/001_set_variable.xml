@@ -4,7 +4,7 @@
 
 	<radio>
 		<choice text="one variable">
-			<variable />
+			<variable scope="Global|Local" />
 		</choice>
 		<choice text="all variables from">
 			<group>

@@ -16,9 +16,16 @@ import android.widget.TextView;
 public class ElementVariablePoint extends Element {
 
 	private SelectorVariable selectorVarX, selectorVarY;
+	String scope;
 
 	public ElementVariablePoint(Attributes atts, Context context) {
 		super(atts, context);
+	}
+	
+	@Override
+	protected void readAttributes(Attributes atts) {
+		super.readAttributes(atts);
+		scope = atts.getValue("scope");
 	}
 
 	@Override
@@ -39,8 +46,10 @@ public class ElementVariablePoint extends Element {
 		varLayout.setOrientation(LinearLayout.HORIZONTAL);
 		selectorVarX = new SelectorVariable(context);
 		selectorVarX.setEventContext(eventContext);
+		selectorVarX.setAllowedScopes(scope);
 		selectorVarY = new SelectorVariable(context);
 		selectorVarY.setEventContext(eventContext);
+		selectorVarY.setAllowedScopes(scope);
 		TextView tvLp = new TextView(context), tvRp = new TextView(context),
 		tvCom = new TextView(context);
 		tvLp.setText("("); tvRp.setText(")"); tvCom.setTag(", ");

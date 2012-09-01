@@ -4,7 +4,7 @@
 
 	<radio>
 		<choice text="one switch" mute="true">
-			<switch />
+			<switch scope="Global|Local" />
 		</choice>
 		<choice text="all switches from">
 			<group>

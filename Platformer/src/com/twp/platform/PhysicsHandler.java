@@ -63,6 +63,10 @@ public class PhysicsHandler {
 	public World getWorld() {
 		return world;
 	}
+	
+	public PlatformGame getGame() {
+		return game;
+	}
 
 	public ActorBody getHero() {
 		return heroBody;

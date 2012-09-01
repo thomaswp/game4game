@@ -31,14 +31,15 @@ public class ElementObjectInstance extends ElementMulti {
 			new OptionEmpty(context, "the triggering object", 
 					"the triggering object"),
 			new OptionEmpty(context, "the created object",
-					"the created object")
+					"the created object"),
+			new OptionEmpty(context, "this object", "this object")
 		};
 		
 		options[0].visible = 
 			eventContext.getScope() == Scope.MapEvent;
 		options[1].enabled = 
 			eventContext.hasTrigger(TriggerType.ObjectTrigger);
-		options[2].visible = 
+		options[3].visible = 
 			eventContext.getScope() == Scope.ObjectBehavior;
 		
 		return options;

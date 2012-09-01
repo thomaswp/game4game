@@ -3,7 +3,10 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
+
+import edu.elon.honors.price.game.Game;
 
 public abstract class GameData implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -17,13 +20,15 @@ public abstract class GameData implements Serializable {
 	
 	public static boolean areEqual(Object o1, Object o2) {
 
-		Class<?> c = o1.getClass();
-		
 		if (o1 == null || o2 == null)
 			return (o1 == o2);
+		
+		Class<?> c = o1.getClass();
 
 		if (c != o2.getClass())
 			return false;
+		
+		//Game.debug("Comparing %s's", c.toString());
 		
 		for (int i = 0; i < shallow.length; i++) {
 			if (shallow[i].equals(c)) {
@@ -74,16 +79,26 @@ public abstract class GameData implements Serializable {
 		while (c != null) {
 			for (Field field : c.getDeclaredFields()) {
 				//Game.debug("Field:" + field.getName());
+				int mods = field.getModifiers();
+				if (Modifier.isFinal(mods) || Modifier.isStatic(mods) ||
+						Modifier.isTransient(mods)) {
+					continue;
+				}
+				field.setAccessible(true);
 				try {
 					if (field.getType().isPrimitive()) {
 						if (!field.get(o1).equals(field.get(o2)))
 							return false;
+						else {
+//							Game.debug("%s: %o vs %o", field.getName(),
+//									field.get(o1), field.get(o2));
+						}
 					} else {
 						if (!areEqual(field.get(o1), field.get(o2)))
 							return false;
 					}
 				} catch (Exception e) {
-					//e.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 			c = c.getSuperclass();
