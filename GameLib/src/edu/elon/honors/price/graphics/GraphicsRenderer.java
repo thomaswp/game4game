@@ -407,6 +407,9 @@ public class GraphicsRenderer implements Renderer {
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, newBmp, 0);
 
 			} else {
+				if(!bitmap.getConfig().equals(Config.ARGB_8888)) {
+					Game.debug("Non-ARGB_8888 format!!");
+				}
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, bitmap, GL10.GL_UNSIGNED_BYTE, 0);
 			}
 

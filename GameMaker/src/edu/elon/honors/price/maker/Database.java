@@ -32,7 +32,7 @@ public class Database extends DatabaseActivity {
 			};
 		
 		
-		setContentView(R.layout.database);
+		setContentView(R.layout.database); 
 		next = (Button)findViewById(R.id.buttonNext);
 		prev = (Button)findViewById(R.id.buttonPrevious);
 		

@@ -140,7 +140,6 @@ public class DatabaseEditAction extends DatabaseActivity {
 		if (originalParameters == null)
 			return false;
 		
-		//TODO: Find out why it's always true!?
 		Game.debug("%s v %s", rootElement.getParameters().toString(), 
 				originalParameters.toString());
 		return super.hasChanged() || 
