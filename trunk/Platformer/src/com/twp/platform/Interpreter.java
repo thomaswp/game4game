@@ -413,45 +413,45 @@ public class Interpreter extends ActionIds {
 				}
 
 			} catch (ParameterException e) {
-				Game.debug(e.getMessage());
+				Game.debug("Param Exception!: %s", e.getMessage());
 			} finally {
 				actionIndex++;
 			}
 		}
 	}
 	
-	private void assertThat(boolean condition, String message)
+	private static void assertThat(boolean condition, String message)
 	throws ParameterException {
 		if (!condition) {
 			throw new ParameterException(message);
 		}
 	}
 	
-	private void assertThat(boolean condition, String message, 
+	private static void assertThat(boolean condition, String message, 
 			Object... args) throws ParameterException {
 		assertThat(condition, String.format(message, args));
 	}
 	
-	private boolean inArray(int index, int length) {
+	private static boolean inArray(int index, int length) {
 		return index >= 0 && index < length;
 	}
 	
-	private boolean inArray(int index, List<?> list) {
+	private static boolean inArray(int index, List<?> list) {
 		return index >= 0 && index < list.size();
 	}
 	
-	private <T> boolean inArray(int index, T[] array) {
+	private static <T> boolean inArray(int index, T[] array) {
 		return inArray(index, array.length);
 	}
 	
-	private IBehaving getBehaving(Event event) throws ParameterException {
+	public static IBehaving getBehaving(Event event) throws ParameterException {
 		assertThat(event.behaving != null && 
 				event.behaving instanceof IBehaving,
 				"No behaving object!");
 		return (IBehaving)event.behaving;
 	}
 	
-	private BehaviorInstance getBehavingInstance(Event event) 
+	public static BehaviorInstance getBehavingInstance(Event event) 
 	throws ParameterException {
 		List<BehaviorInstance> instances = 
 			getBehaving(event).getBehaviorInstances();
@@ -460,7 +460,7 @@ public class Interpreter extends ActionIds {
 		return instances.get(event.behaviorIndex);		
 	}
 	
-	private BehaviorRuntime getBehavingRuntime(Event event) 
+	public static BehaviorRuntime getBehavingRuntime(Event event) 
 	throws ParameterException {
 		BehaviorRuntime[] runtimes = 
 			getBehaving(event).getBehaviorRuntimes();
@@ -469,9 +469,8 @@ public class Interpreter extends ActionIds {
 		return runtimes[event.behaviorIndex];		
 	}
 
-	private boolean readSwitch(Parameters params, int index, Event event) 
-	throws ParameterException {
-		Switch s = params.getSwitch();
+	public static boolean readSwitch(Switch s, Event event) 
+			throws ParameterException {
 		if (s.scope == DataScope.Global) {
 			int i = s.id;
 			assertThat(inArray(i, Globals.getSwitches().length), 
@@ -487,38 +486,78 @@ public class Interpreter extends ActionIds {
 			assertThat(inArray(s.id, instance.parameters),
 					"Switch index is out of bounds: %d", s.id);
 			Object o = instance.parameters.get(s.id);
-			assertThat(o instanceof Boolean, 
+			assertThat(o instanceof Switch, 
 					"Paramter is now a switch");
-			return (Boolean)instance.parameters.get(s.id);
+			return readSwitch((Switch)o, event);
 		}
+	}
+	
+	public static void setSwitch(Switch s, Event event, boolean value) 
+			throws ParameterException {
+		if (s.scope == DataScope.Global) {
+			int i = s.id;
+			assertThat(inArray(i, Globals.getSwitches().length), 
+					"Switch index out of bounds: %d", i);
+			Globals.getSwitches()[i] = value;
+		} else if (s.scope == DataScope.Local) {
+			BehaviorRuntime runtime = getBehavingRuntime(event);
+			assertThat(inArray(s.id, runtime.switches.length),
+				"Switch index out of bounds: %d", s.id);
+			runtime.switches[s.id] = value;
+		} else {
+			throw new ParameterException("Cannot set a parameter!");
+		}
+	}
+	
+	public static int readVariable(Variable v, Event event) 
+			throws ParameterException {
+		if (v.scope == DataScope.Global) {
+			int i = v.id;
+			assertThat(inArray(i, Globals.getVariables().length),
+					"Variable index out of bounds: %d", i);
+			return Globals.getVariables()[i];
+		}  else if (v.scope == DataScope.Local) {
+			BehaviorRuntime runtime = getBehavingRuntime(event);
+			assertThat(inArray(v.id, runtime.variables.length),
+					"Variable index out of bounds: %d", v.id);
+			return runtime.variables[v.id];
+		} else {
+			BehaviorInstance instance = getBehavingInstance(event);
+			assertThat(inArray(v.id, instance.parameters.size()),
+					"Variable index out of bounds: %d", v.id);
+			Object o = instance.parameters.get(v.id);
+			assertThat(o instanceof Variable, "Paramter is now a variable");
+			return readVariable((Variable) o, event);
+		}
+	}
+	
+	public static void setVaraible(Variable v, Event event, int value) 
+			throws ParameterException {
+		if (v.scope == DataScope.Global) {
+			int i = v.id;
+			assertThat(inArray(i, Globals.getVariables().length),
+				"Variable index out of bounds: %d", i);
+			Globals.getVariables()[i] = value;
+		}  else if (v.scope == DataScope.Local) {
+			BehaviorRuntime runtime = getBehavingRuntime(event);
+			assertThat(inArray(v.id, runtime.variables.length),
+					"Variable index out of bounds: %d", v.id);
+			runtime.variables[v.id] = value;
+		} else {
+			throw new ParameterException("Cannot set a parameter!");
+		}
+	}
+	
+	private boolean readSwitch(Parameters params, int index, Event event) 
+	throws ParameterException {
+		return readSwitch(params.getSwitch(index), event);
+		
 	}
 
 	private int readVariable(Parameters params, int index, Event event) 
 	throws ParameterException {
-		Variable v = params.getVariable();
-		if (v.scope == DataScope.Global) {
-			int i = v.id;
-			if (i < 0 || i >= Globals.getVariables().length) {
-				throw new ParameterException("Variable index out of bounds: " + i);
-			}
-			return Globals.getVariables()[i];
-		}  else if (v.scope == DataScope.Local) {
-			BehaviorRuntime runtime = getBehavingRuntime(event);
-			if (v.id < 0 || v.id >= runtime.variables.length) {
-				throw new ParameterException("Variable index out of bounds: " + v.id);
-			}
-			return runtime.variables[v.id];
-		} else {
-			BehaviorInstance instance = getBehavingInstance(event);
-			if (v.id < 0 || v.id >= instance.parameters.size()) {
-				throw new ParameterException("Switch index out of bounds: " + v.id);
-			}
-			Object o = instance.parameters.get(v.id);
-			if (!(o instanceof Integer)) {
-				throw new ParameterException("Paramter is now a variable");
-			}
-			return (Integer)instance.parameters.get(v.id);
-		}
+		return readVariable(params.getVariable(index), event);
+		
 	}
 
 	private ActorClass readActorClass(Parameters params, int index) 
@@ -556,6 +595,8 @@ public class Interpreter extends ActionIds {
 			}
 			return (ActorBody)event.tActor;
 		} else {
+			Game.debug(event.behaving);
+			
 			assertThat(event.behaving != null && 
 					event.behaving instanceof ActorBody,
 					"Behaving object is not an Actor");
@@ -670,7 +711,7 @@ public class Interpreter extends ActionIds {
 
 	}
 
-	private static class ParameterException extends Exception {
+	public static class ParameterException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		public ParameterException(String message) {

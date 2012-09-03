@@ -105,7 +105,6 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 
 	@Override
 	protected boolean hasChanged() {
-		//TODO: Why isn't the compare working!?
 		BehaviorInstance old = (BehaviorInstance)getExtra("instance");
 		Game.debug("%s vs %s", instance.toString(), old.toString());
 		return !instance.equals(old) || super.hasChanged(); 

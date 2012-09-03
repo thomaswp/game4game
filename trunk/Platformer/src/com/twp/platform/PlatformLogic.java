@@ -129,7 +129,7 @@ public class PlatformLogic implements Logic {
 				Graphics.getWidth(), startForegroundY + bmp.getHeight()), -6);
 
 		bmp = Data.loadBackground(map.skyImageName);
-		Game.debug("%dx%d", Graphics.getWidth(), Graphics.getHeight());
+		//Game.debug("%dx%d", Graphics.getWidth(), Graphics.getHeight());
 		startBackgroundY = startForegroundY - Graphics.getHeight();
 		background = new BackgroundSprite(bmp, new Rect(0, startBackgroundY, 
 				Graphics.getWidth(), startForegroundY), -7);
@@ -142,7 +142,7 @@ public class PlatformLogic implements Logic {
 			for (int i = 0; i < map.midGrounds.size(); i++) {
 				String path = map.midGrounds.get(i);
 				bmp = Data.loadMidground(path);
-				Game.debug("%dx%d", bmp.getWidth(), bmp.getHeight());
+				//Game.debug("%dx%d", bmp.getWidth(), bmp.getHeight());
 				if (mid == null) {
 					mid = bmp.copy(bmp.getConfig(), true);
 				} else {

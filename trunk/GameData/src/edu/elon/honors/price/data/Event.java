@@ -27,7 +27,7 @@ public class Event extends GameData {
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
 	
 	public transient Object tActor, tObject, tVector, behaving;
-	public transient int behaviorIndex;
+	public transient int behaviorIndex = -1;
 
 	/**
 	 * Creates a new event with the given list of Actions.
@@ -58,6 +58,12 @@ public class Event extends GameData {
 	public void clearTriggerInfo() {
 		tActor = null;
 		tObject = null;
+		tVector = null;
+	}
+	
+	public void clearBehavingInfo() {
+		behaving = null;
+		behaviorIndex = -1;
 	}
 	
 	/**
@@ -273,7 +279,12 @@ public class Event extends GameData {
 							return false;
 						}
 					} else {
-						if (!getObject(i).equals(o.getObject(i))) {
+						Object objectA = getObject(i);
+						Object objectB = o.getObject(i);
+						if (objectA != null && objectA instanceof GameData
+								&& objectB instanceof GameData) {
+							return ((GameData)objectA).equals((GameData)objectB);
+						} else if (!getObject(i).equals(o.getObject(i))) {
 							return false;
 						}
 					}

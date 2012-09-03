@@ -17,6 +17,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
@@ -63,8 +64,9 @@ public final class Data {
 					ContentResolver cr = parent.getContentResolver();
 					AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, name), "r");
 					InputStream is = afd.createInputStream();
-					//BitmapFactory.Options options = new Options();
-					Bitmap bmp = BitmapFactory.decodeStream(is);
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inPreferredConfig = Config.ARGB_8888;
+					Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
 					Cache.RegisterBitmap(name, bmp);
 					return bmp;
 				} catch (Exception ex) {

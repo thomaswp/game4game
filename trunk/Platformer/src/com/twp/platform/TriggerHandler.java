@@ -5,10 +5,12 @@ import java.util.List;
 
 import android.graphics.RectF;
 
+import com.twp.platform.Interpreter.ParameterException;
 import com.twp.platform.PhysicsHandler.BodyCallback;
 
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Behavior;
+import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Map;
@@ -23,6 +25,7 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
@@ -55,90 +58,85 @@ public class TriggerHandler {
 		for (int i = 0; i < map.events.length; i++) {
 			checkEvent(map.events[i]);
 		}
-		//TODO: fix this
+		//TODO: figure out how to represent map runtimes
 //		for (int i = 0; i < map.behaviors.size(); i++) {
 //			checkBehavior(map.behaviors.get(i));
 //		}
 		for (int i = 0; i < physics.getPlatformBodies().size(); i++) {
 			PlatformBody body = physics.getPlatformBodies().get(i);
-			List<BehaviorInstance> behaviors = null;
 			if (body instanceof ActorBody) {
-				ActorClass actor = ((ActorBody) body).getActor();
-				behaviors = actor.behaviors;
+				checkBehaving(((ActorBody) body));
 			} else if (body instanceof ObjectBody) {
-				ObjectClass object = ((ObjectBody) body).getObject();
-				behaviors = object.behaviors;
-			}
-			if (behaviors != null) {
-				for (int j = 0; j < behaviors.size(); i++) {
-					checkBehavior(behaviors.get(j));
-				}
+				checkBehaving(((ObjectBody) body));
 			}
 		}
 	}
 	
-	private void checkBehavior(BehaviorInstance instance) {
+	private void checkBehaving(IBehaving behaving) {
+		if (behaving != null) {
+			for (int j = 0; j < behaving.getBehaviorCount(); j++) {
+				checkBehavior(behaving.getBehaviorInstances().get(j), 
+						behaving, j);
+			}
+		}
+	}
+	
+	private void checkBehavior(BehaviorInstance instance, 
+			IBehaving behaving, int behavingIndex) {
 		Behavior behavior = instance.getBehavior(game);
 		for (int i = 0; i < behavior.events.size(); i++) {
-			checkEvent(behavior.events.get(i), instance);
+			Event event = behavior.events.get(i);
+			event.behaving = behaving;
+			event.behaviorIndex = behavingIndex;
+			checkEvent(behavior.events.get(i));
+			event.clearBehavingInfo();
 		}
 	}
 	
 	private void checkEvent(Event event) {
-		checkEvent(event, null);
-	}
-	
-	private void checkEvent(Event event, BehaviorInstance instance) {
 		for (int j = 0; j < event.triggers.size(); j++) {
 			Trigger generic = event.triggers.get(j);
 
-			if (generic instanceof SwitchTrigger) {
-				checkTrigger((SwitchTrigger)generic, event);
-			} else if (generic instanceof VariableTrigger) {
-				checkTrigger((VariableTrigger)generic, event);
-			} else if (generic instanceof ActorOrObjectTrigger) {
-				checkTrigger((ActorOrObjectTrigger)generic, event);
-			} else if (generic instanceof RegionTrigger) {
-				checkTrigger((RegionTrigger)generic, event);
-			} else if (generic instanceof UITrigger) {
-				checkTrigger((UITrigger)generic, event);
+			try {
+				if (generic instanceof SwitchTrigger) {
+					checkTrigger((SwitchTrigger)generic, event);
+				} else if (generic instanceof VariableTrigger) {
+					checkTrigger((VariableTrigger)generic, event);
+				} else if (generic instanceof ActorOrObjectTrigger) {
+					checkTrigger((ActorOrObjectTrigger)generic, event);
+				} else if (generic instanceof RegionTrigger) {
+					checkTrigger((RegionTrigger)generic, event);
+				} else if (generic instanceof UITrigger) {
+					checkTrigger((UITrigger)generic, event);
+				}	
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
 
-	private void checkTrigger(SwitchTrigger trigger, Event event) {
+	private void checkTrigger(SwitchTrigger trigger, Event event)
+			throws ParameterException {
 		Switch tSwitch = trigger.triggerSwitch;
-		if (tSwitch.scope == DataScope.Global) {
+		if (Interpreter.readSwitch(tSwitch, event) == trigger.value) {
 			if (Globals.getSwitches()[tSwitch.id] == trigger.value) {
 				trigger(event);
 			}			
-		} else {
-			//TODO: finish
 		}
 	}
 
-	private void checkTrigger(VariableTrigger trigger, Event event) {
+	private void checkTrigger(VariableTrigger trigger, Event event)
+			throws ParameterException {
 		Variable variable = trigger.variable;
 
-		int value1;
-		if (variable.scope == DataScope.Global) {
-			value1 = Globals.getVariables()[variable.id];	
-		} else {
-			value1 = 0;
-			//TODO: finish
-		}
+		int value1 = Interpreter.readVariable(variable, event);
 		
 		int value2;
 		if (trigger.with == VariableTrigger.WITH_VALUE) {
 			value2 = trigger.withValue;
 		} else {
 			variable = trigger.withVariable;
-			if (variable.scope == DataScope.Global) {
-				value2 = Globals.getVariables()[variable.id];	
-			} else {
-				value2 = 0;
-				//TODO: finish
-			}
+			value2 = Interpreter.readVariable(variable, event);
 		}
 
 		boolean result = false;
@@ -158,6 +156,7 @@ public class TriggerHandler {
 
 
 	private void checkTrigger(ActorOrObjectTrigger trigger, Event event) {
+		//TODO: support for "this actor/object"
 		List<PlatformBody> platformBodies = physics.getPlatformBodies();
 		for (int k = 0; k < platformBodies.size(); k++) {
 			PlatformBody body = platformBodies.get(k);

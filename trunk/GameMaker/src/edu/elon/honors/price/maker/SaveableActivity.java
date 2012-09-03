@@ -19,12 +19,28 @@ import android.widget.Button;
 public class SaveableActivity extends Activity {
 
 	private Handler finishHandler = new Handler();
+	private boolean loaded;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null) {
 			//Game.debug("RESTORING INSTANCE!!!");
 		}
+		
+		//This just makes sure everything has
+		//had a chance to load before back can be pressed
+		final Handler handler = new Handler();
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						loaded = true;
+					}
+				});
+			}
+		});
 	}
 
 	/**
@@ -46,6 +62,7 @@ public class SaveableActivity extends Activity {
 	 */
 	@Override
 	public void onBackPressed() {
+		if (!loaded) return;
 		if (hasChanged()) {
 			new AlertDialog.Builder(this)
 			.setIcon(android.R.drawable.ic_dialog_alert)
@@ -131,6 +148,7 @@ public class SaveableActivity extends Activity {
 			buttonOk.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					if (!loaded) return;
 					if (onSaving()) {
 						finishOk();
 					}
