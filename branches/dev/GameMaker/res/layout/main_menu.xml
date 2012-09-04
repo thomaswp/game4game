@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" android:text="@string/select"/>
+<ScrollView android:layout_width="match_parent" android:id="@+id/scrollView1" android:layout_height="220dip">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/linearLayout1" android:orientation="vertical">
+    </LinearLayout>
+</ScrollView>
+<LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout2">
+    <Button android:layout_height="wrap_content" android:text="@string/edit" android:id="@+id/buttonEdit" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/play" android:id="@+id/buttonPlay" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/newgame" android:id="@+id/buttonNewGame" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/delete" android:id="@+id/buttonDelete" android:layout_width="100dip"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/copy" android:id="@+id/buttonCopy" android:layout_width="100dip"></Button>
+
+    <Button
+        android:id="@+id/buttonTest"
+        android:layout_width="100dip"
+        android:layout_height="wrap_content"
+        android:text="@string/test" />
+
+</LinearLayout>
+<LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout3">
+</LinearLayout>
+</LinearLayout>

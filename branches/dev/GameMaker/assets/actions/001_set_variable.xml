@@ -1,0 +1,54 @@
+<action id="1" name="Set Variable">
+
+	<text text="For" />
+
+	<radio>
+		<choice text="one variable">
+			<variable scope="Global|Local" />
+		</choice>
+		<choice text="all variables from">
+			<group>
+				<variable scope="Global" />
+				<text text="to" />
+				<variable scope="Global" />
+			</group>
+		</choice>
+	</radio>
+
+	<radio>
+		<choice text="set it to" />
+		<choice text="add" />
+		<choice text="subtract" />
+		<choice text="multiply" />
+		<choice text="divide by" />
+		<choice text="mod by" />	
+	</radio>
+
+	<radio>
+		<choice text="the value">
+			<exactNumber />
+		</choice>
+		<choice text="a variable">
+			<variable />
+		</choice>
+		<choice text="a random number">
+			<group>
+				<text text="between" />
+				<exactNumber />
+				<text text="and" />
+				<exactNumber />
+			</group>
+		</choice>
+		<choice text="an actor property">
+			<description text=":" />
+			<actorInstance />
+			<description text=";" />
+			<radio>
+				<choice text="x-coordinate" />
+				<choice text="y-coordinate" />
+			</radio>
+		</choice>
+		
+	</radio>
+
+</action>

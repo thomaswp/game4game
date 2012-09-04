@@ -1,0 +1,39 @@
+<action id="16" name="Draw to Screen">
+
+	<radio>
+		<choice text="Clear the screen" />
+		<choice text="Draw a">
+			<color />
+			<radio>
+				<choice text="hollow" />
+				<choice text="filled in" />
+			</radio>
+			<radio>
+				<choice text="line">
+					<text text="from" />
+					<point />
+					<text text="to" />
+					<point />
+				</choice>
+				<choice text="circle">
+					<text text="centered at" />
+					<point />
+					<text text="with radius" />
+					<number />
+				</choice>
+				<choice text="box">
+					<text text="with one corner at" />
+					<point />
+					<text text="and the other at" />
+					<point />
+				</choice>
+			</radio>
+			<text text="using" />
+			<radio>
+				<choice text="world coordinates" />
+				<choice text="screen coordinates" />
+			</radio>
+		</choice>
+	</radio>
+
+</action>

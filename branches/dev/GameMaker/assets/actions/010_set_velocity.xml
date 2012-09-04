@@ -1,0 +1,17 @@
+<action id="10" name="Set Velocity">
+
+	<text text="Set the velocity of the" />
+	<radio>
+		<choice text="actor" mute="true">
+			<actorInstance />
+		</choice>
+		<choice text="object" mute="true">
+			<objectInstance />
+		</choice>
+	</radio>
+	<text text="in the direction of" />
+	<vector />
+	<text text="with the magnitude" />
+	<number />
+
+</action>
