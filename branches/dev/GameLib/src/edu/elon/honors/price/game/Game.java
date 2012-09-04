@@ -234,7 +234,11 @@ public abstract class Game extends Activity {
 	}
 
 	public static void debug(String format, Object... args) {
-		debug(String.format(format, args));
+		try {
+			debug(String.format(format, args));
+		} catch (Exception e) {
+			debug(e);
+		}
 	}
 	
 	public static void debug(Exception e) {
