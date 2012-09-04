@@ -26,6 +26,7 @@ Map Editor:
 -Update appropriately when actors/objects/etc change
 -redo texture selector
 -gap in bg (why?)
+-work with out of bounds
 
 Hero:
 -decide how to handle non-hero games...

@@ -60,7 +60,7 @@ public class SelectorVector extends Button implements IPopulatable{
 			}
 		});
 		
-		setVector(0, 0);
+		setVector(0, -1);
 	}
 
 	@Override
