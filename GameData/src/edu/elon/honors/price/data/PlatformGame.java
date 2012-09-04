@@ -64,14 +64,15 @@ public class PlatformGame extends GameData {
 		variableValues = new int[] { };
 		resizeVariables(100);
 
-		maps = new ArrayList<Map>();
-		maps.add(new Map());
-		startMapId = 0;
-
 		tilesets = new Tileset[3];
-		tilesets[0] = new Tileset("Default", "tiles.png", 48, 48, 8, 8);
+		tilesets[0] = new Tileset("Default", "tiles-64.png", 64, 64, 9, 8);
 		tilesets[1] = new Tileset("Ice", "ice.png", 48, 48, 8, 8);
 		tilesets[2] = new Tileset("Grass", "grass.png", 48, 48, 8, 8);
+		
+		maps = new ArrayList<Map>();
+		maps.add(new Map(this));
+		startMapId = 0;
+
 
 		actors = new ActorClass[3];
 		actors[1] = new ActorClass();

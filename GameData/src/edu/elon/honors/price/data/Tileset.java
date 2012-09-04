@@ -18,4 +18,11 @@ public class Tileset extends GameData {
 		this.columns = columns;
 	}
 	
+	public int width() {
+		return tileWidth * columns;
+	}
+	
+	public int height() {
+		return tileHeight * rows;
+	}
 }

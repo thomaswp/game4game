@@ -26,19 +26,25 @@ public class Map extends GameData {
 	public String skyImageName;
 	public LinkedList<String> midGrounds = new LinkedList<String>();
 
-	public Map() {
+	public Map(PlatformGame game) {
 
 		rows = 8;
 		columns = 30;
 
-		groundY = 4 * 48;
+		groundY = 4 * game.tilesets[tilesetId].tileHeight;
 		groundImageName = "ground.png";
 		skyImageName = "sky.png";
 
+		midGrounds = new LinkedList<String>();
+		midGrounds.add("whiteclouds.png");
+		midGrounds.add("mountain.png");
+		midGrounds.add("trees.png");
+		
 		tilesetId = 0;
 
 		//layer with tiles representing indices in the actors ArrayList 
 		actorLayer = new MapLayer("actors", rows, columns, false, -1);
+		actorLayer.defaultValue = -1;
 
 		actors = new ArrayList<ActorInstance>();
 		actors.add(null);

@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
 import android.graphics.Paint.Style;
+import android.graphics.Shader.TileMode;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.Window;
@@ -163,7 +166,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				startDragOffX -= offX;
 				offX = 0;
 			}
-			float edgeX = this.width - width;
+			float edgeX = Math.min(0, this.width - width);
 			if (offX < edgeX) {
 				startDragOffX += edgeX - offX; 
 				offX = edgeX;
@@ -172,7 +175,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				startDragOffY -= offY;
 				offY = 0;
 			}
-			float edgeY = this.height - height;
+			float edgeY = Math.min(0, this.height - height);
 			if (offY < edgeY) {
 				startDragOffY += edgeY - offY; 
 				offY = edgeY;
@@ -204,10 +207,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 			if (width == 0 || height == 0) return;
 			if (grid == null) createGrid();
 
-			c.drawColor(Color.WHITE);
-
-
 			synchronized (game) {
+				c.drawColor(Color.DKGRAY);
 				drawBackground(c);
 				drawContent(c);
 				drawGrid(c);
@@ -226,6 +227,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 			Tileset tileset = game.tilesets[map.tilesetId];
 			int mapWidth = tileset.tileWidth * map.columns;
 			int mapHeight = tileset.tileHeight * map.rows;
+			
+			paint.setColor(Color.WHITE);
+			paint.setStyle(Style.FILL);
+			c.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
 
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
@@ -267,7 +272,15 @@ public abstract class MapActivityBase extends SaveableActivity {
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 			paint.setAlpha(200);
-			c.drawBitmap(grid, offX % tileset.tileWidth, offY % tileset.tileHeight, paint);
+			paint.setShader(new BitmapShader(grid, TileMode.REPEAT, TileMode.REPEAT));
+			//c.drawBitmap(grid, offX % tileset.tileWidth, offY % tileset.tileHeight, paint);
+			float left = offX % tileset.tileWidth;
+			float top = offY % tileset.tileHeight;
+			float right = Math.min(width - left, tileset.width() + offX);
+			float bot = Math.min(height - top, tileset.height() + offY);
+			Game.debug("%f, %f, %f, %f", left, top, right, bot);
+			c.drawRect(left, top, right, bot, paint);
+			paint.setShader(null);
 		}
 
 		private void createGrid() {
@@ -280,6 +293,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int cols = this.width / tileWidth + 2;
 			int rows = this.height / tileHeight + 2;
 
+			cols = 1; rows = 1;
+			
 			int width = cols * tileWidth;
 			int height = rows * tileHeight;
 
