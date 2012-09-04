@@ -3,6 +3,7 @@ package com.twp.platform;
 import java.util.List;
 import java.util.Random;
 
+import android.R.integer;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Paint.Style;
@@ -82,14 +83,6 @@ public class Interpreter extends ActionIds {
 				if (action.id == ID_SET_SWITCH) {
 					int from, to;
 					if (params.getInt() == 0) {
-						from = params.getInt(1);
-						to = from;
-					} else {
-						from = params.getParameters(1).getInt();
-						to = params.getParameters(1).getInt(1);
-					}
-
-					for (int i = from; i <= to; i++) {
 						boolean argument;
 						if (params.getInt(2) == 0) {
 							if (params.getInt(3) == 0) {
@@ -104,42 +97,54 @@ public class Interpreter extends ActionIds {
 						} else {
 							argument = !readSwitch(params, 1, event);
 						}
-						Globals.getSwitches()[i] = argument;
+						setSwitch(params.getSwitch(1), event, argument);
+					} else {
+						from = params.getParameters(1).getSwitch().id;
+						to = params.getParameters(1).getSwitch().id;
+
+						for (int i = from; i <= to; i++) {
+							boolean argument;
+							if (params.getInt(2) == 0) {
+								if (params.getInt(3) == 0) {
+									argument = true;
+								} else if (params.getInt(3) == 1) {
+									argument = false;
+								} else if (params.getInt(3) == 2) {
+									argument = readSwitch(params, 4, event); 
+								} else {
+									argument = rand.nextBoolean();
+								}
+							} else {
+								argument = !readSwitch(params, 1, event);
+							}
+							Globals.getSwitches()[i] = argument;
+						}
 					}
 				}
 
 				//001 Set Variable
 				if (action.id == ID_SET_VARIABLE) {
-					int from, to;
-					if (params.getInt() == 0) {
-						from = params.getInt(1);
-						to = from;
+					int argument;
+					if (params.getInt(3) == 0) {
+						argument = params.getInt(4);
+					} else if (params.getInt(3) == 1) {
+						argument = readVariable(params, 4, event); 
+					} else if (params.getInt(3) == 2) {
+						int randFrom = params.getParameters(4).getInt();
+						int randTo = params.getParameters(4).getInt(1);
+						argument = randFrom + rand.nextInt(randTo - randFrom + 1);
 					} else {
-						from = params.getParameters(1).getInt();
-						to = params.getParameters(1).getInt(1);
+						ActorBody body = readActorBody(params, 4, event);
+						Vector pos = body.getScaledPosition();
+						if (params.getInt(5) == 0) {
+							argument = round(pos.getX());
+						} else {
+							argument = round(pos.getY());
+						}
 					}
 
-					for (int i = from; i <= to; i++) {
-						int argument;
-						if (params.getInt(3) == 0) {
-							argument = params.getInt(4);
-						} else if (params.getInt(3) == 1) {
-							argument = readVariable(params, 4, event); 
-						} else if (params.getInt(3) == 2) {
-							int randFrom = params.getParameters(4).getInt();
-							int randTo = params.getParameters(4).getInt(1);
-							argument = randFrom + rand.nextInt(randTo - randFrom + 1);
-						} else {
-							ActorBody body = readActorBody(params, 4, event);
-							Vector pos = body.getScaledPosition();
-							if (params.getInt(5) == 0) {
-								argument = round(pos.getX());
-							} else {
-								argument = round(pos.getY());
-							}
-						}
-
-						int value = Globals.getVariables()[i];
+					if (params.getInt() == 0) {
+						int value = readVariable(params, 1, event);
 						if (params.getInt(2) == 0) {
 							value = argument;
 						} else if (params.getInt(2) == 1) {
@@ -157,8 +162,31 @@ public class Interpreter extends ActionIds {
 						} else {
 							value %= argument;
 						}
-
-						Globals.getVariables()[i] = value;
+						setVariable(params.getVariable(1), event, value);
+					} else {
+						int from = params.getParameters(1).getVariable().id;
+						int to = params.getParameters(1).getVariable().id;
+						for (int i = from; i <= to; i++) {
+							int value = Globals.getVariables()[i];
+							if (params.getInt(2) == 0) {
+								value = argument;
+							} else if (params.getInt(2) == 1) {
+								value += argument;
+							} else if (params.getInt(2) == 2) {
+								value -= argument;
+							} else if (params.getInt(2) == 3) {
+								value *= argument;
+							} else if (params.getInt(2) == 4) {
+								if (argument == 0) {
+									throw new ParameterException("Divide by 0");
+								} else {
+									value /= argument;
+								}
+							} else {
+								value %= argument;
+							}
+							Globals.getVariables()[i] = value;
+						}
 					}
 				}
 
@@ -199,8 +227,8 @@ public class Interpreter extends ActionIds {
 						y -= oy;
 					}
 
-					Globals.getVariables()[params.getInt(0)] = x;
-					Globals.getVariables()[params.getInt(1)] = y;
+					setVariable(params.getVariable(0), event, x);
+					setVariable(params.getVariable(1), event, y);
 				}
 
 				if (action.id == ID_CREATE_ACTOR) {
@@ -419,51 +447,51 @@ public class Interpreter extends ActionIds {
 			}
 		}
 	}
-	
+
 	private static void assertThat(boolean condition, String message)
-	throws ParameterException {
+			throws ParameterException {
 		if (!condition) {
 			throw new ParameterException(message);
 		}
 	}
-	
+
 	private static void assertThat(boolean condition, String message, 
 			Object... args) throws ParameterException {
 		assertThat(condition, String.format(message, args));
 	}
-	
+
 	private static boolean inArray(int index, int length) {
 		return index >= 0 && index < length;
 	}
-	
+
 	private static boolean inArray(int index, List<?> list) {
 		return index >= 0 && index < list.size();
 	}
-	
+
 	private static <T> boolean inArray(int index, T[] array) {
 		return inArray(index, array.length);
 	}
-	
+
 	public static IBehaving getBehaving(Event event) throws ParameterException {
 		assertThat(event.behaving != null && 
 				event.behaving instanceof IBehaving,
 				"No behaving object!");
 		return (IBehaving)event.behaving;
 	}
-	
+
 	public static BehaviorInstance getBehavingInstance(Event event) 
-	throws ParameterException {
+			throws ParameterException {
 		List<BehaviorInstance> instances = 
-			getBehaving(event).getBehaviorInstances();
+				getBehaving(event).getBehaviorInstances();
 		assertThat(inArray(event.behaviorIndex, instances),
 				"Behavior out of range!");
 		return instances.get(event.behaviorIndex);		
 	}
-	
+
 	public static BehaviorRuntime getBehavingRuntime(Event event) 
-	throws ParameterException {
+			throws ParameterException {
 		BehaviorRuntime[] runtimes = 
-			getBehaving(event).getBehaviorRuntimes();
+				getBehaving(event).getBehaviorRuntimes();
 		assertThat(inArray(event.behaviorIndex, runtimes),
 				"Behavior out of range!");
 		return runtimes[event.behaviorIndex];		
@@ -479,19 +507,18 @@ public class Interpreter extends ActionIds {
 		} else if (s.scope == DataScope.Local) {
 			BehaviorRuntime runtime = getBehavingRuntime(event);
 			assertThat(inArray(s.id, runtime.switches.length),
-				"Switch index out of bounds: %d", s.id);
+					"Switch index out of bounds: %d", s.id);
 			return runtime.switches[s.id];
 		} else {
 			BehaviorInstance instance = getBehavingInstance(event);
 			assertThat(inArray(s.id, instance.parameters),
 					"Switch index is out of bounds: %d", s.id);
 			Object o = instance.parameters.get(s.id);
-			assertThat(o instanceof Switch, 
-					"Paramter is now a switch");
-			return readSwitch((Switch)o, event);
+			assertThat(o instanceof Parameters, "Invalid parameter");
+			return readBoolean((Parameters)o, event);
 		}
 	}
-	
+
 	public static void setSwitch(Switch s, Event event, boolean value) 
 			throws ParameterException {
 		if (s.scope == DataScope.Global) {
@@ -502,13 +529,13 @@ public class Interpreter extends ActionIds {
 		} else if (s.scope == DataScope.Local) {
 			BehaviorRuntime runtime = getBehavingRuntime(event);
 			assertThat(inArray(s.id, runtime.switches.length),
-				"Switch index out of bounds: %d", s.id);
+					"Switch index out of bounds: %d", s.id);
 			runtime.switches[s.id] = value;
 		} else {
 			throw new ParameterException("Cannot set a parameter!");
 		}
 	}
-	
+
 	public static int readVariable(Variable v, Event event) 
 			throws ParameterException {
 		if (v.scope == DataScope.Global) {
@@ -526,17 +553,17 @@ public class Interpreter extends ActionIds {
 			assertThat(inArray(v.id, instance.parameters.size()),
 					"Variable index out of bounds: %d", v.id);
 			Object o = instance.parameters.get(v.id);
-			assertThat(o instanceof Variable, "Paramter is now a variable");
-			return readVariable((Variable) o, event);
+			assertThat(o instanceof Parameters, "Invalid parameter");
+			return readNumber((Parameters)o, 0, event);
 		}
 	}
-	
-	public static void setVaraible(Variable v, Event event, int value) 
+
+	public static void setVariable(Variable v, Event event, int value) 
 			throws ParameterException {
 		if (v.scope == DataScope.Global) {
 			int i = v.id;
 			assertThat(inArray(i, Globals.getVariables().length),
-				"Variable index out of bounds: %d", i);
+					"Variable index out of bounds: %d", i);
 			Globals.getVariables()[i] = value;
 		}  else if (v.scope == DataScope.Local) {
 			BehaviorRuntime runtime = getBehavingRuntime(event);
@@ -547,21 +574,21 @@ public class Interpreter extends ActionIds {
 			throw new ParameterException("Cannot set a parameter!");
 		}
 	}
-	
-	private boolean readSwitch(Parameters params, int index, Event event) 
-	throws ParameterException {
+
+	private static boolean readSwitch(Parameters params, int index, Event event) 
+			throws ParameterException {
 		return readSwitch(params.getSwitch(index), event);
-		
+
 	}
 
-	private int readVariable(Parameters params, int index, Event event) 
-	throws ParameterException {
+	private static int readVariable(Parameters params, int index, Event event) 
+			throws ParameterException {
 		return readVariable(params.getVariable(index), event);
-		
+
 	}
 
 	private ActorClass readActorClass(Parameters params, int index) 
-	throws ParameterException {
+			throws ParameterException {
 		int i = params.getInt(index);
 		if (i < 0 || i >= game.actors.length) {
 			throw new ParameterException("Actor Class index out of bounds: " + i);
@@ -570,7 +597,7 @@ public class Interpreter extends ActionIds {
 	}
 
 	private ObjectClass readObjectClass(Parameters params, int index) 
-	throws ParameterException {
+			throws ParameterException {
 		int i = params.getInt(index);
 		if (i < 0 || i >= game.objects.length) {
 			throw new ParameterException("Object Class index out of bounds: " + i);
@@ -579,7 +606,7 @@ public class Interpreter extends ActionIds {
 	}
 
 	private ActorBody readActorBody(Parameters params, int index, Event event) 
-	throws ParameterException {
+			throws ParameterException {
 		Parameters ps = params.getParameters(index);
 		int mode = ps.getInt();
 		if (mode == 0) {
@@ -595,8 +622,6 @@ public class Interpreter extends ActionIds {
 			}
 			return (ActorBody)event.tActor;
 		} else {
-			Game.debug(event.behaving);
-			
 			assertThat(event.behaving != null && 
 					event.behaving instanceof ActorBody,
 					"Behaving object is not an Actor");
@@ -605,7 +630,7 @@ public class Interpreter extends ActionIds {
 	}
 
 	private ObjectBody readObjectBody(Parameters params, int index, Event event) 
-	throws ParameterException {
+			throws ParameterException {
 		Parameters ps = params.getParameters(index);
 		int mode = ps.getInt();
 		if (mode == 0) {
@@ -664,7 +689,7 @@ public class Interpreter extends ActionIds {
 	}
 
 	private JoyStick readJoystick(Parameters params, int index) 
-	throws ParameterException {
+			throws ParameterException {
 		JoyStick joy = logic.getJoystick(params.getInt(index));
 		if (joy == null) throw new ParameterException(
 				"No joystick found with id " + params.getInt(index));
@@ -672,16 +697,15 @@ public class Interpreter extends ActionIds {
 	}
 
 	private Button readButton(Parameters params, int index) 
-	throws ParameterException {
+			throws ParameterException {
 		Button button = logic.getButton(params.getInt(index));
 		if (button == null) throw new ParameterException(
 				"No button found with id " + params.getInt(index));
 		return button;
 	}
 
-	private int readNumber(Parameters params, int index, Event event) 
-	throws ParameterException {
-		Parameters ps = params.getParameters(index);
+	private static int readNumber(Parameters ps, Event event) 
+			throws ParameterException {
 		int mode = ps.getInt();
 		if (mode == 0) {
 			return ps.getInt(1);
@@ -690,9 +714,14 @@ public class Interpreter extends ActionIds {
 		}
 	}
 
-	public boolean readBoolean(Parameters params, int index, Event event)
-	throws ParameterException {
+	private static int readNumber(Parameters params, int index, Event event) 
+			throws ParameterException {
 		Parameters ps = params.getParameters(index);
+		return readNumber(ps, event);
+	}
+
+	public static boolean readBoolean(Parameters ps, Event event)
+			throws ParameterException {
 		int mode = ps.getInt();
 		if (mode == 0) {
 			return true;
@@ -701,6 +730,12 @@ public class Interpreter extends ActionIds {
 		} else {
 			return readSwitch(ps, 1, event);
 		}
+	}
+
+	public static boolean readBoolean(Parameters params, int index, Event event)
+			throws ParameterException {
+		Parameters ps = params.getParameters(index);
+		return readBoolean(ps, event);
 	}
 
 	private int round(float x) {
