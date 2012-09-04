@@ -184,18 +184,21 @@ implements IPopulatable{
 			name = TextUtils.getColoredText(name, Color.LTGRAY);
 			if (param != null && param instanceof Parameters) {
 				Element element = null;
-				if (baseParam.type == ParameterType.Switch) {
-					element = new ElementBoolean(null, getContext());
-					//dumb work around for "on"/"off" not being inited
-					((ElementBoolean )element).genView();
-				} else if (baseParam.type == ParameterType.Variable) {
-					element = new ElementNumber(null, getContext());
-				}
-				
-				if (element != null) {
-					DatabaseActivity.populateViews(element.getView(), game);
-					element.setParameters((Parameters) param);
-					name = element.getDescription(game);
+				try {
+					if (baseParam.type == ParameterType.Switch) {
+						element = new ElementBoolean(null, getContext());
+						//dumb work around for "on"/"off" not being inited
+						((ElementBoolean )element).genView();
+					} else if (baseParam.type == ParameterType.Variable) {
+						element = new ElementNumber(null, getContext());
+					}
+					if (element != null) {
+						DatabaseActivity.populateViews(element.getView(), game);
+						element.setParameters((Parameters) param);
+						name = element.getDescription(game);
+					}
+				} catch (Exception e) {
+					params.set(i, null);
 				}
 			}
 			sb.append(name);		
