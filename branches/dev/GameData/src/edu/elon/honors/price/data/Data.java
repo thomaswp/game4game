@@ -54,7 +54,7 @@ public final class Data {
 	
 	private static Bitmap loadBitmap(String name, Context parent) {
 		try {
-			if (Cache.isBitmapRegistered(name)) {
+			if (false && Cache.isBitmapRegistered(name)) {
 				//Game.debug("Cache: " + id);
 				return Cache.getRegisteredBitmap(name);
 			}

@@ -431,8 +431,8 @@ public class GraphicsRenderer implements Renderer {
 		time = System.currentTimeMillis() - time;
 		
 		if (bitmap != fpsBitmap) {
-//			Game.debug("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
-//					+ time + "ms), " + textures.size() + " in cache");
+			Game.debug("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
+					+ time + "ms), " + textures.size() + " in cache");
 		}
 		
 		return textureName;

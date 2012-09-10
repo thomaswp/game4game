@@ -6,6 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -184,6 +185,12 @@ public class PlatformLogic implements Logic {
 		Viewport.DefaultViewport.setZ(3);
 
 		update(1);
+		
+//		for (int i = 0; i < 100; i++) {
+//			Game.debug(i);
+//			Bitmap b = Data.loadBackground("sky.png");
+//			Sprite s = new Sprite(Viewport.DefaultViewport, b);
+//		}
 	}
 
 
