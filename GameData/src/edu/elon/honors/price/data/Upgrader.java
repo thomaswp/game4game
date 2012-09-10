@@ -9,7 +9,8 @@ public class Upgrader {
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
 		int version = game._VERSION_;
-		
+		game.tilesets[0].bitmapName = "StickTiles.png";
+		game.hero.imageName = "hero.png";
 	}
 	
 	private static void upgraded(PlatformGame game) {
