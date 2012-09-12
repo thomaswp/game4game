@@ -5,8 +5,8 @@ General:
 --returnResponse is problematic because it's not serializable. It only works if it's a static class, not anonymous
 -choose whether actors/objects/events should be deletable
 -map selector (oh yeah.. that)
--figure out hi-res
 -server
+-make sure rendering stops on pauses
 
 Behaviors:
 -spiff up editor (to look like the others if possible)
@@ -28,7 +28,7 @@ Map Editor:
 -Update appropriately when actors/objects/etc change
 -redo texture selector
 -gap in bg (why?)
--work with out of bounds
+-fix rect selector for out of bounds?
 
 Hero:
 -decide how to handle non-hero games...
