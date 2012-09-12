@@ -175,12 +175,14 @@ public class Map extends GameData {
 	//	}
 
 	public int getActorType(int row, int column) {
+		if (!inMap(row, column)) return 0;
 		int id = actorLayer.tiles[row][column];
 		if (id == -1) return -1;
 		return id > 0 ? actors.get(id).classIndex : 0;
 	}
 
 	public ActorInstance getActorInstance(int row, int column) {
+		if (!inMap(row, column)) return null;
 		return actors.get(actorLayer.tiles[row][column]);
 	}
 
@@ -202,6 +204,7 @@ public class Map extends GameData {
 	 * 1 is always the hero, and 0 indicates the actor was cleared.
 	 */
 	public int setActor(int row, int column, int type) {
+		if (!inMap(row, column)) return 0;
 		if (type == -1) {
 			if (actorLayer.tiles[row][column] > 0) {
 				//Dispose actor?
@@ -225,6 +228,10 @@ public class Map extends GameData {
 			return actor.id;
 		}
 	}
+	
+	public boolean inMap(int row, int column) {
+		return !(row < 0 || row >= rows || column < 0 || column >= columns);
+	}
 
 	public int getHeroRow() {
 		for (int i = 0; i < rows; i++) {
@@ -246,5 +253,13 @@ public class Map extends GameData {
 			}
 		}
 		return -1;
+	}
+	
+	public int width(PlatformGame game) {
+		return game.tilesets[tilesetId].tileWidth * columns;
+	}
+	
+	public int height(PlatformGame game) {
+		return game.tilesets[tilesetId].tileHeight * rows;
 	}
 }

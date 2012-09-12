@@ -33,6 +33,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 	public static final int SELECTION_BORDER_COLOR = 
 		Color.argb(255, 50, 50, 255);
 	public static final int SELECTION_BORDER_WIDTH = 2;
+	
+	private static final int BUTTON_TEXT_SIZE = 26;
 
 	protected PlatformGame game;
 	protected MapView view;
@@ -161,28 +163,39 @@ public abstract class MapActivityBase extends SaveableActivity {
 			}
 		}
 
-		protected void doOriginBounding(int width, int height) {
-			if (offX > 0) {
-				startDragOffX -= offX;
-				offX = 0;
+		protected void doOriginBounding(int mapWidth, int mapHeight) {
+			if (mapWidth < width) {
+				offX = (width - mapWidth) / 2;
+			} else {
+				float edgeX = 0;
+				if (offX > edgeX) {
+					startDragOffX += edgeX - offX;
+					offX = edgeX;
+				}
+				edgeX = Math.min(edgeX, this.width - mapWidth);
+				if (offX < edgeX) {
+					startDragOffX += edgeX - offX; 
+					offX = edgeX;
+				}
 			}
-			float edgeX = Math.min(0, this.width - width);
-			if (offX < edgeX) {
-				startDragOffX += edgeX - offX; 
-				offX = edgeX;
-			}
-			if (offY > 0) {
-				startDragOffY -= offY;
-				offY = 0;
-			}
-			float edgeY = Math.min(0, this.height - height);
-			if (offY < edgeY) {
-				startDragOffY += edgeY - offY; 
-				offY = edgeY;
+			
+			if (mapHeight < height) {
+				offY = (height - mapHeight) / 2;
+			} else {
+				float edgeY = 0;
+				if (offY > edgeY) {
+					startDragOffY += edgeY - offY;
+					offY = edgeY;
+				}
+				edgeY = Math.min(edgeY, this.height - mapHeight);
+				if (offY < edgeY) {
+					startDragOffY += edgeY - offY; 
+					offY = edgeY;
+				}
 			}
 		}
 
-		protected abstract void doUpdate(int width, int height, float x, float y);
+		protected abstract void doUpdate(int mapWidth, int mapHeight, float x, float y);
 
 		protected void createButtons() { }
 
@@ -193,13 +206,13 @@ public abstract class MapActivityBase extends SaveableActivity {
 				createButtons();
 			}
 
-			int width = game.getMapWidth(game.getSelectedMap());
-			int height = game.getMapHeight(game.getSelectedMap());
+			int mapWidth = game.getMapWidth(game.getSelectedMap());
+			int mapHeight = game.getMapHeight(game.getSelectedMap());
 
 			float x = Input.getLastTouchX();
 			float y = Input.getLastTouchY();
 
-			doUpdate(width, height, x, y);
+			doUpdate(mapWidth, mapHeight, x, y);
 		}
 
 		@Override
@@ -231,15 +244,17 @@ public abstract class MapActivityBase extends SaveableActivity {
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Style.FILL);
 			c.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
-
+			c.drawRect(0, 0, width, (int)offY + mapHeight, paint);
+			
+			//TODO: Make parallax scroll base at the right point
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
-			int pOffY = (int)(paralax * offY);
+			int pOffY = (int)(paralax * offY);//(offY - (height - mapHeight) / 2));
 
 			paint.reset();
 			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
-			int fgHeight = mapHeight - map.groundY;
+			int fgHeight = mapHeight + (int)offY - map.groundY;
 			for (int i = 0; i < mapWidth; i += foreground.getWidth()) {
 				c.drawBitmap(foreground, i + pOffX, fgHeight + pOffY, paint);
 			}
@@ -269,18 +284,31 @@ public abstract class MapActivityBase extends SaveableActivity {
 		}
 
 		protected void drawGrid(Canvas c) {
+		
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
-			paint.setAlpha(200);
-			paint.setShader(new BitmapShader(grid, TileMode.REPEAT, TileMode.REPEAT));
-			//c.drawBitmap(grid, offX % tileset.tileWidth, offY % tileset.tileHeight, paint);
-			float left = offX % tileset.tileWidth;
-			float top = offY % tileset.tileHeight;
-			float right = Math.min(width - left, tileset.width() + offX);
-			float bot = Math.min(height - top, tileset.height() + offY);
-			Game.debug("%f, %f, %f, %f", left, top, right, bot);
-			c.drawRect(left, top, right, bot, paint);
-			paint.setShader(null);
+			
+			
+			float minX = Math.max(0, offX), minY = Math.max(0, offY);
+			float maxX = Math.min(width, map.width(game) + offX);
+			float maxY = Math.min(height, map.height(game) + offY);
+			paint.setColor(Color.argb(123, 123, 123, 123));
+			paint.setStrokeWidth(2);
+			paint.setStyle(Style.STROKE);
+			
+			for (int i = 0; i <= map.columns; i++) {
+				float x = offX + i * tileset.tileWidth;
+				if (x < minX || x > maxX) continue;
+				c.drawLine(x, minY, x, maxY, paint);
+			}
+
+			for (int i = 0; i < map.rows; i++) {
+				float y = offY + i * tileset.tileHeight;
+				if (y < minY || y > maxY) continue;
+				c.drawLine(minX, y, maxX, y, paint);
+			}
+			
+			paint.setStyle(Style.FILL);
 		}
 
 		private void createGrid() {
@@ -298,7 +326,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int width = cols * tileWidth;
 			int height = rows * tileHeight;
 
-			grid = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+			Bitmap grid = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 
 			Canvas c = new Canvas();
 			c.setBitmap(grid);
@@ -314,6 +342,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 					c.drawRect(x + 1, y + 1, x + tileWidth - 1, y + tileHeight - 1, paint);
 				}
 			}
+			
+			this.grid = grid;
 		}
 
 		private void createActors() {
@@ -535,7 +565,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				if (!down && !opaque) {
 					paint.setAlpha((int)(255 * alphaFactor));
 				}
-				paint.setTextSize(20);
+				paint.setTextSize(BUTTON_TEXT_SIZE);
 				paint.setAntiAlias(true);
 				float textSize = paint.measureText(text);
 				float textX = ctx - textSize / 2;

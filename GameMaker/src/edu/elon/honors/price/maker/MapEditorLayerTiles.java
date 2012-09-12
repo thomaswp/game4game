@@ -40,16 +40,18 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 			int tileHeight = tileset.tileHeight;
 
 			paint.setColor(Color.WHITE);
-			Bitmap bmp = parent.tilesetImage;
-			int x = (int)(touchX - bmp.getWidth() / 2);
-			int edgeX = (int)parent.offX % tileWidth;
-			x = (x - edgeX + tileWidth / 2) / tileWidth;
-			x = x * tileWidth + edgeX;
-			int y = (int)(touchY - bmp.getHeight() / 2);
-			int edgeY = (int)parent.offY % tileHeight;
-			y = (y - edgeY + tileHeight / 2) / tileHeight;
-			y = y * tileHeight + edgeY;
-			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
+//			Bitmap bmp = parent.tilesetImage;
+//			int x = (int)(touchX - bmp.getWidth() / 2);
+//			int edgeX = (int)parent.offX % tileWidth;
+//			x = (x - edgeX + tileWidth / 2) / tileWidth;
+//			x = x * tileWidth + edgeX;
+//			int y = (int)(touchY - bmp.getHeight() / 2);
+//			int edgeY = (int)parent.offY % tileHeight;
+//			y = (y - edgeY + tileHeight / 2) / tileHeight;
+//			y = y * tileHeight + edgeY;
+//			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
+			float x = getBitmapCol(touchX) * tileWidth + parent.offX;
+			float y = getBitmapRow(touchY) * tileHeight + parent.offY;
 			c.drawBitmap(parent.tilesetImage, x, y, paint);
 		}
 	}
@@ -118,16 +120,27 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 			placeTiles(x, y);
 		}
 	}
-
-	private void placeTiles(float x, float y) {
+	
+	private int getBitmapRow(float touchY) {
 		Tileset tileset = game.getMapTileset(map);
-		int tileWidth = tileset.tileWidth;
 		int tileHeight = tileset.tileHeight;
 		Bitmap bmp = parent.tilesetImage;
+		return (int)Math.round((touchY - parent.offY - bmp.getHeight() / 2) / tileHeight);
+	}
+
+	private int getBitmapCol(float touchX) {
+		Tileset tileset = game.getMapTileset(map);
+		int tileWidth = tileset.tileWidth;
+		Bitmap bmp = parent.tilesetImage;
+		return (int)Math.round((touchX - parent.offX - bmp.getWidth() / 2) / tileWidth);
+	}
+	
+	private void placeTiles(float x, float y) {
+		Tileset tileset = game.getMapTileset(map);
 		Rect rect = parent.tilesetSelection;
 
-		int row = (int)(y - parent.offY - bmp.getHeight() / 2 + tileHeight / 2) / tileHeight;
-		int col = (int)(x - parent.offX - bmp.getWidth() / 2 + tileWidth / 2) / tileWidth;
+		int row = getBitmapRow(y);
+		int col = getBitmapCol(x);
 
 		MapLayer layer = map.layers[this.layer];
 
@@ -138,7 +151,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 			for (int j = 0; j < rect.width(); j++) {
 				int destRow = row + i;
 				int destCol = col + j;
-				if (destRow < layer.rows && destCol < layer.columns) {
+				if (destRow >= 0 && destRow < layer.rows && destCol >=0 && destCol < layer.columns) {
 					int srcRow = rect.top + i;
 					int srcCol = rect.left + j;
 					int redoId = srcRow * tileset.columns + srcCol;

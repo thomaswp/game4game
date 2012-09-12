@@ -22,6 +22,20 @@ public class MapEditorLayerActors extends MapEditorLayer {
 		paint.setTextSize(12);
 		paint.setAntiAlias(true);
 	}
+	
+	private int getBitmapRow(float touchY) {
+		Tileset tileset = game.getMapTileset(map);
+		int tileHeight = tileset.tileHeight;
+		Bitmap bmp = parent.actorImage;
+		return (int)Math.round((touchY - parent.offY - bmp.getHeight() / 2) / tileHeight);
+	}
+
+	private int getBitmapCol(float touchX) {
+		Tileset tileset = game.getMapTileset(map);
+		int tileWidth = tileset.tileWidth;
+		Bitmap bmp = parent.actorImage;
+		return (int)Math.round((touchX - parent.offX - bmp.getWidth() / 2) / tileWidth);
+	}
 
 	@Override
 	public void drawContent(Canvas c) {
@@ -34,16 +48,20 @@ public class MapEditorLayerActors extends MapEditorLayer {
 			paint.setStyle(Style.FILL);
 			Bitmap bmp = parent.actorImage;
 
-			int x = (int)(touchX - bmp.getWidth() / 2);
-			int edgeX = (int)parent.offX % tileWidth;
-			x = (x - edgeX + tileWidth / 2) / tileWidth;
-			x = x * tileWidth + edgeX + (tileWidth - bmp.getWidth()) / 2;
+//			int x = (int)(touchX - bmp.getWidth() / 2);
+//			int edgeX = (int)parent.offX % tileWidth;
+//			x = (x - edgeX + tileWidth / 2) / tileWidth;
+//			x = x * tileWidth + edgeX + (tileWidth - bmp.getWidth()) / 2;
+//
+//			int y = (int)(touchY - bmp.getHeight() / 2);
+//			int edgeY = (int)parent.offY % tileHeight;
+//			y = (y - edgeY + tileHeight / 2) / tileHeight;
+//			y = y * tileHeight + edgeY  + (tileHeight- bmp.getHeight()) / 2;
 
-			int y = (int)(touchY - bmp.getHeight() / 2);
-			int edgeY = (int)parent.offY % tileHeight;
-			y = (y - edgeY + tileHeight / 2) / tileHeight;
-			y = y * tileHeight + edgeY  + (tileHeight- bmp.getHeight()) / 2;
-
+			float x = getBitmapCol(touchX) * tileWidth + parent.offX + (tileWidth - bmp.getWidth()) / 2;
+			float y = getBitmapRow(touchY) * tileHeight + parent.offY + (tileHeight - bmp.getHeight()) / 2;
+			
+			
 			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
 			c.drawBitmap(bmp, x, y, paint);
 		}
@@ -102,14 +120,9 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	public void onTouchUp(float x, float y) {
 		super.onTouchUp(x, y);
 
-		Tileset tileset = game.getMapTileset(map);
-		int tileWidth = tileset.tileWidth;
-		int tileHeight = tileset.tileHeight;
-		Bitmap bmp = parent.actorImage;
-
 		final int newClass = parent.actorSelection;
-		final int row = (int)(y - parent.offY - bmp.getHeight() / 2 + tileHeight / 2) / tileHeight;
-		final int col = (int)(x - parent.offX - bmp.getWidth() / 2 + tileWidth / 2) / tileWidth;
+		final int row = getBitmapRow(touchY);
+		final int col = getBitmapCol(touchX);
 		final int oldClass = map.getActorType(row, col);
 
 		//int previousId = game.getSelectedMap().actorLayer.tiles[row][col];
