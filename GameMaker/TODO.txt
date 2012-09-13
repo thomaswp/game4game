@@ -34,7 +34,7 @@ Hero:
 -decide how to handle non-hero games...
 
 Map Properties:
--edit map size needs fixing
+-edit map size creates lag
 -finalize how to add/remove bgs
 
 Objects:

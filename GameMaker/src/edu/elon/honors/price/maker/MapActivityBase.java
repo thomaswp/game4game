@@ -221,7 +221,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			if (grid == null) createGrid();
 
 			synchronized (game) {
-				c.drawColor(Color.DKGRAY);
+				c.drawColor(Color.BLACK);
 				drawBackground(c);
 				drawContent(c);
 				drawGrid(c);
@@ -246,17 +246,25 @@ public abstract class MapActivityBase extends SaveableActivity {
 			c.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
 			c.drawRect(0, 0, width, (int)offY + mapHeight, paint);
 			
-			//TODO: Make parallax scroll base at the right point
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
-			int pOffY = (int)(paralax * offY);//(offY - (height - mapHeight) / 2));
+			float mOffY = offY + mapHeight - height;
+			int pOffY = (int)(paralax * mOffY);
+			if (offY > 0) pOffY = (mapHeight - height) / 2;
 
+			Rect screenRect = new Rect(0, 0, width, height);
+			Rect bmpRect = new Rect();
+			
 			paint.reset();
 			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
-			int fgHeight = mapHeight + (int)offY - map.groundY;
+			int fgHeight = height - map.groundY;
 			for (int i = 0; i < mapWidth; i += foreground.getWidth()) {
-				c.drawBitmap(foreground, i + pOffX, fgHeight + pOffY, paint);
+				int x = i + pOffX, y = fgHeight + pOffY;
+				bmpRect.set(x, y, x + foreground.getWidth(), 
+						y + foreground.getHeight());
+				//if (bmpRect.intersect(screenRect))
+					c.drawBitmap(foreground, bmpRect.left, bmpRect.top, paint);
 			}
 			Bitmap background = Data.loadBackground(map.skyImageName);
 			int bgHeight = fgHeight - background.getHeight();
@@ -265,7 +273,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					c.drawBitmap(background, i + pOffX, j + pOffY, paint);
 				}
 			}
-			int mgHeight = bgHeight + 80;
+			int mgHeight = fgHeight - foreground.getHeight();
 			for (int j = 0; j < map.midGrounds.size(); j++) {
 				Bitmap midground = Data.loadMidground(map.midGrounds.get(j));
 				for (int i = 0; i < mapWidth; i += midground.getWidth()) {
