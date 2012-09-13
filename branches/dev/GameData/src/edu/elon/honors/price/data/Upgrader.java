@@ -10,7 +10,9 @@ public class Upgrader {
 	public static void upgrade(PlatformGame game) {
 		int version = game._VERSION_;
 		game.tilesets[0].bitmapName = "StickTiles.png";
-		game.hero.imageName = "hero.png";
+		game.maps.get(0).midGrounds.set(0, "whiteclouds-big.png");
+		game.maps.get(0).midGrounds.set(1, "mountain-big.png");
+		game.maps.get(0).midGrounds.set(2, "trees-big.png");
 	}
 	
 	private static void upgraded(PlatformGame game) {
