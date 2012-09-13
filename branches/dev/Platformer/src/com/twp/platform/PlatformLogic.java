@@ -347,6 +347,9 @@ public class PlatformLogic implements Logic {
 				p.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
 		}
 
+		//TODO: remove this
+		p.clear();
+		
 		offset.add(p);
 
 

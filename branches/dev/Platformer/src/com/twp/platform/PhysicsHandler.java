@@ -176,6 +176,7 @@ public class PhysicsHandler {
 			layers[i] = new Tilemap(Data.loadTileset(tileset.bitmapName), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, Graphics.getRect(), i * 2);
+			
 		}
 
 		for (int k = 0; k < layers.length; k++) {

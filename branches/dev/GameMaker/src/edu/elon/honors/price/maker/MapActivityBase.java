@@ -251,9 +251,6 @@ public abstract class MapActivityBase extends SaveableActivity {
 			float mOffY = offY + mapHeight - height;
 			int pOffY = (int)(paralax * mOffY);
 			if (offY > 0) pOffY = (mapHeight - height) / 2;
-
-			Rect screenRect = new Rect(0, 0, width, height);
-			Rect bmpRect = new Rect();
 			
 			paint.reset();
 			paint.setAlpha(getBackgroundTransparency());
@@ -261,10 +258,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int fgHeight = height - map.groundY;
 			for (int i = 0; i < mapWidth; i += foreground.getWidth()) {
 				int x = i + pOffX, y = fgHeight + pOffY;
-				bmpRect.set(x, y, x + foreground.getWidth(), 
-						y + foreground.getHeight());
-				//if (bmpRect.intersect(screenRect))
-					c.drawBitmap(foreground, bmpRect.left, bmpRect.top, paint);
+				c.drawBitmap(foreground, x, y, paint);
 			}
 			Bitmap background = Data.loadBackground(map.skyImageName);
 			int bgHeight = fgHeight - background.getHeight();
