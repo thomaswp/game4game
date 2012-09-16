@@ -21,6 +21,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.view.ContextMenu;
 
 /**
  * A class for saving and loading persistent data as well as
@@ -35,13 +36,13 @@ public final class Data {
 	public final static String SD_FOLDER = "Game Maker/";
 	public final static String GRAPHICS = "graphics";
 	public final static String ACTIONS_DIR = "actions";
+	public final static String EDITOR_DIR = "editor/";
 	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
 	public final static String BACKGROUNDS_DIR = GRAPHICS + "/backgrounds/";
 	public final static String FOREGROUNDS_DIR = GRAPHICS + "/foregrounds/";
 	public final static String MIDGROUNDS_DIR = GRAPHICS + "/midgrounds/";
-	
 	private static Context defaultParent;
 	
 	public static Context getDefaultParent() {
@@ -194,6 +195,20 @@ public final class Data {
 	
 	public static Bitmap loadMidground(String name) {
 		return loadBitmap(MIDGROUNDS_DIR + name, getDefaultParent());
+	}
+	
+	public static Bitmap loadEditorBmp(String name, Context context) {
+		try {
+			return BitmapFactory.decodeStream(
+					context.getAssets().open(EDITOR_DIR + name));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static Bitmap loadEditorBmp(String name) {
+		return loadEditorBmp(name, getDefaultParent());
 	}
 	
 	/**

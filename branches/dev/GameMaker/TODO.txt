@@ -7,6 +7,7 @@ General:
 -map selector (oh yeah.. that)
 -server
 -make sure rendering stops on pauses
+-support resource loading (update ContentProvider)
 
 Behaviors:
 -spiff up editor (to look like the others if possible)
@@ -27,8 +28,7 @@ Actors:
 Map Editor:
 -Update appropriately when actors/objects/etc change
 -redo texture selector
--gap in bg (why?)
--fix rect selector for out of bounds?
+-actors second edit brush
 
 Hero:
 -decide how to handle non-hero games...

@@ -215,13 +215,26 @@ public abstract class MapActivityBase extends SaveableActivity {
 			doUpdate(mapWidth, mapHeight, x, y);
 		}
 
+		private BitmapShader transShader;
 		@Override
 		public void onDraw(Canvas c) {
 			if (width == 0 || height == 0) return;
 			if (grid == null) createGrid();
 
-			synchronized (game) {
-				c.drawColor(Color.BLACK);
+			
+			if (transShader == null) {
+				Bitmap transBg = Data.loadEditorBmp("trans.png");
+				transShader = new BitmapShader(transBg, 
+						TileMode.REPEAT, TileMode.REPEAT);
+			}
+
+			c.drawColor(Color.WHITE);
+			paint.setShader(transShader);
+			paint.setAlpha(getBackgroundTransparency());
+			c.drawRect(0,  0, width, height, paint);
+			paint.setShader(null);
+			
+			synchronized (game) {	
 				drawBackground(c);
 				drawContent(c);
 				drawGrid(c);
@@ -252,17 +265,19 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int pOffY = (int)(paralax * mOffY);
 			if (offY > 0) pOffY = (mapHeight - height) / 2;
 			
+			int endWidth = Math.max(mapWidth, width);
+			
 			paint.reset();
 			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
 			int fgHeight = height - map.groundY;
-			for (int i = 0; i < mapWidth; i += foreground.getWidth()) {
+			for (int i = -foreground.getWidth(); i < endWidth; i += foreground.getWidth()) {
 				int x = i + pOffX, y = fgHeight + pOffY;
 				c.drawBitmap(foreground, x, y, paint);
 			}
 			Bitmap background = Data.loadBackground(map.skyImageName);
 			int bgHeight = fgHeight - background.getHeight();
-			for (int i = 0; i < mapWidth; i += background.getWidth()) {
+			for (int i = -background.getWidth(); i < endWidth; i += background.getWidth()) {
 				for (int j = bgHeight; j > -mapHeight; j -= background.getHeight()) {
 					c.drawBitmap(background, i + pOffX, j + pOffY, paint);
 				}
@@ -270,7 +285,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int mgHeight = fgHeight - foreground.getHeight();
 			for (int j = 0; j < map.midGrounds.size(); j++) {
 				Bitmap midground = Data.loadMidground(map.midGrounds.get(j));
-				for (int i = 0; i < mapWidth; i += midground.getWidth()) {
+				for (int i = -midground.getWidth(); i < endWidth; i += midground.getWidth()) {
 					c.drawBitmap(midground, i + pOffX, mgHeight + pOffY, paint);
 				}
 			}
