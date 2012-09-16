@@ -98,6 +98,15 @@ public class SelectorMapBase extends MapActivityBase {
 			return !leftButton.showing || mode == MODE_SELECT;
 		}
 		
+		/**
+		 * Called when the player taps the screen.
+		 * Start selection here.
+		 * @return true if selection was successful (and
+		 * therefore if the player taps a button it should
+		 * not be ignored in favor of selection on the map).
+		 * This method should return false in at least some
+		 * cases or buttons will be inoperable.
+		 */
 		protected boolean doSelection() {
 			return false;
 		}

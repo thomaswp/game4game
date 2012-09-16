@@ -71,6 +71,17 @@ public class PageMap extends Page {
 						DatabaseActivity.REQUEST_RETURN_GAME);
 			}
 		});
+		
+		Button buttonEditHorizon = (Button)findViewById(R.id.buttonEditHorizon);
+		buttonEditHorizon.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(parent, DatabaseEditMapHorizon.class);
+				intent.putExtra("game", getGame());
+				parent.startActivityForResult(intent, 
+						DatabaseActivity.REQUEST_RETURN_GAME);
+			}
+		});
 
 		DragNDropGroup group = new DragNDropGroup();
 		ArrayList<String> list1 = new ArrayList<String>() {
