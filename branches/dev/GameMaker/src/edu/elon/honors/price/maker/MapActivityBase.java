@@ -248,7 +248,15 @@ public abstract class MapActivityBase extends SaveableActivity {
 			return 80;
 		}
 
+		private Bitmap bgBmp;
 		protected void drawBackground(Canvas c) {
+			if (bgBmp == null || bgBmp.getWidth() != width ||
+					bgBmp.getHeight() != height) {
+				bgBmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+			}
+			Canvas canvas = new Canvas(bgBmp);
+			canvas.drawColor(Color.WHITE);
+			
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 			int mapWidth = tileset.tileWidth * map.columns;
@@ -268,27 +276,29 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int endWidth = Math.max(mapWidth, width);
 			
 			paint.reset();
-			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
 			int fgHeight = height - map.groundY;
 			for (int i = -foreground.getWidth(); i < endWidth; i += foreground.getWidth()) {
 				int x = i + pOffX, y = fgHeight + pOffY;
-				c.drawBitmap(foreground, x, y, paint);
+				canvas.drawBitmap(foreground, x, y, paint);
 			}
 			Bitmap background = Data.loadBackground(map.skyImageName);
 			int bgHeight = fgHeight - background.getHeight();
 			for (int i = -background.getWidth(); i < endWidth; i += background.getWidth()) {
 				for (int j = bgHeight; j > -mapHeight; j -= background.getHeight()) {
-					c.drawBitmap(background, i + pOffX, j + pOffY, paint);
+					canvas.drawBitmap(background, i + pOffX, j + pOffY, paint);
 				}
 			}
 			int mgHeight = fgHeight - foreground.getHeight();
 			for (int j = 0; j < map.midGrounds.size(); j++) {
 				Bitmap midground = Data.loadMidground(map.midGrounds.get(j));
 				for (int i = -midground.getWidth(); i < endWidth; i += midground.getWidth()) {
-					c.drawBitmap(midground, i + pOffX, mgHeight + pOffY, paint);
+					canvas.drawBitmap(midground, i + pOffX, mgHeight + pOffY, paint);
 				}
 			}
+			
+			paint.setAlpha(getBackgroundTransparency());
+			c.drawBitmap(bgBmp, 0, 0, paint);
 		}
 
 		protected void drawButtons(Canvas c) {
