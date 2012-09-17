@@ -50,11 +50,20 @@ public class BackgroundSprite {
 		viewport.setY(y);
 	}
 	
+	public Rect getRect() {
+		return viewport.getRect();
+	}
+	
 	public BackgroundSprite(Bitmap bitmap, Rect rect, int z) {
 		viewport = createViewport(rect, z);
 		fullRect = viewport.getRect();
 		tile = bitmap;
 		createSprites();
+	}
+	
+	public void setScroll(float x, float y) {
+		Sprite corner = sprites[0][0];
+		scroll(x + corner.getX(), y + corner.getY());
 	}
 	
 	public void scroll(float x, float y) {
@@ -97,16 +106,16 @@ public class BackgroundSprite {
 			for (int j = 0; j < sprites[i].length; j++) {
 				if (sprites[i][j] != null) {
 					Sprite s = sprites[i][j];
-					s.setX(s.getX() + x);
-					s.setY(s.getY() + y);
+					s.setX((int)Math.round(s.getX() + x));
+					s.setY((int)Math.round(s.getY() + y));
 				}
 			}
 		}
 	}
 
 	private void createSprites() {
-		int rows = fullRect.height() / tile.getHeight() + 2;
-		int cols = fullRect.width() / tile.getWidth() + 2;
+		int rows = (fullRect.height() - 1) / tile.getHeight() + 2; //round up + 1
+		int cols = (fullRect.width() - 1) / tile.getWidth() + 2;
 		
 		sprites = new Sprite[rows][cols];
 		

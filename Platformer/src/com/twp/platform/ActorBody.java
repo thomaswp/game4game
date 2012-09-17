@@ -38,7 +38,7 @@ public class ActorBody extends PlatformBody {
 	private boolean onLadder;
 	private World world;
 	
-	private int animationFrames = 4;
+	private int animationFrames = 8, animations = 7;
 	
 	@Override
 	public List<BehaviorInstance> getBehaviorInstances() {
@@ -77,7 +77,7 @@ public class ActorBody extends PlatformBody {
 	}
 
 	public int getFacingDirectionX() {
-		return (sprite.getFrame() / 4) == 1 ? -1 : 1;
+		return (sprite.getFrame() / animationFrames) == 1 ? -1 : 1;
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class ActorBody extends PlatformBody {
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Bitmap[] frames;
 		if (actor.animated) {
-			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / animationFrames, bitmap.getHeight() / 4, 0); 
+			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / animationFrames, bitmap.getHeight() / animations, 0); 
 		} else {
 			frames = new Bitmap[] { bitmap.copy(bitmap.getConfig(), true) };
 		}

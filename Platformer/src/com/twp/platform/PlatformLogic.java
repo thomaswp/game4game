@@ -46,7 +46,7 @@ public class PlatformLogic implements Logic {
 	private LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
 	private LinkedList<Button> buttons = new LinkedList<Button>();
 	private AnimatedSprite hero;
-	private Vector p = new Vector(), joystickPull = new Vector();
+	private Vector cameraOffset = new Vector(), joystickPull = new Vector();
 	private Vector offset;
 
 	private LinkedList<Sprite> drawScreenSprites = new LinkedList<Sprite>();
@@ -124,7 +124,7 @@ public class PlatformLogic implements Logic {
 		map = game.maps.get(game.startMapId);
 
 		Bitmap bmp = Data.loadForeground(map.groundImageName);
-		int bottom = game.tilesets[map.tilesetId].tileHeight * map.rows;
+		int bottom = map.height(game);
 		startForegroundY = bottom - map.groundY;
 		foreground = new BackgroundSprite(bmp, new Rect(0, startForegroundY, 
 				Graphics.getWidth(), startForegroundY + bmp.getHeight()), -6);
@@ -147,11 +147,21 @@ public class PlatformLogic implements Logic {
 				if (mid == null) {
 					mid = bmp.copy(bmp.getConfig(), true);
 				} else {
+					if (bmp.getWidth() > mid.getWidth() || 
+							bmp.getHeight() > mid.getHeight()) {
+						Bitmap temp = Bitmap.createBitmap(
+								Math.max(mid.getWidth(), bmp.getWidth()),
+								Math.max(mid.getHeight(), bmp.getHeight()),
+								mid.getConfig());
+						Canvas c = new Canvas(temp);
+						c.drawBitmap(mid, 0, 0, paint);
+						mid = temp;
+					}
 					Canvas c = new Canvas(mid);
 					c.drawBitmap(bmp, 0, 0, paint);
 				}
 			}
-			startMidgroundY = startForegroundY - mid.getHeight() + 80;
+			startMidgroundY = startForegroundY - 256;
 			midground = new BackgroundSprite(mid, new Rect(0, 
 					startMidgroundY, Graphics.getWidth(), startMidgroundY + 
 					mid.getHeight()), -5);
@@ -327,30 +337,27 @@ public class PlatformLogic implements Logic {
 	}
 
 	private void updateScroll() {
-		p.clear();
+		cameraOffset.clear();
 
 		int mHeight = game.tilesets[map.tilesetId].tileHeight * map.rows;
 		int maxBgY = mHeight - Graphics.getHeight() - 96; 
 
 		RectF heroRect = hero.getRect();
 		if (heroRect.left < BORDER) {
-			p.setX(BORDER - heroRect.left);
+			cameraOffset.setX(BORDER - heroRect.left);
 		}
 		if (heroRect.right > Graphics.getWidth() - BORDER) {
-			p.setX((Graphics.getWidth() - BORDER) - heroRect.right);
+			cameraOffset.setX((Graphics.getWidth() - BORDER) - heroRect.right);
 		}
 		if (heroRect.top < BORDER) {
-			p.setY(BORDER - heroRect.top);
+			cameraOffset.setY(BORDER - heroRect.top);
 		}
 		if (heroRect.bottom > Graphics.getHeight() - BORDER) {
 			if (bgY < maxBgY)
-				p.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
+				cameraOffset.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
 		}
-
-		//TODO: remove this
-		p.clear();
 		
-		offset.add(p);
+		offset.add(cameraOffset);
 
 
 		physics.updateScroll(offset);
@@ -360,26 +367,22 @@ public class PlatformLogic implements Logic {
 			sprite.setY(offset.getY());
 		}
 
-		p.multiply(-1);
-
-		p.multiply(0.7f);
-		p.setX(p.getX() * 0.7f);
-
-		bgX += p.getX(); bgY += p.getY();
-		bgY = Math.min(maxBgY, bgY);
-
-		foreground.scroll(p.getX(), 0);
-		foreground.setY(startForegroundY - bgY);
-
+		float scrollX = -offset.getX() * 0.7f;
+		float offY = offset.getY() * 0.7f;
+		
+		foreground.setY(startForegroundY + offY);
+		foreground.setScroll(scrollX, 0);
+		
 		if (midground != null) {
-			midground.scroll(p.getX(), 0);
-			midground.setY(startMidgroundY - bgY);
+			midground.setY(foreground.getY() - 256);
+			midground.setScroll(scrollX, 0);
 		}
-
-		background.setY(Math.min(0, startBackgroundY - bgY));
-		float scroll = Math.min(0, background.getY() + bgY);
-		background.scroll(p.getX(), scroll - skyScroll);
-		skyScroll = scroll;
+		
+		float bgMinY = foreground.getY() - background.getRect().height();
+		float bgY = Math.min(0, bgMinY);
+		float bgOffY = bgMinY - bgY;
+		background.setY(bgY);
+		background.setScroll(scrollX, -bgOffY);
 	}
 
 	public static class ActorAddable {
