@@ -29,6 +29,7 @@ public class GraphicsRenderer implements Renderer {
 	private int lastBGC;
 	private int framesRendered = 0;
 	private Game game;
+	private int textureCacheSize = 0;
 
 	private Logic logic;
 
@@ -128,6 +129,7 @@ public class GraphicsRenderer implements Renderer {
 	private void flush(GL10 gl) {
 		long time = System.currentTimeMillis();
 		textures.clear();
+		textureCacheSize = 0;
 		for (int i = 0; i < resources.size(); i++) {
 			int x = resources.get(i);
 			rTexture[0] = x;
@@ -405,12 +407,20 @@ public class GraphicsRenderer implements Renderer {
 				Bitmap newBmp = Bitmap.createBitmap(targetWidth, targetHeight, bitmap.getConfig());
 				newBmp.setPixels(pixels, 0, width, 0, 0, width, height);
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, newBmp, 0);
+				
+				if (bitmap != fpsBitmap) {
+					textureCacheSize += newBmp.getWidth() * newBmp.getHeight() * 4;
+				}
 
 			} else {
 				if(!bitmap.getConfig().equals(Config.ARGB_8888)) {
 					Game.debug("Non-ARGB_8888 format!!");
 				}
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, bitmap, GL10.GL_UNSIGNED_BYTE, 0);
+				
+				if (bitmap != fpsBitmap) {
+					textureCacheSize += bitmap.getWidth() * bitmap.getHeight() * 4;
+				}
 			}
 
 			mCropWorkspace[0] = 0;
@@ -432,7 +442,8 @@ public class GraphicsRenderer implements Renderer {
 		
 		if (bitmap != fpsBitmap) {
 			Game.debug("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
-					+ time + "ms), " + textures.size() + " in cache");
+					+ time + "ms), " + textures.size() + " in cache (" +
+					textureCacheSize + "b)");
 		}
 		
 		return textureName;

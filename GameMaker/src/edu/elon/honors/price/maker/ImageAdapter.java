@@ -32,8 +32,6 @@ public class ImageAdapter extends ArrayAdapter<String> {
 		label.setTextSize(20);
 		label.setTextColor(Color.DKGRAY);
 		ImageView icon=(ImageView)row.findViewById(R.id.icon);
-		//Bitmap bmp = Data.loadActor(getItem(position), getContext());
-		//bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
 		icon.setImageBitmap(images.get(position));
 		return row;
 	}

@@ -2,6 +2,8 @@ package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
 
+import com.twp.platform.ActorBody;
+
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 import android.content.Context;
@@ -41,8 +43,7 @@ public class SelectorActorImage extends Spinner {
 		ArrayList<String> imageNames = Data.getResources(Data.ACTORS_DIR, context);
 		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 		for (int i = 0; i < imageNames.size(); i++) {
-			Bitmap bmp = Data.loadActor(imageNames.get(i));
-			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+			Bitmap bmp = Data.loadActorIcon(imageNames.get(i));
 			images.add(bmp);
 		}
 		

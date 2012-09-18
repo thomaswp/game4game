@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -91,7 +92,8 @@ public class DatabaseNewAction extends DatabaseActivity {
 
 		TextView tv = new TextView(this);
 		tv.setTextSize(20);
-		tv.setWidth(150);
+		tv.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+				175, getResources().getDisplayMetrics()));
 		tv.setText(ActionIds.ACTION_NAMES[id]);
 		layout.addView(tv);
 

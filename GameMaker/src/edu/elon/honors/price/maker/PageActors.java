@@ -119,8 +119,7 @@ public class PageActors extends Page{
 		label.setText(actor.name);
 		label.setTextSize(20);
 		ImageView icon=(ImageView)row.findViewById(R.id.icon);
-		Bitmap bmp = Data.loadActor(actor.imageName, context);
-		bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+		Bitmap bmp = Data.loadActorIcon(actor.imageName, context);
 		icon.setImageBitmap(bmp);
 	}
 	

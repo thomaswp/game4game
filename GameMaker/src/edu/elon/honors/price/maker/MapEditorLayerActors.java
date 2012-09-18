@@ -59,7 +59,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 //			y = y * tileHeight + edgeY  + (tileHeight- bmp.getHeight()) / 2;
 
 			float x = getBitmapCol(touchX) * tileWidth + parent.offX + (tileWidth - bmp.getWidth()) / 2;
-			float y = getBitmapRow(touchY) * tileHeight + parent.offY + (tileHeight - bmp.getHeight()) / 2;
+			float y = getBitmapRow(touchY) * tileHeight + parent.offY + (tileHeight - bmp.getHeight());
 			
 			
 			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
@@ -81,7 +81,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 				if (actorClass > -1) {
 					Bitmap bmp = mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
 					float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
-					float sy = (tileset.tileHeight - bmp.getHeight()) / 2f;
+					float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
 					float dx = x + getOffX() + sx;
 					float dy = y + getOffY() + sy;
 
@@ -106,8 +106,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 			return;
 		}
 		ActorClass actor = id == 0 ? game.hero : game.actors[id]; 
-		Bitmap bmp = Data.loadActor(actor.imageName);
-		bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+		Bitmap bmp = Data.loadActorIcon(actor.imageName);
 		parent.actorImage = bmp;
 	}
 
