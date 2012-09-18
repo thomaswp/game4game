@@ -1,5 +1,6 @@
 package com.twp.platform;
 
+import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import android.graphics.Color;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
@@ -39,7 +41,7 @@ public class ActorBody extends PlatformBody {
 	private boolean onLadder;
 	private World world;
 	
-	private boolean isJumping;
+	private int nextAnimUpdate;
 	
 	@Override
 	public List<BehaviorInstance> getBehaviorInstances() {
@@ -78,7 +80,17 @@ public class ActorBody extends PlatformBody {
 	}
 
 	public int getFacingDirectionX() {
-		return (sprite.getFrame() / ANIMATION_FRAMES) == 1 ? -1 : 1;
+		int set = getCurrentAnimSet();
+		if (set == SET_WALK_LEFT ||
+				set == SET_JUMP_LEFT ||
+				set == SET_ATTACK_LEFT) {
+			return -1;
+		} else if (set == SET_WALK_RIGHT ||
+				set == SET_JUMP_RIGHT ||
+				set == SET_ATTACK_RIGHT) {
+			return 1;
+		}
+		return 0;
 	}
 
 	@Override
@@ -194,7 +206,12 @@ public class ActorBody extends PlatformBody {
 //				}
 //			}
 		
-		updateAnimation();
+		nextAnimUpdate -= timeElapsed;
+		if (nextAnimUpdate <= 0) {
+			updateAnimation();
+			nextAnimUpdate += FRAME;
+		}
+		sprite.setColor(isGrounded() ? Color.BLUE : Color.WHITE);
 		
 		if (!isHero && actor.speed > 0)
 			setVelocityX(stopped ? 0 : directionX * actor.speed);
@@ -207,15 +224,15 @@ public class ActorBody extends PlatformBody {
 		Walking,
 		Jumping,
 		Landing,
-		Falling,
 		Attacking,
 		Climbing
 	}
 	
 	private AnimationState animationState = AnimationState.Walking;
 	private final static int SET_STAND_CLIMB = 0, SET_WALK_LEFT = 1, 
-			SET_WALK_RIGHT = 2, SET_JUMP_LEFT = 3, SET_JUMP_RIGHT = 4,
-			SET_ATTACK_LEFT = 5, SET_ATTACK_RIGHT = 6;
+			SET_WALK_RIGHT = 2, SET_ATTACK_LEFT = 3, SET_ATTACK_RIGHT = 4, 
+			SET_JUMP_LEFT = 5, SET_JUMP_RIGHT = 6;
+	private final static int JUMP_FRAME = 3;
 	
 	private void updateAnimation() {
 		int frame = getCurrentAnimFrame();
@@ -223,9 +240,13 @@ public class ActorBody extends PlatformBody {
 		
 		switch(animationState) {
 		case Walking:
+			if (set != SET_WALK_LEFT && set != SET_WALK_RIGHT) {
+				setCurrentAnimSet(getFacingDirectionX() > 0 ? 
+						SET_WALK_RIGHT : SET_WALK_LEFT);
+			}
 			if (directionX != 0) {
 				int nSet = directionX > 0 ? SET_WALK_RIGHT : SET_WALK_LEFT;
-				if (set != nSet) {
+				if (set != nSet || !isGrounded()) {
 					setCurrentAnimSet(nSet);
 				} else {
 					setCurrentAnimFrame((frame + 1) % ANIMATION_FRAMES);
@@ -235,11 +256,50 @@ public class ActorBody extends PlatformBody {
 			}
 			break;
 		case Jumping:
-			
+			if (set != SET_JUMP_LEFT && set != SET_JUMP_RIGHT) {
+				setCurrentAnimSet(getFacingDirectionX() > 0 ? 
+						SET_JUMP_RIGHT : SET_JUMP_LEFT);
+			} else {
+				if (directionX != 0) {
+					int nSet = directionX > 0 ? SET_JUMP_RIGHT : SET_JUMP_LEFT;
+					if (set != nSet) {
+						setCurrentAnimSet(nSet);
+						setCurrentAnimFrame(frame);
+					}	
+				}
+				if (frame < JUMP_FRAME) {
+					setCurrentAnimFrame(frame + 1);
+				}
+			}
+			if (isGrounded()) {
+				animationState = AnimationState.Landing;
+				Game.debug("GROUNDED!");
+			}
 			break;
 		case Landing:
-			break;
-		case Falling:
+			if (directionX != 0) {
+				animationState = AnimationState.Walking;
+				break;
+			}
+			if (set != SET_JUMP_LEFT && set != SET_JUMP_RIGHT) {
+				setCurrentAnimSet(getFacingDirectionX() > 0 ? 
+						SET_JUMP_RIGHT : SET_JUMP_LEFT);
+			}
+			frame = getCurrentAnimFrame();
+//			if (directionX != 0) {
+//				int nSet = directionX > 0 ? SET_JUMP_RIGHT : SET_JUMP_LEFT;
+//				if (set != nSet) {
+//					setCurrentAnimSet(nSet);
+//					setCurrentAnimFrame(frame);
+//				}
+//			}
+			if (frame < JUMP_FRAME) {
+				setCurrentAnimFrame(JUMP_FRAME);
+			} else if (frame < ANIMATION_FRAMES - 1) {
+				setCurrentAnimFrame(frame + 1);
+			} else {
+				animationState = AnimationState.Walking;
+			}
 			break;
 		case Attacking:
 			break;
