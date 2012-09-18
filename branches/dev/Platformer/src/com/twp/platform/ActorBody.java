@@ -25,7 +25,8 @@ import edu.elon.honors.price.physics.Vector;
 
 public class ActorBody extends PlatformBody {
 
-	private static final int FRAME = 150;
+	public final static int ANIMATION_FRAMES = 8, ANIMATION_SETS = 7;
+	private static final int FRAME = 600 / ANIMATION_FRAMES;
 	private static final int BEHAVIOR_REST = 3;
 
 	private AnimatedSprite sprite;
@@ -38,7 +39,7 @@ public class ActorBody extends PlatformBody {
 	private boolean onLadder;
 	private World world;
 	
-	private int animationFrames = 8, animations = 7;
+	private boolean isJumping;
 	
 	@Override
 	public List<BehaviorInstance> getBehaviorInstances() {
@@ -77,7 +78,7 @@ public class ActorBody extends PlatformBody {
 	}
 
 	public int getFacingDirectionX() {
-		return (sprite.getFrame() / animationFrames) == 1 ? -1 : 1;
+		return (sprite.getFrame() / ANIMATION_FRAMES) == 1 ? -1 : 1;
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public class ActorBody extends PlatformBody {
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Bitmap[] frames;
 		if (actor.animated) {
-			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / animationFrames, bitmap.getHeight() / animations, 0); 
+			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / ANIMATION_FRAMES, bitmap.getHeight() / ANIMATION_SETS, 0); 
 		} else {
 			frames = new Bitmap[] { bitmap.copy(bitmap.getConfig(), true) };
 		}
@@ -174,24 +175,26 @@ public class ActorBody extends PlatformBody {
 				setOnLadder(false);
 		}
 		
+
+//			if (actor.animated && stun <= 0) {
+//				if (onLadder) {
+//					sprite.setFrame(3 * ANIMATION_FRAMES);
+//				} else {
+//					int frame = sprite.getFrame();
+//					if (directionX > 0 && (frame / ANIMATION_FRAMES != 2 || !sprite.isAnimated())) {
+//						sprite.Animate(FRAME, 2 * ANIMATION_FRAMES, ANIMATION_FRAMES);
+//					} else if (directionX < 0 && (frame / ANIMATION_FRAMES != 1 || !sprite.isAnimated())) {
+//						sprite.Animate(FRAME, ANIMATION_FRAMES, ANIMATION_FRAMES);
+//					}
+//					if (sprite.isAnimated()) {
+//						if (stopped) {
+//							sprite.setFrame(frame - frame % ANIMATION_FRAMES);
+//						}
+//					}
+//				}
+//			}
 		
-		if (actor.animated && stun <= 0) {
-			if (onLadder) {
-				sprite.setFrame(3 * animationFrames);
-			} else {
-				int frame = sprite.getFrame();
-				if (directionX > 0 && (frame / animationFrames != 2 || !sprite.isAnimated())) {
-					sprite.Animate(FRAME, 2 * animationFrames, animationFrames);
-				} else if (directionX < 0 && (frame / animationFrames != 1 || !sprite.isAnimated())) {
-					sprite.Animate(FRAME, animationFrames, animationFrames);
-				}
-				if (sprite.isAnimated()) {
-					if (stopped) {
-						sprite.setFrame(frame - frame % animationFrames);
-					}
-				}
-			}
-		}
+		updateAnimation();
 		
 		if (!isHero && actor.speed > 0)
 			setVelocityX(stopped ? 0 : directionX * actor.speed);
@@ -200,6 +203,69 @@ public class ActorBody extends PlatformBody {
 		lastVelocity.set(getVelocity());
 	}
 
+	private enum AnimationState {
+		Walking,
+		Jumping,
+		Landing,
+		Falling,
+		Attacking,
+		Climbing
+	}
+	
+	private AnimationState animationState = AnimationState.Walking;
+	private final static int SET_STAND_CLIMB = 0, SET_WALK_LEFT = 1, 
+			SET_WALK_RIGHT = 2, SET_JUMP_LEFT = 3, SET_JUMP_RIGHT = 4,
+			SET_ATTACK_LEFT = 5, SET_ATTACK_RIGHT = 6;
+	
+	private void updateAnimation() {
+		int frame = getCurrentAnimFrame();
+		int set = getCurrentAnimSet();
+		
+		switch(animationState) {
+		case Walking:
+			if (directionX != 0) {
+				int nSet = directionX > 0 ? SET_WALK_RIGHT : SET_WALK_LEFT;
+				if (set != nSet) {
+					setCurrentAnimSet(nSet);
+				} else {
+					setCurrentAnimFrame((frame + 1) % ANIMATION_FRAMES);
+				}
+			} else {
+				setCurrentAnimFrame(0);
+			}
+			break;
+		case Jumping:
+			
+			break;
+		case Landing:
+			break;
+		case Falling:
+			break;
+		case Attacking:
+			break;
+		case Climbing:
+			break;
+		}
+	}
+	
+	private int getCurrentAnimFrame() {
+		return sprite.getFrame() % ANIMATION_FRAMES;
+	}
+	
+	private int getCurrentAnimSet() {
+		return sprite.getFrame() / ANIMATION_FRAMES;
+	}
+	
+	private void setCurrentAnimFrame(int frame) {
+		int nFrame = (sprite.getFrame() / ANIMATION_FRAMES) * 
+				ANIMATION_FRAMES + frame;
+		sprite.setFrame(nFrame);
+	}
+	
+	private void setCurrentAnimSet(int set) {
+		sprite.setFrame(set * ANIMATION_FRAMES);
+	}
+	
 	public void doBehaviorWall() {
 		doBehavior(actor.wallBehavior, null);
 	}
@@ -294,6 +360,7 @@ public class ActorBody extends PlatformBody {
 		///if (!checkGrounded || isGrounded() || isOnLadder()) {
 		setVerticalVelocity(actor.jumpVelocity);	
 		onLadder = false;
+		animationState = AnimationState.Jumping;
 		//}
 	}
 

@@ -58,8 +58,7 @@ public class PlatformLogic implements Logic {
 	private Vector2 antiGravity = new Vector2(0, -PhysicsHandler.GRAVITY),
 	zeroVector = new Vector2();
 
-	private float bgX, bgY, skyScroll;
-	private int startBackgroundY, startForegroundY, startMidgroundY;
+	private int startForegroundY;
 
 	private boolean paused;
 
@@ -131,7 +130,7 @@ public class PlatformLogic implements Logic {
 
 		bmp = Data.loadBackground(map.skyImageName);
 		//Game.debug("%dx%d", Graphics.getWidth(), Graphics.getHeight());
-		startBackgroundY = startForegroundY - Graphics.getHeight();
+		int startBackgroundY = startForegroundY - Graphics.getHeight();
 		background = new BackgroundSprite(bmp, new Rect(0, startBackgroundY, 
 				Graphics.getWidth(), startForegroundY), -7);
 		background.scroll(0, Graphics.getHeight() - bmp.getHeight());		
@@ -161,7 +160,7 @@ public class PlatformLogic implements Logic {
 					c.drawBitmap(bmp, 0, 0, paint);
 				}
 			}
-			startMidgroundY = startForegroundY - 256;
+			int startMidgroundY = startForegroundY - 256;
 			midground = new BackgroundSprite(mid, new Rect(0, 
 					startMidgroundY, Graphics.getWidth(), startMidgroundY + 
 					mid.getHeight()), -5);
@@ -339,9 +338,6 @@ public class PlatformLogic implements Logic {
 	private void updateScroll() {
 		cameraOffset.clear();
 
-		int mHeight = game.tilesets[map.tilesetId].tileHeight * map.rows;
-		int maxBgY = mHeight - Graphics.getHeight() - 96; 
-
 		RectF heroRect = hero.getRect();
 		if (heroRect.left < BORDER) {
 			cameraOffset.setX(BORDER - heroRect.left);
@@ -353,8 +349,12 @@ public class PlatformLogic implements Logic {
 			cameraOffset.setY(BORDER - heroRect.top);
 		}
 		if (heroRect.bottom > Graphics.getHeight() - BORDER) {
-			if (bgY < maxBgY)
-				cameraOffset.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
+			cameraOffset.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
+		}
+		if (foreground.getRect().bottom + cameraOffset.getY() < 
+				Graphics.getHeight()) {
+			cameraOffset.setY(Graphics.getHeight() - 
+					foreground.getRect().bottom);
 		}
 		
 		offset.add(cameraOffset);

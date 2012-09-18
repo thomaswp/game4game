@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import com.twp.platform.ActorBody;
+
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.PlatformGame;
@@ -49,8 +51,7 @@ public class MapEditorActorSelector extends Activity {
 			bitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.no);
 			for (int i = 0; i < game.actors.length; i++) {
 				ActorClass actor = i == 0 ? game.hero : game.actors[i];
-				Bitmap source = Data.loadActor(actor.imageName);
-				bitmaps[i+1] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
+				bitmaps[i+1] = Data.loadActorIcon(actor.imageName);
 				bitmaps[i+1] = Bitmap.createScaledBitmap(bitmaps[i+1], bitmaps[i+1].getWidth() * 2, bitmaps[i+1].getHeight() * 2, false);
 			}
 			return bitmaps;

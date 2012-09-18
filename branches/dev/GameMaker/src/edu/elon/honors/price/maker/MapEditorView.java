@@ -547,9 +547,7 @@ public class MapEditorView extends MapView {
 			oldActor = i == 0 ? this.game.hero : this.game.actors[i];
 			oldName = oldActor == null ? null : oldActor.imageName;
 			if (oldActor == null || !oldName.equals(newName)) {
-				actors[i] = Data.loadActor(newGame.actors[i].imageName);
-				actors[i] = Bitmap.createBitmap(actors[i], 0, 0, 
-						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
+				actors[i] = Data.loadActorIcon(newGame.actors[i].imageName);
 				darkActors[i] = darken(actors[i]);
 			}
 		}

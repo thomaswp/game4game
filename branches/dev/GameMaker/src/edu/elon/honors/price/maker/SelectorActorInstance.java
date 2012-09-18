@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import com.twp.platform.ActorBody;
+
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
@@ -37,8 +39,7 @@ public class SelectorActorInstance extends Button implements IPopulatable {
 				int classIndex = game.getSelectedMap().actors.get(id).classIndex; 
 				actor = game.actors[classIndex];
 			}
-			Bitmap bmp = Data.loadActor(actor.imageName);
-			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+			Bitmap bmp = Data.loadActorIcon(actor.imageName);
 			
 			drawable = new BitmapDrawable(bmp);
 			text = String.format("%03d: ", id) + actor.name;

@@ -2,6 +2,8 @@ package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
 
+import com.twp.platform.ActorBody;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -375,13 +377,9 @@ public abstract class MapActivityBase extends SaveableActivity {
 
 		private void createActors() {
 			actors = new Bitmap[game.actors.length];
-			actors[0] = Data.loadActor(game.hero.imageName);
+			actors[0] = Data.loadActorIcon(game.hero.imageName);
 			for (int i = 1; i < actors.length; i++) {
-				actors[i] = Data.loadActor(game.actors[i].imageName);
-			}
-			for (int i = 0; i < actors.length; i++) {
-				actors[i] = Bitmap.createBitmap(actors[i], 0, 0, 
-						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
+				actors[i] = Data.loadActorIcon(game.actors[i].imageName);
 			}
 		}
 

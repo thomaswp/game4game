@@ -162,6 +162,24 @@ public final class Data {
 	public static Bitmap loadActor(String name, Context context) {
 		return loadBitmap(ACTORS_DIR + name, context);
 	}
+	
+	public static Bitmap loadActorIcon(String name) {
+		return loadActorIcon(name, getDefaultParent());				
+	}
+	
+	public static Bitmap loadActorIcon(String name, Context context) {
+		Bitmap bmp = loadActor(name, context);
+		String key = ACTORS_DIR + name + "``icon";
+		if (Cache.isBitmapRegistered(key)) {
+			return Cache.getRegisteredBitmap(key);
+		} else {
+			Bitmap icon = Bitmap.createBitmap(bmp, 0, 0, 
+					bmp.getWidth() / 8, 
+					bmp.getHeight() / 7);
+			Cache.RegisterBitmap(key, icon);
+			return icon;
+		}
+	}
 
 	/**
 	 * Loads a tileset from the TILESETS_DIR directory. Uses the current running
