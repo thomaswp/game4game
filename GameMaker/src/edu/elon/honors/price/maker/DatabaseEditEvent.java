@@ -25,6 +25,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -619,37 +620,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			LinearLayout.LayoutParams params = new LayoutParams(
 					android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.weight = 1;
-			TextView tv = createTextView();
+			View tv = createTextViewButton();
 			tv.setLayoutParams(params);
 			addView(tv);
-
-			Button buttonOptions = new Button(context);
-			buttonOptions.setText("!");
-			buttonOptions.setWidth(50);
-			buttonOptions.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					new AlertDialog.Builder(context).setItems(
-							new String[] { "Edit", "Insert", "Delete",
-									"Cut", "Copy", "Paste"},
-									new AlertDialog.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									switch (which) {
-									case 0: edit();	break;
-									case 1: insert(); break;
-									case 2: delete(); break;
-									case 3: cut(); break;
-									case 4: copy(); break;
-									case 5: paste(); break;
-									}
-								}
-							}
-					).show();
-				}
-			});
-
-			addView(buttonOptions);
 
 		}
 
@@ -746,16 +719,57 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 		}
 
-		private TextView createTextView() {
+//		private TextView createTextView() {
+//			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+//			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+//					10, getResources().getDisplayMetrics());
+//			TextView tv = new TextView(getContext());
+//			//tv.setWidth(200);
+//			tv.setSingleLine(false);
+//			tv.setTextSize(16);
+//			tv.setLayoutParams(lp);
+//			tv.requestLayout();
+//
+//			tv.setText(Html.fromHtml(getAction().description));
+//			return tv;
+//		}
+		
+		private Button createTextViewButton() {
 			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
-			TextView tv = new TextView(getContext());
-			//tv.setWidth(200);
+			Button tv = new Button(getContext());
 			tv.setSingleLine(false);
 			tv.setTextSize(16);
 			tv.setLayoutParams(lp);
+			tv.setTextColor(Color.LTGRAY);
 			tv.requestLayout();
+			tv.setGravity(Gravity.LEFT);
+			
+			tv.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(getContext()).setItems(
+							new String[] { "Edit", "Insert", "Delete",
+									"Cut", "Copy", "Paste"},
+									new AlertDialog.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									switch (which) {
+									case 0: edit();	break;
+									case 1: insert(); break;
+									case 2: delete(); break;
+									case 3: cut(); break;
+									case 4: copy(); break;
+									case 5: paste(); break;
+									}
+								}
+							}
+					).show();
+				}
+			});
+			
+			tv.setBackgroundResource(R.drawable.border_action);
 
 			tv.setText(Html.fromHtml(getAction().description));
 			return tv;
@@ -838,9 +852,12 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			TextView tv = createTextView();
 			addView(tv);
 
+			int dip100 = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+					100, getResources().getDisplayMetrics());
+			
 			Button buttonEdit = new Button(context);
 			buttonEdit.setText("Edit");
-			buttonEdit.setWidth(100);
+			buttonEdit.setWidth(dip100);
 			buttonEdit.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -857,7 +874,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 			Button buttonDelete = new Button(context);
 			buttonDelete.setText("Delete");
-			buttonDelete.setWidth(100);
+			buttonDelete.setWidth(dip100);
 			buttonDelete.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -894,7 +911,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
 			TextView tv = new TextView(getContext());
-			tv.setWidth(200);
+			tv.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+					200, getResources().getDisplayMetrics()));
 			tv.setSingleLine(false);
 			tv.setTextSize(16);
 			tv.setLayoutParams(lp);

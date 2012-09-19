@@ -211,7 +211,6 @@ public class ActorBody extends PlatformBody {
 			updateAnimation();
 			nextAnimUpdate += FRAME;
 		}
-		sprite.setColor(isGrounded() ? Color.BLUE : Color.WHITE);
 		
 		if (!isHero && actor.speed > 0)
 			setVelocityX(stopped ? 0 : directionX * actor.speed);
@@ -259,6 +258,7 @@ public class ActorBody extends PlatformBody {
 			if (set != SET_JUMP_LEFT && set != SET_JUMP_RIGHT) {
 				setCurrentAnimSet(getFacingDirectionX() > 0 ? 
 						SET_JUMP_RIGHT : SET_JUMP_LEFT);
+				frame = 0;
 			} else {
 				if (directionX != 0) {
 					int nSet = directionX > 0 ? SET_JUMP_RIGHT : SET_JUMP_LEFT;
@@ -271,9 +271,9 @@ public class ActorBody extends PlatformBody {
 					setCurrentAnimFrame(frame + 1);
 				}
 			}
-			if (isGrounded()) {
+			if (frame > 0 && isGrounded()) {
 				animationState = AnimationState.Landing;
-				Game.debug("GROUNDED!");
+				break;
 			}
 			break;
 		case Landing:

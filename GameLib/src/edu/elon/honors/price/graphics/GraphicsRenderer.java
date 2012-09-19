@@ -240,11 +240,6 @@ public class GraphicsRenderer implements Renderer {
 								gl.glPushMatrix();
 								gl.glLoadIdentity();
 
-//								gl.glTranslatef(viewport.getX(), Graphics.getHeight() - viewport.getY(), 0);
-//								gl.glRotatef(-viewport.getRotation(), 0, 0, 1);
-//								gl.glScalef(viewport.getZoomX(), viewport.getZoomY(), 0);
-//								gl.glTranslatef(-viewport.getOriginX(), -viewport.getOriginY(), 0);
-
 								if (clipSet) {
 									float stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
 									float stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
@@ -252,7 +247,6 @@ public class GraphicsRenderer implements Renderer {
 									gl.glScalef(stretchX, stretchY, 0);
 								}
 								
-								//gl.glTranslatef(sprite.getX(), Graphics.getHeight() + (bY - targetHeight) * sprite.getZoomY() + 
 								float tx = (int)sprite.getX(); 
 								float ty = (int)(Graphics.getHeight() + (bY - targetHeight) * 1 +	sprite.getOriginY() * 2	- sprite.getY());
 								if (tx != 0 || ty != 0)
