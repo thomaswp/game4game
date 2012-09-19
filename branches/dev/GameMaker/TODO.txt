@@ -19,6 +19,7 @@ Events:
 -rework placement of map event editor to go along with behaviors theme
 -rename actions when var names change
 -reset instead of resize global variables
+-copy/paste
 -add bunches more!
 
 Actors:
