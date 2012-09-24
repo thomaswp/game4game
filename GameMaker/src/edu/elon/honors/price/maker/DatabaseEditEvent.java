@@ -28,7 +28,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.Html;
@@ -62,13 +65,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	};
 
 	public static final String COLOR_VARIABLE = 
-		TextUtils.COLOR_VARIABLE;
+			TextUtils.COLOR_VARIABLE;
 	public static final String COLOR_MODE = 
-		TextUtils.COLOR_MODE;
+			TextUtils.COLOR_MODE;
 	public static final String COLOR_VALUE = 
-		TextUtils.COLOR_VALUE;
+			TextUtils.COLOR_VALUE;
 	public static final String COLOR_ACTION = 
-		TextUtils.COLOR_ACTION;
+			TextUtils.COLOR_ACTION;
+	
+	private final static int BUTTON_BORDER_FADE = 1200;
 
 	private EditText editTextName;
 	private LinearLayout linearLayoutTriggers, linearLayoutActions;
@@ -77,6 +82,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	private RelativeLayout selectionLayout;
 	private ScrollView scrollView;
 	private LinkedList<ActionView> actionViews = new LinkedList<ActionView>();
+	private LinkedList<TriggerView> triggerViews = new LinkedList<TriggerView>();
 
 	private boolean selecting;
 	//private LinkedList<Action> copy = new LinkedList<Event.Action>();
@@ -85,16 +91,16 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 	private Event event;
 	private Behavior behavior;
-	
+
 	private Event getEvent() {
 		//return game.getSelectedMap().events[id];
 		return event;
 	}
-	
+
 	private Event readEvent(Bundle savedInstanceState) {
 		Bundle extras = savedInstanceState == null ?
 				getIntent().getExtras(): savedInstanceState;
-		return (Event)extras.getSerializable("event");
+				return (Event)extras.getSerializable("event");
 	}
 
 	@Override
@@ -104,14 +110,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		event = readEvent(savedInstanceState);
 		if (getIntent().getExtras().containsKey("behavior")) {
 			behavior = (Behavior)getIntent().getExtras()
-			.getSerializable("behavior");
+					.getSerializable("behavior");
 		}
-		
+
 		if (savedInstanceState != null) {
 			returnResponse = (ReturnResponse)savedInstanceState
-			.getSerializable("returnResponse");
+					.getSerializable("returnResponse");
 		}
-		
+
 		setContentView(R.layout.database_edit_event);
 
 		setDefaultButtonActions();
@@ -139,7 +145,6 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				}
 
 				if (selecting) {
-					Game.debug(event.getAction());
 					updateSelection(event);
 					return true;
 				}
@@ -171,19 +176,28 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		});
 
 		populateViews();
+		
+		if (savedInstanceState == null) {
+			for (ClickableView cv : actionViews) {
+				cv.flashbutton();
+			}
+			for (ClickableView cv : triggerViews) {
+				cv.flashbutton();
+			}
+		}
 	}
-	
+
 	@Override
 	protected void putExtras(Intent intent) {
 		intent.putExtra("event", getEvent());
 	}
-	
+
 	@Override
 	protected boolean hasChanged() {
 		Event event = readEvent(null);
-		
+
 		return !PlatformGame.areEqual(event, this.event) ||
-			super.hasChanged();
+				super.hasChanged();
 	}
 
 	@Override
@@ -192,7 +206,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		outState.putSerializable("returnResponse", returnResponse);
 		outState.putSerializable("event", event);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add("Select");
@@ -242,7 +256,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		selectionRect.bottom = rY;
 
 		RelativeLayout.LayoutParams lps = 
-			(RelativeLayout.LayoutParams)selection.getLayoutParams();
+				(RelativeLayout.LayoutParams)selection.getLayoutParams();
 		lps.leftMargin = Math.min(selectionRect.left, selectionRect.right);
 		lps.topMargin = Math.min(selectionRect.top, selectionRect.bottom);
 		lps.width = Math.max(1, Math.abs(selectionRect.width()));
@@ -287,6 +301,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		return recurse;
 	}
 
+	//TODO: Select indents, test invert test for fade buttons
 	private int[] loc = new int[2];
 	private void updateViewSelection() {
 		int indent = -1;
@@ -328,7 +343,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			view.endSelection();
 		}
 		if (count == 0) return;
-		
+
 		new AlertDialog.Builder(this)
 		.setTitle("Action?")
 		.setItems(new String[] {
@@ -384,10 +399,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	}
 
 	private void deleteSelection() {
+		LinkedList<Action> toDelete = new LinkedList<Event.Action>();
 		for (ActionView view : actionViews) {
 			if (view.getHighlight()) {
-				getEvent().actions.remove(view.getAction());
+				toDelete.add(view.getAction());
 			}
+		}
+		for (Action action : toDelete) {
+			getEvent().actions.remove(action);
 		}
 		populateViews();
 	}
@@ -395,7 +414,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
+
 		if (resultCode == RESULT_OK && returnResponse != null) {
 			returnResponse.run(this, data);
 			returnResponse = null;
@@ -412,14 +431,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		returnResponse = new NewActionReturnResponse();
 		startActivityForResult(intent, REQUEST_RETURN_GAME);
 	}
-	
+
 	private static class NewActionReturnResponse extends ReturnResponse {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		void run(DatabaseEditEvent me, Intent data) {
 			Action action = (Action)data.getExtras().
-			getSerializable("action");
+					getSerializable("action");
 			me.getEvent().actions.add(action);
 			me.populateViews();
 		}
@@ -466,14 +485,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		})
 		.show();
 	}
-	
+
 	private static class NewTriggerReturnResponse extends ReturnResponse {
 		private static final long serialVersionUID = 1L;
 
 		@Override
 		void run(DatabaseEditEvent me, Intent data) {
 			Trigger trigger = (Trigger)data.getExtras().
-			getSerializable("trigger");
+					getSerializable("trigger");
 			me.getEvent().triggers.add(trigger);
 			me.populateViews();
 		}
@@ -485,8 +504,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		editTextName.setText(event.name);
 
 		linearLayoutTriggers.removeAllViews();
+		triggerViews.clear();
 		for (int i = 0; i < event.triggers.size(); i++) {
 			TriggerView tv = new TriggerView(this, i);
+			triggerViews.add(tv);
 			linearLayoutTriggers.addView(tv);
 		}
 
@@ -520,9 +541,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				LinearLayout layout = new LinearLayout(this);
 				layout.setOrientation(LinearLayout.VERTICAL);
 				LinearLayout.LayoutParams lp = 
-					new LinearLayout.LayoutParams(
-							android.view.ViewGroup.LayoutParams.FILL_PARENT, 
-							android.view.ViewGroup.LayoutParams.FILL_PARENT);
+						new LinearLayout.LayoutParams(
+								android.view.ViewGroup.LayoutParams.FILL_PARENT, 
+								android.view.ViewGroup.LayoutParams.FILL_PARENT);
 				lp.setMargins(20, 0, 0, 0);
 				layout.setLayoutParams(lp);
 				hosts.push(layout);
@@ -569,19 +590,19 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				new EventContext(getEvent(), behavior));
 		startActivityForResult(intent, REQUEST_RETURN_GAME);
 	}
-	
+
 	private static class NewIndentReturnResponse extends ReturnResponse {
 		private int indent, index;
 		public NewIndentReturnResponse(int index, int indent) {
 			this.index = index;
 			this.indent = indent;
 		}
-		
+
 		private static final long serialVersionUID = 1L;
 		@Override
 		void run(DatabaseEditEvent me, Intent data) {
 			Action a = (Action)data.getExtras()
-			.getSerializable("action");
+					.getSerializable("action");
 			a.indent = indent;
 			me.getEvent().actions.add(index, a);
 			me.populateViews();
@@ -594,11 +615,38 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		abstract void run(DatabaseEditEvent me, Intent data);
 	}
 
-	private class ActionView extends LinearLayout {
+	private abstract class ClickableView extends LinearLayout {
+		
+		protected Button button;
+		
+		public ClickableView(Context context) {
+			super(context);
+		}
+		
+		public void flashbutton() {
+			//if (this.getGlobalVisibleRect(null)) {
+				int[] padding = new int[] {
+						button.getPaddingLeft(),
+						button.getPaddingTop(),
+						button.getPaddingRight(),
+						button.getPaddingTop()
+				};
+				TransitionDrawable td = new TransitionDrawable(new Drawable[] {
+						getResources().getDrawable(R.drawable.border_white_no_pad),
+						getResources().getDrawable(R.drawable.border_action)
+				});
+				td.setCrossFadeEnabled(true);
+				button.setBackgroundDrawable(td);
+				td.startTransition(BUTTON_BORDER_FADE);
+				button.setPadding(padding[0], padding[1], padding[2], padding[3]);
+			//}
+		}
+	}
+	
+	private class ActionView extends ClickableView {
 		private int index;
 		private Drawable lastBackground;
 		private boolean highlight;
-		private Button button;
 
 		public Action getAction() {
 			return getEvent().actions.get(index);
@@ -608,7 +656,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			button.setEnabled(false);
 			button.setClickable(false);
 		}
-		
+
 		public void endSelection() {
 			button.setEnabled(true);
 			button.setClickable(true);
@@ -742,21 +790,21 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 		}
 
-//		private TextView createTextView() {
-//			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-//			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
-//					10, getResources().getDisplayMetrics());
-//			TextView tv = new TextView(getContext());
-//			//tv.setWidth(200);
-//			tv.setSingleLine(false);
-//			tv.setTextSize(16);
-//			tv.setLayoutParams(lp);
-//			tv.requestLayout();
-//
-//			tv.setText(Html.fromHtml(getAction().description));
-//			return tv;
-//		}
-		
+		//		private TextView createTextView() {
+		//			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+		//			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+		//					10, getResources().getDisplayMetrics());
+		//			TextView tv = new TextView(getContext());
+		//			//tv.setWidth(200);
+		//			tv.setSingleLine(false);
+		//			tv.setTextSize(16);
+		//			tv.setLayoutParams(lp);
+		//			tv.requestLayout();
+		//
+		//			tv.setText(Html.fromHtml(getAction().description));
+		//			return tv;
+		//		}
+
 		private Button createTextViewButton() {
 			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
@@ -768,7 +816,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			button.setTextColor(Color.LTGRAY);
 			button.requestLayout();
 			button.setGravity(Gravity.LEFT);
-			
+
 			button.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -788,65 +836,78 @@ public class DatabaseEditEvent extends DatabaseActivity {
 									}
 								}
 							}
-					).show();
+							).show();
 				}
 			});
-			
-			button.setBackgroundResource(R.drawable.border_action);
+
+			int[] padding = new int[] {
+					button.getPaddingLeft(),
+					button.getPaddingTop(),
+					button.getPaddingRight(),
+					button.getPaddingTop()
+			};
+			TransitionDrawable td = new TransitionDrawable(new Drawable[] {
+					getResources().getDrawable(R.drawable.border_white_no_pad),
+					getResources().getDrawable(R.drawable.border_action)
+			});
+			td.setCrossFadeEnabled(true);
+			button.setBackgroundDrawable(td);
+			td.startTransition(BUTTON_BORDER_FADE);
+			button.setPadding(padding[0], padding[1], padding[2], padding[3]);
 
 			button.setText(Html.fromHtml(getAction().description));
 			return button;
 		}
 	}
-	
+
 	private static class EditActionReturnResponse extends ReturnResponse {
 		private static final long serialVersionUID = 1L;
 
 		private int index;
-		
+
 		public EditActionReturnResponse(int index) {
 			this.index = index;
 		}
-		
+
 		@Override
 		void run(DatabaseEditEvent me, Intent data) {
 			Action action = (Action)data.getExtras()
-			.getSerializable("action");
+					.getSerializable("action");
 			action.indent = me.getEvent().actions.get(index).indent;
 			me.getEvent().actions.remove(index);
 			me.getEvent().actions.add(index, action);
 			me.populateViews();
 		}
 	}
-	
+
 	private static class InsertActionReturnResponse extends ReturnResponse {
 		private static final long serialVersionUID = 1L;
 
 		private int index;
-		
+
 		public InsertActionReturnResponse(int index) {
 			this.index = index;
 		}
-		
+
 		@Override
 		void run(DatabaseEditEvent me, Intent data) {
 			Action action = (Action)data.getExtras().
-			getSerializable("action");
+					getSerializable("action");
 			action.indent = me.getEvent().actions.get(index).indent;
 			me.getEvent().actions.add(index, action);
 			me.populateViews();
 		}
 	}
-	
+
 	private static class EditTriggerReturnResponse extends ReturnResponse {
 		private static final long serialVersionUID = 1L;
 
 		private int index;
-		
+
 		public EditTriggerReturnResponse(int index) {
 			this.index = index;
 		}
-		
+
 		@Override
 		void run(DatabaseEditEvent me, Intent data) {
 			Trigger trigger = (Trigger)data.getExtras().getSerializable("trigger");
@@ -857,7 +918,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		}
 	}
 
-	private class TriggerView extends LinearLayout {
+	private class TriggerView extends ClickableView {
 
 		private int index;
 
@@ -872,35 +933,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 			setGravity(Gravity.CENTER_VERTICAL);
 
-			View tv = createTriggerView();
-			addView(tv);
-
-//			int dip100 = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
-//					100, getResources().getDisplayMetrics());
-//			
-//			Button buttonEdit = new Button(context);
-//			buttonEdit.setText("Edit");
-//			buttonEdit.setWidth(dip100);
-//			buttonEdit.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					
-//				}
-//			});
-//			addView(buttonEdit);
-//
-//			Button buttonDelete = new Button(context);
-//			buttonDelete.setText("Delete");
-//			buttonDelete.setWidth(dip100);
-//			buttonDelete.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					
-//				}
-//			});
-//			addView(buttonDelete);
+			button = createTriggerView();
+			addView(button);
 		}
-		
+
 		private void edit() {
 			returnResponse = new EditTriggerReturnResponse(index);
 			Intent intent = new Intent(getContext(), getEditorClass());
@@ -915,7 +951,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			getEvent().triggers.remove(index);
 			populateViews();
 		}
-		
+
 		private Class<?> getEditorClass() {
 			Trigger trigger = getTrigger();
 
@@ -942,8 +978,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
 			Button button = new Button(getContext());
-//			tv.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
-//					200, getResources().getDisplayMetrics()));
+			//			tv.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+			//					200, getResources().getDisplayMetrics()));
 			button.setSingleLine(false);
 			button.setTextSize(16);
 			button.setLayoutParams(lp);
@@ -957,7 +993,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				public void onClick(View v) {
 					new AlertDialog.Builder(getContext()).setItems(
 							new String[] { "Edit", "Delete" },
-									new AlertDialog.OnClickListener() {
+							new AlertDialog.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
 									switch (which) {
@@ -966,10 +1002,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 									}
 								}
 							}
-					).show();
+							).show();
 				}
 			});
-
+			
 
 			String text = null;
 			if (trigger instanceof SwitchTrigger) {
@@ -985,6 +1021,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 
 			button.setText(Html.fromHtml(text));
+			
 			return button;
 		}
 
@@ -993,7 +1030,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 			String switchString = trigger.triggerSwitch.getName(
 					game, behavior);
-			
+
 			TextUtils.addColoredText(sb, switchString, COLOR_VARIABLE);
 			sb.append(" turns ");
 			TextUtils.addColoredText(sb, trigger.value ? "On" : "Off", COLOR_VALUE);
@@ -1006,7 +1043,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 			String variableString = trigger.variable.getName(
 					game, behavior);
-			
+
 			TextUtils.addColoredText(sb, variableString, COLOR_VARIABLE);
 			sb.append(" is ");
 			TextUtils.addColoredText(sb, VariableTrigger.OPERATORS[trigger.test], COLOR_MODE);
