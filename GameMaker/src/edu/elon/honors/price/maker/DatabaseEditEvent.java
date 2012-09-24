@@ -139,6 +139,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				}
 
 				if (selecting) {
+					Game.debug(event.getAction());
 					updateSelection(event);
 					return true;
 				}
@@ -209,6 +210,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 	private void startSelection() {
 		selecting = true;
+		for (ActionView view : actionViews) {
+			view.startSelection();
+		}
 	}
 
 
@@ -230,8 +234,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		int rY = (int)y + scrollView.getScrollY();
 
 		if (action == MotionEvent.ACTION_DOWN) {
-			selection.setVisibility(LinearLayout.VISIBLE);
 			selectionRect.set(rX, rY, rX, rY);
+			selection.setVisibility(LinearLayout.VISIBLE);
 		}
 
 		selectionRect.right = rX;
@@ -296,7 +300,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			boolean topIn = viewTop > locTop && viewTop < locBot;
 			boolean bottomIn = viewBot > locTop && viewTop < locBot;
 
-			Game.debug("%d, %d", viewTop, locTop);
+			//Game.debug("%d, %d", viewTop, locTop);
 
 			if (topIn || bottomIn) {
 				if (indent == -1) {
@@ -316,7 +320,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	private void endSelection() {
 		selecting = false;
 		selection.setVisibility(LinearLayout.GONE);
+		selection.layout(0, 0, 0, 0);
 
+		int count = 0;
+		for (ActionView view : actionViews) {
+			if (view.highlight) count++;
+			view.endSelection();
+		}
+		if (count == 0) return;
+		
 		new AlertDialog.Builder(this)
 		.setTitle("Action?")
 		.setItems(new String[] {
@@ -586,9 +598,20 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		private int index;
 		private Drawable lastBackground;
 		private boolean highlight;
+		private Button button;
 
 		public Action getAction() {
 			return getEvent().actions.get(index);
+		}
+
+		public void startSelection() {
+			button.setEnabled(false);
+			button.setClickable(false);
+		}
+		
+		public void endSelection() {
+			button.setEnabled(true);
+			button.setClickable(true);
 		}
 
 		public boolean getHighlight() {
@@ -620,9 +643,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			LinearLayout.LayoutParams params = new LayoutParams(
 					android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.weight = 1;
-			View tv = createTextViewButton();
-			tv.setLayoutParams(params);
-			addView(tv);
+			button = createTextViewButton();
+			button.setLayoutParams(params);
+			addView(button);
 
 		}
 
@@ -738,15 +761,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
-			Button tv = new Button(getContext());
-			tv.setSingleLine(false);
-			tv.setTextSize(16);
-			tv.setLayoutParams(lp);
-			tv.setTextColor(Color.LTGRAY);
-			tv.requestLayout();
-			tv.setGravity(Gravity.LEFT);
+			Button button = new Button(getContext());
+			button.setSingleLine(false);
+			button.setTextSize(16);
+			button.setLayoutParams(lp);
+			button.setTextColor(Color.LTGRAY);
+			button.requestLayout();
+			button.setGravity(Gravity.LEFT);
 			
-			tv.setOnClickListener(new OnClickListener() {
+			button.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					new AlertDialog.Builder(getContext()).setItems(
@@ -769,10 +792,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				}
 			});
 			
-			tv.setBackgroundResource(R.drawable.border_action);
+			button.setBackgroundResource(R.drawable.border_action);
 
-			tv.setText(Html.fromHtml(getAction().description));
-			return tv;
+			button.setText(Html.fromHtml(getAction().description));
+			return button;
 		}
 	}
 	
@@ -849,42 +872,50 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 			setGravity(Gravity.CENTER_VERTICAL);
 
-			TextView tv = createTextView();
+			View tv = createTriggerView();
 			addView(tv);
 
-			int dip100 = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
-					100, getResources().getDisplayMetrics());
-			
-			Button buttonEdit = new Button(context);
-			buttonEdit.setText("Edit");
-			buttonEdit.setWidth(dip100);
-			buttonEdit.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					returnResponse = new EditTriggerReturnResponse(index);
-					Intent intent = new Intent(getContext(), getEditorClass());
-					intent.putExtra("game", game);
-					intent.putExtra("trigger", getTrigger());
-					intent.putExtra("eventContext", 
-							new EventContext(getEvent(), behavior));
-					startActivityForResult(intent, REQUEST_RETURN_GAME);
-				}
-			});
-			addView(buttonEdit);
-
-			Button buttonDelete = new Button(context);
-			buttonDelete.setText("Delete");
-			buttonDelete.setWidth(dip100);
-			buttonDelete.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					getEvent().triggers.remove(index);
-					populateViews();
-				}
-			});
-			addView(buttonDelete);
+//			int dip100 = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+//					100, getResources().getDisplayMetrics());
+//			
+//			Button buttonEdit = new Button(context);
+//			buttonEdit.setText("Edit");
+//			buttonEdit.setWidth(dip100);
+//			buttonEdit.setOnClickListener(new OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					
+//				}
+//			});
+//			addView(buttonEdit);
+//
+//			Button buttonDelete = new Button(context);
+//			buttonDelete.setText("Delete");
+//			buttonDelete.setWidth(dip100);
+//			buttonDelete.setOnClickListener(new OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					
+//				}
+//			});
+//			addView(buttonDelete);
+		}
+		
+		private void edit() {
+			returnResponse = new EditTriggerReturnResponse(index);
+			Intent intent = new Intent(getContext(), getEditorClass());
+			intent.putExtra("game", game);
+			intent.putExtra("trigger", getTrigger());
+			intent.putExtra("eventContext", 
+					new EventContext(getEvent(), behavior));
+			startActivityForResult(intent, REQUEST_RETURN_GAME);
 		}
 
+		private void delete() {
+			getEvent().triggers.remove(index);
+			populateViews();
+		}
+		
 		private Class<?> getEditorClass() {
 			Trigger trigger = getTrigger();
 
@@ -903,21 +934,41 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			return null;
 		}
 
-		private TextView createTextView() {
+		private Button createTriggerView() {
 			Trigger trigger = getTrigger();
 
 
 			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
 					10, getResources().getDisplayMetrics());
-			TextView tv = new TextView(getContext());
-			tv.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
-					200, getResources().getDisplayMetrics()));
-			tv.setSingleLine(false);
-			tv.setTextSize(16);
-			tv.setLayoutParams(lp);
-			tv.requestLayout();
+			Button button = new Button(getContext());
+//			tv.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+//					200, getResources().getDisplayMetrics()));
+			button.setSingleLine(false);
+			button.setTextSize(16);
+			button.setLayoutParams(lp);
+			button.setBackgroundResource(R.drawable.border_action);
+			button.setTextColor(Color.LTGRAY);
+			button.setGravity(Gravity.LEFT);
+			button.requestLayout();
 
+			button.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					new AlertDialog.Builder(getContext()).setItems(
+							new String[] { "Edit", "Delete" },
+									new AlertDialog.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									switch (which) {
+									case 0: edit();	break;
+									case 1: delete(); break;
+									}
+								}
+							}
+					).show();
+				}
+			});
 
 
 			String text = null;
@@ -933,8 +984,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				text = getTriggerText((UITrigger)trigger);
 			}
 
-			tv.setText(Html.fromHtml(text));
-			return tv;
+			button.setText(Html.fromHtml(text));
+			return button;
 		}
 
 		private String getTriggerText(SwitchTrigger trigger) {
