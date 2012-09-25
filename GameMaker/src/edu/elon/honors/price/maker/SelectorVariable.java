@@ -66,7 +66,16 @@ public class SelectorVariable extends Button implements IPopulatable {
 		this.variable = variable;
 		Behavior behavior = eventContext == null ?
 				null : eventContext.getBehavior();
+		validateVariable();
 		setText(variable.getName(game, behavior));
+	}
+	
+	private void validateVariable() {
+		Behavior behavior = eventContext == null ?
+				null : eventContext.getBehavior();
+		if (variable.scope != DataScope.Global) {
+			if (behavior == null) variable = new Variable();
+		}
 	}
 	
 	public SelectorVariable(Context context) {
