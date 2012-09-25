@@ -36,7 +36,9 @@ import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -179,13 +181,24 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 		populateViews();
 
+		final Handler handler = new Handler();
 		if (savedInstanceState == null) {
-			for (ClickableView cv : actionViews) {
-				cv.flashbutton();
-			}
-			for (ClickableView cv : triggerViews) {
-				cv.flashbutton();
-			}
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							for (ClickableView cv : actionViews) {
+								cv.flashbutton();
+							}
+							for (ClickableView cv : triggerViews) {
+								cv.flashbutton();
+							}
+						}
+					});
+				}
+			});
 		}
 	}
 
@@ -636,8 +649,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		}
 
 		public void flashbutton() {
-			//TODO: Add a real visible condition
-			//if (this.getGlobalVisibleRect(new Rect())) {
+			getLocationOnScreen(loc);
+			if (loc[1] >= 0 && loc[1] < scrollView.getHeight()) {
 			int[] padding = new int[] {
 					button.getPaddingLeft(),
 					button.getPaddingTop(),
@@ -652,7 +665,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			button.setBackgroundDrawable(td);
 			td.startTransition(BUTTON_BORDER_FADE);
 			button.setPadding(padding[0], padding[1], padding[2], padding[3]);
-			//}
+			}
 		}
 	}
 
