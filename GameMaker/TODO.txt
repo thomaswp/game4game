@@ -8,6 +8,7 @@ General:
 -server
 -make sure rendering stops on pauses
 -support resource loading (update ContentProvider)
+-versioning - that'd be cool!
 
 Behaviors:
 -spiff up editor (to look like the others if possible)

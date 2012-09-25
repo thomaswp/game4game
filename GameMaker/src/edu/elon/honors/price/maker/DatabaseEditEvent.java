@@ -2,6 +2,8 @@ package edu.elon.honors.price.maker;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -72,7 +74,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			TextUtils.COLOR_VALUE;
 	public static final String COLOR_ACTION = 
 			TextUtils.COLOR_ACTION;
-	
+
 	private final static int BUTTON_BORDER_FADE = 1200;
 
 	private EditText editTextName;
@@ -176,7 +178,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		});
 
 		populateViews();
-		
+
 		if (savedInstanceState == null) {
 			for (ClickableView cv : actionViews) {
 				cv.flashbutton();
@@ -301,7 +303,6 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		return recurse;
 	}
 
-	//TODO: Select indents, test invert test for fade buttons
 	private int[] loc = new int[2];
 	private void updateViewSelection() {
 		int indent = -1;
@@ -395,7 +396,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				}
 			}
 		}
-		Game.debug(actions);
+		game.copyData = actions;
+		//Game.debug(actions);
 	}
 
 	private void deleteSelection() {
@@ -616,41 +618,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	}
 
 	private abstract class ClickableView extends LinearLayout {
-		
-		protected Button button;
-		
-		public ClickableView(Context context) {
-			super(context);
-		}
-		
-		public void flashbutton() {
-			//if (this.getGlobalVisibleRect(null)) {
-				int[] padding = new int[] {
-						button.getPaddingLeft(),
-						button.getPaddingTop(),
-						button.getPaddingRight(),
-						button.getPaddingTop()
-				};
-				TransitionDrawable td = new TransitionDrawable(new Drawable[] {
-						getResources().getDrawable(R.drawable.border_white_no_pad),
-						getResources().getDrawable(R.drawable.border_action)
-				});
-				td.setCrossFadeEnabled(true);
-				button.setBackgroundDrawable(td);
-				td.startTransition(BUTTON_BORDER_FADE);
-				button.setPadding(padding[0], padding[1], padding[2], padding[3]);
-			//}
-		}
-	}
-	
-	private class ActionView extends ClickableView {
-		private int index;
-		private Drawable lastBackground;
-		private boolean highlight;
 
-		public Action getAction() {
-			return getEvent().actions.get(index);
-		}
+		protected Button button;
 
 		public void startSelection() {
 			button.setEnabled(false);
@@ -660,6 +629,40 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		public void endSelection() {
 			button.setEnabled(true);
 			button.setClickable(true);
+		}
+
+		public ClickableView(Context context) {
+			super(context);
+		}
+
+		public void flashbutton() {
+			//TODO: Add a real visible condition
+			//if (this.getGlobalVisibleRect(new Rect())) {
+			int[] padding = new int[] {
+					button.getPaddingLeft(),
+					button.getPaddingTop(),
+					button.getPaddingRight(),
+					button.getPaddingTop()
+			};
+			TransitionDrawable td = new TransitionDrawable(new Drawable[] {
+					getResources().getDrawable(R.drawable.border_white_no_pad),
+					getResources().getDrawable(R.drawable.border_action)
+			});
+			td.setCrossFadeEnabled(true);
+			button.setBackgroundDrawable(td);
+			td.startTransition(BUTTON_BORDER_FADE);
+			button.setPadding(padding[0], padding[1], padding[2], padding[3]);
+			//}
+		}
+	}
+
+	private class ActionView extends ClickableView {
+		private int index;
+		private Drawable lastBackground;
+		private boolean highlight;
+
+		public Action getAction() {
+			return getEvent().actions.get(index);
 		}
 
 		public boolean getHighlight() {
@@ -717,18 +720,30 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			game.copyData = actions;
 		}
 
-		private void paste() {
+		private void paste(boolean below, boolean insert) {
 			if (game.copyData != null && 
 					game.copyData instanceof List<?>) {
 				List<?> list = ((List<?>)game.copyData);
-				int indent = getAction().indent;
+				int indent = getAction().indent +
+						(insert ? 1 : 0);
+				int offset = index;
+				if (below) {
+					offset++;
+					if (!insert) {
+						while (offset < getEvent().actions.size() &&
+								getEvent().actions.get(offset).indent > indent) {	
+							offset++;
+						}
+					}
+					
+				}
 				for (int i = 0; i < list.size(); i++) {
 					if (!(list.get(i) instanceof Action)) {
 						return;
 					}
 					Action action = ((Action)list.get(i)).copy();
 					action.indent += indent;
-					getEvent().actions.add(i + 1, action);
+					getEvent().actions.add(i + offset, action);
 				}
 				populateViews();
 			}
@@ -820,19 +835,34 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			button.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					String[] baseItems = new String[] {
+							"Edit", "Insert", "Delete",
+							"Copy", "Cut" 
+					};
+					LinkedList<String> items = new LinkedList<String>( 
+							Arrays.asList(baseItems));
+					if (game.copyData != null && game.copyData instanceof List<?>) {
+						items.add("Paste (Below)");
+						items.add("Paste (Above)");
+						if (getAction().canHaveChildren()) {
+							items.add("Paste (Nested)");
+						}
+					}
+					String[] itemsArray = new String[items.size()]; 
 					new AlertDialog.Builder(getContext()).setItems(
-							new String[] { "Edit", "Insert", "Delete",
-									"Cut", "Copy", "Paste"},
-									new AlertDialog.OnClickListener() {
+							items.toArray(itemsArray),
+							new AlertDialog.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
 									switch (which) {
 									case 0: edit();	break;
 									case 1: insert(); break;
 									case 2: delete(); break;
-									case 3: cut(); break;
-									case 4: copy(); break;
-									case 5: paste(); break;
+									case 3: copy(); break;
+									case 4: cut(); break;
+									case 5: paste(true, false); break;
+									case 6: paste(false, false); break;
+									case 7: paste(true, true); break;
 									}
 								}
 							}
@@ -840,20 +870,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				}
 			});
 
-			int[] padding = new int[] {
-					button.getPaddingLeft(),
-					button.getPaddingTop(),
-					button.getPaddingRight(),
-					button.getPaddingTop()
-			};
-			TransitionDrawable td = new TransitionDrawable(new Drawable[] {
-					getResources().getDrawable(R.drawable.border_white_no_pad),
-					getResources().getDrawable(R.drawable.border_action)
-			});
-			td.setCrossFadeEnabled(true);
-			button.setBackgroundDrawable(td);
-			td.startTransition(BUTTON_BORDER_FADE);
-			button.setPadding(padding[0], padding[1], padding[2], padding[3]);
+			button.setBackgroundResource(R.drawable.border_action);
 
 			button.setText(Html.fromHtml(getAction().description));
 			return button;
@@ -1005,7 +1022,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 							).show();
 				}
 			});
-			
+
+			button.setBackgroundResource(R.drawable.border_action);
 
 			String text = null;
 			if (trigger instanceof SwitchTrigger) {
@@ -1021,7 +1039,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 
 			button.setText(Html.fromHtml(text));
-			
+
 			return button;
 		}
 
