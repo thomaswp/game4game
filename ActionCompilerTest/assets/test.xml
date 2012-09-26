@@ -1,3 +1,32 @@
-<a>
-    <b></b> 
-</a>
+<action id="0" name="Set Switch">
+
+	<text text="For" />
+
+	<radio var="numSwitches">
+		<choice text="one switch" mute="true">
+			<switch scope="Global|Local" />
+		</choice>
+		<choice text="all switches from">
+			<group>
+				<switch scope="Global" var="from" />
+				<text text="to" />
+				<switch scope="Global" var="to" />
+			</group>
+		</choice>
+	</radio>
+
+	<radio var="setOrToggle">
+		<choice text="set it to">
+			<radio var="setTo">
+				<choice text="On" color="value" />
+				<choice text="Off" color="value" />
+				<choice text="a Switch's value" mute="true" >
+					<switch />
+				</choice>
+				<choice text="a random value" />
+			</radio>
+		</choice>
+		<choice text="toggle it" />
+	</radio>
+
+</action>

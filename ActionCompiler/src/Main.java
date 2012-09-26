@@ -10,27 +10,30 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import compiler.ActionHandler;
-
-
-
+import edu.elon.honors.price.action.ActionHandler;
 
 public class Main {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, FileNotFoundException, IOException {
+		System.out.printf("Starting build: %s, %s", args[0], args[1]);
+		
 		File output = new File(args[1]);
 		File[] files = output.listFiles();
-		for (File file : files) {
-			file.delete();
+		if (files != null) {
+			for (File file : files) {
+				file.delete();
+			}
 		}
 		
 		files = new File(args[0]).listFiles();
 		XMLReader parser = XMLReaderFactory.createXMLReader();
 		
-		for (File file : files) {
-			ActionHandler handler = new ActionHandler();
-			parser.setContentHandler(handler);
-			parser.parse(new InputSource(new FileInputStream(file)));
-			handler.writeFile(output);
+		if (files != null) {
+			for (File file : files) {
+				ActionHandler handler = new ActionHandler();
+				parser.setContentHandler(handler);
+				parser.parse(new InputSource(new FileInputStream(file)));
+				handler.writeFile(output);
+			}
 		}
 	}
 }
