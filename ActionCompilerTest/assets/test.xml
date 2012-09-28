@@ -2,7 +2,7 @@
 
 	<text text="For" />
 
-	<radio var="numSwitches">
+	<radio var="set">
 		<choice text="one switch" mute="true">
 			<switch scope="Global|Local" />
 		</choice>
@@ -15,7 +15,7 @@
 		</choice>
 	</radio>
 
-	<radio var="setOrToggle">
+	<radio>
 		<choice text="set it to">
 			<radio var="setTo">
 				<choice text="On" color="value" />
