@@ -11,26 +11,21 @@ public class ActionSetSwitch extends Action {
 	public ActionSetSwitch(Parameters params) {
 		super(params);
 	}
-		
-	public enum NumSwitchesChoice {
-		OneSwitch,
-		AllSwitchesFrom
-	}
-
-	public NumSwitchesChoice numSwitches;
 	
-	public static class ChoiceOneSwitch extends ActionFragment {
-		public ChoiceOneSwitch(Parameters params) {
+	public static class OneSwitchData extends ActionFragment {
+		public OneSwitchData(Parameters params) {
 			super(params);
 		}
 		
 		public Switch switch1;
 	}
 
-	public ChoiceOneSwitch numSwitches_OneSwitch;
+	public boolean setOneSwitch;
+	public OneSwitchData setOneSwitchData;
+
 	
-	public static class ChoiceAllSwitchesFrom extends ActionFragment {
-		public ChoiceAllSwitchesFrom(Parameters params) {
+	public static class AllSwitchesFromData extends ActionFragment {
+		public AllSwitchesFromData(Parameters params) {
 			super(params);
 		}
 		
@@ -38,38 +33,35 @@ public class ActionSetSwitch extends Action {
 		public Switch to;
 	}
 	
-	public ChoiceAllSwitchesFrom numSwitches_AllSwitchesFrom;
+	public boolean setAllSwitchesFrom;
+	public AllSwitchesFromData setAllSwitchesFromData;
+
 	
-	public enum SetOrToggleChoice {
-		SetItTo,
-		ToggleIt
-	}
+	public boolean setItTo;
+	public SetItToData setItToData;
 	
-	public SetOrToggleChoice setOrToggle;
-	
-	public static class ChoiceSet extends ActionFragment {
-		public ChoiceSet(Parameters params) {
+	public static class SetItToData extends ActionFragment {
+		public SetItToData(Parameters params) {
 			super(params);
 		}
 		
-		public enum SetToChoice {
-			On,
-			Off,
-			ASwitchsValue,
-			ARandomValue
-		}
+		public boolean setToOn;
+		public boolean setToOff;
+		public boolean setToASwitchsValue;
+		public SetToASwitchsValueData setToASwitchsValueData;
 		
-		public SetToChoice setTo;
-		
-		public static class ChoiceASwitchsValue extends ActionFragment {
-			public ChoiceASwitchsValue(Parameters params) {
+		public static class SetToASwitchsValueData extends ActionFragment {
+			public SetToASwitchsValueData(Parameters params) {
 				super(params);
 			}
 			
 			public Switch switch1;
 		}
+		
+		
+		public boolean setToARandomValue;
 	}
 	
-	public ChoiceSet setOrToggle_Set;
+	public boolean toggleIt;
 
 }

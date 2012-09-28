@@ -191,6 +191,7 @@ public class Interpreter extends ActionIds {
 				}
 
 				if (action.id == ID_POINT_OPERATION) {
+					//TODO: is this right?
 					int x = readVariable(params, 0, event);
 					int y = readVariable(params, 1, event);
 

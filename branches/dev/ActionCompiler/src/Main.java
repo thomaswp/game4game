@@ -11,6 +11,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import edu.elon.honors.price.action.ActionHandler;
+import edu.elon.honors.price.data.types.Switch;
 
 public class Main {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, FileNotFoundException, IOException {
@@ -34,6 +35,17 @@ public class Main {
 				parser.parse(new InputSource(new FileInputStream(file)));
 				handler.writeFile(output);
 			}
+		}
+		
+		ActionSetSwitch action = null;
+		if (action.setOneSwitch) {
+			Switch s = action.setOneSwitchData.switch1;
+		} else if (action.setAllSwitchesFrom) {
+			Switch from = action.setAllSwitchesFromData.from;
+			Switch to = action.setAllSwitchesFromData.to;
+		}
+		if (action.setItTo) {
+			Switch s = action.setItToData.setToASwitchsValueData.switch1;
 		}
 	}
 }
