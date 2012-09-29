@@ -8,16 +8,13 @@ public class ActionSetSwitch extends Action {
 	public static final String name = "Set Switch";
 	public static final int id = 1;
 	
-	public ActionSetSwitch(Parameters params) {
-		super(params);
-	}
-	
 	public static class OneSwitchData extends ActionFragment {
-		public OneSwitchData(Parameters params) {
-			super(params);
-		}
-		
 		public Switch switch1;
+		
+		@Override
+		protected void readParams() {
+			switch1 = params.getSwitch(0);
+		}
 	}
 
 	public boolean setOneSwitch;
@@ -25,25 +22,25 @@ public class ActionSetSwitch extends Action {
 
 	
 	public static class AllSwitchesFromData extends ActionFragment {
-		public AllSwitchesFromData(Parameters params) {
-			super(params);
-		}
 		
 		public Switch from;
 		public Switch to;
+		
+		@Override
+		protected void readParams() {
+			from = params.getSwitch(0);
+			to = params.getSwitch(1);
+		}
 	}
 	
 	public boolean setAllSwitchesFrom;
 	public AllSwitchesFromData setAllSwitchesFromData;
 
 	
-	public boolean setItTo;
-	public SetItToData setItToData;
+	public boolean actionSetItTo;
+	public SetItToData actionSetItToData;
 	
 	public static class SetItToData extends ActionFragment {
-		public SetItToData(Parameters params) {
-			super(params);
-		}
 		
 		public boolean setToOn;
 		public boolean setToOff;
@@ -51,17 +48,51 @@ public class ActionSetSwitch extends Action {
 		public SetToASwitchsValueData setToASwitchsValueData;
 		
 		public static class SetToASwitchsValueData extends ActionFragment {
-			public SetToASwitchsValueData(Parameters params) {
-				super(params);
-			}
 			
 			public Switch switch1;
+			
+			@Override
+			protected void readParams() {
+				switch1 = params.getSwitch(0);
+			}
 		}
 		
-		
 		public boolean setToARandomValue;
+		
+		@Override
+		protected void readParams() {
+			int setTo = params.getInt(0);
+			setToOn = setTo == 0;
+			setToOff = setTo == 1;
+			setToASwitchsValue = setTo == 2;
+			setToASwitchsValueData.setParameters(params.getParameters(1));
+			setToARandomValue = setTo == 3;
+		}
+		
+		public SetItToData() {
+			setToASwitchsValueData = new SetToASwitchsValueData();
+		}
 	}
 	
-	public boolean toggleIt;
-
+	public boolean actionToggleIt;
+	
+	@Override
+	protected void readParams() {
+		int set = params.getInt(0);
+		setOneSwitch = set == 0;
+		setOneSwitchData.setParameters(params.getParameters(1));
+		setAllSwitchesFrom = set == 1;
+		setAllSwitchesFromData.setParameters(params.getParameters(1));
+		
+		int action = params.getInt(2);
+		actionSetItTo = action == 0;
+		actionSetItToData.setParameters(params.getParameters(3));
+		actionToggleIt = action == 1;
+	}
+	
+	public ActionSetSwitch() {
+		setOneSwitchData = new OneSwitchData();
+		setAllSwitchesFromData = new AllSwitchesFromData();
+		actionSetItToData = new SetItToData();
+	}
 }
