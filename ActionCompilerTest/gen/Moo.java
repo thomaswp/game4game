@@ -1,1 +1,0 @@
-public class Moo { public final static int ABC = 0; }
