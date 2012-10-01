@@ -1,10 +1,11 @@
-import edu.elon.honors.price.action.Action;
-import edu.elon.honors.price.action.ActionFragment;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.types.Switch;
+import edu.elon.honors.price.maker.action.Action;
+import edu.elon.honors.price.maker.action.ActionFragment;
 
 
-public class ActionSetSwitch extends Action {
+public class ActionSetSwitchSample extends Action {
 	public static final String name = "Set Switch";
 	public static final int id = 1;
 	
@@ -12,8 +13,8 @@ public class ActionSetSwitch extends Action {
 		public Switch switch1;
 		
 		@Override
-		protected void readParams() {
-			switch1 = params.getSwitch(0);
+		protected void readParams(Iterator iterator) {
+			switch1 = iterator.getSwitch();
 		}
 	}
 
@@ -27,9 +28,9 @@ public class ActionSetSwitch extends Action {
 		public Switch to;
 		
 		@Override
-		protected void readParams() {
-			from = params.getSwitch(0);
-			to = params.getSwitch(1);
+		protected void readParams(Iterator iterator) {
+			from = iterator.getSwitch();
+			to = iterator.getSwitch();
 		}
 	}
 	
@@ -52,20 +53,20 @@ public class ActionSetSwitch extends Action {
 			public Switch switch1;
 			
 			@Override
-			protected void readParams() {
-				switch1 = params.getSwitch(0);
+			protected void readParams(Iterator iterator) {
+				switch1 = iterator.getSwitch();
 			}
 		}
 		
 		public boolean setToARandomValue;
 		
 		@Override
-		protected void readParams() {
-			int setTo = params.getInt(0);
+		protected void readParams(Iterator iterator) {
+			int setTo = iterator.getInt();
 			setToOn = setTo == 0;
 			setToOff = setTo == 1;
 			setToASwitchsValue = setTo == 2;
-			setToASwitchsValueData.setParameters(params.getParameters(1));
+			setToASwitchsValueData.setParameters(iterator.getParameters());
 			setToARandomValue = setTo == 3;
 		}
 		
@@ -77,20 +78,20 @@ public class ActionSetSwitch extends Action {
 	public boolean actionToggleIt;
 	
 	@Override
-	protected void readParams() {
-		int set = params.getInt(0);
+	protected void readParams(Iterator iterator) {
+		int set = iterator.getInt();
 		setOneSwitch = set == 0;
-		setOneSwitchData.setParameters(params.getParameters(1));
+		setOneSwitchData.setParameters(iterator.getParameters());
 		setAllSwitchesFrom = set == 1;
-		setAllSwitchesFromData.setParameters(params.getParameters(1));
+		setAllSwitchesFromData.setParameters(iterator.getParameters());
 		
-		int action = params.getInt(2);
+		int action = iterator.getInt();
 		actionSetItTo = action == 0;
-		actionSetItToData.setParameters(params.getParameters(3));
+		actionSetItToData.setParameters(iterator.getParameters());
 		actionToggleIt = action == 1;
 	}
 	
-	public ActionSetSwitch() {
+	public ActionSetSwitchSample() {
 		setOneSwitchData = new OneSwitchData();
 		setAllSwitchesFromData = new AllSwitchesFromData();
 		actionSetItToData = new SetItToData();

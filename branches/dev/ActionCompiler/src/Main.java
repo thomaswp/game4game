@@ -10,8 +10,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import edu.elon.honors.price.action.ActionHandler;
 import edu.elon.honors.price.data.types.Switch;
+import edu.elon.honors.price.maker.action.ActionHandler;
 
 public class Main {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, FileNotFoundException, IOException {
@@ -22,7 +22,7 @@ public class Main {
 			};
 		}
 		
-		System.out.printf("Starting build: %s, %s", args[0], args[1]);
+		System.out.printf("Starting build: %s, %s\n", args[0], args[1]);
 		
 		File output = new File(args[1]);
 		File[] files = output.listFiles();
@@ -37,6 +37,7 @@ public class Main {
 		
 		if (files != null) {
 			for (File file : files) {
+				System.out.println("Parsing: " + file.getPath());
 				ActionHandler handler = new ActionHandler();
 				parser.setContentHandler(handler);
 				parser.parse(new InputSource(new FileInputStream(file)));
