@@ -2,20 +2,20 @@
 
 	<text text="For" />
 
-	<radio var="set">
+	<radio name="set">
 		<choice text="one switch" mute="true">
 			<switch scope="Global|Local" />
 		</choice>
 		<choice text="all switches from">
 			<group>
-				<switch scope="Global" var="from" />
+				<switch scope="Global" name="from" />
 				<text text="to" />
-				<switch scope="Global" var="to" />
+				<switch scope="Global" name="to" />
 			</group>
 		</choice>
 	</radio>
 
-	<radio var="action">
+	<radio name="action">
 		<choice text="set it to">
 			<radio var="setTo">
 				<choice text="On" color="value" />
