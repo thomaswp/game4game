@@ -1,8 +1,13 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 public class ActionIf extends Action {								// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "If...";						// ActionWriter.writeHeader()
@@ -14,6 +19,9 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 	public class CheckIfTheSwitchData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;switch&gt;</b> */							// ActionFragmentWriter.writeElement()
 		public Switch aSwitch;										// ActionFragmentWriter.writeElement()
+		public boolean readASwitch(GameState gameState) {			// ActionFragmentWriter.writeElement()
+			return gameState.readSwitch(aSwitch);					// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 		public boolean operatorEquals;								// ActionFragmentWriter.writeElement()
 		public boolean operatorDoesNotEqual;						// ActionFragmentWriter.writeElement()
 		public boolean withOn;										// ActionFragmentWriter.writeElement()
@@ -23,10 +31,19 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 		public class WithTheSwitchData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 			/** Type: <b>&lt;switch&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Switch aSwitch;									// ActionFragmentWriter.writeElement()
+			public boolean readASwitch(GameState gameState) {		// ActionFragmentWriter.writeElement()
+				return gameState.readSwitch(aSwitch);				// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
 				aSwitch = iterator.getSwitch();						// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 																	// ActionFragmentWriter.writeConstructor()
@@ -47,6 +64,24 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 			if (withTheSwitch) withTheSwitchData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+		 * <li><b>&lt;radio&gt;</b> operator</i>:</li><ul>
+		 * <li>operatorEquals:</li>
+		 * <li>operatorDoesNotEqual:</li>
+		 * </ul>
+		 * <li><b>&lt;radio&gt;</b> with</i>:</li><ul>
+		 * <li>withOn:</li>
+		 * <li>withOff:</li>
+		 * <li>withTheSwitch:</li>
+		 * <ul>
+		 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+		 * </ul>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean checkIfTheVariable;								// ActionFragmentWriter.writeElement()
@@ -54,6 +89,9 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 	public class CheckIfTheVariableData extends ActionFragment {	// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;variable&gt;</b> */						// ActionFragmentWriter.writeElement()
 		public Variable variable;									// ActionFragmentWriter.writeElement()
+		public int readVariable(GameState gameState) {				// ActionFragmentWriter.writeElement()
+			return gameState.readVariable(variable);				// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 		public boolean operatorEquals;								// ActionFragmentWriter.writeElement()
 		public boolean operatorNotEquals;							// ActionFragmentWriter.writeElement()
 		public boolean operatorGreater;								// ActionFragmentWriter.writeElement()
@@ -62,6 +100,9 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 		public boolean operatorLessOrEqual;							// ActionFragmentWriter.writeElement()
 		/** Type: <b>&lt;number&gt;</b> */							// ActionFragmentWriter.writeElement()
 		public Parameters number;									// ActionFragmentWriter.writeElement()
+		public int readNumber(GameState gameState) {				// ActionFragmentWriter.writeElement()
+			return gameState.readNumber(number);					// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			variable = iterator.getVariable();						// ActionFragmentWriter.writeReadParams()
@@ -75,6 +116,21 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 																	// ActionFragmentWriter.writeReadParams()
 			number = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;variable&gt;</b> variable</li>
+		 * <li><b>&lt;radio&gt;</b> operator</i>:</li><ul>
+		 * <li>operatorEquals:</li>
+		 * <li>operatorNotEquals:</li>
+		 * <li>operatorGreater:</li>
+		 * <li>operatorGreaterOrEqual:</li>
+		 * <li>operatorLess:</li>
+		 * <li>operatorLessOrEqual:</li>
+		 * </ul>
+		 * <li><b>&lt;number&gt;</b> number</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean checkIfTheActor;									// ActionFragmentWriter.writeElement()
@@ -82,6 +138,9 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 	public class CheckIfTheActorData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;actorInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
 		public Parameters actorInstance;							// ActionFragmentWriter.writeElement()
+		public ActorBody readActorInstance(GameState gameState) {	// ActionFragmentWriter.writeElement()
+			return gameState.readActorInstance(actorInstance);		// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 		public boolean checkProperty;								// ActionFragmentWriter.writeElement()
 		public CheckPropertyData checkPropertyData;					// ActionFragmentWriter.writeElement()
 		public class CheckPropertyData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
@@ -94,6 +153,15 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 				propertyIsDead = property == 1;						// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;radio&gt;</b> property</i>:</li><ul>
+			 * <li>propertyIsAlive:</li>
+			 * <li>propertyIsDead:</li>
+			 * </ul>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 		public boolean checkRegion;									// ActionFragmentWriter.writeElement()
@@ -113,6 +181,17 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 																	// ActionFragmentWriter.writeReadParams()
 				region = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
+			 * <li>checkIsInside:</li>
+			 * <li>checkIsTouching:</li>
+			 * <li>checkIsOutside:</li>
+			 * </ul>
+			 * <li><b>&lt;region&gt;</b> region</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 																	// ActionFragmentWriter.writeConstructor()
@@ -130,12 +209,32 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 			if (checkRegion) checkRegionData.readParams(iterator);	// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
+		 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
+		 * <li>checkProperty:</li>
+		 * <ul>
+		 * <li><b>&lt;radio&gt;</b> property</i>:</li><ul>
+		 * <li>propertyIsAlive:</li>
+		 * <li>propertyIsDead:</li>
+		 * </ul>
+		 * </ul>
+		 * <li>checkRegion:</li>
+		 * <ul>
+		 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
+		 * <li>checkIsInside:</li>
+		 * <li>checkIsTouching:</li>
+		 * <li>checkIsOutside:</li>
+		 * </ul>
+		 * <li><b>&lt;region&gt;</b> region</li>
+		 * </ul>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 																	// ActionFragmentWriter.writeConstructor()
 	public ActionIf() {												// ActionFragmentWriter.writeConstructor()
 		checkIfTheSwitchData = new CheckIfTheSwitchData();			// ActionFragmentWriter.writeConstructor()
@@ -153,4 +252,63 @@ public class ActionIf extends Action {								// ActionFragmentWriter.writeHeade
 		if (checkIfTheActor) checkIfTheActorData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 007 <b><i>If...</i></b> (Control)<br />
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> checkIf</i>:</li><ul>
+	 * <li>checkIfTheSwitch:</li>
+	 * <ul>
+	 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+	 * <li><b>&lt;radio&gt;</b> operator</i>:</li><ul>
+	 * <li>operatorEquals:</li>
+	 * <li>operatorDoesNotEqual:</li>
+	 * </ul>
+	 * <li><b>&lt;radio&gt;</b> with</i>:</li><ul>
+	 * <li>withOn:</li>
+	 * <li>withOff:</li>
+	 * <li>withTheSwitch:</li>
+	 * <ul>
+	 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * <li>checkIfTheVariable:</li>
+	 * <ul>
+	 * <li><b>&lt;variable&gt;</b> variable</li>
+	 * <li><b>&lt;radio&gt;</b> operator</i>:</li><ul>
+	 * <li>operatorEquals:</li>
+	 * <li>operatorNotEquals:</li>
+	 * <li>operatorGreater:</li>
+	 * <li>operatorGreaterOrEqual:</li>
+	 * <li>operatorLess:</li>
+	 * <li>operatorLessOrEqual:</li>
+	 * </ul>
+	 * <li><b>&lt;number&gt;</b> number</li>
+	 * </ul>
+	 * <li>checkIfTheActor:</li>
+	 * <ul>
+	 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
+	 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
+	 * <li>checkProperty:</li>
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> property</i>:</li><ul>
+	 * <li>propertyIsAlive:</li>
+	 * <li>propertyIsDead:</li>
+	 * </ul>
+	 * </ul>
+	 * <li>checkRegion:</li>
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
+	 * <li>checkIsInside:</li>
+	 * <li>checkIsTouching:</li>
+	 * <li>checkIsOutside:</li>
+	 * </ul>
+	 * <li><b>&lt;region&gt;</b> region</li>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()

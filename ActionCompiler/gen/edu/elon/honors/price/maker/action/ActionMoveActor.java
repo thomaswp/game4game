@@ -1,8 +1,13 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 public class ActionMoveActor extends Action {						// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Move Actor";					// ActionWriter.writeHeader()
@@ -11,15 +16,17 @@ public class ActionMoveActor extends Action {						// ActionFragmentWriter.write
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;actorInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters actorInstance;								// ActionFragmentWriter.writeElement()
+	public ActorBody readActorInstance(GameState gameState) {		// ActionFragmentWriter.writeElement()
+		return gameState.readActorInstance(actorInstance);			// ActionFragmentWriter.writeElement()
+	}																// ActionFragmentWriter.writeElement()
 	/** Type: <b>&lt;point&gt;</b> */								// ActionFragmentWriter.writeElement()
 	public Parameters point;										// ActionFragmentWriter.writeElement()
+	public Point readPoint(GameState gameState) {					// ActionFragmentWriter.writeElement()
+		return gameState.readPoint(point);							// ActionFragmentWriter.writeElement()
+	}																// ActionFragmentWriter.writeElement()
 	public boolean facingLeft;										// ActionFragmentWriter.writeElement()
 	public boolean facingRight;										// ActionFragmentWriter.writeElement()
 	public boolean facingTheSameDirection;							// ActionFragmentWriter.writeElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 																	// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		actorInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
@@ -30,4 +37,17 @@ public class ActionMoveActor extends Action {						// ActionFragmentWriter.write
 		facingTheSameDirection = facing == 2;						// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 004 <b><i>Move Actor</i></b> (null)<br />
+	 * <ul>
+	 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
+	 * <li><b>&lt;point&gt;</b> point</li>
+	 * <li><b>&lt;radio&gt;</b> facing</i>:</li><ul>
+	 * <li>facingLeft:</li>
+	 * <li>facingRight:</li>
+	 * <li>facingTheSameDirection:</li>
+	 * </ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()

@@ -1,8 +1,13 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 public class ActionLoop extends Action {							// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Loop...";					// ActionWriter.writeHeader()
@@ -11,12 +16,18 @@ public class ActionLoop extends Action {							// ActionFragmentWriter.writeHead
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;number&gt;</b> */								// ActionFragmentWriter.writeElement()
 	public Parameters numTimes;										// ActionFragmentWriter.writeElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
+	public int readNumTimes(GameState gameState) {					// ActionFragmentWriter.writeElement()
+		return gameState.readNumber(numTimes);						// ActionFragmentWriter.writeElement()
+	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		numTimes = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 017 <b><i>Loop...</i></b> (Control)<br />
+	 * <ul>
+	 * <li><b>&lt;number&gt;</b> numTimes</li>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()

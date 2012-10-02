@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import org.xml.sax.Attributes;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.sun.org.apache.xpath.internal.compiler.Keywords;
 
 public class ActionFragmentWriter extends Writer {
@@ -17,6 +18,9 @@ public class ActionFragmentWriter extends Writer {
 			new LinkedList<String>();
 	protected LinkedList<String> toInstantiate = 
 			new LinkedList<String>();
+	
+	protected LinkedList<String> javadoc =
+			new LinkedList<String>(); 
 	
 	protected String radioName;
 	protected String currentChoice;
@@ -51,6 +55,7 @@ public class ActionFragmentWriter extends Writer {
 		KEYWORDS.add("for");
 		KEYWORDS.add("new");
 		KEYWORDS.add("true");
+		KEYWORDS.add("boolean");
 		//TODO: make a complete implementation
 	}
 		
@@ -107,6 +112,7 @@ public class ActionFragmentWriter extends Writer {
 	public void writeHeader() {
 		writeLn("public class %s extends %s {", name, getSuperclass());
 		tab++;
+		javadoc.add("<ul>");
 	}
 	
 	@Override
@@ -130,6 +136,7 @@ public class ActionFragmentWriter extends Writer {
 		if (qName.equals("radio")) {
 			radioName = nameVariable(originamQName, atts);
 			writeDeferred("int %s = iterator.getInt();", radioName);
+			javadoc.add(String.format("<li><b>&lt;radio&gt;</b> %s</i>:</li><ul>", radioName));
 			return;
 		}
 		
@@ -140,6 +147,8 @@ public class ActionFragmentWriter extends Writer {
 			writeVariable("boolean", currentChoice);
 			writeDeferred("%s = %s == %d;", currentChoice, radioName, choiceNum);
 			choiceNum++;
+			
+			javadoc.add(String.format("<li>%s:</li>", currentChoice));
 			
 			childWriter = new ChoiceWriter(className, writer, qName, atts, tab);
 			choiceWriterHeaded = false;
@@ -156,6 +165,9 @@ public class ActionFragmentWriter extends Writer {
 			
 			toInstantiate.add(varName);
 			writeDeferred("%s.readParams(iterator.getParameters().iterator());", varName);
+			
+			javadoc.add(String.format("<li><b>&lt;group&gt;</b> %s:</li>", varName));
+			
 			return;
 		}
 		
@@ -173,6 +185,22 @@ public class ActionFragmentWriter extends Writer {
 		writeJavadoc("Type: <b>&lt;%s&gt;</b>", originamQName);
 		writeVariable(type, varName);
 		writeDeferred("%s = iterator.get%s();", varName, type);
+		
+		for (String read : GameStateWriter.READ_TYPES.keySet()) {
+			if (read.equalsIgnoreCase(qName)) {
+				String rType = GameStateWriter.READ_TYPES.get(read);
+				writeLn("public %s read%s(GameState gameState) {", 
+						rType, capitalize(varName));
+				tab++;
+				writeLn("return gameState.read%s(%s);", 
+						capitalize(read), varName);
+				tab--;
+				writeLn("}");
+				break;
+			}
+		}
+		
+		javadoc.add(String.format("<li><b>&lt;%s&gt;</b> %s</li>", originamQName, varName));
 	}
 	
 	public void endElement(String qName) {
@@ -182,14 +210,17 @@ public class ActionFragmentWriter extends Writer {
 			childWriter.endElement(qName);
 			if (childWriter.isEnded()) {
 				childWriter.writeFooter();
+				javadoc.addAll(childWriter.javadoc);
 				childWriter = null;
 				writeLn();
+				
 			}
 			return;
 		}
 		
 		if (qName.equals("radio")) {
 			writeDeferred("");
+			javadoc.add("</ul>");
 			radioName = null;
 			choiceNum = 0;
 		}
@@ -199,6 +230,8 @@ public class ActionFragmentWriter extends Writer {
 	public void writeFooter() {
 		writeConstructor();
 		writeReadParams();
+		javadoc.add("</ul>");
+		writeJavadoc();
 		
 		tab--;
 		writeLn("}");
@@ -206,7 +239,7 @@ public class ActionFragmentWriter extends Writer {
 	
 	protected void writeJavadoc() {
 		startJavadocBlock();
-		writeLn("This is sample javadoc!");
+		for (String line : javadoc) writeLn(line);
 		endJavadockBlock();
 		writeConstant("String", "JAVADOC", quote(""));
 	}
