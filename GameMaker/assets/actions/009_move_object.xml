@@ -1,8 +1,0 @@
-<action id="9" name="Move Object">
-
-	<text text="Move" />
-	<objectInstance />
-	<text text="to" />
-	<point />
-
-</action>
