@@ -29,12 +29,37 @@ public class PlatformGameState implements GameState {
 	private PlatformLogic logic;
 	private PhysicsHandler physics;
 	private PlatformGame game;
+	private Event event;
 
 	private Point point = new Point();
 	private Vector vector = new Vector();
 	
-	private Event event;
+	public Event getEvent() {
+		return event;
+	}
 
+	public void setEvent(Event event) {
+		this.event = event;
+	}
+
+	public PlatformLogic getLogic() {
+		return logic;
+	}
+
+	public PhysicsHandler getPhysics() {
+		return physics;
+	}
+
+	public PlatformGame getGame() {
+		return game;
+	}
+	
+	public PlatformGameState(PlatformLogic logic, PhysicsHandler physics,
+			PlatformGame game) {
+		this.logic = logic;
+		this.physics = physics;
+		this.game = game;
+	}
 
 	@Override
 	public JoyStick readJoystick(int index) throws ParameterException {
