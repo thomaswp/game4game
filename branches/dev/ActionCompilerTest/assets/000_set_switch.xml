@@ -1,4 +1,4 @@
-<action id="0" name="Set Switch">
+<action id="0" name="Set Switch" category="Variable Operations">
 
 	<text text="For" />
 
@@ -17,7 +17,7 @@
 
 	<radio name="action">
 		<choice text="set it to">
-			<radio var="setTo">
+			<radio name="setTo">
 				<choice text="On" color="value" />
 				<choice text="Off" color="value" />
 				<choice text="a Switch's value" mute="true" >

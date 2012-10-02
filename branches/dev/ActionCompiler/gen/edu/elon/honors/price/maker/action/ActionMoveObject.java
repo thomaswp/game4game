@@ -1,8 +1,13 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 public class ActionMoveObject extends Action {						// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Move Object";				// ActionWriter.writeHeader()
@@ -11,15 +16,25 @@ public class ActionMoveObject extends Action {						// ActionFragmentWriter.writ
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;objectInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters objectInstance;								// ActionFragmentWriter.writeElement()
+	public ObjectBody readObjectInstance(GameState gameState) {		// ActionFragmentWriter.writeElement()
+		return gameState.readObjectInstance(objectInstance);		// ActionFragmentWriter.writeElement()
+	}																// ActionFragmentWriter.writeElement()
 	/** Type: <b>&lt;point&gt;</b> */								// ActionFragmentWriter.writeElement()
 	public Parameters point;										// ActionFragmentWriter.writeElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
+	public Point readPoint(GameState gameState) {					// ActionFragmentWriter.writeElement()
+		return gameState.readPoint(point);							// ActionFragmentWriter.writeElement()
+	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		objectInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 		point = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 009 <b><i>Move Object</i></b> (null)<br />
+	 * <ul>
+	 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
+	 * <li><b>&lt;point&gt;</b> point</li>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()

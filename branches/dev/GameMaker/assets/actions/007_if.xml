@@ -1,14 +1,14 @@
-<action id="7" name="If...">
+<action id="7" name="If..." category="Control">
 
 	<text text="If" />
-	<radio>
+	<radio name="checkIf">
 		<choice text="the switch" mute="true">
 			<switch />
-			<radio>
+			<radio name="operator">
 				<choice text="equals" />
 				<choice text="does not equal" />
 			</radio>
-			<radio>
+			<radio name="with">
 				<choice text="On" color="value" />
 				<choice text="Off" color="value" />
 				<choice text="the switch" mute="true">
@@ -18,27 +18,27 @@
 		</choice>
 		<choice text="the variable" mute="true">
 			<variable />
-			<radio>
-				<choice text="=" />
-				<choice text="≠" />
-				<choice text="&gt;" />
-				<choice text="≥" />
-				<choice text="&lt;" />
-				<choice text="≤" />
+			<radio name="operator">
+				<choice name="equals" text="="/>
+				<choice name="notEquals" text="≠" />
+				<choice name="greater" text="&gt;" />
+				<choice name="greaterOrEqual" text="≥" />
+				<choice name="less" text="&lt;" />
+				<choice name="lessOrEqual" text="≤" />
 			</radio>
 			<number />
 		</choice>
 		<choice text="the actor" mute="true">
 			<actorInstance />
-			<radio>
+			<radio name="check">
 				<choice text="property" mute="true">
-					<radio>
+					<radio name="property" >
 						<choice text="is alive" />
 						<choice text="is dead" />
 					</radio>
 				</choice>
 				<choice text="region" mute="true">
-					<radio>
+					<radio name="check">
 						<choice text="is inside" />
 						<choice text="is touching" />
 						<choice text="is outside" />

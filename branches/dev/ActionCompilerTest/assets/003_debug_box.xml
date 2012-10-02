@@ -1,4 +1,4 @@
-<action id="11" name="Debug Message" category="Debug">
+<action id="3" name="Debug Box">
 
 	<text text="Show" />
 	

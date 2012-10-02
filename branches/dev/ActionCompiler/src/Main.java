@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -12,13 +14,14 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.maker.action.ActionHandler;
+import edu.elon.honors.price.maker.action.GameStateWriter;
 
 public class Main {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, FileNotFoundException, IOException {
 		if (args.length == 0) {
 			args = new String[] {
 				new File("").getAbsolutePath() + "\\assets",
-				new File("").getAbsolutePath() + "\\gen"
+				new File("").getAbsolutePath() + "\\gen\\edu\\elon\\honors\\price\\maker\\action"
 			};
 		}
 		
@@ -45,15 +48,11 @@ public class Main {
 			}
 		}
 		
-//		ActionSetSwitch action = null;
-//		if (action.setOneSwitch) {
-//			Switch s = action.setOneSwitchData.switch1;
-//		} else if (action.setAllSwitchesFrom) {
-//			Switch from = action.setAllSwitchesFromData.from;
-//			Switch to = action.setAllSwitchesFromData.to;
-//		}
-//		if (action.actionSetItTo) {
-//			Switch s = action.actionSetItToData.setToASwitchsValueData.switch1;
-//		}
+		StringWriter writer = new StringWriter();
+		GameStateWriter gsWriter = new GameStateWriter(writer);
+		gsWriter.writeHeader();
+		FileWriter fWriter = new FileWriter(output.getAbsolutePath() + "\\" + "GameState.java");
+		fWriter.write(writer.toString());
+		fWriter.close();
 	}
 }

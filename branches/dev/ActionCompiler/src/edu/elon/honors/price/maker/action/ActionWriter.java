@@ -7,12 +7,18 @@ import org.xml.sax.Attributes;
 
 public class ActionWriter extends ActionFragmentWriter {
 	
-	private final static String[] IMPORTS = new String[] {
+	protected final static String[] IMPORTS = new String[] {
 			"edu.elon.honors.price.maker.action.*",
+			"edu.elon.honors.price.data.*",
 			"edu.elon.honors.price.data.types.*",
 			"edu.elon.honors.price.data.Event.Parameters.Iterator",
-			"edu.elon.honors.price.data.Event.Parameters"
+			"edu.elon.honors.price.data.Event.Parameters",
+			"com.twp.platform.*",
+			"edu.elon.honors.price.physics.*",
+			"edu.elon.honors.price.input.*"
 	};
+	
+	protected final static String PACKAGE = "edu.elon.honors.price.maker.action";
 	
 	public String fileName;
 	protected String readableName;
@@ -35,14 +41,15 @@ public class ActionWriter extends ActionFragmentWriter {
 
 	@Override
 	public void writeHeader() {
-		//writeLn("package edu.elon.honors.price.maker.action;");
+		writeLn("package %s;", PACKAGE);
 		writeLn();
 		
 		for (String s : IMPORTS) {
 			writeLn("import %s;", s);
 		}
 		writeLn();
-		
+
+		javadoc.add(String.format("%03d <b><i>%s</i></b> (%s)<br />", id, readableName, category));
 		super.writeHeader();
 		
 		writeConstant("String", "NAME", quote(readableName));
@@ -51,11 +58,12 @@ public class ActionWriter extends ActionFragmentWriter {
 		
 		writeLn();
 		
+		
 	}
 	
-	@Override
-	public void writeFooter() {
-		writeJavadoc();
-		super.writeFooter();
-	}
+//	@Override
+//	public void writeFooter() {
+//		writeJavadoc();
+//		super.writeFooter();
+//	}
 }

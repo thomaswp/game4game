@@ -1,8 +1,13 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 public class ActionDrawToScreen extends Action {					// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Draw to Screen";				// ActionWriter.writeHeader()
@@ -22,13 +27,26 @@ public class ActionDrawToScreen extends Action {					// ActionFragmentWriter.wri
 		public class ShapeLineData extends ActionFragment {			// ActionFragmentWriter.writeHeader()
 			/** Type: <b>&lt;point&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Parameters from;									// ActionFragmentWriter.writeElement()
+			public Point readFrom(GameState gameState) {			// ActionFragmentWriter.writeElement()
+				return gameState.readPoint(from);					// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 			/** Type: <b>&lt;point&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Parameters to;									// ActionFragmentWriter.writeElement()
+			public Point readTo(GameState gameState) {				// ActionFragmentWriter.writeElement()
+				return gameState.readPoint(to);						// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
 				from = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 				to = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;point&gt;</b> from</li>
+			 * <li><b>&lt;point&gt;</b> to</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 		public boolean shapeCircle;									// ActionFragmentWriter.writeElement()
@@ -36,13 +54,26 @@ public class ActionDrawToScreen extends Action {					// ActionFragmentWriter.wri
 		public class ShapeCircleData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 			/** Type: <b>&lt;point&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Parameters center;								// ActionFragmentWriter.writeElement()
+			public Point readCenter(GameState gameState) {			// ActionFragmentWriter.writeElement()
+				return gameState.readPoint(center);					// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 			/** Type: <b>&lt;number&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Parameters radius;								// ActionFragmentWriter.writeElement()
+			public int readRadius(GameState gameState) {			// ActionFragmentWriter.writeElement()
+				return gameState.readNumber(radius);				// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
 				center = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 				radius = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;point&gt;</b> center</li>
+			 * <li><b>&lt;number&gt;</b> radius</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 		public boolean shapeBox;									// ActionFragmentWriter.writeElement()
@@ -50,13 +81,26 @@ public class ActionDrawToScreen extends Action {					// ActionFragmentWriter.wri
 		public class ShapeBoxData extends ActionFragment {			// ActionFragmentWriter.writeHeader()
 			/** Type: <b>&lt;point&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Parameters corner1;								// ActionFragmentWriter.writeElement()
+			public Point readCorner1(GameState gameState) {			// ActionFragmentWriter.writeElement()
+				return gameState.readPoint(corner1);				// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 			/** Type: <b>&lt;point&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Parameters corner2;								// ActionFragmentWriter.writeElement()
+			public Point readCorner2(GameState gameState) {			// ActionFragmentWriter.writeElement()
+				return gameState.readPoint(corner2);				// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
 				corner1 = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 				corner2 = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;point&gt;</b> corner1</li>
+			 * <li><b>&lt;point&gt;</b> corner2</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 		public boolean useWorldCoordinates;							// ActionFragmentWriter.writeElement()
@@ -87,12 +131,39 @@ public class ActionDrawToScreen extends Action {					// ActionFragmentWriter.wri
 			useScreenCoordinates = use == 1;						// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;color&gt;</b> color</li>
+		 * <li><b>&lt;radio&gt;</b> style</i>:</li><ul>
+		 * <li>styleHollow:</li>
+		 * <li>styleFilledIn:</li>
+		 * </ul>
+		 * <li><b>&lt;radio&gt;</b> shape</i>:</li><ul>
+		 * <li>shapeLine:</li>
+		 * <ul>
+		 * <li><b>&lt;point&gt;</b> from</li>
+		 * <li><b>&lt;point&gt;</b> to</li>
+		 * </ul>
+		 * <li>shapeCircle:</li>
+		 * <ul>
+		 * <li><b>&lt;point&gt;</b> center</li>
+		 * <li><b>&lt;number&gt;</b> radius</li>
+		 * </ul>
+		 * <li>shapeBox:</li>
+		 * <ul>
+		 * <li><b>&lt;point&gt;</b> corner1</li>
+		 * <li><b>&lt;point&gt;</b> corner2</li>
+		 * </ul>
+		 * </ul>
+		 * <li><b>&lt;radio&gt;</b> use</i>:</li><ul>
+		 * <li>useWorldCoordinates:</li>
+		 * <li>useScreenCoordinates:</li>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 																	// ActionFragmentWriter.writeConstructor()
 	public ActionDrawToScreen() {									// ActionFragmentWriter.writeConstructor()
 		actionDrawAData = new ActionDrawAData();					// ActionFragmentWriter.writeConstructor()
@@ -105,4 +176,42 @@ public class ActionDrawToScreen extends Action {					// ActionFragmentWriter.wri
 		if (actionDrawA) actionDrawAData.readParams(iterator);		// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 016 <b><i>Draw to Screen</i></b> (UI)<br />
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> action</i>:</li><ul>
+	 * <li>actionClearTheScreen:</li>
+	 * <li>actionDrawA:</li>
+	 * <ul>
+	 * <li><b>&lt;color&gt;</b> color</li>
+	 * <li><b>&lt;radio&gt;</b> style</i>:</li><ul>
+	 * <li>styleHollow:</li>
+	 * <li>styleFilledIn:</li>
+	 * </ul>
+	 * <li><b>&lt;radio&gt;</b> shape</i>:</li><ul>
+	 * <li>shapeLine:</li>
+	 * <ul>
+	 * <li><b>&lt;point&gt;</b> from</li>
+	 * <li><b>&lt;point&gt;</b> to</li>
+	 * </ul>
+	 * <li>shapeCircle:</li>
+	 * <ul>
+	 * <li><b>&lt;point&gt;</b> center</li>
+	 * <li><b>&lt;number&gt;</b> radius</li>
+	 * </ul>
+	 * <li>shapeBox:</li>
+	 * <ul>
+	 * <li><b>&lt;point&gt;</b> corner1</li>
+	 * <li><b>&lt;point&gt;</b> corner2</li>
+	 * </ul>
+	 * </ul>
+	 * <li><b>&lt;radio&gt;</b> use</i>:</li><ul>
+	 * <li>useWorldCoordinates:</li>
+	 * <li>useScreenCoordinates:</li>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()

@@ -1,7 +1,7 @@
-<action id="10" name="Set Velocity">
+<action id="10" name="Set Velocity" category="Physics">
 
 	<text text="Set the velocity of the" />
-	<radio>
+	<radio name="set">
 		<choice text="actor" mute="true">
 			<actorInstance />
 		</choice>
@@ -10,8 +10,8 @@
 		</choice>
 	</radio>
 	<text text="in the direction of" />
-	<vector />
+	<vector name="directionVector" />
 	<text text="with the magnitude" />
-	<number />
+	<number name="directionMagnitude" />
 
 </action>
