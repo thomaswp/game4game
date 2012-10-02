@@ -1,7 +1,5 @@
 package edu.elon.honors.price.maker.action;
 
-public abstract class ActionInterpreter {
-	public void interperate(Action action, PlatformGameState gameState) {
-		
-	}
+public abstract class ActionInterpreter<T extends Action> {
+	public abstract void interperate(T action, PlatformGameState gameState) throws ParameterException;
 }

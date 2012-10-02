@@ -49,6 +49,7 @@ public class ActionFragmentWriter extends Writer {
 		ELEMENT_TYPES.put("objectClass", "int");
 		ELEMENT_TYPES.put("button", "int");
 		ELEMENT_TYPES.put("joystick", "int");
+		ELEMENT_TYPES.put("string", "String");
 	}
 	
 	protected final static String[] IGNORE_ELEMENTS = new String[] {

@@ -18,10 +18,10 @@ public class ActionDebugMessage extends Action {					// ActionFragmentWriter.wri
 	public ShowTheMessageData showTheMessageData;					// ActionFragmentWriter.writeElement()
 	public class ShowTheMessageData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;string&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public Parameters string;									// ActionFragmentWriter.writeElement()
+		public String string;										// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			string = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
+			string = iterator.getString();							// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
 		/**
 		 * <ul>
