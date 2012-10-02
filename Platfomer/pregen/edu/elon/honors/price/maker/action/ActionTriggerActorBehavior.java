@@ -16,7 +16,7 @@ public class ActionTriggerActorBehavior extends Action {			// ActionFragmentWrit
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;actorInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters actorInstance;								// ActionFragmentWriter.writeElement()
-	public ActorBody readActorInstance(GameState gameState) {		// ActionFragmentWriter.writeElement()
+	public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
 		return gameState.readActorInstance(actorInstance);			// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 	/** Type: <b>&lt;actorBehavior&gt;</b> */						// ActionFragmentWriter.writeElement()

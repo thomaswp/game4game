@@ -20,7 +20,7 @@ public class ActionUIAction extends Action {						// ActionFragmentWriter.writeH
 	public boolean setItsDefaultBehavior;							// ActionFragmentWriter.writeElement()
 	/** Type: <b>&lt;boolean&gt;</b> */								// ActionFragmentWriter.writeElement()
 	public Parameters to;											// ActionFragmentWriter.writeElement()
-	public boolean readTo(GameState gameState) {					// ActionFragmentWriter.writeElement()
+	public boolean readTo(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
 		return gameState.readBoolean(to);							// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()

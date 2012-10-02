@@ -16,7 +16,7 @@ public class ActionDestroyObject extends Action {					// ActionFragmentWriter.wr
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;objectInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters objectInstance;								// ActionFragmentWriter.writeElement()
-	public ObjectBody readObjectInstance(GameState gameState) {		// ActionFragmentWriter.writeElement()
+	public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
 		return gameState.readObjectInstance(objectInstance);		// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
