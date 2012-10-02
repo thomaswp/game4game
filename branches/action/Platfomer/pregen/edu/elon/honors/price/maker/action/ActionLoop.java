@@ -16,7 +16,7 @@ public class ActionLoop extends Action {							// ActionFragmentWriter.writeHead
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;number&gt;</b> */								// ActionFragmentWriter.writeElement()
 	public Parameters numTimes;										// ActionFragmentWriter.writeElement()
-	public int readNumTimes(GameState gameState) {					// ActionFragmentWriter.writeElement()
+	public int readNumTimes(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
 		return gameState.readNumber(numTimes);						// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()

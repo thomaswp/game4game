@@ -7,6 +7,11 @@ import org.xml.sax.Attributes;
 
 public class GameStateWriter extends Writer {
 
+	/**
+	 * Maps an element to to "read" type of the element,
+	 * meaning the usable form at runtime, such as 
+	 * an ActorBody instead of the index of that body.
+	 */
 	protected final static HashMap<String, String> READ_TYPES = 
 			new HashMap<String, String>();
 	static {
@@ -47,7 +52,7 @@ public class GameStateWriter extends Writer {
 					paramType = ActionWriter.ELEMENT_TYPES.get(key);
 				}
 			}
-			writeLn("public %s read%s(%s params);", type, capitalize(read),
+			writeLn("public %s read%s(%s params) throws ParameterException;", type, capitalize(read),
 					paramType);
 		}
 		tab--;
