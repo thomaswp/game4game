@@ -35,11 +35,20 @@ public class ActionFragmentWriter extends Writer {
 		return ended;
 	}
 	
+	/**
+	 * Maps an element name to the data type that is placed
+	 * into parameters at that element's index. Defaults
+	 * to Parameters if not in this list.
+	 */
 	protected final static HashMap<String, String> ELEMENT_TYPES =
 			new HashMap<String, String>();
 	static {
 		ELEMENT_TYPES.put("switch", "Switch");
 		ELEMENT_TYPES.put("variable", "Variable");
+		ELEMENT_TYPES.put("actorClass", "int");
+		ELEMENT_TYPES.put("objectClass", "int");
+		ELEMENT_TYPES.put("button", "int");
+		ELEMENT_TYPES.put("joystick", "int");
 	}
 	
 	protected final static String[] IGNORE_ELEMENTS = new String[] {
@@ -177,19 +186,19 @@ public class ActionFragmentWriter extends Writer {
 		
 		String type = "Parameters";
 		for (String key : ELEMENT_TYPES.keySet()) {
-			if (qName.equals(key)) {
+			if (qName.equalsIgnoreCase(key)) {
 				type = ELEMENT_TYPES.get(key);
 			}
 		}
 		String varName = nameVariable(originamQName, atts);
 		writeJavadoc("Type: <b>&lt;%s&gt;</b>", originamQName);
 		writeVariable(type, varName);
-		writeDeferred("%s = iterator.get%s();", varName, type);
+		writeDeferred("%s = iterator.get%s();", varName, capitalize(type));
 		
 		for (String read : GameStateWriter.READ_TYPES.keySet()) {
 			if (read.equalsIgnoreCase(qName)) {
 				String rType = GameStateWriter.READ_TYPES.get(read);
-				writeLn("public %s read%s(GameState gameState) {", 
+				writeLn("public %s read%s(GameState gameState) throws ParameterException {", 
 						rType, capitalize(varName));
 				tab++;
 				writeLn("return gameState.read%s(%s);", 
