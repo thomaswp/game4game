@@ -11,6 +11,7 @@ import com.twp.platform.PhysicsHandler;
 import com.twp.platform.PlatformLogic;
 
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.PlatformGame;
@@ -52,6 +53,30 @@ public class PlatformGameState implements GameState {
 
 	public PlatformGame getGame() {
 		return game;
+	}
+	
+	public BehaviorInstance getBehaviorInstance() throws ParameterException {
+		return getBehavingInstance(event);
+	}
+	
+	public IBehaving getBehaving() throws ParameterException {
+		return getBehaving(event);
+	}
+	
+	public Behavior getBehavior() throws ParameterException {
+		BehaviorInstance instance = getBehaviorInstance();
+		Behavior behavior = instance.getBehavior(game); 
+		return behavior;
+	}
+	
+	public Behavior getNullableBehavior() throws ParameterException {
+		try {
+			BehaviorInstance instance = getBehaviorInstance();
+			Behavior behavior = instance.getBehavior(game);
+			return behavior;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	public PlatformGameState(PlatformLogic logic, PhysicsHandler physics,
