@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.LinkedList;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -13,8 +14,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import edu.elon.honors.price.data.types.Switch;
-import edu.elon.honors.price.maker.action.ActionHandler;
-import edu.elon.honors.price.maker.action.GameStateWriter;
+import edu.elon.honors.price.maker.action.writer.ActionFactoryWriter;
+import edu.elon.honors.price.maker.action.writer.ActionHandler;
+import edu.elon.honors.price.maker.action.writer.GameStateWriter;
+import edu.elon.honors.price.maker.action.writer.Writer;
 
 public class Main {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, FileNotFoundException, IOException {
@@ -38,6 +41,7 @@ public class Main {
 		files = new File(args[0]).listFiles();
 		XMLReader parser = XMLReaderFactory.createXMLReader();
 		
+		LinkedList<String> classes = new LinkedList<String>();
 		if (files != null) {
 			for (File file : files) {
 				System.out.println("Parsing: " + file.getPath());
@@ -45,14 +49,27 @@ public class Main {
 				parser.setContentHandler(handler);
 				parser.parse(new InputSource(new FileInputStream(file)));
 				handler.writeFile(output);
+				classes.add(handler.getActionWriter().getName());
 			}
 		}
 		
-		StringWriter writer = new StringWriter();
-		GameStateWriter gsWriter = new GameStateWriter(writer);
+		StringWriter sWriter = new StringWriter();
+		GameStateWriter gsWriter = new GameStateWriter(sWriter);
 		gsWriter.writeHeader();
-		FileWriter fWriter = new FileWriter(output.getAbsolutePath() + "\\" + "GameState.java");
-		fWriter.write(writer.toString());
+		writeFile(output.getAbsolutePath() + "\\" + "GameState.java",
+				sWriter.toString());
+		
+		sWriter = new StringWriter();
+		ActionFactoryWriter afWriter = 
+				new ActionFactoryWriter(sWriter, classes);
+		afWriter.writeHeader();
+		writeFile(output.getAbsolutePath() + "\\" + "ActionFactory.java",
+				sWriter.toString());
+	}
+	
+	private static void writeFile(String path, String text) throws IOException {
+		FileWriter fWriter = new FileWriter(path);
+		fWriter.write(text);
 		fWriter.close();
 	}
 }

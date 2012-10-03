@@ -1,4 +1,4 @@
-package edu.elon.honors.price.maker.action;
+package edu.elon.honors.price.maker.action.writer;
 
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -13,6 +13,9 @@ import com.sun.org.apache.xpath.internal.compiler.Keywords;
 public class ActionFragmentWriter extends Writer {
 
 	protected String name;
+	public String getName() {
+		return name;
+	}
 	
 	protected LinkedList<String> variableNames = 
 			new LinkedList<String>();

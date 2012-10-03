@@ -1,4 +1,4 @@
-package edu.elon.honors.price.maker.action;
+package edu.elon.honors.price.maker.action.writer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +18,10 @@ public class ActionHandler implements ContentHandler {
 				"\\" + actionWriter.fileName + ".java");
 		writer.append(text);
 		writer.close();
+	}
+	
+	public ActionWriter getActionWriter() {
+		return actionWriter;
 	}
 	
 	private StringWriter writer = new StringWriter(3000);

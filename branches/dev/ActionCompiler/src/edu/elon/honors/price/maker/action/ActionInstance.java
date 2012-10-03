@@ -5,9 +5,9 @@ import edu.elon.honors.price.data.Event.Parameters;
 /**
  * Description somewhere
  */
-public abstract class Action extends ActionFragment {
+public abstract class ActionInstance extends ActionFragment {
 
-	public Action() {
+	public ActionInstance() {
 	}
 
 }

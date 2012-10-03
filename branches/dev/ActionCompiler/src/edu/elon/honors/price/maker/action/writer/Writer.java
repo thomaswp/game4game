@@ -1,4 +1,4 @@
-package edu.elon.honors.price.maker.action;
+package edu.elon.honors.price.maker.action.writer;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,7 +24,7 @@ public abstract class Writer {
 		this.writer = writer;
 	}
 	
-	protected abstract void writeHeader();
+	public abstract void writeHeader();
 	public abstract void writeElement(String qName, Attributes atts);
 	public abstract void endElement(String qName);
 	public abstract void writeFooter();

@@ -1,4 +1,4 @@
-package edu.elon.honors.price.maker.action;
+package edu.elon.honors.price.maker.action.writer;
 
 import java.io.StringWriter;
 import java.util.HashMap;

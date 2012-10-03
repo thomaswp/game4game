@@ -1,4 +1,4 @@
-package edu.elon.honors.price.maker.action;
+package edu.elon.honors.price.maker.action.writer;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,7 +27,7 @@ public class ActionWriter extends ActionFragmentWriter {
 	
 	@Override
 	protected String getSuperclass() {
-		return "Action";
+		return "ActionInstance";
 	}
 	
 	public ActionWriter(StringWriter writer, String qName, Attributes atts) {
