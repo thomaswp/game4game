@@ -1,11 +1,11 @@
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.types.Switch;
-import edu.elon.honors.price.maker.action.Action;
+import edu.elon.honors.price.maker.action.ActionInstance;
 import edu.elon.honors.price.maker.action.ActionFragment;
 
 
-public class ActionSetSwitchSample extends Action {
+public class ActionSetSwitchSample extends ActionInstance {
 	public static final String name = "Set Switch";
 	public static final int id = 1;
 	
