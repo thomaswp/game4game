@@ -1,10 +1,15 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
-public class ActionDebugBox extends ActionInstance {						// ActionFragmentWriter.writeHeader()
+public class ActionDebugBox extends ActionInstance {				// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Debug Box";					// ActionWriter.writeHeader()
 	public static final int ID = 3;									// ActionWriter.writeHeader()
 	public static final String CATEGORY = null;						// ActionWriter.writeHeader()
@@ -13,11 +18,17 @@ public class ActionDebugBox extends ActionInstance {						// ActionFragmentWrite
 	public ShowTheMessageData showTheMessageData;					// ActionFragmentWriter.writeElement()
 	public class ShowTheMessageData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;string&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public Parameters string;									// ActionFragmentWriter.writeElement()
+		public String string;										// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			string = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
+			string = iterator.getString();							// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;string&gt;</b> string</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean showTheSwitch;									// ActionFragmentWriter.writeElement()
@@ -25,10 +36,19 @@ public class ActionDebugBox extends ActionInstance {						// ActionFragmentWrite
 	public class ShowTheSwitchData extends ActionFragment {			// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;switch&gt;</b> */							// ActionFragmentWriter.writeElement()
 		public Switch aSwitch;										// ActionFragmentWriter.writeElement()
+		public boolean readASwitch(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readSwitch(aSwitch);					// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			aSwitch = iterator.getSwitch();							// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean showTheVariable;									// ActionFragmentWriter.writeElement()
@@ -36,16 +56,21 @@ public class ActionDebugBox extends ActionInstance {						// ActionFragmentWrite
 	public class ShowTheVariableData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;variable&gt;</b> */						// ActionFragmentWriter.writeElement()
 		public Variable variable;									// ActionFragmentWriter.writeElement()
+		public int readVariable(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readVariable(variable);				// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			variable = iterator.getVariable();						// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;variable&gt;</b> variable</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 																	// ActionFragmentWriter.writeConstructor()
 	public ActionDebugBox() {										// ActionFragmentWriter.writeConstructor()
 		showTheMessageData = new ShowTheMessageData();				// ActionFragmentWriter.writeConstructor()
@@ -63,4 +88,24 @@ public class ActionDebugBox extends ActionInstance {						// ActionFragmentWrite
 		if (showTheVariable) showTheVariableData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 003 <b><i>Debug Box</i></b> (null)<br />
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> show</i>:</li><ul>
+	 * <li>showTheMessage:</li>
+	 * <ul>
+	 * <li><b>&lt;string&gt;</b> string</li>
+	 * </ul>
+	 * <li>showTheSwitch:</li>
+	 * <ul>
+	 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+	 * </ul>
+	 * <li>showTheVariable:</li>
+	 * <ul>
+	 * <li><b>&lt;variable&gt;</b> variable</li>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()

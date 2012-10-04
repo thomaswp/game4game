@@ -1,10 +1,15 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
-public class ActionSetVariable extends ActionInstance {						// ActionFragmentWriter.writeHeader()
+public class ActionSetVariable extends ActionInstance {				// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Set Variable";				// ActionWriter.writeHeader()
 	public static final int ID = 1;									// ActionWriter.writeHeader()
 	public static final String CATEGORY = "Variable Operations";	// ActionWriter.writeHeader()
@@ -14,10 +19,19 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 	public class SetOneVariableData extends ActionFragment {		// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;variable&gt;</b> */						// ActionFragmentWriter.writeElement()
 		public Variable variable;									// ActionFragmentWriter.writeElement()
+		public int readVariable(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readVariable(variable);				// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			variable = iterator.getVariable();						// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;variable&gt;</b> variable</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean setAllVariablesFrom;								// ActionFragmentWriter.writeElement()
@@ -25,13 +39,26 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 	public class SetAllVariablesFromData extends ActionFragment {	// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;variable&gt;</b> */						// ActionFragmentWriter.writeElement()
 		public Variable from;										// ActionFragmentWriter.writeElement()
+		public int readFrom(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readVariable(from);					// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 		/** Type: <b>&lt;variable&gt;</b> */						// ActionFragmentWriter.writeElement()
 		public Variable to;											// ActionFragmentWriter.writeElement()
+		public int readTo(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readVariable(to);						// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			from = iterator.getVariable();							// ActionFragmentWriter.writeReadParams()
 			to = iterator.getVariable();							// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;variable&gt;</b> from</li>
+		 * <li><b>&lt;variable&gt;</b> to</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean operationSetItTo;								// ActionFragmentWriter.writeElement()
@@ -49,6 +76,12 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			exactNumber = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;exactNumber&gt;</b> exactNumber</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean withAVariable;									// ActionFragmentWriter.writeElement()
@@ -56,10 +89,19 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 	public class WithAVariableData extends ActionFragment {			// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;variable&gt;</b> */						// ActionFragmentWriter.writeElement()
 		public Variable variable;									// ActionFragmentWriter.writeElement()
+		public int readVariable(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readVariable(variable);				// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			variable = iterator.getVariable();						// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;variable&gt;</b> variable</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean withARandomNumber;								// ActionFragmentWriter.writeElement()
@@ -76,6 +118,13 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 				exactNumber = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
 				exactNumber2 = iterator.getParameters();			// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;exactNumber&gt;</b> exactNumber</li>
+			 * <li><b>&lt;exactNumber&gt;</b> exactNumber2</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 																	// ActionFragmentWriter.writeConstructor()
@@ -86,6 +135,16 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			group.readParams(iterator.getParameters().iterator());	// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;group&gt;</b> group:</li>
+		 * <ul>
+		 * <li><b>&lt;exactNumber&gt;</b> exactNumber</li>
+		 * <li><b>&lt;exactNumber&gt;</b> exactNumber2</li>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean withAnActorProperty;								// ActionFragmentWriter.writeElement()
@@ -93,6 +152,9 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 	public class WithAnActorPropertyData extends ActionFragment {	// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;actorInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
 		public Parameters actorInstance;							// ActionFragmentWriter.writeElement()
+		public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readActorInstance(actorInstance);		// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 		public boolean coordinateX;									// ActionFragmentWriter.writeElement()
 		public boolean coordinateY;									// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
@@ -103,12 +165,18 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 			coordinateY = coordinate == 1;							// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
+		 * <li><b>&lt;radio&gt;</b> coordinate</i>:</li><ul>
+		 * <li>coordinateX:</li>
+		 * <li>coordinateY:</li>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 																	// ActionFragmentWriter.writeConstructor()
 	public ActionSetVariable() {									// ActionFragmentWriter.writeConstructor()
 		setOneVariableData = new SetOneVariableData();				// ActionFragmentWriter.writeConstructor()
@@ -145,4 +213,55 @@ public class ActionSetVariable extends ActionInstance {						// ActionFragmentWr
 		if (withAnActorProperty) withAnActorPropertyData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 001 <b><i>Set Variable</i></b> (Variable Operations)<br />
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> set</i>:</li><ul>
+	 * <li>setOneVariable:</li>
+	 * <ul>
+	 * <li><b>&lt;variable&gt;</b> variable</li>
+	 * </ul>
+	 * <li>setAllVariablesFrom:</li>
+	 * <ul>
+	 * <li><b>&lt;variable&gt;</b> from</li>
+	 * <li><b>&lt;variable&gt;</b> to</li>
+	 * </ul>
+	 * </ul>
+	 * <li><b>&lt;radio&gt;</b> operation</i>:</li><ul>
+	 * <li>operationSetItTo:</li>
+	 * <li>operationAdd:</li>
+	 * <li>operationSubtract:</li>
+	 * <li>operationMultiply:</li>
+	 * <li>operationDivideBy:</li>
+	 * <li>operationModBy:</li>
+	 * </ul>
+	 * <li><b>&lt;radio&gt;</b> with</i>:</li><ul>
+	 * <li>withTheValue:</li>
+	 * <ul>
+	 * <li><b>&lt;exactNumber&gt;</b> exactNumber</li>
+	 * </ul>
+	 * <li>withAVariable:</li>
+	 * <ul>
+	 * <li><b>&lt;variable&gt;</b> variable</li>
+	 * </ul>
+	 * <li>withARandomNumber:</li>
+	 * <ul>
+	 * <li><b>&lt;group&gt;</b> group:</li>
+	 * <ul>
+	 * <li><b>&lt;exactNumber&gt;</b> exactNumber</li>
+	 * <li><b>&lt;exactNumber&gt;</b> exactNumber2</li>
+	 * </ul>
+	 * </ul>
+	 * <li>withAnActorProperty:</li>
+	 * <ul>
+	 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
+	 * <li><b>&lt;radio&gt;</b> coordinate</i>:</li><ul>
+	 * <li>coordinateX:</li>
+	 * <li>coordinateY:</li>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()
