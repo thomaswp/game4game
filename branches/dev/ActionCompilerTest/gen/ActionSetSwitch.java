@@ -1,10 +1,15 @@
+package edu.elon.honors.price.maker.action;							// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 import edu.elon.honors.price.maker.action.*;						// ActionWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.types.*;							// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ActionWriter.writeHeader()
 import edu.elon.honors.price.data.Event.Parameters;					// ActionWriter.writeHeader()
+import com.twp.platform.*;											// ActionWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ActionWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
-public class ActionSetSwitch extends ActionInstance {						// ActionFragmentWriter.writeHeader()
+public class ActionSetSwitch extends ActionInstance {				// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Set Switch";					// ActionWriter.writeHeader()
 	public static final int ID = 0;									// ActionWriter.writeHeader()
 	public static final String CATEGORY = "Variable Operations";	// ActionWriter.writeHeader()
@@ -14,10 +19,19 @@ public class ActionSetSwitch extends ActionInstance {						// ActionFragmentWrit
 	public class SetOneSwitchData extends ActionFragment {			// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;switch&gt;</b> */							// ActionFragmentWriter.writeElement()
 		public Switch aSwitch;										// ActionFragmentWriter.writeElement()
+		public boolean readASwitch(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readSwitch(aSwitch);					// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			aSwitch = iterator.getSwitch();							// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean setAllSwitchesFrom;								// ActionFragmentWriter.writeElement()
@@ -27,13 +41,26 @@ public class ActionSetSwitch extends ActionInstance {						// ActionFragmentWrit
 		public class Group extends ActionFragment {					// ActionFragmentWriter.writeHeader()
 			/** Type: <b>&lt;switch&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Switch from;										// ActionFragmentWriter.writeElement()
+			public boolean readFrom(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+				return gameState.readSwitch(from);					// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 			/** Type: <b>&lt;switch&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Switch to;										// ActionFragmentWriter.writeElement()
+			public boolean readTo(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+				return gameState.readSwitch(to);					// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
 				from = iterator.getSwitch();						// ActionFragmentWriter.writeReadParams()
 				to = iterator.getSwitch();							// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;switch&gt;</b> from</li>
+			 * <li><b>&lt;switch&gt;</b> to</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 																	// ActionFragmentWriter.writeConstructor()
@@ -44,6 +71,16 @@ public class ActionSetSwitch extends ActionInstance {						// ActionFragmentWrit
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
 			group.readParams(iterator.getParameters().iterator());	// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;group&gt;</b> group:</li>
+		 * <ul>
+		 * <li><b>&lt;switch&gt;</b> from</li>
+		 * <li><b>&lt;switch&gt;</b> to</li>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean actionSetItTo;									// ActionFragmentWriter.writeElement()
@@ -56,10 +93,19 @@ public class ActionSetSwitch extends ActionInstance {						// ActionFragmentWrit
 		public class SetToASwitchsValueData extends ActionFragment {// ActionFragmentWriter.writeHeader()
 			/** Type: <b>&lt;switch&gt;</b> */						// ActionFragmentWriter.writeElement()
 			public Switch aSwitch;									// ActionFragmentWriter.writeElement()
+			public boolean readASwitch(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+				return gameState.readSwitch(aSwitch);				// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
 				aSwitch = iterator.getSwitch();						// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
 		}															// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 		public boolean setToARandomValue;							// ActionFragmentWriter.writeElement()
@@ -77,13 +123,23 @@ public class ActionSetSwitch extends ActionInstance {						// ActionFragmentWrit
 			setToARandomValue = setTo == 3;							// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;radio&gt;</b> setTo</i>:</li><ul>
+		 * <li>setToOn:</li>
+		 * <li>setToOff:</li>
+		 * <li>setToASwitchsValue:</li>
+		 * <ul>
+		 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+		 * </ul>
+		 * <li>setToARandomValue:</li>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
 	public boolean actionToggleIt;									// ActionFragmentWriter.writeElement()
-	/**
-	 * This is sample javadoc!
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 																	// ActionFragmentWriter.writeConstructor()
 	public ActionSetSwitch() {										// ActionFragmentWriter.writeConstructor()
 		setOneSwitchData = new SetOneSwitchData();					// ActionFragmentWriter.writeConstructor()
@@ -104,4 +160,39 @@ public class ActionSetSwitch extends ActionInstance {						// ActionFragmentWrit
 		actionToggleIt = action == 1;								// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 000 <b><i>Set Switch</i></b> (Variable Operations)<br />
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> set</i>:</li><ul>
+	 * <li>setOneSwitch:</li>
+	 * <ul>
+	 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+	 * </ul>
+	 * <li>setAllSwitchesFrom:</li>
+	 * <ul>
+	 * <li><b>&lt;group&gt;</b> group:</li>
+	 * <ul>
+	 * <li><b>&lt;switch&gt;</b> from</li>
+	 * <li><b>&lt;switch&gt;</b> to</li>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * <li><b>&lt;radio&gt;</b> action</i>:</li><ul>
+	 * <li>actionSetItTo:</li>
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> setTo</i>:</li><ul>
+	 * <li>setToOn:</li>
+	 * <li>setToOff:</li>
+	 * <li>setToASwitchsValue:</li>
+	 * <ul>
+	 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+	 * </ul>
+	 * <li>setToARandomValue:</li>
+	 * </ul>
+	 * </ul>
+	 * <li>actionToggleIt:</li>
+	 * </ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
 }																	// ActionFragmentWriter.writeFooter()
