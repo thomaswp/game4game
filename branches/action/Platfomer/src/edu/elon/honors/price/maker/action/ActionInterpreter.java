@@ -17,17 +17,13 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	private static HashMap<Action, ActionInstance> actionMap =
 			new HashMap<Action, ActionInstance>();
 
-	private static HashMap<Action, ActionInterpreter<?>> interperaterMap =
-			new HashMap<Action, ActionInterpreter<?>>();
-
-//	private static HashMap<Action, Method> methodMap =
-//			new HashMap<Action, Method>();
+	private static HashMap<Integer, ActionInterpreter<?>> interperaterMap =
+			new HashMap<Integer, ActionInterpreter<?>>();
 
 	protected Class<?> getActionClass() {
 		return getActionClass(getClass());
 	}
 
-	//@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static Class<?> getActionClass(Class<?> cls) {
 		ParameterizedType parameterizedType =
 				(ParameterizedType) cls.getGenericSuperclass();
@@ -49,7 +45,7 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 
 		ActionInstance instance = actionMap.get(action);
 
-		if (!interperaterMap.containsKey(action)) {
+		if (!interperaterMap.containsKey(action.id)) {
 			ActionInterpreter<?> interp = null;
 			for (Class<?> cls : interpreters) {
 				if (getActionClass(cls) == instance.getClass()) {
@@ -65,30 +61,12 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 			}
 			if (interp == null) throw new ParameterException(
 					"No interpreter for action #" + action.id);
-			interperaterMap.put(action, interp);
+			interperaterMap.put(action.id, interp);
 		}
 
-		ActionInterpreter<?> interp = interperaterMap.get(action);
+		ActionInterpreter<?> interp = interperaterMap.get(action.id);
 
 		invoke(instance.getClass(), interp, instance, gameState);
-
-		//		if (!methodMap.containsKey(action)) {
-		//			try {
-		//				Method method = interp.getClass().getMethod("interperate", 
-		//						instance.getClass(), GameState.class);
-		//				methodMap.put(action, method);
-		//				
-		//			} catch (Exception e) {
-		//				Game.debug(e);
-		//			}
-		//		}
-		//		
-		//		Method method = methodMap.get(action);
-		//		try {
-		//			method.invoke(interp, instance, gameState);
-		//		} catch (Exception e) {
-		//			Game.debug(e);
-		//		}
 	}
 
 	@SuppressWarnings("unchecked")

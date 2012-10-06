@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.Event.Parameters;					// GameStateWriter.write
 import com.twp.platform.*;											// GameStateWriter.writeHeader()
 import edu.elon.honors.price.physics.*;								// GameStateWriter.writeHeader()
 import edu.elon.honors.price.input.*;								// GameStateWriter.writeHeader()
+@SuppressWarnings("unused")											// GameStateWriter.writeHeader()
 public interface GameState {										// GameStateWriter.writeHeader()
 	public Point readPoint(Parameters params) throws ParameterException;// GameStateWriter.writeHeader()
 	public JoyStick readJoystick(int params) throws ParameterException;// GameStateWriter.writeHeader()
