@@ -446,6 +446,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					getSerializable("action");
 			me.getEvent().actions.add(action);
 			me.populateViews();
+			//TODO: add more of these
+			me.actionViews.get(me.actionViews.size() - 1).flashbutton();
 		}
 	}
 
