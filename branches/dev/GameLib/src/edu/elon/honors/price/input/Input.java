@@ -2,7 +2,6 @@ package edu.elon.honors.price.input;
 
 import java.util.ArrayList;
 
-import edu.elon.honors.price.game.Game;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -353,6 +352,7 @@ public final class Input {
 
 	private static void handleTouchEvents() {
 		//process the touch event
+		@SuppressWarnings("unused")
 		String out = "";
 		
 		synchronized (touchEvents) {

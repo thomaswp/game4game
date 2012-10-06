@@ -13,18 +13,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.maker.action.writer.ActionFactoryWriter;
 import edu.elon.honors.price.maker.action.writer.ActionHandler;
 import edu.elon.honors.price.maker.action.writer.GameStateWriter;
-import edu.elon.honors.price.maker.action.writer.Writer;
 
 public class Main {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, FileNotFoundException, IOException {
 		if (args.length == 0) {
 			args = new String[] {
 				new File("").getAbsolutePath() + "\\assets",
-				new File("").getAbsolutePath() + "\\gen\\edu\\elon\\honors\\price\\maker\\action"
+				new File("").getAbsolutePath() + "\\pregen\\edu\\elon\\honors\\price\\maker\\action"
 			};
 		}
 		

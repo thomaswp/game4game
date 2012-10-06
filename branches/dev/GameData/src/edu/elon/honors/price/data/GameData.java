@@ -6,8 +6,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import edu.elon.honors.price.game.Game;
-
 public abstract class GameData implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

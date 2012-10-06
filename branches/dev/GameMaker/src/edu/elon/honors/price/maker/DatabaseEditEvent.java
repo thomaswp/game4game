@@ -3,7 +3,6 @@ package edu.elon.honors.price.maker;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -11,7 +10,7 @@ import java.util.Stack;
 import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
-import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.ObjectInstance;
@@ -20,25 +19,18 @@ import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.maker.MapEditor.ReturnResponse;
 import edu.elon.honors.price.maker.action.EventContext;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Html;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -46,12 +38,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -211,7 +201,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	protected boolean hasChanged() {
 		Event event = readEvent(null);
 
-		return !PlatformGame.areEqual(event, this.event) ||
+		return !GameData.areEqual(event, this.event) ||
 				super.hasChanged();
 	}
 
@@ -264,7 +254,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 		if (action == MotionEvent.ACTION_DOWN) {
 			selectionRect.set(rX, rY, rX, rY);
-			selection.setVisibility(LinearLayout.VISIBLE);
+			selection.setVisibility(View.VISIBLE);
 		}
 
 		selectionRect.right = rX;
@@ -348,7 +338,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 	private void endSelection() {
 		selecting = false;
-		selection.setVisibility(LinearLayout.GONE);
+		selection.setVisibility(View.GONE);
 		selection.layout(0, 0, 0, 0);
 
 		int count = 0;

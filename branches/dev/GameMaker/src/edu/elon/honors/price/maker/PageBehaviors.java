@@ -5,9 +5,6 @@ import java.util.LinkedList;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -122,7 +119,7 @@ public class PageBehaviors extends Page {
 			Intent intent = new Intent(parent, DatabaseEditBehavior.class);
 			intent.putExtra("game", getGame());
 			intent.putExtra("behavior", behaviors.get(index));
-			parent.startActivityForResult(intent, Database.REQUEST_RETURN_GAME);
+			parent.startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
 		}
 	}
 

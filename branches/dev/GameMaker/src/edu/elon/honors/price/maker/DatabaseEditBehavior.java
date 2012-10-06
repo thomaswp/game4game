@@ -1,7 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
@@ -19,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -54,6 +53,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 	}
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -126,7 +126,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 
 	@Override
 	public boolean hasChanged() {
-		return !PlatformGame.areEqual(behavior, readBehavior()) ||
+		return !GameData.areEqual(behavior, readBehavior()) ||
 		super.hasChanged();
 	}
 

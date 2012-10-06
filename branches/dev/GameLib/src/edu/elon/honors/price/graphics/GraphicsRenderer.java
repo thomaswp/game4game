@@ -28,7 +28,7 @@ public class GraphicsRenderer implements Renderer {
 	private int[] rTexture = new int[1];
 	private int lastBGC;
 	private int framesRendered = 0;
-	private Game game;
+	//private Game game;
 	private int textureCacheSize = 0;
 
 	private Logic logic;
@@ -60,7 +60,7 @@ public class GraphicsRenderer implements Renderer {
 		mTextureNameWorkspace = new int[1];
 		mCropWorkspace = new int[4];
 		resources = new LinkedList<Integer>();
-		this.game = game;
+		//this.game = game;
 	}
 	
 	@Override

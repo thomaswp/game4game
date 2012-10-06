@@ -1,9 +1,7 @@
 package com.ericharlow.DragNDrop;
 
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.Adapter;
 import android.widget.LinearLayout;

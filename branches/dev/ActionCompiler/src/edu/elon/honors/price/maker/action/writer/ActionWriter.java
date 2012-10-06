@@ -1,6 +1,5 @@
 package edu.elon.honors.price.maker.action.writer;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.xml.sax.Attributes;
@@ -50,6 +49,7 @@ public class ActionWriter extends ActionFragmentWriter {
 		writeLn();
 
 		javadoc.add(String.format("%03d <b><i>%s</i></b> (%s)<br />", id, readableName, category));
+		writeLn("@SuppressWarnings(%s)", quote("unused"));
 		super.writeHeader();
 		
 		writeConstant("String", "NAME", quote(readableName));

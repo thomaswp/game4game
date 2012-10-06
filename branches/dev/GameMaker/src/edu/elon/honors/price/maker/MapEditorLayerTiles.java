@@ -125,14 +125,14 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		Tileset tileset = game.getMapTileset(map);
 		int tileHeight = tileset.tileHeight;
 		Bitmap bmp = parent.tilesetImage;
-		return (int)Math.round((touchY - parent.offY - bmp.getHeight() / 2) / tileHeight);
+		return Math.round((touchY - parent.offY - bmp.getHeight() / 2) / tileHeight);
 	}
 
 	private int getBitmapCol(float touchX) {
 		Tileset tileset = game.getMapTileset(map);
 		int tileWidth = tileset.tileWidth;
 		Bitmap bmp = parent.tilesetImage;
-		return (int)Math.round((touchX - parent.offX - bmp.getWidth() / 2) / tileWidth);
+		return Math.round((touchX - parent.offX - bmp.getWidth() / 2) / tileWidth);
 	}
 	
 	private void placeTiles(float x, float y) {

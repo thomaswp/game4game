@@ -1,12 +1,9 @@
 package edu.elon.honors.price.data;
 
-import java.util.LinkedList;
-
-import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.game.Game;
 
+@SuppressWarnings("unused")
 public class Upgrader {
-	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
 		int version = game._VERSION_;
 		game.tilesets[0].bitmapName = "StickTiles.png";

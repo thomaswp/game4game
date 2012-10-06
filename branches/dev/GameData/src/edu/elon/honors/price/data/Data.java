@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import edu.elon.honors.price.game.Cache;
 import edu.elon.honors.price.game.Game;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -21,7 +22,6 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
-import android.view.ContextMenu;
 
 /**
  * A class for saving and loading persistent data as well as
@@ -261,9 +261,11 @@ public final class Data {
 	 * @param data The PlatformGame object.
 	 * @return true if the save was successful.
 	 */
+	@SuppressLint("WorldReadableFiles")
 	public static boolean saveGame(String name, Activity parent, Serializable data) {
 		try {
-			FileOutputStream fos = parent.openFileOutput(name, Context.MODE_WORLD_WRITEABLE);
+			FileOutputStream fos = parent.openFileOutput(name, 
+					Context.MODE_WORLD_READABLE);
 			ObjectOutputStream out = new ObjectOutputStream(fos);
 			out.writeObject(data);
 			out.close();

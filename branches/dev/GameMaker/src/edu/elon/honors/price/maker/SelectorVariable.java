@@ -1,12 +1,7 @@
 package edu.elon.honors.price.maker;
 
-import java.util.List;
-
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Behavior.ParameterType;
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.maker.action.EventContext;

@@ -21,6 +21,7 @@ public class ActionDestroyObject extends ActionInstance {			// ActionFragmentWri
 		return gameState.readObjectInstance(objectInstance);		// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		objectInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()

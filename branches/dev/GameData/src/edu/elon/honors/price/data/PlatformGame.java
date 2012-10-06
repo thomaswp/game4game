@@ -2,17 +2,10 @@ package edu.elon.honors.price.data;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
-
 import edu.elon.honors.price.data.Behavior.BehaviorType;
-import edu.elon.honors.price.game.Game;
-
 import android.graphics.Rect;
 
 public class PlatformGame extends GameData {
@@ -77,7 +70,7 @@ public class PlatformGame extends GameData {
 		actors = new ActorClass[3];
 		actors[1] = new ActorClass();
 		ActorClass ghost = actors[1];
-		ghost.imageName = "ghost.png";
+		ghost.imageName = "StickMan.png";
 		ghost.speed = 1.5f;
 		ghost.jumpVelocity = 4f;
 		ghost.edgeBehavior = ActorClass.BEHAVIOR_TURN;
@@ -88,7 +81,7 @@ public class PlatformGame extends GameData {
 		ghost.name = "Ghost";
 
 		ActorClass vlad = new ActorClass();
-		vlad.imageName = "vamp.png";
+		vlad.imageName = "StickMan.png";
 		vlad.speed = 1f;
 		vlad.edgeBehavior = ActorClass.BEHAVIOR_TURN;
 		vlad.wallBehavior = ActorClass.BEHAVIOR_TURN;
@@ -102,7 +95,7 @@ public class PlatformGame extends GameData {
 		hero.speed = 3.5f;
 		hero.jumpVelocity = 6f;
 		hero.stunDuration = 600;
-		hero.imageName = "hero.png";
+		hero.imageName = "StickMan.png";
 		hero.name = "Hero";
 		hero.actorContactBehaviors[ActorClass.BELOW] = ActorClass.BEHAVIOR_JUMP;
 		hero.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_STUN;

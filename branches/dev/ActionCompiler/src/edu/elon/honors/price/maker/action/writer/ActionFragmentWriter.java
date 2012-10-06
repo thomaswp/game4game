@@ -1,14 +1,10 @@
 package edu.elon.honors.price.maker.action.writer;
 
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.xml.sax.Attributes;
-
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.sun.org.apache.xpath.internal.compiler.Keywords;
 
 public class ActionFragmentWriter extends Writer {
 
@@ -216,6 +212,7 @@ public class ActionFragmentWriter extends Writer {
 		javadoc.add(String.format("<li><b>&lt;%s&gt;</b> %s</li>", originamQName, varName));
 	}
 	
+	@Override
 	public void endElement(String qName) {
 		if (childWriter instanceof ChoiceWriter && !choiceWriterHeaded) childWriter = null;
 		
@@ -259,6 +256,7 @@ public class ActionFragmentWriter extends Writer {
 	
 	protected void writeReadParams() {
 		writeLn();
+		writeLn("@Override");
 		writeLn("public void readParams(Iterator iterator) {");
 		tab++;
 		

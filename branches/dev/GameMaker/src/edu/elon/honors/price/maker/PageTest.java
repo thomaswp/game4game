@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import android.content.Intent;
 
+@SuppressWarnings("unused")
 public class PageTest extends Page {
 
 	private SelectorActorInstance sai, sai2;

@@ -8,13 +8,10 @@ import android.graphics.RectF;
 import com.twp.platform.Interpreter.ParameterException;
 import com.twp.platform.PhysicsHandler.BodyCallback;
 
-import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
@@ -22,10 +19,8 @@ import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
@@ -65,9 +60,9 @@ public class TriggerHandler {
 		for (int i = 0; i < physics.getPlatformBodies().size(); i++) {
 			PlatformBody body = physics.getPlatformBodies().get(i);
 			if (body instanceof ActorBody) {
-				checkBehaving(((ActorBody) body));
+				checkBehaving((body));
 			} else if (body instanceof ObjectBody) {
-				checkBehaving(((ObjectBody) body));
+				checkBehaving((body));
 			}
 		}
 	}

@@ -26,6 +26,7 @@ public class ActionChangeGravity extends ActionInstance {			// ActionFragmentWri
 		return gameState.readNumber(magnitude);						// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		vector = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
 		magnitude = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()

@@ -11,8 +11,6 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
-import edu.elon.honors.price.maker.SelectorActorClass.OnActorClassChangedListener;
-import edu.elon.honors.price.maker.SelectorObjectClass.OnObjectClassChangedListener;
 import edu.elon.honors.price.maker.action.EventContext;
 import edu.elon.honors.price.maker.action.EventContext.Scope;
 

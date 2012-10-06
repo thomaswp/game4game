@@ -1,8 +1,9 @@
 package edu.elon.honors.price.maker.action;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
+
+import android.util.SparseArray;
 
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.game.Game;
@@ -17,8 +18,8 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	private static HashMap<Action, ActionInstance> actionMap =
 			new HashMap<Action, ActionInstance>();
 
-	private static HashMap<Integer, ActionInterpreter<?>> interperaterMap =
-			new HashMap<Integer, ActionInterpreter<?>>();
+	private static SparseArray<ActionInterpreter<?>> interperaterMap =
+			new SparseArray<ActionInterpreter<?>>();
 
 	protected Class<?> getActionClass() {
 		return getActionClass(getClass());
@@ -35,18 +36,18 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 
 	public static void interperate(Action action, PlatformGameState gameState) 
 			throws ParameterException {
-		if (!actionMap.containsKey(action)) {
-			ActionInstance a = ActionFactory.getInstance(action.id);
-			if (a == null) throw new ParameterException(
+		
+		ActionInstance instance = actionMap.get(action);
+		if (instance == null) {
+			instance = ActionFactory.getInstance(action.id);
+			if (instance == null) throw new ParameterException(
 					"Invalid action id: " + action.id);
-			a.setParameters(action.params);
-			actionMap.put(action, a);
+			instance.setParameters(action.params);
+			actionMap.put(action, instance);
 		}
 
-		ActionInstance instance = actionMap.get(action);
-
-		if (!interperaterMap.containsKey(action.id)) {
-			ActionInterpreter<?> interp = null;
+		ActionInterpreter<?> interp = interperaterMap.get(action.id);
+		if (interp == null) {
 			for (Class<?> cls : interpreters) {
 				if (getActionClass(cls) == instance.getClass()) {
 					try {
@@ -64,7 +65,6 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 			interperaterMap.put(action.id, interp);
 		}
 
-		ActionInterpreter<?> interp = interperaterMap.get(action.id);
 
 		invoke(instance.getClass(), interp, instance, gameState);
 	}

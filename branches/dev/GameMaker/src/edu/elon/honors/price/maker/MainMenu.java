@@ -194,9 +194,12 @@ public class MainMenu extends Activity {
 					FileInputStream fis = new FileInputStream(new File(dir, file));
 					ObjectInputStream ois = new ObjectInputStream(fis);
 					PlatformGame game = (PlatformGame)ois.readObject();
-					FileOutputStream fos = openFileOutput(file, MODE_WORLD_WRITEABLE);
+					ois.close();
+					
+					FileOutputStream fos = openFileOutput(file, MODE_PRIVATE);
 					ObjectOutputStream oos = new ObjectOutputStream(fos);
 					oos.writeObject(game);
+					oos.close();
 					loadMaps();
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -218,7 +221,7 @@ public class MainMenu extends Activity {
 					FileOutputStream fos = new FileOutputStream(file2);
 					ObjectOutputStream oos = new ObjectOutputStream(fos);
 					oos.writeObject(game);
-
+					oos.close();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

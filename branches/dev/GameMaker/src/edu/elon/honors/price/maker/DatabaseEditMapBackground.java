@@ -13,10 +13,8 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
 
 public class DatabaseEditMapBackground extends DatabaseActivity {
 

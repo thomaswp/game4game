@@ -26,6 +26,7 @@ public class ActionMoveObject extends ActionInstance {				// ActionFragmentWrite
 		return gameState.readPoint(point);							// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		objectInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 		point = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()

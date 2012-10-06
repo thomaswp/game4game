@@ -2,7 +2,6 @@ package edu.elon.honors.price.maker;
 
 import java.io.InputStream;
 
-import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;

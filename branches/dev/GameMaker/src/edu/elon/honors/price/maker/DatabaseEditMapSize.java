@@ -16,6 +16,7 @@ public class DatabaseEditMapSize extends DatabaseActivity {
 	
 	private Map map;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		

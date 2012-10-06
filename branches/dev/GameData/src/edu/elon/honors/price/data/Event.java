@@ -3,14 +3,11 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Game;
 import android.graphics.Rect;
 
 /**
@@ -106,6 +103,7 @@ public class Event extends GameData {
 			return a;
 		}
 		
+		@Override
 		public String toString() {
 			return String.format("[%d] %s", indent, ActionIds.ACTION_NAMES[id]);
 		}
