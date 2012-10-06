@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.elon.honors.price.data.Event.Action;
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;

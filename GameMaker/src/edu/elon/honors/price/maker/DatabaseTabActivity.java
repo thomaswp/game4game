@@ -1,15 +1,11 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.game.Game;
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
@@ -20,6 +16,7 @@ public abstract class DatabaseTabActivity extends DatabaseActivity {
 	protected TabHost tabHost;
 	private boolean loaded[];
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_tab_activity);
@@ -59,7 +56,7 @@ public abstract class DatabaseTabActivity extends DatabaseActivity {
 		tabHost.setId(1);
 				
 		LinearLayout.LayoutParams lps = new LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+				android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
 		main.addView(tabHost, lps);
 		
 		LinearLayout content = new LinearLayout(this);

@@ -1,6 +1,5 @@
 package edu.elon.honors.price.data;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 

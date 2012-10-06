@@ -1,12 +1,9 @@
 package edu.elon.honors.price.maker.action.writer;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
 
 import org.xml.sax.Attributes;
-
-import edu.elon.honors.price.game.Game;
 
 public abstract class Writer {
 	

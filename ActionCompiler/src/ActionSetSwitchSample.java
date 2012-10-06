@@ -1,4 +1,3 @@
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.maker.action.ActionInstance;

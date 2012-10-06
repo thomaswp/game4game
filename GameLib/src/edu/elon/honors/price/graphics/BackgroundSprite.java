@@ -106,8 +106,8 @@ public class BackgroundSprite {
 			for (int j = 0; j < sprites[i].length; j++) {
 				if (sprites[i][j] != null) {
 					Sprite s = sprites[i][j];
-					s.setX((int)Math.round(s.getX() + x));
-					s.setY((int)Math.round(s.getY() + y));
+					s.setX(Math.round(s.getX() + x));
+					s.setY(Math.round(s.getY() + y));
 				}
 			}
 		}

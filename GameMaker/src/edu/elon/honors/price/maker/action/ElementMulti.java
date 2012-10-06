@@ -11,7 +11,6 @@ import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;

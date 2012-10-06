@@ -2,15 +2,11 @@ package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
 
-import com.twp.platform.ActorBody;
-
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
@@ -25,7 +21,6 @@ import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Cache;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public abstract class MapActivityBase extends SaveableActivity {

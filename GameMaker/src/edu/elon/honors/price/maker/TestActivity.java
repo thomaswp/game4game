@@ -1,7 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import android.app.Activity;
-import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
@@ -10,6 +8,7 @@ public class TestActivity extends DatabaseActivity {
 	public SelectorSwitch ss;
 	public SelectorVariable sv;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -23,6 +22,7 @@ public class TestActivity extends DatabaseActivity {
 		setContentView(layout);
 	}
 	
+	@Override
 	public void onActivityResult(int requestCode, 
 			int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);

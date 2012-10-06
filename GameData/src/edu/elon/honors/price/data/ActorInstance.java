@@ -1,7 +1,5 @@
 package edu.elon.honors.price.data;
 
-import java.io.Serializable;
-
 /**
  * Represents an instance of an actor. This instance can be
  * tied to specific events, but inherits most of its ActorClass.

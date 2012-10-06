@@ -2,12 +2,9 @@ package edu.elon.honors.price.maker;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.input.Input;
-import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
-import edu.elon.honors.price.maker.SelectorMapRegion.RegionView;
 
 public class DatabaseEditMapHorizon extends SelectorMapBase {
 
@@ -41,6 +38,7 @@ public class DatabaseEditMapHorizon extends SelectorMapBase {
 			super(context, game, savedInstanceState);
 		}
 
+		@Override
 		protected String getLeftButtonText() {
 			switch (mode) {
 			case MODE_MOVE: return "Move";

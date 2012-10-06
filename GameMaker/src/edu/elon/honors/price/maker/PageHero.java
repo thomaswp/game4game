@@ -8,7 +8,6 @@ import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Hero;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 
 public class PageHero extends Page {

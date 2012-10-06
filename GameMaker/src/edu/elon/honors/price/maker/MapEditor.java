@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import android.app.AlertDialog;
@@ -33,9 +34,10 @@ public class MapEditor extends MapActivityBase {
 	@Override
 	protected boolean hasChanged() {
 		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
-		return !PlatformGame.areEqual(oldGame, game);
+		return !GameData.areEqual(oldGame, game);
 	}
 	
+	@Override
 	protected void finishOk(Intent data) {
 		save();
 		finish();

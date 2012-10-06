@@ -1,7 +1,5 @@
 package edu.elon.honors.price.maker.action;
 
-import java.util.LinkedList;
-
 import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.maker.action.EventContext.Scope;

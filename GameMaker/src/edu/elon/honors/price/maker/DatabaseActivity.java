@@ -1,25 +1,15 @@
 package edu.elon.honors.price.maker;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Vibrator;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.GameData;
@@ -270,7 +260,7 @@ public class DatabaseActivity extends SaveableActivity {
 	protected boolean hasChanged() {
 		//long time = System.currentTimeMillis();
 		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
-		boolean r = !PlatformGame.areEqual(oldGame, game);
+		boolean r = !GameData.areEqual(oldGame, game);
 		//time = System.currentTimeMillis() - time;
 		//Game.debug("Game compared in " + time + "ms");
 		return r;
@@ -284,6 +274,7 @@ public class DatabaseActivity extends SaveableActivity {
 	 * passed back to the parent. This method cannot
 	 * itself be overwritten.
 	 */
+	@Override
 	protected final void finishOk(Intent intent) {
 		onFinishing();
 		intent.putExtra("game", game);

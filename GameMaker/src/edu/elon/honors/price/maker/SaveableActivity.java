@@ -1,9 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import java.io.Serializable;
-
-import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -21,6 +17,7 @@ public class SaveableActivity extends Activity {
 	private Handler finishHandler = new Handler();
 	private boolean loaded;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null) {

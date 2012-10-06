@@ -1,8 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import edu.elon.honors.price.data.Behavior;
@@ -12,14 +9,9 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.data.types.Switch;
-import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.Element;
 import edu.elon.honors.price.maker.action.ElementBoolean;
 import edu.elon.honors.price.maker.action.ElementNumber;
-import edu.elon.honors.price.maker.action.ElementSwitch;
-import edu.elon.honors.price.maker.action.ElementVariable;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -29,18 +21,12 @@ import android.graphics.Color;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 public class SelectorBehaviorInstances extends LinearLayout 
 implements IPopulatable{

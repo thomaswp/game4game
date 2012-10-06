@@ -42,14 +42,15 @@ public class GameStateWriter extends Writer {
 			writeLn("import %s;", s);
 		}
 		
+		writeLn("@SuppressWarnings(%s)", quote("unused"));
 		writeLn("public interface GameState {");
 		tab++;
 		for (String read : READ_TYPES.keySet()) {
 			String type = READ_TYPES.get(read);
 			String paramType = "Parameters";
-			for (String key : ActionWriter.ELEMENT_TYPES.keySet()) {
+			for (String key : ActionFragmentWriter.ELEMENT_TYPES.keySet()) {
 				if (read.equalsIgnoreCase(key)) {
-					paramType = ActionWriter.ELEMENT_TYPES.get(key);
+					paramType = ActionFragmentWriter.ELEMENT_TYPES.get(key);
 				}
 			}
 			writeLn("public %s read%s(%s params) throws ParameterException;", type, capitalize(read),
