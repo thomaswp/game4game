@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.graphics.RectF;
 
-import com.twp.platform.Interpreter.ParameterException;
 import com.twp.platform.PhysicsHandler.BodyCallback;
 
 import edu.elon.honors.price.data.Behavior;
@@ -24,6 +23,7 @@ import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
+import edu.elon.honors.price.maker.action.ParameterException;
 import edu.elon.honors.price.physics.Vector;
 
 public class TriggerHandler {

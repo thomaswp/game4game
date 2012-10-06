@@ -8,6 +8,5 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GameLib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PhysicsLib"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ActionCompiler"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

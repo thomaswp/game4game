@@ -24,7 +24,10 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
+import edu.elon.honors.price.maker.action.ActionInterpreter;
+import edu.elon.honors.price.maker.action.PlatformGameState;
 import edu.elon.honors.price.physics.Vector;
+import edu.elon.honors.price.maker.action.ParameterException;;
 
 public class Interpreter extends ActionIds {
 
@@ -39,12 +42,14 @@ public class Interpreter extends ActionIds {
 	private Point point = new Point();
 	private Vector vector = new Vector();
 	private Paint paint = new Paint();
+	private PlatformGameState gameState;
 
 
 	public Interpreter(PlatformLogic logic) {
 		this.logic = logic;
 		this.physics = logic.getPhysics();
 		this.game = logic.getGame();
+		gameState = new PlatformGameState(logic, physics, game);
 	}
 
 	public void doEvent(Event event) {
@@ -66,15 +71,16 @@ public class Interpreter extends ActionIds {
 			try {
 				//003 Debug Box
 				if (action.id == ID_DEBUG_BOX) {
-					String text;
-					if (params.getInt() == 0 ) {
-						text = params.getString(1);
-					} else if (params.getInt() == 1) {
-						text = "" + readSwitch(params, 1, event);
-					} else {
-						text = "" + readVariable(params, 1, event);
-					}
-					Game.getCurrentGame().showToast(text);
+//					String text;
+//					if (params.getInt() == 0 ) {
+//						text = params.getString(1);
+//					} else if (params.getInt() == 1) {
+//						text = "" + readSwitch(params, 1, event);
+//					} else {
+//						text = "" + readVariable(params, 1, event);
+//					}
+//					Game.getCurrentGame().showToast(text);
+					ActionInterpreter.interperate(action, gameState);
 				}
 
 				//TODO: Rework set switch and variable
@@ -746,11 +752,11 @@ public class Interpreter extends ActionIds {
 
 	}
 
-	public static class ParameterException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public ParameterException(String message) {
-			super(message);
-		}
-	}
+//	public static class ParameterException extends Exception {
+//		private static final long serialVersionUID = 1L;
+//
+//		public ParameterException(String message) {
+//			super(message);
+//		}
+//	}
 }
