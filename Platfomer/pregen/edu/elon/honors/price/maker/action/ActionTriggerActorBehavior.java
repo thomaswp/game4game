@@ -23,6 +23,7 @@ public class ActionTriggerActorBehavior extends ActionInstance {	// ActionFragme
 	/** Type: <b>&lt;actorBehavior&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters actorBehavior;								// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		actorInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 		actorBehavior = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()

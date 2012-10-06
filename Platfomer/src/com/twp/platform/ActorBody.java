@@ -1,7 +1,5 @@
 package com.twp.platform;
 
-import java.util.Currency;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
@@ -18,7 +16,6 @@ import android.graphics.Color;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
@@ -228,6 +225,7 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	private AnimationState animationState = AnimationState.Walking;
+	@SuppressWarnings("unused")
 	private final static int SET_STAND_CLIMB = 0, SET_WALK_LEFT = 1, 
 			SET_WALK_RIGHT = 2, SET_ATTACK_LEFT = 3, SET_ATTACK_RIGHT = 4, 
 			SET_JUMP_LEFT = 5, SET_JUMP_RIGHT = 6;

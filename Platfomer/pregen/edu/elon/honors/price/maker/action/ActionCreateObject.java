@@ -26,6 +26,7 @@ public class ActionCreateObject extends ActionInstance {			// ActionFragmentWrit
 		return gameState.readPoint(point);							// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		objectClass = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
 		point = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()

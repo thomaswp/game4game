@@ -29,6 +29,7 @@ public class ActionMoveActor extends ActionInstance {				// ActionFragmentWriter
 	public boolean facingRight;										// ActionFragmentWriter.writeElement()
 	public boolean facingTheSameDirection;							// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		actorInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 		point = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()

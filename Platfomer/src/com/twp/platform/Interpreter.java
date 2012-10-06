@@ -3,7 +3,6 @@ package com.twp.platform;
 import java.util.List;
 import java.util.Random;
 
-import android.R.integer;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Paint.Style;

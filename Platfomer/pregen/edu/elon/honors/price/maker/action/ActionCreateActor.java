@@ -28,6 +28,7 @@ public class ActionCreateActor extends ActionInstance {				// ActionFragmentWrit
 	public boolean facingLeft;										// ActionFragmentWriter.writeElement()
 	public boolean facingRight;										// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		actorClass = iterator.getInt();								// ActionFragmentWriter.writeReadParams()
 		point = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()

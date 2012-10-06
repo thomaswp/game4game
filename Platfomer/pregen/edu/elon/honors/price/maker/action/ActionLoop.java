@@ -21,6 +21,7 @@ public class ActionLoop extends ActionInstance {					// ActionFragmentWriter.wri
 		return gameState.readNumber(numTimes);						// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
 		numTimes = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
