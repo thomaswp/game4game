@@ -13,7 +13,7 @@ import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 public class ActionPointOperation extends ActionInstance {			// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Point Operation";			// ActionWriter.writeHeader()
 	public static final int ID = 12;								// ActionWriter.writeHeader()
-	public static final String CATEGORY = null;						// ActionWriter.writeHeader()
+	public static final String CATEGORY = "Variables";				// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;variablePoint&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters point;										// ActionFragmentWriter.writeElement()
@@ -139,7 +139,7 @@ public class ActionPointOperation extends ActionInstance {			// ActionFragmentWr
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
-	 * 012 <b><i>Point Operation</i></b> (null)<br />
+	 * 012 <b><i>Point Operation</i></b> (Variables)<br />
 	 * <ul>
 	 * <li><b>&lt;variablePoint&gt;</b> point</li>
 	 * <li><b>&lt;radio&gt;</b> operator</i>:</li><ul>

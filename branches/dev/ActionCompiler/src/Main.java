@@ -15,6 +15,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import edu.elon.honors.price.maker.action.writer.ActionFactoryWriter;
 import edu.elon.honors.price.maker.action.writer.ActionHandler;
+import edu.elon.honors.price.maker.action.writer.ActionWriter;
 import edu.elon.honors.price.maker.action.writer.GameStateWriter;
 
 public class Main {
@@ -39,7 +40,7 @@ public class Main {
 		files = new File(args[0]).listFiles();
 		XMLReader parser = XMLReaderFactory.createXMLReader();
 		
-		LinkedList<String> classes = new LinkedList<String>();
+		LinkedList<ActionWriter> actions = new LinkedList<ActionWriter>();
 		if (files != null) {
 			for (File file : files) {
 				System.out.println("Parsing: " + file.getPath());
@@ -47,7 +48,7 @@ public class Main {
 				parser.setContentHandler(handler);
 				parser.parse(new InputSource(new FileInputStream(file)));
 				handler.writeFile(output);
-				classes.add(handler.getActionWriter().getName());
+				actions.add(handler.getActionWriter());
 			}
 		}
 		
@@ -59,7 +60,7 @@ public class Main {
 		
 		sWriter = new StringWriter();
 		ActionFactoryWriter afWriter = 
-				new ActionFactoryWriter(sWriter, classes);
+				new ActionFactoryWriter(sWriter, actions);
 		afWriter.writeHeader();
 		writeFile(output.getAbsolutePath() + "\\" + "ActionFactory.java",
 				sWriter.toString());

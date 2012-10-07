@@ -1,17 +1,18 @@
 package edu.elon.honors.price.maker.action.writer;
 
 import java.io.StringWriter;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.xml.sax.Attributes;
 
 public class ActionFactoryWriter extends Writer {
 
-	List<String> classes;
+	List<ActionWriter> actions;
 	
-	public ActionFactoryWriter(StringWriter writer, List<String> classes) {
+	public ActionFactoryWriter(StringWriter writer, List<ActionWriter> actions) {
 		super(writer);
-		this.classes = classes;
+		this.actions = actions;
 	}
 
 	@Override
@@ -25,14 +26,57 @@ public class ActionFactoryWriter extends Writer {
 		
 		writeLn("public class ActionFactory {");
 		tab++;
+		
+		writeLn("public final static int[] ACTION_IDS = new int[] {");
+		tab++;
+		for (ActionWriter action : actions) {
+			writeLn("%d,", action.id);
+		}
+		tab--;
+		writeLn("};");
+		
+		LinkedList<String> names = new LinkedList<String>();
+		LinkedList<String> categories = new LinkedList<String>();
+		for (ActionWriter action : actions) {
+			int id = action.id;
+			while (names.size() <= id) {
+				names.add(null);
+				categories.add(null);
+			} 
+			if (names.get(id) != null) throw new RuntimeException(
+					"No two Actions may have the same ID!");
+			names.set(id, action.readableName);
+			categories.set(id, action.category);
+		}
+		
+		writeLn("public final static String[] ACTION_NAMES = new String[] {");
+		tab++;
+		for (int i = 0; i < names.size(); i++) {
+			String name = names.get(i);
+			writeLn("%s,", quote(name == null ? "" : name));
+		}
+		tab--;
+		writeLn("};");
+		
+		writeLn("public final static String[] ACTION_CATEGORIES = new String[] {");
+		tab++;
+		for (int i = 0; i < categories.size(); i++) {
+			String category = categories.get(i);
+			writeLn("%s,", quote(category == null ? "Misc" : category));
+		}
+		tab--;
+		writeLn("};");
+		
 		writeLn("public static ActionInstance getInstance(int id) {");
 		tab++;
-		for (String c : classes) {
-			writeLn("if (id == %s.ID) return new %s();", c, c);
+		for (ActionWriter action : actions) {
+			writeLn("if (id == %s.ID) return new %s();", 
+					action.name, action.name);
 		}
 		writeLn("return null;");
 		tab--;
 		writeLn("}");
+		
 		tab--;
 		writeLn("}");
 	}

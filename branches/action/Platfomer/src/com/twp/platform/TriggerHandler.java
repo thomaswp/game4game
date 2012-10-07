@@ -59,11 +59,7 @@ public class TriggerHandler {
 //		}
 		for (int i = 0; i < physics.getPlatformBodies().size(); i++) {
 			PlatformBody body = physics.getPlatformBodies().get(i);
-			if (body instanceof ActorBody) {
-				checkBehaving((body));
-			} else if (body instanceof ObjectBody) {
-				checkBehaving((body));
-			}
+			checkBehaving(body);
 		}
 	}
 	

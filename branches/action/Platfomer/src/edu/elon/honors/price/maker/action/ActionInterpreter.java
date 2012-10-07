@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker.action;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
+import java.util.Random;
 
 import android.util.SparseArray;
 
@@ -10,6 +11,8 @@ import edu.elon.honors.price.game.Game;
 
 public abstract class ActionInterpreter<T extends ActionInstance> {
 
+	Random rand = new Random();
+	
 	private static final Class<?>[] interpreters = new Class<?>[] {
 		InterpreterSetSwtich.class,
 		InterpreterDebugBox.class

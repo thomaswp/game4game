@@ -106,7 +106,10 @@ public final class Data {
 		try {
 			String[] assets = parent.getAssets().list(dir);
 			for (int i = 0; i < assets.length; i++) {
-				files.add(assets[i]);
+				//To avoid subdirectories
+				if (assets[i].contains(".")) {
+					files.add(assets[i]);
+				}
 			}
 		} catch (Exception ex) {
 			Game.debug("No local resources for '" + dir + "'");
@@ -116,7 +119,9 @@ public final class Data {
 			File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + dir);
 			String[] externals = file.list();
 			for (int i = 0; i < externals.length; i++) {
-				files.add(externals[i]);
+				if (externals[i].contains(".")) {
+					files.add(externals[i]);
+				}
 			}
 		} catch (Exception ex) {
 			Game.debug("No external resources for '" + dir + "'");

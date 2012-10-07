@@ -24,6 +24,7 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
+import edu.elon.honors.price.maker.action.ActionFactory;
 import edu.elon.honors.price.maker.action.ActionInterpreter;
 import edu.elon.honors.price.maker.action.PlatformGameState;
 import edu.elon.honors.price.physics.Vector;
@@ -56,6 +57,8 @@ public class Interpreter extends ActionIds {
 		if (event == null)
 			return;
 
+		gameState.setEvent(event);
+		
 		//Game.debug(event.name);
 
 		actionIndex = 0;
@@ -66,65 +69,18 @@ public class Interpreter extends ActionIds {
 
 			Parameters params = action.params;
 
-			Game.debug("%s: %s", ActionIds.ACTION_NAMES[action.id], params.toString());
+			Game.debug("%s: %s", ActionFactory.ACTION_NAMES[action.id], params.toString());
 
 			try {
 				//003 Debug Box
 				if (action.id == ID_DEBUG_BOX) {
-//					String text;
-//					if (params.getInt() == 0 ) {
-//						text = params.getString(1);
-//					} else if (params.getInt() == 1) {
-//						text = "" + readSwitch(params, 1, event);
-//					} else {
-//						text = "" + readVariable(params, 1, event);
-//					}
-//					Game.getCurrentGame().showToast(text);
 					ActionInterpreter.interperate(action, gameState);
 				}
 
 				//TODO: Rework set switch and variable
 				//000 Set Switch
 				if (action.id == ID_SET_SWITCH) {
-					int from, to;
-					if (params.getInt() == 0) {
-						boolean argument;
-						if (params.getInt(2) == 0) {
-							if (params.getInt(3) == 0) {
-								argument = true;
-							} else if (params.getInt(3) == 1) {
-								argument = false;
-							} else if (params.getInt(3) == 2) {
-								argument = readSwitch(params, 4, event); 
-							} else {
-								argument = rand.nextBoolean();
-							}
-						} else {
-							argument = !readSwitch(params, 1, event);
-						}
-						setSwitch(params.getSwitch(1), event, argument);
-					} else {
-						from = params.getParameters(1).getSwitch().id;
-						to = params.getParameters(1).getSwitch().id;
-
-						for (int i = from; i <= to; i++) {
-							boolean argument;
-							if (params.getInt(2) == 0) {
-								if (params.getInt(3) == 0) {
-									argument = true;
-								} else if (params.getInt(3) == 1) {
-									argument = false;
-								} else if (params.getInt(3) == 2) {
-									argument = readSwitch(params, 4, event); 
-								} else {
-									argument = rand.nextBoolean();
-								}
-							} else {
-								argument = !readSwitch(params, 1, event);
-							}
-							Globals.getSwitches()[i] = argument;
-						}
-					}
+					ActionInterpreter.interperate(action, gameState);
 				}
 
 				//001 Set Variable
