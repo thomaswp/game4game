@@ -446,7 +446,6 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					getSerializable("action");
 			me.getEvent().actions.add(action);
 			me.populateViews();
-			//TODO: add more of these
 			me.actionViews.get(me.actionViews.size() - 1).flashbutton();
 		}
 	}
@@ -502,6 +501,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					getSerializable("trigger");
 			me.getEvent().triggers.add(trigger);
 			me.populateViews();
+			me.triggerViews.get(me.triggerViews.size() - 1).flashbutton();
 		}
 	}
 
@@ -613,6 +613,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			a.indent = indent;
 			me.getEvent().actions.add(index, a);
 			me.populateViews();
+			me.actionViews.get(index).flashbutton();
 		}
 	}
 
@@ -728,6 +729,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		private void paste(boolean below, boolean insert) {
 			if (game.copyData != null && 
 					game.copyData instanceof List<?>) {
+				LinkedList<Integer> indices = new LinkedList<Integer>();
+				
 				List<?> list = ((List<?>)game.copyData);
 				int indent = getAction().indent +
 						(insert ? 1 : 0);
@@ -748,9 +751,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					}
 					Action action = ((Action)list.get(i)).copy();
 					action.indent += indent;
-					getEvent().actions.add(i + offset, action);
+					int index = i + offset;
+					getEvent().actions.add(index, action);
+					indices.add(index);
 				}
 				populateViews();
+				for (int i : indices) {
+					actionViews.get(i).flashbutton();
+				}
 			}
 		}
 
@@ -899,6 +907,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			me.getEvent().actions.remove(index);
 			me.getEvent().actions.add(index, action);
 			me.populateViews();
+			me.actionViews.get(index).flashbutton();
 		}
 	}
 
@@ -918,6 +927,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			action.indent = me.getEvent().actions.get(index).indent;
 			me.getEvent().actions.add(index, action);
 			me.populateViews();
+			me.actionViews.get(index).flashbutton();
 		}
 	}
 
@@ -937,6 +947,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			triggers.remove(index);
 			triggers.add(index, trigger);
 			me.populateViews();
+			me.triggerViews.get(index).flashbutton();
 		}
 	}
 
