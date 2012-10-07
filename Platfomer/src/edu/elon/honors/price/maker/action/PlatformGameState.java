@@ -203,12 +203,20 @@ public class PlatformGameState implements GameState {
 	public boolean readSwitch(Switch params) throws ParameterException {
 		return readSwitch(params, event);
 	}
+	
+	public void setSwitch(Switch s, boolean value) throws ParameterException {
+		setSwitch(s, event, value);
+	}
 
 	@Override
 	public int readVariable(Variable params) throws ParameterException {
 		return readVariable(params, event);
 	}
 
+	public void setVariable(Variable variable, int value) throws ParameterException {
+		setVariable(variable, event, value);
+	}
+	
 	@Override
 	public boolean readBoolean(Parameters ps) throws ParameterException {
 		return readBoolean(ps, event);
@@ -273,10 +281,7 @@ public class PlatformGameState implements GameState {
 	public static boolean readSwitch(Switch s, Event event) 
 			throws ParameterException {
 		if (s.scope == DataScope.Global) {
-			int i = s.id;
-			assertThat(inArray(i, Globals.getSwitches().length), 
-					"Switch index out of bounds: %d", i);
-			return Globals.getSwitches()[i];
+			return readGlobalSwitch(s.id);
 		} else if (s.scope == DataScope.Local) {
 			BehaviorRuntime runtime = getBehavingRuntime(event);
 			assertThat(inArray(s.id, runtime.switches.length),
@@ -291,14 +296,17 @@ public class PlatformGameState implements GameState {
 			return readBoolean((Parameters)o, event);
 		}
 	}
+	
+	public static boolean readGlobalSwitch(int id) throws ParameterException {
+		assertThat(inArray(id, Globals.getSwitches().length), 
+				"Switch index out of bounds: %d", id);
+		return Globals.getSwitches()[id];
+	}
 
 	public static void setSwitch(Switch s, Event event, boolean value) 
 			throws ParameterException {
 		if (s.scope == DataScope.Global) {
-			int i = s.id;
-			assertThat(inArray(i, Globals.getSwitches().length), 
-					"Switch index out of bounds: %d", i);
-			Globals.getSwitches()[i] = value;
+			setGlobalSwitch(s.id, value);
 		} else if (s.scope == DataScope.Local) {
 			BehaviorRuntime runtime = getBehavingRuntime(event);
 			assertThat(inArray(s.id, runtime.switches.length),
@@ -308,14 +316,17 @@ public class PlatformGameState implements GameState {
 			throw new ParameterException("Cannot set a parameter!");
 		}
 	}
+	
+	public static void setGlobalSwitch(int id, boolean value) throws ParameterException {
+		assertThat(inArray(id, Globals.getSwitches().length), 
+				"Switch index out of bounds: %d", id);
+		Globals.getSwitches()[id] = value;
+	}
 
 	public static int readVariable(Variable v, Event event) 
 			throws ParameterException {
 		if (v.scope == DataScope.Global) {
-			int i = v.id;
-			assertThat(inArray(i, Globals.getVariables().length),
-					"Variable index out of bounds: %d", i);
-			return Globals.getVariables()[i];
+			return readGlobalVariable(v.id);
 		}  else if (v.scope == DataScope.Local) {
 			BehaviorRuntime runtime = getBehavingRuntime(event);
 			assertThat(inArray(v.id, runtime.variables.length),
@@ -330,14 +341,17 @@ public class PlatformGameState implements GameState {
 			return readNumber((Parameters)o, 0, event);
 		}
 	}
+	
+	public static int readGlobalVariable(int id) throws ParameterException {
+		assertThat(inArray(id, Globals.getVariables().length), 
+				"Variable index out of bounds: %d", id);
+		return Globals.getVariables()[id];
+	}
 
 	public static void setVariable(Variable v, Event event, int value) 
 			throws ParameterException {
 		if (v.scope == DataScope.Global) {
-			int i = v.id;
-			assertThat(inArray(i, Globals.getVariables().length),
-					"Variable index out of bounds: %d", i);
-			Globals.getVariables()[i] = value;
+			setGlobalVariable(v.id, value);
 		}  else if (v.scope == DataScope.Local) {
 			BehaviorRuntime runtime = getBehavingRuntime(event);
 			assertThat(inArray(v.id, runtime.variables.length),
@@ -346,6 +360,12 @@ public class PlatformGameState implements GameState {
 		} else {
 			throw new ParameterException("Cannot set a parameter!");
 		}
+	}
+	
+	public static void setGlobalVariable(int id, int value) throws ParameterException {
+		assertThat(inArray(id, Globals.getVariables().length), 
+				"Variable index out of bounds: %d", id);
+		Globals.getVariables()[id] = value;
 	}
 	
 	private static int readNumber(Parameters ps, Event event) 

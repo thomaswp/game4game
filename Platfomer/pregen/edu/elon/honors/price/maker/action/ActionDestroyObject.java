@@ -13,7 +13,7 @@ import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 public class ActionDestroyObject extends ActionInstance {			// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Destroy Object";				// ActionWriter.writeHeader()
 	public static final int ID = 15;								// ActionWriter.writeHeader()
-	public static final String CATEGORY = null;						// ActionWriter.writeHeader()
+	public static final String CATEGORY = "Object";					// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 	/** Type: <b>&lt;objectInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters objectInstance;								// ActionFragmentWriter.writeElement()
@@ -26,7 +26,7 @@ public class ActionDestroyObject extends ActionInstance {			// ActionFragmentWri
 		objectInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
-	 * 015 <b><i>Destroy Object</i></b> (null)<br />
+	 * 015 <b><i>Destroy Object</i></b> (Object)<br />
 	 * <ul>
 	 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
 	 * </ul>

@@ -13,7 +13,7 @@ import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 public class ActionSetSwitch extends ActionInstance {				// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Set Switch";					// ActionWriter.writeHeader()
 	public static final int ID = 0;									// ActionWriter.writeHeader()
-	public static final String CATEGORY = "Variable Operations";	// ActionWriter.writeHeader()
+	public static final String CATEGORY = "Variables";				// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 	public boolean setOneSwitch;									// ActionFragmentWriter.writeElement()
 	public SetOneSwitchData setOneSwitchData;						// ActionFragmentWriter.writeElement()
@@ -168,7 +168,7 @@ public class ActionSetSwitch extends ActionInstance {				// ActionFragmentWriter
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
-	 * 000 <b><i>Set Switch</i></b> (Variable Operations)<br />
+	 * 000 <b><i>Set Switch</i></b> (Variables)<br />
 	 * <ul>
 	 * <li><b>&lt;radio&gt;</b> set</i>:</li><ul>
 	 * <li>setOneSwitch:</li>

@@ -13,7 +13,7 @@ import edu.elon.honors.price.input.*;								// ActionWriter.writeHeader()
 public class ActionSetVariable extends ActionInstance {				// ActionFragmentWriter.writeHeader()
 	public static final String NAME = "Set Variable";				// ActionWriter.writeHeader()
 	public static final int ID = 1;									// ActionWriter.writeHeader()
-	public static final String CATEGORY = "Variable Operations";	// ActionWriter.writeHeader()
+	public static final String CATEGORY = "Variables";				// ActionWriter.writeHeader()
 																	// ActionWriter.writeHeader()
 	public boolean setOneVariable;									// ActionFragmentWriter.writeElement()
 	public SetOneVariableData setOneVariableData;					// ActionFragmentWriter.writeElement()
@@ -223,7 +223,7 @@ public class ActionSetVariable extends ActionInstance {				// ActionFragmentWrit
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
-	 * 001 <b><i>Set Variable</i></b> (Variable Operations)<br />
+	 * 001 <b><i>Set Variable</i></b> (Variables)<br />
 	 * <ul>
 	 * <li><b>&lt;radio&gt;</b> set</i>:</li><ul>
 	 * <li>setOneVariable:</li>
