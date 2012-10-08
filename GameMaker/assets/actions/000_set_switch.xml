@@ -7,11 +7,9 @@
 			<switch scope="Global|Local" />
 		</choice>
 		<choice text="all switches from">
-			<group>
-				<switch scope="Global" name="from" />
-				<text text="to" />
-				<switch scope="Global" name="to" />
-			</group>
+			<switch scope="Global" name="from" />
+			<text text="to" />
+			<switch scope="Global" name="to" />
 		</choice>
 	</radio>
 
