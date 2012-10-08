@@ -103,12 +103,19 @@ public class PlatformGameState implements GameState {
 	}
 	
 	@Override
-	public Point readPoint(Parameters ps) throws ParameterException {
-		if (ps.getInt() == 0) {
-			point.set(ps.getInt(1), ps.getInt(2));
+	public Point readPoint(Parameters params) throws ParameterException {
+		if (params.getInt() == 0) {
+			point.set(params.getInt(1), params.getInt(2));
 		} else {
-			point.set(readVariable(ps.getVariable(1), event), readVariable(ps.getVariable(2), event));
+			Parameters ps = params.getParameters(1);
+			point = readVariablePoint(ps);
 		}
+		return point;
+	}
+	
+	public Point readVariablePoint(Parameters ps) throws ParameterException {
+		point.set(readVariable(ps.getVariable(0), event), 
+				readVariable(ps.getVariable(1), event));
 		return point;
 	}
 	

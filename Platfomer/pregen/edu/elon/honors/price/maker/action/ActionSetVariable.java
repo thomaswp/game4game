@@ -74,11 +74,11 @@ public class ActionSetVariable extends ActionInstance {				// ActionFragmentWrit
 	public WithTheValueData withTheValueData;						// ActionFragmentWriter.writeElement()
 	public class WithTheValueData extends ActionFragment {			// ActionFragmentWriter.writeHeader()
 		/** Type: <b>&lt;exactNumber&gt;</b> */						// ActionFragmentWriter.writeElement()
-		public Parameters exactNumber;								// ActionFragmentWriter.writeElement()
+		public int exactNumber;										// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 		@Override													// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			exactNumber = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
+			exactNumber = iterator.getInt();						// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
 		/**
 		 * <ul>
@@ -115,14 +115,14 @@ public class ActionSetVariable extends ActionInstance {				// ActionFragmentWrit
 		public Group group;											// ActionFragmentWriter.writeElement()
 		public class Group extends ActionFragment {					// ActionFragmentWriter.writeHeader()
 			/** Type: <b>&lt;exactNumber&gt;</b> */					// ActionFragmentWriter.writeElement()
-			public Parameters exactNumber;							// ActionFragmentWriter.writeElement()
+			public int exactNumber;									// ActionFragmentWriter.writeElement()
 			/** Type: <b>&lt;exactNumber&gt;</b> */					// ActionFragmentWriter.writeElement()
-			public Parameters exactNumber2;							// ActionFragmentWriter.writeElement()
+			public int exactNumber2;								// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 			@Override												// ActionFragmentWriter.writeReadParams()
 			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				exactNumber = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
-				exactNumber2 = iterator.getParameters();			// ActionFragmentWriter.writeReadParams()
+				exactNumber = iterator.getInt();					// ActionFragmentWriter.writeReadParams()
+				exactNumber2 = iterator.getInt();					// ActionFragmentWriter.writeReadParams()
 			}														// ActionFragmentWriter.writeReadParams()
 			/**
 			 * <ul>
