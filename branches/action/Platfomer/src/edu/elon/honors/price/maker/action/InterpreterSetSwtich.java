@@ -7,21 +7,24 @@ public class InterpreterSetSwtich extends ActionInterpreter<ActionSetSwitch> {
 	@Override
 	protected void interperate(ActionSetSwitch action,
 			PlatformGameState gameState) throws ParameterException {
-		int from, to;
 		if (action.setOneSwitch) {
 			Switch s = action.setOneSwitchData.aSwitch;
-			setOneSwitch(s.id, action, gameState);
+			boolean value = operate(gameState.readSwitch(s), 
+					action, gameState);
+			gameState.setSwitch(s, value);
 		} else {
-			from = action.setAllSwitchesFromData.group.from.id;
-			to = action.setAllSwitchesFromData.group.to.id;
+			int from = action.setAllSwitchesFromData.from.id;
+			int to = action.setAllSwitchesFromData.to.id;
 
 			for (int i = from; i <= to; i++) {
-				setOneSwitch(i, action, gameState);
+				boolean startValue = PlatformGameState.readGlobalSwitch(i);
+				boolean value = operate(startValue, action, gameState);
+				PlatformGameState.setGlobalSwitch(i, value);
 			}
 		}
 	}
 	
-	private void setOneSwitch(int id, ActionSetSwitch action,
+	private boolean operate(boolean startValue, ActionSetSwitch action,
 			PlatformGameState gameState) throws ParameterException {
 		
 		ActionSetSwitch.ActionSetItToData data = 
@@ -39,10 +42,10 @@ public class InterpreterSetSwtich extends ActionInterpreter<ActionSetSwitch> {
 				argument = data.setToASwitchsValueData.readASwitch(gameState);
 			}
 		} else {
-			argument = !PlatformGameState.readGlobalSwitch(id);
+			argument = !startValue;
 		}
 		
-		PlatformGameState.setGlobalSwitch(id, argument);
+		return argument;
 	}
 
 }

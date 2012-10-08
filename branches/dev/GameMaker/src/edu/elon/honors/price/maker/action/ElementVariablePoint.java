@@ -30,14 +30,17 @@ public class ElementVariablePoint extends Element {
 
 	@Override
 	protected void addParameters(Parameters params) {
-		params.addParam(selectorVarX.getVariable());
-		params.addParam(selectorVarY.getVariable());
+		Parameters ps = new Parameters();
+		ps.addParam(selectorVarX.getVariable());
+		ps.addParam(selectorVarY.getVariable());
+		params.addParam(ps);
 	}
 
 	@Override
 	protected void readParameters(Iterator params) {
-		selectorVarX.setVariable(params.getVariable());
-		selectorVarY.setVariable(params.getVariable());
+		Parameters ps = params.getParameters();
+		selectorVarX.setVariable(ps.getVariable(0));
+		selectorVarY.setVariable(ps.getVariable(1));
 	}
 
 	@Override

@@ -114,6 +114,14 @@ public abstract class PlatformBody implements IBehaving {
 				body.getPosition().y * SCALE);
 		return scaledPosition;
 	}
+	
+	public void setPosition(float x, float y) {
+		body.setTransform(x, y, body.getAngle());
+	}
+	
+	public void setScaledPosition(int x, int y) {
+		setPosition(x / SCALE, y / SCALE);
+	}
 
 	public Sprite getSprite() {
 		return sprite;

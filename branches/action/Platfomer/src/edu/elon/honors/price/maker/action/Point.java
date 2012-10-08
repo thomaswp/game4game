@@ -11,4 +11,10 @@ public class Point {
 	public void set(int x, int y) {
 		this.x = x; this.y = y;
 	}
+	public void set(Point point) {
+		set(point.x, point.y);
+	}
+	public void setF(float x, float y) {
+		set(Math.round(x), Math.round(y));
+	}
 }
