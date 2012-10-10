@@ -2,7 +2,7 @@ package edu.elon.honors.price.maker.action;
 
 import edu.elon.honors.price.data.types.Switch;
 
-public class InterpreterSetSwtich extends ActionInterpreter<ActionSetSwitch> {
+public class InterpreterSetSwitch extends ActionInterpreter<ActionSetSwitch> {
 
 	@Override
 	protected void interperate(ActionSetSwitch action,

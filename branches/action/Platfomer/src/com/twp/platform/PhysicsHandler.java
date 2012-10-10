@@ -90,7 +90,11 @@ public class PhysicsHandler {
 	}
 
 	public void setGravity(Vector vector) {
-		gravity.set(vector.getX(), vector.getY());
+		if (vector.magnitude() < 0.001) {
+			gravity.set(0, 0.001f);
+		} else {
+			gravity.set(vector.getX(), vector.getY());
+		}
 		world.setGravity(gravity);
 		for (PlatformBody body : platformBodies) {
 			if (body != null) {

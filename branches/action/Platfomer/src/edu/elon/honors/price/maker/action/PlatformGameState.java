@@ -147,7 +147,11 @@ public class PlatformGameState implements GameState {
 		} else {
 			JoyStick joy = readJoystick(ps.getInt(1));
 			vector.set(joy.getLastPull());
-			vector.multiply(1f / joy.getLastPull().magnitude());
+			if (joy.getLastPull().magnitude() == 0) {
+				vector.set(0, 0);
+			} else {
+				vector.multiply(1f / joy.getLastPull().magnitude());
+			}
 			Game.debug(vector);
 		}
 		return vector;
