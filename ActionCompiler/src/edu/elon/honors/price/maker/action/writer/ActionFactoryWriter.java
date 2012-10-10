@@ -77,16 +77,19 @@ public class ActionFactoryWriter extends Writer {
 		tab--;
 		writeLn("}");
 		
-		writeLn("public static void loadInterpreters() {");
+		writeLn("public static java.util.LinkedList<Class<?>> getInterpreters() {");
 		tab++;
+		writeLn("java.util.LinkedList<Class<?>> classes = " +
+				"new java.util.LinkedList<Class<?>>();");
 		for (ActionWriter action : actions) {
 			writeLn("try {");
 			tab++;
-			writeLn("Class.forName(\"%s.%s\");", ActionWriter.PACKAGE, 
+			writeLn("classes.add(Class.forName(\"%s.%s\"));", ActionWriter.PACKAGE, 
 					action.name.replace("Action", "Interpreter"));
 			tab--;
 			writeLn("} catch (Exception e) { }");
 		}
+		writeLn("return classes;");
 		tab--;
 		writeLn("}");
 		

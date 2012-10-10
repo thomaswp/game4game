@@ -19,6 +19,7 @@ import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.EventContext;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -309,6 +310,10 @@ public class DatabaseEditEvent extends DatabaseActivity {
 	private int[] loc = new int[2];
 	private void updateViewSelection() {
 		int indent = -1;
+
+		//"break" if we see a view we can't include
+		//but keep looping to set others false
+		boolean brk = false;
 		for (ActionView view : actionViews) {
 
 			view.getLocationOnScreen(loc);
@@ -320,13 +325,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			boolean bottomIn = viewBot > locTop && viewTop < locBot;
 
 			//Game.debug("%d, %d", viewTop, locTop);
-
+			
 			if (topIn || bottomIn) {
 				if (indent == -1) {
 					indent = view.getAction().indent;
 				}
-				if (view.getAction().indent < indent) {
+				if (view.getAction().indent < indent || brk) {
 					view.setHighlight(false);
+					brk = true;
 				} else {
 					view.setHighlight(true);
 				}
@@ -395,7 +401,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				}
 				a.indent -= indent;
 				if (a.indent >= 0) {
-					actions.add(view.getAction());
+					actions.add(a);
 				}
 			}
 		}
@@ -745,6 +751,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					}
 					
 				}
+
 				for (int i = 0; i < list.size(); i++) {
 					if (!(list.get(i) instanceof Action)) {
 						return;

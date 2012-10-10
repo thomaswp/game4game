@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import android.text.Html;
+
 public class TextUtils {
 
 	public static final String COLOR_VARIABLE = "#00CC00";
@@ -12,6 +14,7 @@ public class TextUtils {
 	}
 
 	public static void  addColoredText(StringBuilder sb, String text, String color) {
+		text = android.text.TextUtils.htmlEncode(text);
 		if (color == null) {
 			sb.append(text);
 			return;
