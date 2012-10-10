@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker.action;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import com.twp.platform.PlatformLogic;
@@ -16,14 +17,8 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	Random rand = new Random();
 	public static final float SCALE = PlatformLogic.SCALE;
 	
-	static {
-		
-	}
-	
-	private static final Class<?>[] interpreters = new Class<?>[] {
-		InterpreterSetSwtich.class,
-		InterpreterDebugBox.class
-	};
+	private static final List<Class<?>> interpreters = 
+			ActionFactory.getInterpreters();
 
 	private static HashMap<Action, ActionInstance> actionMap =
 			new HashMap<Action, ActionInstance>();
@@ -54,7 +49,7 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 		ActionInstance instance = actionMap.get(action);
 		if (instance == null) {
 			instance = ActionFactory.getInstance(action.id);
-			if (instance == null) throw new ParameterException(
+			if (instance == null) throw new RuntimeException(
 					"Invalid action id: " + action.id);
 			instance.setParameters(action.params);
 			actionMap.put(action, instance);
@@ -74,7 +69,7 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 					}
 				}
 			}
-			if (interp == null) throw new ParameterException(
+			if (interp == null) throw new RuntimeException(
 					"No interpreter for action #" + action.id);
 			interperaterMap.put(action.id, interp);
 		}
