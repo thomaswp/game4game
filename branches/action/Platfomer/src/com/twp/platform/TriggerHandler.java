@@ -24,6 +24,7 @@ import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
 import edu.elon.honors.price.maker.action.ParameterException;
+import edu.elon.honors.price.maker.action.PlatformGameState;
 import edu.elon.honors.price.physics.Vector;
 
 public class TriggerHandler {
@@ -109,7 +110,7 @@ public class TriggerHandler {
 	private void checkTrigger(SwitchTrigger trigger, Event event)
 			throws ParameterException {
 		Switch tSwitch = trigger.triggerSwitch;
-		if (Interpreter.readSwitch(tSwitch, event) == trigger.value) {
+		if (PlatformGameState.readSwitch(tSwitch, event) == trigger.value) {
 			if (Globals.getSwitches()[tSwitch.id] == trigger.value) {
 				trigger(event);
 			}			
@@ -120,14 +121,14 @@ public class TriggerHandler {
 			throws ParameterException {
 		Variable variable = trigger.variable;
 
-		int value1 = Interpreter.readVariable(variable, event);
+		int value1 = PlatformGameState.readVariable(variable, event);
 		
 		int value2;
 		if (trigger.with == VariableTrigger.WITH_VALUE) {
 			value2 = trigger.withValue;
 		} else {
 			variable = trigger.withVariable;
-			value2 = Interpreter.readVariable(variable, event);
+			value2 = PlatformGameState.readVariable(variable, event);
 		}
 
 		boolean result = false;

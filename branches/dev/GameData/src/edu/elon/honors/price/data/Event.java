@@ -23,7 +23,7 @@ public class Event extends GameData {
 	public ArrayList<Action> actions = new ArrayList<Event.Action>();
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
 	
-	public transient Object tActor, tObject, tVector, behaving;
+	public transient Object tActor, tObject, tVector, tUI, behaving;
 	public transient int behaviorIndex = -1;
 
 	/**

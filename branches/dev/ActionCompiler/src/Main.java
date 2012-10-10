@@ -22,8 +22,8 @@ public class Main {
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, FileNotFoundException, IOException {
 		if (args.length == 0) {
 			args = new String[] {
-				new File("").getAbsolutePath() + "\\assets",
-				new File("").getAbsolutePath() + "\\pregen\\edu\\elon\\honors\\price\\maker\\action"
+				new File("").getAbsolutePath() + "\\..\\GameMaker\\assets\\actions",
+				new File("").getAbsolutePath() + "\\..\\Platformer\\pregen\\edu\\elon\\honors\\price\\maker\\action"
 			};
 		}
 		

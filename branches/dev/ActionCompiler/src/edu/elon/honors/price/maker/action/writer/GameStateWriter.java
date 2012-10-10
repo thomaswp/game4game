@@ -27,6 +27,8 @@ public class GameStateWriter extends Writer {
 		READ_TYPES.put("button", "Button");
 		READ_TYPES.put("number", "int");
 		READ_TYPES.put("boolean", "boolean");
+		READ_TYPES.put("region", "android.graphics.Rect");
+		READ_TYPES.put("ui", "UIControl");
 	}
 	
 	public GameStateWriter(StringWriter writer) {
