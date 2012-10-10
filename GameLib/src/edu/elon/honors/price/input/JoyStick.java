@@ -6,7 +6,7 @@ import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
 
-public class JoyStick {
+public class JoyStick extends UIControl {
 	private Viewport viewport;
 	private float radius;
 	private Vector center, touch, dragStart, temp, pull, lastPull;
@@ -110,5 +110,10 @@ public class JoyStick {
 	public void setVisible(boolean visible) {
 		outer.setVisible(visible);
 		inner.setVisible(visible);
+	}
+	
+	@Override
+	public boolean isVisible() {
+		return outer.isVisible();
 	}
 }
