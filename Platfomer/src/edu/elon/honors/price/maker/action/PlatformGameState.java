@@ -2,6 +2,8 @@ package edu.elon.honors.price.maker.action;
 
 import java.util.List;
 
+import android.graphics.Rect;
+
 import com.twp.platform.ActorBody;
 import com.twp.platform.BehaviorRuntime;
 import com.twp.platform.Globals;
@@ -23,6 +25,7 @@ import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
+import edu.elon.honors.price.input.UIControl;
 import edu.elon.honors.price.physics.Vector;
 
 public class PlatformGameState implements GameState {
@@ -34,6 +37,7 @@ public class PlatformGameState implements GameState {
 
 	private Point point = new Point();
 	private Vector vector = new Vector();
+	private Rect rect = new Rect();
 	
 	public Event getEvent() {
 		return event;
@@ -79,11 +83,10 @@ public class PlatformGameState implements GameState {
 		}
 	}
 	
-	public PlatformGameState(PlatformLogic logic, PhysicsHandler physics,
-			PlatformGame game) {
+	public PlatformGameState(PlatformLogic logic) {
 		this.logic = logic;
-		this.physics = physics;
-		this.game = game;
+		this.physics = logic.getPhysics();
+		this.game = logic.getGame();
 	}
 
 	@Override
@@ -100,6 +103,18 @@ public class PlatformGameState implements GameState {
 		if (button == null) throw new ParameterException(
 				"No button found with id " + index);
 		return button;
+	}
+	
+	public UIControl readUi(Parameters params) throws ParameterException {
+		int type = params.getInt(0);
+		if (type == 0) {
+			return logic.getButton(params.getInt(1));
+		} else if (type == 1) {
+			return logic.getJoystick(params.getInt(1));
+		} else {
+			assertThat(event.tUI != null, "No triggering control");
+			return (UIControl)event.tUI;
+		}
 	}
 	
 	@Override
@@ -176,6 +191,15 @@ public class PlatformGameState implements GameState {
 			return (ActorBody)event.behaving;
 		}
 	}
+	
+	@Override
+	public Rect readRegion(Parameters params) {
+		rect.set(params.getInt(0),
+				params.getInt(1),
+				params.getInt(2),
+				params.getInt(3));
+		return rect;
+	}
 
 	@Override
 	public ObjectBody readObjectInstance(Parameters ps) throws ParameterException {
@@ -214,6 +238,10 @@ public class PlatformGameState implements GameState {
 	public void setSwitch(Switch s, boolean value) throws ParameterException {
 		setSwitch(s, event, value);
 	}
+	
+	public String getSwitchName(Switch s) throws ParameterException {
+		return s.getName(game, getNullableBehavior());
+	}
 
 	@Override
 	public int readVariable(Variable params) throws ParameterException {
@@ -222,6 +250,10 @@ public class PlatformGameState implements GameState {
 
 	public void setVariable(Variable variable, int value) throws ParameterException {
 		setVariable(variable, event, value);
+	}
+	
+	public String getVariableName(Variable v) throws ParameterException {
+		return v.getName(game, getNullableBehavior());
 	}
 	
 	@Override

@@ -2,10 +2,11 @@ package edu.elon.honors.price.maker.action;
 
 import edu.elon.honors.price.game.Game;
 
-public class InterpreterDebugBox extends ActionInterpreter<ActionDebugBox> {
+public class InterpreterDebugMessage extends ActionInterpreter<ActionDebugMessage> {
 
 	@Override
-	public void interperate(ActionDebugBox action, PlatformGameState gameState) throws ParameterException {
+	protected void interperate(ActionDebugMessage action,
+			PlatformGameState gameState) throws ParameterException {
 		String message = "";
 		if (action.showTheMessage) {
 			message = action.showTheMessageData.string;
@@ -18,6 +19,6 @@ public class InterpreterDebugBox extends ActionInterpreter<ActionDebugBox> {
 			message = String.format("%s = %d", name,
 					action.showTheVariableData.readVariable(gameState));
 		}
-		Game.getCurrentGame().showToast(message);
+		Game.showMessage(message);
 	}
 }

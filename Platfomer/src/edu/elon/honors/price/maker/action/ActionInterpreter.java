@@ -40,8 +40,12 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	protected abstract void interperate(T action, PlatformGameState gameState) 
 			throws ParameterException;
 
-	public static void interperate(Action action, PlatformGameState gameState) 
-			throws ParameterException {
+	protected void updateControl(ActionControl control) {
+		control.actionIndex++;
+	}
+		
+	public static void interperate(Action action, PlatformGameState gameState,
+			ActionControl control) throws ParameterException {
 		
 		ActionInstance instance = actionMap.get(action);
 		if (instance == null) {
@@ -73,6 +77,7 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 
 
 		invoke(instance.getClass(), interp, instance, gameState);
+		interp.updateControl(control);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -174,6 +174,7 @@ public class PlatformLogic implements Logic {
 			int y = button.y >= 0 ? button.y : Graphics.getHeight() + button.y;
 			buttons.add(new Button(x, y, 10, 
 					button.radius, button.color));
+			buttons.get(i).setActive(button.defaultAction);
 		}
 		for (int i = 0; i < game.uiLayout.joysticks.size(); i++) {
 			UILayout.JoyStick joystick = game.uiLayout.joysticks.get(i);
@@ -181,6 +182,7 @@ public class PlatformLogic implements Logic {
 			int y = joystick.y >= 0 ? joystick.y : Graphics.getHeight() + joystick.y;
 			joysticks.add(new JoyStick(x, y, 10, 
 					joystick.radius, joystick.color));
+			joysticks.get(i).setActive(joystick.defaultAction);
 		}
 
 		offset = new Vector();
@@ -223,7 +225,7 @@ public class PlatformLogic implements Logic {
 		ActorBody heroBody = physics.getHero();
 		if (!heroBody.isStunned()) {
 			for (int i = 0; i < buttons.size(); i++) {
-				if (game.uiLayout.buttons.get(i).defaultAction &&
+				if (buttons.get(i).isActive() &&
 						buttons.get(i).isTapped()) {
 					heroBody.jump(true);
 				}
@@ -232,7 +234,7 @@ public class PlatformLogic implements Logic {
 			boolean joyFound = false;
 			joystickPull.set(0, 0);
 			for (int i = 0; i < joysticks.size(); i++) {
-				if (game.uiLayout.joysticks.get(i).defaultAction) {
+				if (joysticks.get(i).isActive()) {
 					joystickPull.set(joysticks.get(i).getPull());
 					joyFound = true;
 				}
