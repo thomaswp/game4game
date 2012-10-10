@@ -33,7 +33,9 @@ public class InterpreterSetVariable extends ActionInterpreter<ActionSetVariable>
 		} else if (action.withAVariable) {
 			operandB = action.withAVariableData.readVariable(gameState);
 		} else if (action.withARandomNumber) {
-			operandB = rand.nextInt();
+			int min = action.withARandomNumberData.group.exactNumber;
+			int max = action.withARandomNumberData.group.exactNumber2;
+			operandB = rand.nextInt(max - min + 1) + min;
 		} else if (action.withAnActorProperty) {
 			ActorBody body = action.withAnActorPropertyData
 					.readActorInstance(gameState);

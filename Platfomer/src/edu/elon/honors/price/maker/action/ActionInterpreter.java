@@ -16,6 +16,10 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	Random rand = new Random();
 	public static final float SCALE = PlatformLogic.SCALE;
 	
+	static {
+		
+	}
+	
 	private static final Class<?>[] interpreters = new Class<?>[] {
 		InterpreterSetSwtich.class,
 		InterpreterDebugBox.class
