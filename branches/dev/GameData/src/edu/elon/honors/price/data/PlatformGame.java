@@ -95,7 +95,7 @@ public class PlatformGame extends GameData {
 		hero.speed = 3.5f;
 		hero.jumpVelocity = 6f;
 		hero.stunDuration = 600;
-		hero.imageName = "StickMan.png";
+		hero.imageName = "hero.png";
 		hero.name = "Hero";
 		hero.actorContactBehaviors[ActorClass.BELOW] = ActorClass.BEHAVIOR_JUMP;
 		hero.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_STUN;

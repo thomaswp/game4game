@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.util.FloatMath;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
@@ -369,6 +370,7 @@ public class MapEditorView extends MapView {
 
 	@Override
 	protected void drawContent(Canvas c) {
+		
 		int selectedLayer = previewSelectedLayer >= 0 ? 
 				previewSelectedLayer : this.selectedLayer;
 		for (int i = 0; i < layers.length; i++) {
@@ -476,10 +478,10 @@ public class MapEditorView extends MapView {
 		int nOptions = layers.length;
 		float rad = getOptionButtonRadius();
 
-		double degree = Math.PI - Math.PI / 2 * (layer + 0.5) / (nOptions);
+		float degree = (float)(Math.PI - Math.PI / 2 * (layer + 0.5) / (nOptions));
 		float outterRadius = getOptionButtonOuterRadius() * layerButtonsExtention;
-		float x = (float)Math.cos(degree) * outterRadius + width;
-		float y = -(float)Math.sin(degree) * outterRadius + height;
+		float x = FloatMath.cos(degree) * outterRadius + width;
+		float y = -FloatMath.sin(degree) * outterRadius + height;
 
 		int alpha = (int)((selected ? 255 : 150) * layerButtonsExtention); 
 
@@ -497,7 +499,7 @@ public class MapEditorView extends MapView {
 		c.drawCircle(x, y, rad, paint);
 
 		Bitmap icon = layers[layer].getIcon();
-		float demi = (float)(rad / Math.sqrt(2));
+		float demi = (rad / FloatMath.sqrt(2));
 		destRect.set(x - demi, y - demi, x + demi, y + demi);
 		c.drawBitmap(icon, null, destRect, paint);
 	}
@@ -508,10 +510,10 @@ public class MapEditorView extends MapView {
 		int nOptions = N_EDIT_MODES;
 		float rad = getOptionButtonRadius();
 
-		double degree = Math.PI + Math.PI / 2 * (layer + 0.5) / (nOptions);
+		float degree = (float)(Math.PI + Math.PI / 2 * (layer + 0.5) / (nOptions));
 		float outterRadius = getOptionButtonOuterRadius() * editModeButtonsExtention;
-		float x = (float)Math.cos(degree) * outterRadius + width;
-		float y = -(float)Math.sin(degree) * outterRadius;
+		float x = FloatMath.cos(degree) * outterRadius + width;
+		float y = -FloatMath.sin(degree) * outterRadius;
 
 		int alpha = (int)((selected ? 255 : 150) * editModeButtonsExtention); 
 

@@ -139,18 +139,20 @@ public class PlatformGameState implements GameState {
 		int type = ps.getInt();
 		if (type == 0) {
 			vector.set(ps.getFloat(1), ps.getFloat(2));
-		} else if (type == 1) {
-			if (event.tVector == null) {
-				throw new ParameterException("No triggering vector");
+		} else if (type == 1 || type == 2){ 
+			if (type == 1) {
+				if (event.tVector == null) {
+					throw new ParameterException("No triggering vector");
+				}
+				vector.set((Vector)event.tVector);
+			} else {
+				JoyStick joy = readJoystick(ps.getInt(1));
+				vector.set(joy.getLastPull());
 			}
-			vector.set((Vector)event.tVector);
-		} else {
-			JoyStick joy = readJoystick(ps.getInt(1));
-			vector.set(joy.getLastPull());
-			if (joy.getLastPull().magnitude() == 0) {
+			if (vector.magnitude() == 0) {
 				vector.set(0, 0);
 			} else {
-				vector.multiply(1f / joy.getLastPull().magnitude());
+				vector.multiply(1f / vector.magnitude());
 			}
 			Game.debug(vector);
 		}
@@ -188,6 +190,10 @@ public class PlatformGameState implements GameState {
 				throw new ParameterException("No triggering actor");
 			}
 			return (ActorBody)event.tActor;
+		} else if (mode == 2) {
+			ActorBody actor = physics.getLastCreatedActor();
+			assertThat(actor != null, "No last created actor");
+			return actor;
 		} else {
 			assertThat(event.behaving != null && 
 					event.behaving instanceof ActorBody,

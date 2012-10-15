@@ -86,7 +86,13 @@ public class PhysicsHandler {
 	}
 
 	public ObjectBody getLastCreatedObject() {
+		if (objectBodies.size() == 0) return null;
 		return objectBodies.get(objectBodies.size() - 1);
+	}
+	
+	public ActorBody getLastCreatedActor() {
+		if (actorBodies.size() == 0) return null;
+		return actorBodies.get(actorBodies.size() - 1);
 	}
 
 	public void setGravity(Vector vector) {

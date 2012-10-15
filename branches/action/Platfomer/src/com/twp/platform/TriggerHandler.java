@@ -20,6 +20,7 @@ import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
@@ -36,6 +37,7 @@ public class TriggerHandler {
 	private Map map;
 	private PhysicsHandler physics;
 	private Interpreter interpreter;
+	private Vector vector = new Vector();
 
 	private int touchPID;
 	private RectF regionRect = new RectF();
@@ -306,7 +308,9 @@ public class TriggerHandler {
 			}
 			
 			if (triggered) {
-				event.tVector = joy.getPull();
+				vector.set(joy.getLastPull());
+				event.tVector = vector;
+				Game.debug((Vector)event.tVector);
 			}
 		} else {
 			if (Input.isTapped()) {
