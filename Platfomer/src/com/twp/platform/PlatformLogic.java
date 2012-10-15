@@ -135,30 +135,7 @@ public class PlatformLogic implements Logic {
 		background.scroll(0, Graphics.getHeight() - bmp.getHeight());		
 
 		if (map.midGrounds.size() > 0) {
-			Bitmap mid = null;
-			Paint paint = new Paint();
-			paint.setFilterBitmap(true);
-			for (int i = 0; i < map.midGrounds.size(); i++) {
-				String path = map.midGrounds.get(i);
-				bmp = Data.loadMidground(path);
-				//Game.debug("%dx%d", bmp.getWidth(), bmp.getHeight());
-				if (mid == null) {
-					mid = bmp.copy(bmp.getConfig(), true);
-				} else {
-					if (bmp.getWidth() > mid.getWidth() || 
-							bmp.getHeight() > mid.getHeight()) {
-						Bitmap temp = Bitmap.createBitmap(
-								Math.max(mid.getWidth(), bmp.getWidth()),
-								Math.max(mid.getHeight(), bmp.getHeight()),
-								mid.getConfig());
-						Canvas c = new Canvas(temp);
-						c.drawBitmap(mid, 0, 0, paint);
-						mid = temp;
-					}
-					Canvas c = new Canvas(mid);
-					c.drawBitmap(bmp, 0, 0, paint);
-				}
-			}
+			Bitmap mid = Data.loadMidgrounds(map.midGrounds);
 			int startMidgroundY = startForegroundY - 256;
 			midground = new BackgroundSprite(mid, new Rect(0, 
 					startMidgroundY, Graphics.getWidth(), startMidgroundY + 
