@@ -2,15 +2,19 @@ package edu.elon.honors.price.maker;
 
 import java.util.List;
 
+import com.ericharlow.DragNDrop.DragListener;
 import com.ericharlow.DragNDrop.DragNDropAdapter;
 import com.ericharlow.DragNDrop.DragNDropGroup;
 import com.ericharlow.DragNDrop.DragNDropListView;
+import com.ericharlow.DragNDrop.DragNDropListView.DragNDropListener;
+import com.ericharlow.DragNDrop.DropListener;
 import com.ericharlow.DragNDrop.ScrollContainer;
 
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import edu.elon.honors.price.data.Data;
@@ -20,6 +24,7 @@ public class DatabaseEditMapBackground extends DatabaseActivity {
 
 	RadioGroup groupGround, groupSky;
 	DragNDropListView listUsed, listUnused;
+	SelectorMapPreview selectorMapPreview;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,9 +35,8 @@ public class DatabaseEditMapBackground extends DatabaseActivity {
 		setDefaultButtonActions();
 
 		LinearLayout ll = (LinearLayout)findViewById(R.id.linearLayoutMap);
-		SelectorMapPreview mv = new SelectorMapPreview(this, game, 
-				null);
-		ll.addView(mv);
+		selectorMapPreview = new SelectorMapPreview(this, game, null);
+		ll.addView(selectorMapPreview);
 
 		groupSky = (RadioGroup)findViewById(R.id.radioGroupSky);
 		groupGround = (RadioGroup)findViewById(R.id.radioGroupGround);
@@ -97,6 +101,18 @@ public class DatabaseEditMapBackground extends DatabaseActivity {
 		DragNDropGroup group = new DragNDropGroup();
 		group.addListView(listUsed);
 		group.addListView(listUnused);
+		
+		listUsed.setOnDragNDropListener(new DragNDropListener() {
+			@Override
+			public void onItemDroppedTo(String item, int to) {
+				selectorMapPreview.refreshMidgrounds();
+			}
+			
+			@Override
+			public void onItemDroppedFrom(String item, int from) {
+				selectorMapPreview.refreshMidgrounds();
+			}
+		});
 		
 		listUsed.setAdapter(new DragNDropAdapter(this, used));
 		listUnused.setAdapter(new DragNDropAdapter(this, mgs));

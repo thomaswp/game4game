@@ -1,5 +1,7 @@
 package com.ericharlow.DragNDrop;
 
+import com.ericharlow.DragNDrop.DragNDropListView.DragNDropListener;
+
 import edu.elon.honors.price.maker.R;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -52,31 +54,45 @@ public class ScrollContainer extends LinearLayout {
 		rlps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		rlps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		layout.addView(listView, rlps);
-		listView.setDropListener(new DropListener() {
+		
+		listView.setOnDragNDropListener(new DragNDropListener() {
 			@Override
-			public void onDropTo(int to, String item) {
-				if (listView.getAdapter() instanceof DragNDropAdapter) {
-					((DragNDropAdapter)listView.getAdapter())
-					.onDropTo(to, item);
-					adjustSize();
-					listView.invalidateViews();
-					invalidate();
-				}
+			public void onItemDroppedTo(String item, int to) {
+				adjustSize();
+				invalidate();
 			}
-
+			
 			@Override
-			public String onDropFrom(int from) {
-				if (listView.getAdapter() instanceof DragNDropAdapter) {
-					String s = ((DragNDropAdapter)listView.getAdapter())
-					.onDropFrom(from);
-					adjustSize();
-					listView.invalidateViews();
-					invalidate();
-					return s;
-				}
-				return null;
+			public void onItemDroppedFrom(String item, int from) {
+				adjustSize();
+				invalidate();
 			}
 		});
+//		listView.setDropListener(new DropListener() {
+//			@Override
+//			public void onDropTo(int to, String item) {
+//				if (listView.getAdapter() instanceof DragNDropAdapter) {
+//					((DragNDropAdapter)listView.getAdapter())
+//					.onDropTo(to, item);
+//					adjustSize();
+//					listView.invalidateViews();
+//					invalidate();
+//				}
+//			}
+//
+//			@Override
+//			public String onDropFrom(int from) {
+//				if (listView.getAdapter() instanceof DragNDropAdapter) {
+//					String s = ((DragNDropAdapter)listView.getAdapter())
+//					.onDropFrom(from);
+//					adjustSize();
+//					listView.invalidateViews();
+//					invalidate();
+//					return s;
+//				}
+//				return null;
+//			}
+//		});
 
 
 		RelativeLayout div = new RelativeLayout(getContext());

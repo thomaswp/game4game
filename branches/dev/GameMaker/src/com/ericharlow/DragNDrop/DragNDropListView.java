@@ -40,6 +40,8 @@ public class DragNDropListView extends ListView {
 
 	ImageView mDragView;
 	GestureDetector mGestureDetector;
+	
+	private DragNDropListener dragNDropListener;
 
 	DropListener mDropListener = new DropListener() {
 		@Override
@@ -47,6 +49,9 @@ public class DragNDropListView extends ListView {
 			if (getAdapter() instanceof DragNDropAdapter) {
 				((DragNDropAdapter)getAdapter()).onDropTo(to, item);
 				invalidateViews();
+				if (dragNDropListener != null) {
+					dragNDropListener.onItemDroppedTo(item, to);
+				}
 			}
 		}
 		
@@ -54,7 +59,11 @@ public class DragNDropListView extends ListView {
 		public String onDropFrom(int from) {
 			if (getAdapter() instanceof DragNDropAdapter) {
 				invalidateViews();
-				return ((DragNDropAdapter)getAdapter()).onDropFrom(from);
+				String item = ((DragNDropAdapter)getAdapter()).onDropFrom(from); 
+				if (dragNDropListener != null) {
+					dragNDropListener.onItemDroppedTo(item, from);
+				}
+				return item;
 			}
 			return null;
 		}
@@ -97,16 +106,13 @@ public class DragNDropListView extends ListView {
 		this.setPadding(0, 0, 0, MARGIN);
 	}
 
-	public void setDropListener(DropListener l) {
-		mDropListener = l;
+	public void setOnDragNDropListener(DragNDropListener dragAndDropListener) {
+		this.dragNDropListener = dragAndDropListener;
 	}
-
-	//	public void setRemoveListener(RemoveListener l) {
-	//		mRemoveListener = l;
-	//	}
-
-	public void setDragListener(DragListener l) {
-		mDragListener = l;
+	
+	public interface DragNDropListener {
+		public void onItemDroppedFrom(String item, int from);
+		public void onItemDroppedTo(String item, int to);
 	}
 
 	@Override

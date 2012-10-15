@@ -239,7 +239,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			
 			synchronized (game) {	
 				drawBackground(c);
-				//drawContent(c);
+				drawContent(c);
 				drawGrid(c);
 				drawButtons(c);
 			}
@@ -267,14 +267,14 @@ public abstract class MapActivityBase extends SaveableActivity {
 		}
 
 		private Bitmap bgBmp;
-		private Bitmap midground;
+		private Bitmap midgrounds;
 		protected void drawBackground(Canvas canvas) {
 			if (bgBmp == null || bgBmp.getWidth() != width ||
 					bgBmp.getHeight() != height) {
 				bgBmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 			}
 			//Canvas canvas = new Canvas(bgBmp);
-			canvas.drawColor(Color.WHITE);
+//			canvas.drawColor(Color.WHITE);
 			
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
@@ -283,8 +283,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 			
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Style.FILL);
-//			c.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
-//			c.drawRect(0, 0, width, (int)offY + mapHeight, paint);
+			//should be main canvas whether rendering offscreen or not
+			canvas.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
+			canvas.drawRect(0, 0, width, (int)offY + mapHeight, paint);
+			
 			
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
@@ -310,19 +312,24 @@ public abstract class MapActivityBase extends SaveableActivity {
 				}
 			}
 			
-			if (midground == null) {
-				//TODO: efficiency
+			if (map.midGrounds.size() > 0 && midgrounds == null) {
+				createMidgrounds();
 			}
-			int mgHeight = fgHeight - foreground.getHeight();
-			for (int j = 0; j < map.midGrounds.size(); j++) {
-				Bitmap midground = Data.loadMidground(map.midGrounds.get(j));
-				for (int i = -midground.getWidth(); i < endWidth; i += midground.getWidth()) {
-					canvas.drawBitmap(midground, i + pOffX, mgHeight + pOffY, paint);
+			
+			if (midgrounds != null) {
+				int mgHeight = fgHeight - foreground.getHeight();
+				for (int i = -midgrounds.getWidth(); i < endWidth; i += midgrounds.getWidth()) {
+					canvas.drawBitmap(midgrounds, i + pOffX, mgHeight + pOffY, paint);
 				}
 			}
 			
 			//paint.setAlpha(getBackgroundTransparency());
 			//c.drawBitmap(bgBmp, 0, 0, paint);
+		}
+		
+		protected void createMidgrounds() {
+			midgrounds = Data.loadMidgrounds(
+					game.getSelectedMap().midGrounds);
 		}
 
 		protected void drawButtons(Canvas c) {

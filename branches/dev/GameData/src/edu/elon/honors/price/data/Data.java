@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.elon.honors.price.game.Cache;
 import edu.elon.honors.price.game.Game;
@@ -18,6 +19,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -218,6 +221,35 @@ public final class Data {
 	
 	public static Bitmap loadMidground(String name) {
 		return loadBitmap(MIDGROUNDS_DIR + name, getDefaultParent());
+	}
+	
+	public static Bitmap loadMidgrounds(List<String> midgrounds) {
+		Bitmap mid = null;
+		if (midgrounds.size() > 0) {
+			Paint paint = new Paint();
+			paint.setFilterBitmap(true);
+			for (String path : midgrounds) {
+				Bitmap bmp = loadMidground(path);
+				//Game.debug("%dx%d", bmp.getWidth(), bmp.getHeight());
+				if (mid == null) {
+					mid = bmp.copy(bmp.getConfig(), true);
+				} else {
+					if (bmp.getWidth() > mid.getWidth() || 
+							bmp.getHeight() > mid.getHeight()) {
+						Bitmap temp = Bitmap.createBitmap(
+								Math.max(mid.getWidth(), bmp.getWidth()),
+								Math.max(mid.getHeight(), bmp.getHeight()),
+								mid.getConfig());
+						Canvas c = new Canvas(temp);
+						c.drawBitmap(mid, 0, 0, paint);
+						mid = temp;
+					}
+					Canvas c = new Canvas(mid);
+					c.drawBitmap(bmp, 0, 0, paint);
+				}
+			}
+		}
+		return mid;
 	}
 	
 	public static Bitmap loadEditorBmp(String name, Context context) {

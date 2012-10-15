@@ -26,4 +26,8 @@ public class SelectorMapPreview extends SelectorMapView {
 		tiles = createTiles(game.tilesets[game.getSelectedMap().tilesetId], 
 				getContext());
 	}
+	
+	public void refreshMidgrounds() {
+		createMidgrounds();
+	}
 }
