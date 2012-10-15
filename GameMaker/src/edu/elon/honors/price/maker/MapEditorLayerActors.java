@@ -14,6 +14,12 @@ import edu.elon.honors.price.maker.MapEditorView;
 public class MapEditorLayerActors extends MapEditorLayer {
 
 	private Bitmap[] actors, darkActors;
+	
+	public void setGame(PlatformGame game) {
+		super.setGame(game);
+		this.actors = parent.actors;
+		this.darkActors = parent.darkActors;
+	}
 
 	public MapEditorLayerActors(MapEditorView parent) {
 		super(parent);

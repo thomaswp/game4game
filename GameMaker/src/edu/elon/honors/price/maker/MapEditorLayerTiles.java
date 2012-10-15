@@ -58,6 +58,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 
 	@Override
 	public void drawLayer(Canvas c, DrawMode mode) {
+		
 		MapLayer layer = map.layers[this.layer];
 		Tileset tileset = game.tilesets[map.tilesetId];
 

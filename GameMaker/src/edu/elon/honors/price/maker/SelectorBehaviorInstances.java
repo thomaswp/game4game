@@ -113,7 +113,10 @@ implements IPopulatable{
 		buttonDelete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				
+				final int index = getSelectedIndex();
+				if (index < 0) return;
+				behaviors.remove(index);
+				radioGroupBehaviors.removeViewAt(index);
 			}
 		});
 	}
@@ -166,7 +169,7 @@ implements IPopulatable{
 					TextUtils.COLOR_MODE);
 			sb.append(" = ");
 			Object param = params.get(i);
-			String name = TextUtils.HTMLEscape("<None>");
+			String name = "<None>";
 			name = TextUtils.getColoredText(name, Color.LTGRAY);
 			if (param != null && param instanceof Parameters) {
 				Element element = null;

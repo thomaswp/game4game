@@ -21,6 +21,7 @@ import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Cache;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public abstract class MapActivityBase extends SaveableActivity {
@@ -218,6 +219,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			if (width == 0 || height == 0) return;
 			if (grid == null) createGrid();
 
+			updateFPS();
 			
 			if (transShader == null) {
 				Bitmap transBg = Data.loadEditorBmp("trans.png");
@@ -226,19 +228,38 @@ public abstract class MapActivityBase extends SaveableActivity {
 			}
 
 			c.drawColor(Color.WHITE);
-			paint.setShader(transShader);
-			paint.setAlpha(getBackgroundTransparency());
-			c.drawRect(0,  0, width, height, paint);
-			paint.setShader(null);
+			
+			int mapHeight = game.getMapHeight(game.getSelectedMap());
+			if (mapHeight < height) {
+				paint.setShader(transShader);
+				paint.setAlpha(getBackgroundTransparency());
+				c.drawRect(0,  mapHeight - 1, width, height, paint);
+				paint.setShader(null);
+			}
 			
 			synchronized (game) {	
 				drawBackground(c);
-				drawContent(c);
+				//drawContent(c);
 				drawGrid(c);
 				drawButtons(c);
 			}
 		}
 
+		int frames = 0;
+		long lastUpdate = System.currentTimeMillis();
+		
+		private void updateFPS() {
+			frames++;
+			long passed = System.currentTimeMillis() - lastUpdate;
+			if (passed > 1000) {
+				int fps = (int)(frames * 1000 / passed);
+				Game.debug("%d fps", fps);
+				
+				lastUpdate += 1000;
+				frames = 0;
+			}
+		}
+		
 		protected abstract void drawContent(Canvas c);
 
 		protected int getBackgroundTransparency() {
@@ -246,12 +267,13 @@ public abstract class MapActivityBase extends SaveableActivity {
 		}
 
 		private Bitmap bgBmp;
-		protected void drawBackground(Canvas c) {
+		private Bitmap midground;
+		protected void drawBackground(Canvas canvas) {
 			if (bgBmp == null || bgBmp.getWidth() != width ||
 					bgBmp.getHeight() != height) {
 				bgBmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 			}
-			Canvas canvas = new Canvas(bgBmp);
+			//Canvas canvas = new Canvas(bgBmp);
 			canvas.drawColor(Color.WHITE);
 			
 			Map map = game.getSelectedMap();
@@ -261,8 +283,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 			
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Style.FILL);
-			c.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
-			c.drawRect(0, 0, width, (int)offY + mapHeight, paint);
+//			c.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
+//			c.drawRect(0, 0, width, (int)offY + mapHeight, paint);
 			
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
@@ -273,6 +295,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int endWidth = Math.max(mapWidth, width);
 			
 			paint.reset();
+			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
 			int fgHeight = height - map.groundY;
 			for (int i = -foreground.getWidth(); i < endWidth; i += foreground.getWidth()) {
@@ -286,6 +309,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 					canvas.drawBitmap(background, i + pOffX, j + pOffY, paint);
 				}
 			}
+			
+			if (midground == null) {
+				//TODO: efficiency
+			}
 			int mgHeight = fgHeight - foreground.getHeight();
 			for (int j = 0; j < map.midGrounds.size(); j++) {
 				Bitmap midground = Data.loadMidground(map.midGrounds.get(j));
@@ -294,8 +321,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 				}
 			}
 			
-			paint.setAlpha(getBackgroundTransparency());
-			c.drawBitmap(bgBmp, 0, 0, paint);
+			//paint.setAlpha(getBackgroundTransparency());
+			//c.drawBitmap(bgBmp, 0, 0, paint);
 		}
 
 		protected void drawButtons(Canvas c) {
