@@ -188,7 +188,7 @@ public class PlatformLogic implements Logic {
 		if (Input.isTapped()) paused = false;
 
 		if (paused) {
-			updateScroll();
+			updateScroll(1);
 			return;
 		}
 
@@ -241,7 +241,7 @@ public class PlatformLogic implements Logic {
 
 		interpreter.update();
 
-		updateScroll();
+		updateScroll(0.2f);
 	}
 
 	private void updateWorldSprites() {
@@ -313,7 +313,7 @@ public class PlatformLogic implements Logic {
 		game = (PlatformGame) Data.loadGame(mapName, Game.getCurrentGame());
 	}
 
-	private void updateScroll() {
+	private void updateScroll(float force) {
 		cameraOffset.clear();
 
 		RectF heroRect = hero.getRect();
@@ -335,6 +335,7 @@ public class PlatformLogic implements Logic {
 					foreground.getRect().bottom);
 		}
 		
+		cameraOffset.multiply(force);
 		offset.add(cameraOffset);
 
 

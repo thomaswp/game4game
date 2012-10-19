@@ -119,11 +119,15 @@ public class PlatformGameState implements GameState {
 	
 	@Override
 	public Point readPoint(Parameters params) throws ParameterException {
-		if (params.getInt() == 0) {
+		int choice = params.getInt();
+		if (choice == 0) {
 			point.set(params.getInt(1), params.getInt(2));
-		} else {
+		} else if (choice == 1) {
 			Parameters ps = params.getParameters(1);
 			point = readVariablePoint(ps);
+		} else {
+			assertThat(event.tPoint != null, "No triggering point");
+			point = (Point)event.tPoint;
 		}
 		return point;
 	}

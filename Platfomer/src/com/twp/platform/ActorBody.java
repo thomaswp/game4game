@@ -16,6 +16,7 @@ import android.graphics.Color;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
@@ -25,7 +26,7 @@ import edu.elon.honors.price.physics.Vector;
 public class ActorBody extends PlatformBody {
 
 	public final static int ANIMATION_FRAMES = 8, ANIMATION_SETS = 7;
-	private static final int FRAME = 600 / ANIMATION_FRAMES;
+	private static final int FRAME = 900 / ANIMATION_FRAMES;
 	private static final int BEHAVIOR_REST = 3;
 
 	private AnimatedSprite sprite;
@@ -37,6 +38,7 @@ public class ActorBody extends PlatformBody {
 	private int stun;
 	private boolean onLadder;
 	private World world;
+	private Vector2 respawnLocation;
 	
 	private int nextAnimUpdate;
 	
@@ -151,6 +153,10 @@ public class ActorBody extends PlatformBody {
 			actorFix.density = 1;
 			body.createFixture(actorFix);
 		}
+
+		if (isHero) {
+			respawnLocation = new Vector2(body.getPosition());
+		}
 	}
 
 	@Override
@@ -159,6 +165,8 @@ public class ActorBody extends PlatformBody {
 		stun -= timeElapsed;
 		collidedBodies.clear();
 		collidedWall = false;
+		
+		checkDeath();
 		
 		if (actor.fixedRotation) {
 			float pi = (float)Math.PI;
@@ -214,6 +222,15 @@ public class ActorBody extends PlatformBody {
 
 		updateSprite(offset);
 		lastVelocity.set(getVelocity());
+	}
+	
+	private void checkDeath() {
+		if (body.getPosition().y - sprite.getHeight() / SCALE > 
+			physics.getMapFloor()) {
+			body.setTransform(respawnLocation, body.getAngle());
+			body.setLinearVelocity(body.getLinearVelocity().mul(0));
+			stun(null);
+		}
 	}
 
 	private enum AnimationState {
@@ -371,19 +388,21 @@ public class ActorBody extends PlatformBody {
 	
 	public void stun(ActorBody cause) {
 		stun = actor.stunDuration;
-		setVelocityY(-actor.jumpVelocity / 1.5f);
 		sprite.setColor(Color.WHITE);
 		sprite.flash(Color.RED, actor.stunDuration);
-		if (cause == null)
-			directionX *= -1;
-		else {
-			directionX = (int)Math.signum(this.getSprite().getRect().left - cause.getSprite().getRect().left);
+		if (cause != null) {
+			setVelocityY(-actor.jumpVelocity / 1.5f);
+			//if (cause == null)
+			//	directionX *= -1;
+			//else {
+				directionX = (int)Math.signum(this.getSprite().getRect().left - cause.getSprite().getRect().left);
+			//}
+			stopped = false;
+			if (isHero) {
+				Input.getVibrator().vibrate(actor.stunDuration / 2);
+			}
+			onLadder = false;
 		}
-		stopped = false;
-		if (isHero) {
-			Input.getVibrator().vibrate(actor.stunDuration / 2);
-		}
-		onLadder = false;
 	}
 	
 	public void setHorizontalVelocity(float hv) {
@@ -415,11 +434,11 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	public void jump(boolean checkGrounded) {
-		///if (!checkGrounded || isGrounded() || isOnLadder()) {
-		setVerticalVelocity(actor.jumpVelocity);	
-		onLadder = false;
-		animationState = AnimationState.Jumping;
-		//}
+		if (!checkGrounded || isGrounded() || isOnLadder()) {
+			setVerticalVelocity(actor.jumpVelocity);	
+			onLadder = false;
+			animationState = AnimationState.Jumping;
+		}
 	}
 
 	@Override

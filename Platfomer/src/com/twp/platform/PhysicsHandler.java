@@ -61,6 +61,8 @@ public class PhysicsHandler {
 	private HashMap<Fixture, PlatformBody> bodyMap = new HashMap<Fixture, PlatformBody>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
+	private float mapFloor;
+	
 	public World getWorld() {
 		return world;
 	}
@@ -69,6 +71,10 @@ public class PhysicsHandler {
 		return game;
 	}
 
+	public float getMapFloor() {
+		return mapFloor;
+	}
+	
 	public ActorBody getHero() {
 		return heroBody;
 	}
@@ -147,6 +153,8 @@ public class PhysicsHandler {
 		while (actorBodies.size() < map.actors.size()) actorBodies.add(null);
 		while (objectBodies.size() < map.objects.size()) objectBodies.add(null);
 
+		mapFloor = map.height(game) / SCALE;
+		
 		world = new World(new Vector2(0, GRAVITY), true);
 
 		ContactFilter filter = new ContactFilter() {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.graphics.RectF;
 
+import com.badlogic.gdx.math.Vector2;
 import com.twp.platform.PhysicsHandler.BodyCallback;
 
 import edu.elon.honors.price.data.Behavior;
@@ -26,6 +27,7 @@ import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
 import edu.elon.honors.price.maker.action.ParameterException;
 import edu.elon.honors.price.maker.action.PlatformGameState;
+import edu.elon.honors.price.maker.action.Point;
 import edu.elon.honors.price.physics.Vector;
 
 public class TriggerHandler {
@@ -38,6 +40,7 @@ public class TriggerHandler {
 	private PhysicsHandler physics;
 	private Interpreter interpreter;
 	private Vector vector = new Vector();
+	private Point point = new Point();
 
 	private int touchPID;
 	private RectF regionRect = new RectF();
@@ -180,14 +183,14 @@ public class TriggerHandler {
 					PlatformBody collided = body.getCollidedBodies().get(l);
 					if (collided instanceof ActorBody && 
 							((ActorBody)collided).isHero()) {
-						trigger(event, body);
+						trigger(event, body, collided);
 					}
 				}
 			} else if (trigger.action == ActorOrObjectTrigger.ACTION_COLLIDES_ACTOR) {
 				for (int l = 0; l < body.getCollidedBodies().size(); l++) {
 					PlatformBody collided = body.getCollidedBodies().get(l);
 					if (collided instanceof ActorBody) {
-						trigger(event, body);
+						trigger(event, body, collided);
 					}
 				}
 			} else if (trigger.action == ActorOrObjectTrigger.ACTION_COLLIDES_WALL) {
@@ -329,6 +332,9 @@ public class TriggerHandler {
 				if (!inUse) {
 					touchPID = pid;
 					if (trigger.condition == UITrigger.CONDITION_PRESS) {
+						point.setF(Input.getLastTouchX() - logic.getOffset().getX(), 
+								Input.getLastTouchY() - logic.getOffset().getY());
+						event.tPoint = point;
 						triggered = true;	
 					}
 				}
@@ -364,6 +370,14 @@ public class TriggerHandler {
 			event.tObject = body;
 		}
 		trigger(event);
+	}
+	
+	private void trigger(Event event, PlatformBody body, PlatformBody collided) {
+		Vector2 point = body.getPosition().add(
+				collided.getPosition()).mul(0.5f);
+		this.point.setF(point.x * SCALE, point.y * SCALE);
+		event.tPoint = point;
+		trigger(event, body);
 	}
 
 	private boolean inRegion(PlatformBody body, RegionTrigger trigger) {

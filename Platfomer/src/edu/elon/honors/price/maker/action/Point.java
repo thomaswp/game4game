@@ -8,6 +8,9 @@ public class Point {
 	public Point() {
 		
 	}
+	public Point(float x, float y) {
+		setF(x, y);
+	}
 	public void set(int x, int y) {
 		this.x = x; this.y = y;
 	}
