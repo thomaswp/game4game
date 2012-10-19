@@ -12,7 +12,8 @@ import android.widget.RelativeLayout;
 public class Database extends DatabaseActivity {
 
 	private Page[] pages;
-	private int selectedPage;
+	private int selectedPage = 0;
+	private static int lastPage;
 	
 	private Button next, prev;
 	
@@ -44,7 +45,7 @@ public class Database extends DatabaseActivity {
 			int page = savedInstanceState.getInt("page");
 			selectPage(page);
 		} else {
-			selectPage(0);
+			selectPage(lastPage);
 		}
 		
 		
@@ -133,6 +134,7 @@ public class Database extends DatabaseActivity {
 			pages[selectedPage].onPause();
 		}
 		selectedPage = page;
+		lastPage = selectedPage;
 
 		RelativeLayout host = (RelativeLayout)findViewById(R.id.relativeLayoutHost);
 		host.removeAllViews();

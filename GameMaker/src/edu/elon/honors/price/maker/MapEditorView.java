@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -79,18 +80,22 @@ public class MapEditorView extends MapView {
 	}
 
 	public void setGame(PlatformGame game, boolean loadEditorData) {
-		updateActors(game);
-		updateObjects(game);
-		updateTileset(game);
-		this.game = game;
-		if (layers != null) {
-			for (int i = 0; i < layers.length; i++) {
-				layers[i].setGame(game);
+		synchronized(this.game) {
+			updateActors(game);
+			updateObjects(game);
+			updateTileset(game);
+			PlatformGame oldGame = this.game;
+			this.game = game;
+			updateMidgrounds(oldGame);
+			if (layers != null) {
+				for (int i = 0; i < layers.length; i++) {
+					layers[i].setGame(game);
+				}
 			}
-		}
-		layers[selectedLayer].refreshSelection();
-		if (loadEditorData && game.getSelectedMap().editorData != null) {
-			loadMapData((EditorData)game.getSelectedMap().editorData);
+			layers[selectedLayer].refreshSelection();
+			if (loadEditorData && game.getSelectedMap().editorData != null) {
+				loadMapData((EditorData)game.getSelectedMap().editorData);
+			}
 		}
 		actions.clear();
 		actionIndex = 0;
@@ -580,6 +585,26 @@ public class MapEditorView extends MapView {
 			Tileset t = newGame.tilesets[newGame.getSelectedMap().tilesetId];
 			tiles = createTiles(t, getContext());
 			createDarkTiles();
+		}
+	}
+	
+	private void updateMidgrounds(PlatformGame oldGame) {
+		boolean needRefresh = false;
+		List<String> oldMidgrounds = game.getSelectedMap().midGrounds;
+		List<String> newMidgrounds = oldGame.getSelectedMap().midGrounds;
+		
+		
+		if (oldMidgrounds.size() != newMidgrounds.size()) needRefresh = true;
+		if (!needRefresh) {
+			for (int i = 0; i < oldMidgrounds.size(); i++) {
+				if (!oldMidgrounds.get(i).equals(newMidgrounds.get(i))) {
+					needRefresh = true;
+					break;
+				}
+			}
+		}
+		if (needRefresh) {
+			createMidgrounds();
 		}
 	}
 
