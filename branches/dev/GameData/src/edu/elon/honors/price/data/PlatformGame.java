@@ -70,7 +70,7 @@ public class PlatformGame extends GameData {
 		actors = new ActorClass[3];
 		actors[1] = new ActorClass();
 		ActorClass ghost = actors[1];
-		ghost.imageName = "StickMan.png";
+		ghost.imageName = "ghost.png";
 		ghost.speed = 1.5f;
 		ghost.jumpVelocity = 4f;
 		ghost.edgeBehavior = ActorClass.BEHAVIOR_TURN;
@@ -88,7 +88,7 @@ public class PlatformGame extends GameData {
 		vlad.actorContactBehaviors = new int[] {ActorClass.BEHAVIOR_NONE, 
 				ActorClass.BEHAVIOR_NONE, ActorClass.BEHAVIOR_TURN, ActorClass.BEHAVIOR_TURN};
 		vlad.heroContactBehaviors[ActorClass.ABOVE] = ActorClass.BEHAVIOR_DIE;
-		vlad.name = "Vampire!";
+		vlad.name = "Stick Man";
 		actors[2] = vlad;
 
 		hero = new Hero();
