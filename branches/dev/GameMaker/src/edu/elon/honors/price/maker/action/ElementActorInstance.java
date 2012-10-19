@@ -34,6 +34,7 @@ public class ElementActorInstance extends ElementMulti {
 			eventContext.getScope() == Scope.MapEvent;
 		options[1].enabled = 
 			eventContext.hasTrigger(TriggerType.ActorTrigger) ||
+			eventContext.hasTrigger(TriggerType.ObjectTrigger) ||
 			eventContext.hasTrigger(TriggerType.RegionTrigger);
 		options[3].visible = 
 			eventContext.getScope() == Scope.ActorBehavior;

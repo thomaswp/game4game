@@ -10,6 +10,8 @@ public class Upgrader {
 //		game.maps.get(0).midGrounds.set(0, "whiteclouds-big.png");
 //		game.maps.get(0).midGrounds.set(1, "mountain-big.png");
 //		game.maps.get(0).midGrounds.set(2, "trees-big.png");
+		game.tilesets[2].tileWidth = 64;
+		game.tilesets[2].tileHeight = 64;
 	}
 	
 	private static void upgraded(PlatformGame game) {
@@ -19,3 +21,4 @@ public class Upgrader {
 		Game.debug("Upgraded game from v%d to v%d...", from, to);
 	}
 }
+

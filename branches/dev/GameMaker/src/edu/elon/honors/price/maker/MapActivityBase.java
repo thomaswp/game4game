@@ -253,7 +253,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			long passed = System.currentTimeMillis() - lastUpdate;
 			if (passed > 1000) {
 				int fps = (int)(frames * 1000 / passed);
-				Game.debug("%d fps", fps);
+				//Game.debug("%d fps", fps);
 				
 				lastUpdate += 1000;
 				frames = 0;

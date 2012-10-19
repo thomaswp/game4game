@@ -46,6 +46,17 @@ public class PageMap extends Page {
 			}
 		});
 		
+		Button buttonEditMidground = (Button)findViewById(R.id.buttonEditMidground);
+		buttonEditMidground.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(parent, DatabaseEditMapMidground.class);
+				intent.putExtra("game", getGame());
+				parent.startActivityForResult(intent, 
+						DatabaseActivity.REQUEST_RETURN_GAME);
+			}
+		});
+		
 		Button buttonEditMapSize = (Button)findViewById(R.id.buttonEditMapSize);
 		buttonEditMapSize.setOnClickListener(new OnClickListener() {
 			@Override
@@ -119,7 +130,6 @@ public class PageMap extends Page {
 	public void onActivityResult(int requestCode, Intent data) {
 		super.onActivityResult(requestCode, data);
 		setGame((PlatformGame)data.getExtras().getSerializable("game"));
-		Game.debug(getGame().getSelectedMap().skyImageName);
 	}
 
 }

@@ -96,4 +96,7 @@
     <string name="variable">Variable</string>
     <string name="test">Test</string>
     <string name="editHorizon">Edit Horizon</string>
+    <string name="editMidground">Edit Midground</string>
+    <string name="used">Used:</string>
+    <string name="unused">Unused:</string>
 </resources>

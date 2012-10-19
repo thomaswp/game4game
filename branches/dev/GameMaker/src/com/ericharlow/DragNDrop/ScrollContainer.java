@@ -2,9 +2,11 @@ package com.ericharlow.DragNDrop;
 
 import com.ericharlow.DragNDrop.DragNDropListView.DragNDropListener;
 
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -55,7 +57,7 @@ public class ScrollContainer extends LinearLayout {
 		rlps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		layout.addView(listView, rlps);
 		
-		listView.setOnDragNDropListener(new DragNDropListener() {
+		listView.addOnDragNDropListener(new DragNDropListener() {
 			@Override
 			public void onItemDroppedTo(String item, int to) {
 				adjustSize();
@@ -127,11 +129,17 @@ public class ScrollContainer extends LinearLayout {
 	}
 	
 	private void adjustSize() {
-		int height = 0;
+		int height = 20;
 		Adapter adapter = listView.getAdapter();
 		int count = adapter.getCount();
+//		for (int i = 0; i < count; i++) {
+//			View childView = adapter.getView(i, null, listView);
+//			childView.measure(MeasureSpec.makeMeasureSpec(listView.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+//			height += childView.getMeasuredHeight();
+//		}
+//		Game.debug("Height: %d:", height);
 		if (listView.getChildCount() != 0 && count != 0) {
-			height = count * listView.getChildAt(0).getHeight();
+			height += count * listView.getChildAt(0).getHeight();
 		}
 		block.getLayoutParams().height = height;
 		block.requestLayout();
