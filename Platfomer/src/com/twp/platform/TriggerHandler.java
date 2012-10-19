@@ -375,6 +375,11 @@ public class TriggerHandler {
 	private void trigger(Event event, PlatformBody body, PlatformBody collided) {
 		Vector2 point = body.getPosition().add(
 				collided.getPosition()).mul(0.5f);
+		if (collided instanceof ActorBody) {
+			event.tActor = collided;
+		} else {
+			event.tObject = collided;
+		}
 		this.point.setF(point.x * SCALE, point.y * SCALE);
 		event.tPoint = point;
 		trigger(event, body);
