@@ -71,7 +71,11 @@ public class PhysicsHandler {
 		return game;
 	}
 
-	public float getMapFloor() {
+	public float getMapFloorMeters() {
+		return mapFloor / SCALE;
+	}
+	
+	public float getMapFloorPx() {
 		return mapFloor;
 	}
 	
@@ -153,7 +157,7 @@ public class PhysicsHandler {
 		while (actorBodies.size() < map.actors.size()) actorBodies.add(null);
 		while (objectBodies.size() < map.objects.size()) objectBodies.add(null);
 
-		mapFloor = map.height(game) / SCALE;
+		mapFloor = map.height(game);
 		
 		world = new World(new Vector2(0, GRAVITY), true);
 

@@ -226,7 +226,7 @@ public class ActorBody extends PlatformBody {
 	
 	private void checkDeath() {
 		if (body.getPosition().y - sprite.getHeight() / SCALE > 
-			physics.getMapFloor()) {
+			physics.getMapFloorMeters()) {
 			body.setTransform(respawnLocation, body.getAngle());
 			body.setLinearVelocity(body.getLinearVelocity().mul(0));
 			stun(null);
@@ -434,11 +434,11 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	public void jump(boolean checkGrounded) {
-		if (!checkGrounded || isGrounded() || isOnLadder()) {
+		//if (!checkGrounded || isGrounded() || isOnLadder()) {
 			setVerticalVelocity(actor.jumpVelocity);	
 			onLadder = false;
 			animationState = AnimationState.Jumping;
-		}
+		//}
 	}
 
 	@Override
