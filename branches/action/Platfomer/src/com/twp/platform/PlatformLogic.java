@@ -40,8 +40,8 @@ public class PlatformLogic implements Logic {
 
 	private PhysicsHandler physics;
 	private TriggerHandler triggerHandler;
+	private BackgroundHandler backgroundHandler; 
 
-	private BackgroundSprite foreground, background, midground;
 	private LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
 	private LinkedList<Button> buttons = new LinkedList<Button>();
 	private AnimatedSprite hero;
@@ -57,7 +57,6 @@ public class PlatformLogic implements Logic {
 	private Vector2 antiGravity = new Vector2(0, -PhysicsHandler.GRAVITY),
 	zeroVector = new Vector2();
 
-	private int startForegroundY;
 
 	private boolean paused;
 
@@ -121,26 +120,7 @@ public class PlatformLogic implements Logic {
 		if (game == null) game = new PlatformGame();
 		map = game.maps.get(game.startMapId);
 
-		Bitmap bmp = Data.loadForeground(map.groundImageName);
-		int bottom = map.height(game);
-		startForegroundY = bottom - map.groundY;
-		foreground = new BackgroundSprite(bmp, new Rect(0, startForegroundY, 
-				Graphics.getWidth(), startForegroundY + bmp.getHeight()), -6);
-
-		bmp = Data.loadBackground(map.skyImageName);
-		//Game.debug("%dx%d", Graphics.getWidth(), Graphics.getHeight());
-		int startBackgroundY = startForegroundY - Graphics.getHeight();
-		background = new BackgroundSprite(bmp, new Rect(0, startBackgroundY, 
-				Graphics.getWidth(), startForegroundY), -7);
-		background.scroll(0, Graphics.getHeight() - bmp.getHeight());		
-
-		if (map.midGrounds.size() > 0) {
-			Bitmap mid = Data.loadMidgrounds(map.midGrounds);
-			int startMidgroundY = startForegroundY - 256;
-			midground = new BackgroundSprite(mid, new Rect(0, 
-					startMidgroundY, Graphics.getWidth(), startMidgroundY + 
-					mid.getHeight()), -5);
-		}
+		backgroundHandler = new BackgroundHandler(game);
 
 		drawViewport = new Viewport();
 		drawViewport.setZ(5);
@@ -313,7 +293,7 @@ public class PlatformLogic implements Logic {
 		game = (PlatformGame) Data.loadGame(mapName, Game.getCurrentGame());
 	}
 
-	private void updateScroll(float force) {
+	private void updateScroll(float snap) {
 		cameraOffset.clear();
 
 		RectF heroRect = hero.getRect();
@@ -329,14 +309,14 @@ public class PlatformLogic implements Logic {
 		if (heroRect.bottom > Graphics.getHeight() - BORDER) {
 			cameraOffset.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
 		}
-		if (foreground.getRect().bottom + cameraOffset.getY() < 
-				Graphics.getHeight()) {
-			cameraOffset.setY(Graphics.getHeight() - 
-					foreground.getRect().bottom);
-		}
 		
-		cameraOffset.multiply(force);
+		cameraOffset.multiply(snap);
 		offset.add(cameraOffset);
+		
+		if (-offset.getY() + Graphics.getHeight() > physics.getMapFloorPx()) {
+			offset.setY(Graphics.getHeight() - physics.getMapFloorPx());
+		}
+		Game.debug(offset.toString());
 
 
 		physics.updateScroll(offset);
@@ -346,22 +326,7 @@ public class PlatformLogic implements Logic {
 			sprite.setY(offset.getY());
 		}
 
-		float scrollX = -offset.getX() * 0.7f;
-		float offY = offset.getY() * 0.7f;
-		
-		foreground.setY(startForegroundY + offY);
-		foreground.setScroll(scrollX, 0);
-		
-		if (midground != null) {
-			midground.setY(foreground.getY() - 256);
-			midground.setScroll(scrollX, 0);
-		}
-		
-		float bgMinY = foreground.getY() - background.getRect().height();
-		float bgY = Math.min(0, bgMinY);
-		float bgOffY = bgMinY - bgY;
-		background.setY(bgY);
-		background.setScroll(scrollX, -bgOffY);
+		backgroundHandler.updateScroll(offset);
 	}
 
 	public static class ActorAddable {
