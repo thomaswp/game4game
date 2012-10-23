@@ -48,7 +48,6 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
     
     @Override 
     public void toggle() {
-    	Game.debug("!!");
     	if (_checkbox != null) {
     		_checkbox.toggle();
     	}

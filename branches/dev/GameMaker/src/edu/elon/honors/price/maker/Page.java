@@ -73,4 +73,32 @@ public abstract class Page {
 	public void onActivityResult(int requestCode, Intent data) {
 		
 	}
+	
+	private String convertKey(String key) {
+		return getName() + "_" + key;
+	}
+	
+	protected void putPreference(String key, Object value) {
+		parent.putPreference(convertKey(key), value);
+	}
+	
+	protected int getIntPreference(String key, int defaultValue) {
+		return parent.getIntPreference(convertKey(key), defaultValue);
+	}
+	
+	protected long getLongPreference(String key, long defaultValue) {
+		return parent.getLongPreference(convertKey(key), defaultValue);
+	}
+	
+	protected boolean getBooleanPreference(String key, boolean defaultValue) {
+		return parent.getBooleanPreference(convertKey(key), defaultValue);
+	}
+	
+	protected float getFloatPreference(String key, float defaultValue) {
+		return parent.getFloatPreference(convertKey(key), defaultValue);
+	}
+	
+	protected String getStringPreference(String key, String defaultValue) {
+		return parent.getStringPreference(convertKey(key), defaultValue);
+	}
 }

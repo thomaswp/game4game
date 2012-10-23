@@ -259,7 +259,6 @@ public class MainMenu extends Activity {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					//TODO: Delete preferences
 					deleteFile(selectedMap);
 					loadMaps();
 				}

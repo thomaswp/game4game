@@ -13,6 +13,7 @@ import android.widget.TextView;
 public class CheckableArrayAdapter extends ArrayAdapter<String> {
 	
 	ArrayList<String> items;
+	int checkedIndex = -1;
 	
 	public CheckableArrayAdapter(Context context, int textViewResourceId, ArrayList<String> items) {
 		super(context, textViewResourceId, items);
@@ -21,10 +22,15 @@ public class CheckableArrayAdapter extends ArrayAdapter<String> {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-		View row=inflater.inflate(R.layout.checkable_array_adapter_row, parent, false);
-		setRow(row, getItem(position));
-		return row;
+		if (convertView == null) {
+			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
+			convertView = inflater.inflate(R.layout.checkable_array_adapter_row, parent, false);
+		}
+		setRow(convertView, getItem(position));
+		if (checkedIndex == position) {
+			//TODO: Fix your life
+		}
+		return convertView;
 	}		
 
 	public void addItem(String item) {
