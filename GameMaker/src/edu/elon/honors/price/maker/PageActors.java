@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import android.app.Activity;
 import android.content.Context;
@@ -23,6 +24,8 @@ public class PageActors extends Page{
 	private ListView actorsView;
 	private EditText editSize;
 
+	private static final String SELECTED_ACTOR = "selectedActor";
+	
 	@Override
 	public int getViewId() {
 		return R.layout.page_actors;
@@ -48,6 +51,16 @@ public class PageActors extends Page{
 	@Override
 	public void onResume() {
 		createRadioButtons();
+		int index = getIntPreference(SELECTED_ACTOR, 0);
+		if (index >= 0 && index < actorsView.getChildCount()) {
+			((Checkable)actorsView.getChildAt(index)).setChecked(true);
+		}
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		putPreference(SELECTED_ACTOR, getSelectedIndex());
 	}
 	
 	private void createButtonEvents() {
@@ -131,6 +144,7 @@ public class PageActors extends Page{
 		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			Game.debug("get view: %d", position);
 			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
 			View row=inflater.inflate(R.layout.image_adapter_row, parent, false);
 			setRow(row, getItem(position), getContext());
@@ -139,6 +153,12 @@ public class PageActors extends Page{
 	}
 	
 	private int getSelectedId() {
+		int id = getSelectedIndex();
+		if (id >= 0) id++;
+		return id;
+	}
+	
+	private int getSelectedIndex() {
 		for (int i = 0; i < actorsView.getChildCount(); i++) {
 			if (((Checkable)actorsView.getChildAt(i)).isChecked()) {
 				return i + 1;
