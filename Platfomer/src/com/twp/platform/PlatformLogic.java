@@ -117,7 +117,7 @@ public class PlatformLogic implements Logic {
 	public void initialize() {
 		Globals.setInstance(new Globals());
 
-		if (game == null) game = new PlatformGame();
+		if (game == null) game = new PlatformGame("");
 		map = game.maps.get(game.startMapId);
 
 		backgroundHandler = new BackgroundHandler(game);
