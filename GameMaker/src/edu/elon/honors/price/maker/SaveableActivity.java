@@ -1,9 +1,16 @@
 package edu.elon.honors.price.maker;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import edu.elon.honors.price.game.Game;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -12,14 +19,17 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 
-public class SaveableActivity extends Activity {
+public abstract class SaveableActivity extends Activity {
 
 	private Handler finishHandler = new Handler();
 	private boolean loaded;
-
+	private Preferences preferences;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		preferences = new Preferences();
+		
 		if (savedInstanceState != null) {
 			//Game.debug("RESTORING INSTANCE!!!");
 		}
@@ -38,6 +48,12 @@ public class SaveableActivity extends Activity {
 				});
 			}
 		});
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		preferences.save();
 	}
 
 	/**
@@ -193,5 +209,93 @@ public class SaveableActivity extends Activity {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	protected void putPreference(String key, Object value) {
+		preferences.map.put(key, value);
+	}
+	
+	protected int getIntPreference(String key, int defaultValue) {
+		Integer v = (Integer)preferences.map.get(key);
+		return v == null ? defaultValue : v;
+	}
+	
+	protected long getLongPreference(String key, long defaultValue) {
+		Long v = (Long)preferences.map.get(key);
+		return v == null ? defaultValue : v;
+	}
+	
+	protected boolean getBooleanPreference(String key, boolean defaultValue) {
+		Boolean v = (Boolean)preferences.map.get(key);
+		return v == null ? defaultValue : v;
+	}
+	
+	protected float getFloatPreference(String key, float defaultValue) {
+		Float v = (Float)preferences.map.get(key);
+		return v == null ? defaultValue : v;
+	}
+	
+	protected String getStringPreference(String key, String defaultValue) {
+		String v = (String)preferences.map.get(key);
+		return v == null ? defaultValue : v;
+	}
+	
+	protected abstract String getPreferenceId();
+	
+	protected class Preferences {
+		private HashMap<String, Object> map;
+
+		public Preferences() {
+			long time = System.currentTimeMillis();
+			
+			map = new HashMap<String, Object>();
+			String prefix = getPreferenceId() + "_";
+			SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+			for (Entry<String, ?> e : prefs.getAll().entrySet()) {
+				if (e.getKey().startsWith(prefix)) {
+					String pKey = e.getKey().substring(prefix.length());
+					Game.debug("%s -> %o", pKey, e.getValue());
+					map.put(pKey, e.getValue());
+				}
+			}
+			
+			Game.debug("Preferences loaded in: %ds", System.currentTimeMillis() - time);
+		}
+		
+		public void save() {
+			if (map.size() == 0) {
+				return;
+			}
+			
+
+			long time = System.currentTimeMillis();
+			
+			SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+			Editor editor = prefs.edit();
+			
+			String prefix = getPreferenceId();
+			
+			for (String key : map.keySet()) {
+				Object value = map.get(key);
+				String pKey = prefix + "_" + key;
+				
+				if (value == null) continue;
+				if (value instanceof Integer) {
+					editor.putInt(pKey, (Integer) value);
+				} else if (value instanceof Float) {
+					editor.putFloat(pKey, (Float) value);
+				} else if (value instanceof String) {
+					editor.putString(pKey, (String) value);
+				} else if (value instanceof Boolean) {
+					editor.putLong(pKey, (Long) value);
+				} else {
+					editor.putBoolean(pKey, (Boolean) value);
+				}
+			}
+			
+			editor.apply();
+			
+			Game.debug("Preferences saved in: %ds", System.currentTimeMillis() - time);
+		}
 	}
 }

@@ -13,7 +13,8 @@ public class Database extends DatabaseActivity {
 
 	private Page[] pages;
 	private int selectedPage = 0;
-	private static int lastPage;
+	
+	private String LAST_PAGE = "lastPage";
 	
 	private Button next, prev;
 	
@@ -45,7 +46,7 @@ public class Database extends DatabaseActivity {
 			int page = savedInstanceState.getInt("page");
 			selectPage(page);
 		} else {
-			selectPage(lastPage);
+			selectPage(getIntPreference(LAST_PAGE, 0));
 		}
 		
 		
@@ -134,7 +135,7 @@ public class Database extends DatabaseActivity {
 			pages[selectedPage].onPause();
 		}
 		selectedPage = page;
-		lastPage = selectedPage;
+		putPreference(LAST_PAGE, selectedPage);
 
 		RelativeLayout host = (RelativeLayout)findViewById(R.id.relativeLayoutHost);
 		host.removeAllViews();

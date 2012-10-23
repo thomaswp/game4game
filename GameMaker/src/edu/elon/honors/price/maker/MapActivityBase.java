@@ -243,6 +243,11 @@ public abstract class MapActivityBase extends SaveableActivity {
 				drawGrid(c);
 				drawButtons(c);
 			}
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 		int frames = 0;

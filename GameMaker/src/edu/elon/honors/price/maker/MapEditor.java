@@ -170,4 +170,9 @@ public class MapEditor extends MapActivityBase {
 	public static abstract class ReturnResponse {
 		public abstract void onReturn(Intent data);
 	}
+
+	@Override
+	protected String getPreferenceId() {
+		return game.ID;
+	}
 }

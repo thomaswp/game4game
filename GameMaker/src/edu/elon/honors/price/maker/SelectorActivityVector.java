@@ -141,4 +141,9 @@ public class SelectorActivityVector extends SaveableActivity {
 			
 		}
 	}
+
+	@Override
+	protected String getPreferenceId() {
+		return "";
+	}
 }
