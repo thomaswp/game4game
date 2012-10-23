@@ -107,15 +107,26 @@ public class Map extends GameData {
 			layer.rows += dRow;
 
 			for (int i = 0; i < layer.rows; i++) {
+				int[] tiles = layer.tiles[i];
 				if (dCol > 0) {
-					layer.tiles[i] = Arrays.copyOf(layer.tiles[i], columns + dCol);
-					if (layer.defaultValue != 0) {
-						for (int j = columns; j < columns + dCol; j++) {
-							layer.tiles[i][j] = layer.defaultValue;
-						}
+					int[] newTiles = new int[tiles.length + dCol];
+					for (int j = 0; j < newTiles.length; j++) {
+						boolean deflt = anchorLeft ? 
+								j < dCol : j >= tiles.length;
+						int offset = anchorLeft ? -dCol : 0;
+						int value = deflt ? layer.defaultValue :
+							layer.tiles[i][j + offset];
+						newTiles[j] = value;
 					}
+					layer.tiles[i] = newTiles;
 				} else if (dCol < 0) {
-					layer.tiles[i] = Arrays.copyOf(layer.tiles[i], columns + dCol);
+					if (anchorLeft) {
+						int start = -dCol;
+						int end = tiles.length;
+						layer.tiles[i] = Arrays.copyOfRange(tiles, start, end);
+					} else {
+						layer.tiles[i] = Arrays.copyOf(tiles, columns + dCol);	
+					}
 				}
 			}
 
@@ -133,9 +144,9 @@ public class Map extends GameData {
 		columns += dCol;
 		//TODO: SHIFT EVENTS!!
 
-		for (int[] a : layers[1].tiles) {
-			Game.debug(Arrays.toString(a));
-		}
+//		for (int[] a : layers[1].tiles) {
+//			Game.debug(Arrays.toString(a));
+//		}
 	}
 
 	public int addObject(int classIndex, int startX, int startY) {

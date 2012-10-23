@@ -19,6 +19,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings.Secure;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -241,7 +242,9 @@ public class MainMenu extends Activity {
 				exists |= files[i].equals(name); 
 		} while (exists);
 
-		Data.saveGame(name, this, new PlatformGame());
+		String id = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+		id += "_" + System.currentTimeMillis();
+		Data.saveGame(name, this, new PlatformGame(id));
 
 		loadMaps();
 	}
@@ -256,9 +259,8 @@ public class MainMenu extends Activity {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					//TODO: Delete preferences
 					deleteFile(selectedMap);
-					//String name = selectedMap.substring(PREFIX.length());
-					//deleteFile(name + MapEditorLogic.DATA);
 					loadMaps();
 				}
 

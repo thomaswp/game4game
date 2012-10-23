@@ -332,4 +332,9 @@ public class DatabaseActivity extends SaveableActivity {
 		//}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+
+	@Override
+	protected String getPreferenceId() {
+		return game.ID;
+	}
 }

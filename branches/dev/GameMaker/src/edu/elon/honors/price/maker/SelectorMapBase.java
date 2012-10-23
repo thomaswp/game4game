@@ -231,4 +231,9 @@ public class SelectorMapBase extends MapActivityBase {
 			}
 		}
 	}
+
+	@Override
+	protected String getPreferenceId() {
+		return game.ID;
+	}
 }
