@@ -45,7 +45,7 @@ public class DatabaseNewAction extends DatabaseActivity {
 			categoryNames.add(cat.name);
 		}
 
-		listViewCategories.setAdapter(new CheckableArrayAdapter(this,
+		listViewCategories.setAdapter(new CheckableArrayAdapterString(this,
 				android.R.layout.simple_spinner_item, categoryNames));
 
 		listViewCategories.setOnItemClickListener(new OnItemClickListener() {

@@ -54,8 +54,8 @@ public class PageEvents extends Page {
 			public void onClick(View v) {
 				Event e = new Event();
 				getGame().getSelectedMap().events[selectedId] = e;
-				CheckableArrayAdapter adapter = 
-					(CheckableArrayAdapter)listViewEvents.getAdapter();
+				CheckableArrayAdapterString adapter = 
+					(CheckableArrayAdapterString)listViewEvents.getAdapter();
 				adapter.replaceItem(selectedId, e.name);
 			}
 		});
@@ -64,8 +64,8 @@ public class PageEvents extends Page {
 		buttonAdd.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) { 
-				CheckableArrayAdapter adapter = 
-					(CheckableArrayAdapter)listViewEvents.getAdapter();
+				CheckableArrayAdapterString adapter = 
+					(CheckableArrayAdapterString)listViewEvents.getAdapter();
 				
 				Event[] events = getGame().getSelectedMap().events;
 				int oldLength = events.length;
@@ -75,7 +75,7 @@ public class PageEvents extends Page {
 					adapter.addItem(events[i].name);
 				}
 				getGame().getSelectedMap().events = events;
-				((CheckableArrayAdapter)listViewEvents.getAdapter())
+				((CheckableArrayAdapterString)listViewEvents.getAdapter())
 					.notifyDataSetChanged();
 			}
 		});
@@ -107,7 +107,7 @@ public class PageEvents extends Page {
 			Event event = events[i];
 			names.add(event.name);
 		}
-		listViewEvents.setAdapter(new CheckableArrayAdapter(parent, R.layout.checkable_array_adapter_row, names));
+		listViewEvents.setAdapter(new CheckableArrayAdapterString(parent, R.layout.checkable_array_adapter_row, names));
 		//doesn't work...
 		listViewEvents.setSelection(selectedId);
 	}

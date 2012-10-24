@@ -144,7 +144,6 @@ public class PageActors extends Page{
 		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			Game.debug("get view: %d", position);
 			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
 			View row=inflater.inflate(R.layout.image_adapter_row, parent, false);
 			setRow(row, getItem(position), getContext());
