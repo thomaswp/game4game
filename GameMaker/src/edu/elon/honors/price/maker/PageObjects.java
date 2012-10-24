@@ -55,8 +55,8 @@ public class PageObjects extends Page {
 			public void onClick(View v) {
 				ObjectClass o = new ObjectClass();
 				getGame().objects[selectedId] = o;
-				CheckableArrayAdapter adapter = 
-					(CheckableArrayAdapter)listViewObjects.getAdapter();
+				CheckableArrayAdapterString adapter = 
+					(CheckableArrayAdapterString)listViewObjects.getAdapter();
 				adapter.replaceItem(selectedId, o.name);
 			}
 		});
@@ -65,8 +65,8 @@ public class PageObjects extends Page {
 		buttonAdd.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) { 
-				CheckableArrayAdapter adapter = 
-					(CheckableArrayAdapter)listViewObjects.getAdapter();
+				CheckableArrayAdapterString adapter = 
+					(CheckableArrayAdapterString)listViewObjects.getAdapter();
 				
 				ObjectClass[] objects = getGame().objects;
 				int oldLength = objects.length;
@@ -76,7 +76,7 @@ public class PageObjects extends Page {
 					adapter.addItem(objects[i].name);
 				}
 				getGame().objects = objects;
-				((CheckableArrayAdapter)listViewObjects.getAdapter())
+				((CheckableArrayAdapterString)listViewObjects.getAdapter())
 					.notifyDataSetChanged();
 			}
 		});
@@ -103,7 +103,7 @@ public class PageObjects extends Page {
 			ObjectClass object = objects[i];
 			names.add(object.name);
 		}
-		listViewObjects.setAdapter(new CheckableArrayAdapter(parent, R.layout.checkable_array_adapter_row, names));
+		listViewObjects.setAdapter(new CheckableArrayAdapterString(parent, R.layout.checkable_array_adapter_row, names));
 		listViewObjects.setSelection(0);
 	}
 
