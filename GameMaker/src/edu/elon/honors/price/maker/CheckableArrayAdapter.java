@@ -1,9 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import java.util.LinkedList;
 import java.util.List;
-
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.maker.CheckableLinearLayout.OnCheckedChangedListener;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,19 +16,19 @@ public abstract class CheckableArrayAdapter<T> extends ArrayAdapter<T> {
 	
 	List<T> items;
 	int childResource;
-	int checkedIndex = -1;
 	LayoutInflater inflater;
 	
-	public int getCheckedIndex() {
-		return checkedIndex;
-	}
-	
-	public void setCheckedIndex(int checkedIndex) {
-		this.checkedIndex = checkedIndex;
-		notifyDataSetChanged();
-	}
-	
 	protected abstract void setRow(int position, T item, View view);
+	
+	public CheckableArrayAdapter(Context context, int listItemResourceId, T[] items) {
+		super(context, 0, items);
+		LinkedList<T> list = new LinkedList<T>();
+		for (T item : items) list.add(item);
+		
+		this.items = list;
+		childResource = listItemResourceId;
+		inflater = ((Activity)getContext()).getLayoutInflater();
+	}
 	
 	public CheckableArrayAdapter(Context context, int listItemResourceId, List<T> items) {
 		super(context, 0, items);
@@ -55,19 +53,24 @@ public abstract class CheckableArrayAdapter<T> extends ArrayAdapter<T> {
 			child = inflater.inflate(childResource, null);
 			LayoutParams lps = new LayoutParams(
 					LayoutParams.FILL_PARENT,
-					LayoutParams.FILL_PARENT);
+					LayoutParams.WRAP_CONTENT);
 			lps.gravity = Gravity.CENTER_VERTICAL;
 			checkable.addView(child, lps);
 		}
 		setRow(position, items.get(position), child);
 		
-		checkable.setChecked(checkedIndex == position);
-		checkable.setOnCheckedChangedListener(new OnCheckedChangedListener() {
-			@Override
-			public void onCheckChanged(boolean checked) {
-				checkedIndex = position;
-			}
-		});
+		
+//		checkable.setOnCheckedChangedListener(null);
+//		checkable.setChecked(checkedIndex == position);
+//		checkable.setOnCheckedChangedListener(new OnCheckedChangedListener() {
+//			@Override
+//			public void onCheckChanged(boolean checked) {
+//				if (checked) {
+//					Game.debug("setting checked to: %d", position);
+//					checkedIndex = position;
+//				}
+//			}
+//		});
 		
 		return convertView;
 	}		

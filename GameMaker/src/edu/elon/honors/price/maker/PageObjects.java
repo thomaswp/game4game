@@ -103,7 +103,7 @@ public class PageObjects extends Page {
 			ObjectClass object = objects[i];
 			names.add(object.name);
 		}
-		listViewObjects.setAdapter(new CheckableArrayAdapterString(parent, R.layout.checkable_array_adapter_row, names));
+		listViewObjects.setAdapter(new CheckableArrayAdapterString(parent, names));
 		listViewObjects.setSelection(0);
 	}
 
