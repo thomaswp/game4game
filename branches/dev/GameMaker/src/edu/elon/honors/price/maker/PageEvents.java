@@ -107,7 +107,7 @@ public class PageEvents extends Page {
 			Event event = events[i];
 			names.add(event.name);
 		}
-		listViewEvents.setAdapter(new CheckableArrayAdapterString(parent, R.layout.checkable_array_adapter_row, names));
+		listViewEvents.setAdapter(new CheckableArrayAdapterString(parent, names));
 		//doesn't work...
 		listViewEvents.setSelection(selectedId);
 	}

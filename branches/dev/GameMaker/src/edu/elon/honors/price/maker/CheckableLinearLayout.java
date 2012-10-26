@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.game.Game;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -43,11 +44,15 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
     
     @Override 
     public void setChecked(boolean checked) {
+    	boolean wasChecked = isChecked();
     	if (_checkbox != null) {
     		_checkbox.setChecked(checked);
     	}
-    	if (onCheckedChangedListener != null) {
-    		onCheckedChangedListener.onCheckChanged(checked);
+    	if (wasChecked != checked) {
+    		Game.debug("setting to " + checked);
+    		if (onCheckedChangedListener != null) {
+    			onCheckedChangedListener.onCheckChanged(checked);
+        	}
     	}
     }
     
