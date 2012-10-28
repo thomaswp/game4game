@@ -258,7 +258,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			long passed = System.currentTimeMillis() - lastUpdate;
 			if (passed > 1000) {
 				int fps = (int)(frames * 1000 / passed);
-				//Game.debug("%d fps", fps);
+				Game.debug("%d fps", fps);
 				
 				lastUpdate += 1000;
 				frames = 0;
@@ -421,9 +421,6 @@ public abstract class MapActivityBase extends SaveableActivity {
 			objects = new Bitmap[game.objects.length];
 			for (int i = 0; i < objects.length; i++) {
 				objects[i] = Data.loadObject(game.objects[i].imageName);
-				objects[i] = Bitmap.createScaledBitmap(objects[i], 
-						(int)(objects[i].getWidth() * game.objects[i].zoom), 
-						(int)(objects[i].getHeight() * game.objects[i].zoom), true);
 			}
 		}
 

@@ -6,9 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Bitmap.Config;
 import edu.elon.honors.price.data.Data;
@@ -20,7 +18,6 @@ import edu.elon.honors.price.data.UILayout;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.AnimatedSprite;
-import edu.elon.honors.price.graphics.BackgroundSprite;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
@@ -316,7 +313,7 @@ public class PlatformLogic implements Logic {
 		if (-offset.getY() + Graphics.getHeight() > physics.getMapFloorPx()) {
 			offset.setY(Graphics.getHeight() - physics.getMapFloorPx());
 		}
-		Game.debug(offset.toString());
+		//Game.debug(offset.toString());
 
 
 		physics.updateScroll(offset);

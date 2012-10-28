@@ -49,7 +49,6 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
     		_checkbox.setChecked(checked);
     	}
     	if (wasChecked != checked) {
-    		Game.debug("setting to " + checked);
     		if (onCheckedChangedListener != null) {
     			onCheckedChangedListener.onCheckChanged(checked);
         	}

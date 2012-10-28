@@ -22,7 +22,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 	public void setGame(PlatformGame game) {
 		super.setGame(game);
 		tiles = parent.tiles;
-		darkTiles = parent.tiles;
+		darkTiles = parent.darkTiles;
 	}
 	
 	public MapEditorLayerTiles(MapEditorView parent, int layer) {

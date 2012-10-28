@@ -2,11 +2,9 @@ package com.ericharlow.DragNDrop;
 
 import com.ericharlow.DragNDrop.DragNDropListView.DragNDropListener;
 
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;

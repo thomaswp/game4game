@@ -99,4 +99,7 @@
     <string name="editMidground">Edit Midground</string>
     <string name="used">Used:</string>
     <string name="unused">Unused:</string>
+    <string name="add">Add</string>
+    <string name="editSize">Edit Size</string>
+    <string name="dragToScale">Drag to scale:</string>
 </resources>

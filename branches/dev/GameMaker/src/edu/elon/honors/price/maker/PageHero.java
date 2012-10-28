@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
@@ -21,7 +22,7 @@ public class PageHero extends Page {
 	private boolean forceSelect;
 	
 	@Override
-	public int getViewId() {
+	public int getLayoutId() {
 		return R.layout.page_hero;
 	}
 
@@ -37,7 +38,8 @@ public class PageHero extends Page {
 
 	
 	@Override
-	public void onCreate() {
+	public void onCreate(ViewGroup parentView) {
+		super.onCreate(parentView);
 		imageSpinner = (SelectorActorImage)findViewById(R.id.spinnerActorImage);
 		speed = (SeekBar)findViewById(R.id.seekBarSpeed);
 		jump = (SeekBar)findViewById(R.id.seekBarJump);
