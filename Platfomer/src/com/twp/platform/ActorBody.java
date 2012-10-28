@@ -16,7 +16,6 @@ import android.graphics.Color;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
