@@ -12,6 +12,7 @@ import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
 import android.content.Intent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -23,7 +24,7 @@ public class PageMap extends Page {
 	}
 
 	@Override
-	public int getViewId() {
+	public int getLayoutId() {
 		return R.layout.page_map;
 		//return R.layout.drawer;
 	}
@@ -34,7 +35,8 @@ public class PageMap extends Page {
 	}
 
 	@Override
-	public void onCreate() {
+	public void onCreate(ViewGroup parentView) {
+		super.onCreate(parentView);
 		Button buttonEditBackground = (Button)findViewById(R.id.buttonEditBackground);
 		buttonEditBackground.setOnClickListener(new OnClickListener() {
 			@Override
@@ -130,6 +132,12 @@ public class PageMap extends Page {
 	public void onActivityResult(int requestCode, Intent data) {
 		super.onActivityResult(requestCode, data);
 		setGame((PlatformGame)data.getExtras().getSerializable("game"));
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

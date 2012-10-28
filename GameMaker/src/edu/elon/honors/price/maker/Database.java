@@ -3,11 +3,10 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.maker.R;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
 public class Database extends DatabaseActivity {
 
@@ -25,10 +24,10 @@ public class Database extends DatabaseActivity {
 		pages = new Page[] {
 				new PageEvents(this),
 				new PageActors(this),
-				new PageHero(this),
+				new PageObjects(this),
+				//new PageHero(this),
 				new PageMap(this),
 				new PageBehaviors(this),
-				new PageObjects(this),
 				new PageUI(this),
 				new PageTest(this)
 			};
@@ -133,16 +132,18 @@ public class Database extends DatabaseActivity {
 		}
 		if (selectedPage >= 0) {
 			pages[selectedPage].onPause();
+			pages[selectedPage].setVisibility(View.GONE);
 		}
 		selectedPage = page;
 		putPreference(LAST_PAGE, selectedPage);
 
-		RelativeLayout host = (RelativeLayout)findViewById(R.id.relativeLayoutHost);
-		host.removeAllViews();
-		LayoutInflater inflator = getLayoutInflater();
-		inflator.inflate(pages[page].getViewId(), host);
+		if (!pages[page].isCreated()) {
+			pages[page].onCreate((ViewGroup)findViewById(
+					R.id.relativeLayoutHost));
+		}
 		
-		pages[page].onCreate();
+		pages[page].setVisibility(View.VISIBLE);
+		pages[page].onResume();
 		
 		if (selectedPage > 0) {
 			prev.setVisibility(View.VISIBLE);

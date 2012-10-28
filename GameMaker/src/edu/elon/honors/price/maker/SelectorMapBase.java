@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.MapLayer;
+import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
@@ -167,6 +168,7 @@ public class SelectorMapBase extends MapActivityBase {
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 			paint.setColor(Color.WHITE);
+			paint.setAlpha(200);
 			for (int i = 0; i < map.layers.length; i++) {
 				MapLayer layer = map.layers[i];
 
@@ -180,7 +182,6 @@ public class SelectorMapBase extends MapActivityBase {
 					}
 				}
 
-				paint.setAlpha(200);
 			}
 		}
 
@@ -190,16 +191,24 @@ public class SelectorMapBase extends MapActivityBase {
 		
 		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
 				Bitmap bitmap, Paint paint) {
+			ObjectClass objectClass = game.objects[instance.classIndex];
 			paint.setAlpha(255);
-			c.drawBitmap(bitmap, x, y, paint);
+			paint.setAntiAlias(true);
+			paint.setDither(true);
+			paint.setFilterBitmap(true);
+			c.save();
+			c.scale(objectClass.zoom, objectClass.zoom, x, y);
+			c.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getWidth() / 2, paint);
+			c.restore();
+			paint.reset();
 		}
 		
 		protected void drawObjects(Canvas c) {
 			for (int i = 0; i < game.getSelectedMap().objects.size(); i++) {
 				ObjectInstance instance = game.getSelectedMap().objects.get(i);
 				Bitmap bitmap = objects[instance.classIndex];
-				float x = instance.startX - bitmap.getWidth() / 2 + offX;
-				float y = instance.startY - bitmap.getHeight() / 2 + offY;
+				float x = instance.startX + offX;// - bitmap.getWidth() / 2;
+				float y = instance.startY + offY;// - bitmap.getHeight() / 2;
 				drawObject(c, instance, x, y, bitmap, paint);
 			}
 		}

@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import android.content.Intent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
@@ -13,7 +14,7 @@ public class PageUI extends Page {
 	}
 
 	@Override
-	public int getViewId() {
+	public int getLayoutId() {
 		return R.layout.page_ui;
 	}
 
@@ -23,7 +24,8 @@ public class PageUI extends Page {
 	}
 
 	@Override
-	public void onCreate() {
+	public void onCreate(ViewGroup parentView) {
+		super.onCreate(parentView);
 		Button buttonEditUI = (Button)findViewById(R.id.buttonUI);
 		buttonEditUI.setOnClickListener(new OnClickListener() {
 			@Override
@@ -38,6 +40,12 @@ public class PageUI extends Page {
 
 	@Override
 	public void onResume() {
+		
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
 		
 	}
 

@@ -45,6 +45,7 @@
     	<activity android:name=".SelectorActivitySwitch" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".SelectorActivityVariable" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".SelectorActivityVector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".SelectorActivityScale" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditEvent" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditTriggerSwitch" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>

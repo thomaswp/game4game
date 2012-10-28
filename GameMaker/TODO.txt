@@ -28,7 +28,6 @@ Actors:
 -get rid of "behavior" and add Behavior Instances
 
 Map Editor:
--Update appropriately when actors/objects/etc change
 -redo texture selector
 -actors second edit brush
 

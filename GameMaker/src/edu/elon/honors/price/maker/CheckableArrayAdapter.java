@@ -20,14 +20,14 @@ public abstract class CheckableArrayAdapter<T> extends ArrayAdapter<T> {
 	
 	protected abstract void setRow(int position, T item, View view);
 	
+	private static <S> List<S> toList(S[] array) {
+		LinkedList<S> list = new LinkedList<S>();
+		for (S item : array) list.add(item);
+		return list;
+	}
+	
 	public CheckableArrayAdapter(Context context, int listItemResourceId, T[] items) {
-		super(context, 0, items);
-		LinkedList<T> list = new LinkedList<T>();
-		for (T item : items) list.add(item);
-		
-		this.items = list;
-		childResource = listItemResourceId;
-		inflater = ((Activity)getContext()).getLayoutInflater();
+		this(context, listItemResourceId, toList(items));
 	}
 	
 	public CheckableArrayAdapter(Context context, int listItemResourceId, List<T> items) {
@@ -57,39 +57,26 @@ public abstract class CheckableArrayAdapter<T> extends ArrayAdapter<T> {
 			lps.gravity = Gravity.CENTER_VERTICAL;
 			checkable.addView(child, lps);
 		}
-		setRow(position, items.get(position), child);
-		
-		
-//		checkable.setOnCheckedChangedListener(null);
-//		checkable.setChecked(checkedIndex == position);
-//		checkable.setOnCheckedChangedListener(new OnCheckedChangedListener() {
-//			@Override
-//			public void onCheckChanged(boolean checked) {
-//				if (checked) {
-//					Game.debug("setting checked to: %d", position);
-//					checkedIndex = position;
-//				}
-//			}
-//		});
+		setRow(position, getItem(position), child);
 		
 		return convertView;
 	}		
 
-	public void addItem(T item) {
-		items.add(item);
-		notifyDataSetChanged();
-	}
-	
-	public T removeItem(int index) {
-		T s = items.remove(index);
-		notifyDataSetChanged();
-		return s;
-	}
-	
-	public void insertItem(T item, int index) {
-		items.add(index, item);
-		notifyDataSetChanged();
-	}
+//	public void addItem(T item) {
+//		items.add(item);
+//		notifyDataSetChanged();
+//	}
+//	
+//	public T removeItem(int index) {
+//		T s = items.remove(index);
+//		notifyDataSetChanged();
+//		return s;
+//	}
+//	
+//	public void insertItem(T item, int index) {
+//		items.add(index, item);
+//		notifyDataSetChanged();
+//	}
 	
 	public void replaceItem(int index, T newItem) {
 		items.remove(index);

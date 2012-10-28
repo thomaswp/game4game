@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.PlatformGame;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -29,7 +30,7 @@ public class PageBehaviors extends Page {
 	}
 
 	@Override
-	public int getViewId() {
+	public int getLayoutId() {
 		return R.layout.page_behaviors;
 	}
 
@@ -48,7 +49,8 @@ public class PageBehaviors extends Page {
 	}
 
 	@Override
-	public void onCreate() {
+	public void onCreate(ViewGroup parentView) {
+		super.onCreate(parentView);
 		spinnerType = (Spinner)findViewById(R.id.spinnerType);
 		radioGroup = (RadioGroup)findViewById(R.id.radioGroupBehaviors);
 		buttonNew = (Button)findViewById(R.id.buttonNew);
@@ -124,11 +126,6 @@ public class PageBehaviors extends Page {
 	}
 
 	@Override
-	public void onResume() {
-
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, Intent data) {
 		behaviors = getGame().getBehaviors(getBehaviorType());
 		int index = getIndex();
@@ -139,6 +136,18 @@ public class PageBehaviors extends Page {
 			((RadioButton)radioGroup.getChildAt(index)).
 			setText(behavior.name);
 		}
+	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
