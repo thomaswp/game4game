@@ -14,17 +14,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-        	android:textSize="20sp"
             android:minWidth="150dip"
-            android:paddingRight="10dip" >
+            android:paddingRight="10dip"
+            android:textSize="20sp" >
         </TextView>
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/imageViewIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/icon" >
-    </ImageView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dip" >
+
+        <ImageView
+            android:id="@+id/imageViewIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/actorImage"
+            android:scaleType="fitCenter"
+            android:src="@drawable/layer1" />
+    </RelativeLayout>
 
 </LinearLayout>

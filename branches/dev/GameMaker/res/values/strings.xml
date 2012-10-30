@@ -102,4 +102,5 @@
     <string name="add">Add</string>
     <string name="editSize">Edit Size</string>
     <string name="dragToScale">Drag to scale:</string>
+    <string name="scale">Scale:</string>
 </resources>

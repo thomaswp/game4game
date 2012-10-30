@@ -189,18 +189,10 @@ public class SelectorMapBase extends MapActivityBase {
 			c.drawBitmap(tileBitmap, x + offX, y + offY, paint);
 		}
 		
-		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
+		protected void drawObject(Canvas c, ObjectInstance instance, float cx, float cy, 
 				Bitmap bitmap, Paint paint) {
-			ObjectClass objectClass = game.objects[instance.classIndex];
-			paint.setAlpha(255);
-			paint.setAntiAlias(true);
-			paint.setDither(true);
-			paint.setFilterBitmap(true);
-			c.save();
-			c.scale(objectClass.zoom, objectClass.zoom, x, y);
-			c.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getWidth() / 2, paint);
-			c.restore();
-			paint.reset();
+			c.drawBitmap(bitmap, cx - bitmap.getWidth() / 2, 
+					cy - bitmap.getWidth() / 2, paint);
 		}
 		
 		protected void drawObjects(Canvas c) {
