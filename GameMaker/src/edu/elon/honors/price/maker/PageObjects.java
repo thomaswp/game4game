@@ -61,10 +61,11 @@ public class PageObjects extends PageList<ObjectClass> {
 				label.setText(item.name);
 				ImageView icon=(ImageView)row.findViewById(R.id.imageViewIcon);
 				Bitmap bmp = Data.loadObject(item.imageName);
-				int maxHeight = 100;
-				if (bmp.getHeight() > maxHeight) {
-					int width = bmp.getWidth() * maxHeight / bmp.getHeight();
-					bmp = Bitmap.createScaledBitmap(bmp, width, maxHeight, true);
+				if (item.zoom != 1) {
+					bmp = Bitmap.createScaledBitmap(bmp, 
+							(int)(bmp.getWidth() * item.zoom),
+							(int)(bmp.getHeight() * item.zoom),
+							true);
 				}
 				icon.setImageBitmap(bmp);
 			}

@@ -3,11 +3,18 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
+import edu.elon.honors.price.data.ObjectInstance;
+import edu.elon.honors.price.data.PlatformGame;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -20,6 +27,7 @@ public class SelectorActivityScale extends DatabaseActivity {
 	private SeekBar seekBarScale;
 	private TextView textViewInfo;
 	private ImageView imageView;
+	private Button buttonReset;
 	private CharacterUpdater characterUpdater;
 	
 	private Bitmap image;
@@ -46,7 +54,7 @@ public class SelectorActivityScale extends DatabaseActivity {
 		int index = getIntent().getIntExtra("index", 0);
 		if (isActor) {
 			final ActorClass actor = game.actors[index];
-			image = Data.loadActor(actor.imageName);
+			image = Data.loadActorIcon(actor.imageName);
 			scale = actor.zoom;
 			characterUpdater = new CharacterUpdater() {
 				@Override
@@ -67,7 +75,7 @@ public class SelectorActivityScale extends DatabaseActivity {
 		}
 		
 		linearLayoutPreview.addView(
-				new SelectorMapPreview(this, game, savedInstanceState));
+				new SelectorMapPreviewScale(this, game, savedInstanceState));
 		
 		imageView.setImageBitmap(image);
 		
@@ -90,23 +98,54 @@ public class SelectorActivityScale extends DatabaseActivity {
 				imageView.getLayoutParams().height = progress * 
 						image.getHeight() / image.getWidth();
 				imageView.invalidate();
-				
-				makeInfoText();
-				float newScale = (float)imageView.getWidth() / image.getWidth();
+
+				float newScale = (float)progress / image.getWidth();
+				makeInfoText(newScale);
 				characterUpdater.update(newScale);
 			}
 		});
 		seekBarScale.setProgress((int)(image.getWidth() * scale));
+		
+		buttonReset.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				seekBarScale.setProgress(image.getWidth());
+			}
+		});
 	}
 	
-	private void makeInfoText() {
+	private void makeInfoText(float scale) {
 		textViewInfo.setText(String.format(
 				"Scale: %.2f, Width: %d, Height %d",
-				(float)imageView.getWidth() / image.getWidth(),
-				imageView.getWidth(), imageView.getHeight()));
+				scale, (int)(image.getWidth() * scale), 
+				(int)(image.getHeight() * scale)));
 	}
 	
 	private interface CharacterUpdater {
 		public void update(float newScale);
+	}
+	
+	private class SelectorMapPreviewScale extends SelectorMapPreview {
+		public SelectorMapPreviewScale(Context context, PlatformGame game,
+				Bundle savedInstanceState) {
+			super(context, game, savedInstanceState);
+		}
+		
+		@Override
+		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
+				Bitmap bitmap, Paint paint) {
+			ObjectClass objectClass = game.objects[instance.classIndex];
+			bitmap = Data.loadObject(objectClass.imageName);
+			paint.setAlpha(255);
+			paint.setAntiAlias(true);
+			paint.setDither(true);
+			paint.setFilterBitmap(true);
+			c.save();
+			c.scale(objectClass.zoom, objectClass.zoom, x, y);
+			c.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getWidth() / 2, paint);
+			c.restore();
+			paint.reset();
+		}
+		
 	}
 }

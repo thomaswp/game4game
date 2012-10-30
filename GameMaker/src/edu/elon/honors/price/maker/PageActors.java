@@ -89,6 +89,11 @@ public class PageActors extends PageList<ActorClass> {
 			label.setText(actor.name);
 			ImageView icon=(ImageView)row.findViewById(R.id.imageViewIcon);
 			Bitmap bmp = Data.loadActorIcon(actor.imageName, getContext());
+			if (actor.zoom != 1) {
+				bmp = Bitmap.createScaledBitmap(bmp, 
+						(int)(bmp.getWidth() * actor.zoom), 
+						(int)(bmp.getHeight() * actor.zoom), true);
+			}
 			icon.setImageBitmap(bmp);
 		}		
 	}

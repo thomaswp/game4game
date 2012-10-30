@@ -414,6 +414,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 			actors[0] = Data.loadActorIcon(game.hero.imageName);
 			for (int i = 1; i < actors.length; i++) {
 				actors[i] = Data.loadActorIcon(game.actors[i].imageName);
+				actors[i] = Bitmap.createScaledBitmap(actors[i],
+						(int)(actors[i].getWidth() * game.actors[i].zoom),
+						(int)(actors[i].getHeight() * game.actors[i].zoom),
+						true);
 			}
 		}
 
@@ -421,6 +425,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 			objects = new Bitmap[game.objects.length];
 			for (int i = 0; i < objects.length; i++) {
 				objects[i] = Data.loadObject(game.objects[i].imageName);
+				objects[i] = Bitmap.createScaledBitmap(objects[i],
+						(int)(objects[i].getWidth() * game.objects[i].zoom),
+						(int)(objects[i].getHeight() * game.objects[i].zoom),
+						true);
 			}
 		}
 
