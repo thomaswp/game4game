@@ -13,8 +13,8 @@ import edu.elon.honors.price.maker.R;
 
 public class PageHero extends Page {
 	
-	final float speedScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_SPEED;
-	final float jumpScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_JUMP;
+	final float speedScale = DatabaseEditActorClass.SPEEDS / ActorClass.MAX_SPEED;
+	final float jumpScale = DatabaseEditActorClass.SPEEDS / ActorClass.MAX_JUMP;
 	private Hero actor;
 	private Spinner eventSpinner, directionSpinner, behaviorSpinner;
 	private SelectorActorImage imageSpinner;
@@ -62,8 +62,8 @@ public class PageHero extends Page {
 		
 		imageSpinner.setSelectedImageName(actor.imageName);
 
-		speed.setMax(DatabaseEditActor.SPEEDS);
-		jump.setMax(DatabaseEditActor.SPEEDS);
+		speed.setMax(DatabaseEditActorClass.SPEEDS);
+		jump.setMax(DatabaseEditActorClass.SPEEDS);
 		speed.setProgress((int)(actor.speed * speedScale + 0.5f));
 		jump.setProgress((int)(actor.jumpVelocity * jumpScale + 0.5f));
 

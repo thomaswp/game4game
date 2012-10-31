@@ -409,27 +409,36 @@ public abstract class MapActivityBase extends SaveableActivity {
 			this.grid = grid;
 		}
 
-		private void createActors() {
+		protected void createActors() {
 			actors = new Bitmap[game.actors.length];
-			actors[0] = Data.loadActorIcon(game.hero.imageName);
-			for (int i = 1; i < actors.length; i++) {
-				actors[i] = Data.loadActorIcon(game.actors[i].imageName);
-				actors[i] = Bitmap.createScaledBitmap(actors[i],
-						(int)(actors[i].getWidth() * game.actors[i].zoom),
-						(int)(actors[i].getHeight() * game.actors[i].zoom),
-						true);
+			for (int i = 0; i < actors.length; i++) {
+				actors[i] = createActor(i, game);
 			}
 		}
+		
+		protected Bitmap createActor(int index, PlatformGame game) {
+			Bitmap bmp = Data.loadActorIcon(game.actors[index].imageName);
+			bmp = Bitmap.createScaledBitmap(bmp,
+					(int)(bmp.getWidth() * game.actors[index].zoom),
+					(int)(bmp.getHeight() * game.actors[index].zoom),
+					true);
+			return bmp;
+		}
 
-		private void createObjects() {
+		protected void createObjects() {
 			objects = new Bitmap[game.objects.length];
 			for (int i = 0; i < objects.length; i++) {
-				objects[i] = Data.loadObject(game.objects[i].imageName);
-				objects[i] = Bitmap.createScaledBitmap(objects[i],
-						(int)(objects[i].getWidth() * game.objects[i].zoom),
-						(int)(objects[i].getHeight() * game.objects[i].zoom),
-						true);
+				objects[i] = createObject(i, game);
 			}
+		}
+		
+		protected Bitmap createObject(int index, PlatformGame game) {
+			Bitmap bmp = Data.loadObject(game.objects[index].imageName);
+			bmp = Bitmap.createScaledBitmap(bmp,
+					(int)(bmp.getWidth() * game.objects[index].zoom),
+					(int)(bmp.getHeight() * game.objects[index].zoom),
+					true);
+			return bmp;
 		}
 
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId, 

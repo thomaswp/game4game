@@ -35,7 +35,7 @@
     	<activity android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".Database" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
-    	<activity android:name=".DatabaseEditActor" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditActorClass" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditObjectClass" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".SelectorMapBase" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".SelectorMapActorInstance" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
