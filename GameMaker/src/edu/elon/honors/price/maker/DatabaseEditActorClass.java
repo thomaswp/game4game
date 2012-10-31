@@ -18,7 +18,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 
-public class DatabaseEditActor extends DatabaseActivity {
+public class DatabaseEditActorClass extends DatabaseActivity {
 
 	public final static int SPEEDS = 10;
 
@@ -26,12 +26,15 @@ public class DatabaseEditActor extends DatabaseActivity {
 	final static float JUMP_SCALE = SPEEDS / ActorClass.MAX_JUMP;
 
 	private int actorId;
-	private ActorClass actor;
 	private EditText actorName;
 	private SelectorActorImage imageSpinner;
 	private SeekBar speed, jump;
 	private Button buttonScale;
 	private SelectorBehaviorInstances selectorBehaviors;
+	
+	private ActorClass getActor() {
+		return game.actors[actorId];
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class DatabaseEditActor extends DatabaseActivity {
 		
 		selectorBehaviors.populate(game);
 		
-		actor = game.actors[actorId];
+		ActorClass actor = getActor();
 		
 		actorName.setText(actor.name);
 		
@@ -76,21 +79,16 @@ public class DatabaseEditActor extends DatabaseActivity {
 		selectorBehaviors.setBehaviors(actor.behaviors,
 				BehaviorType.Actor);
 		
-		setButtonScaleTest();
+		setButtonScaleText();
 		buttonScale.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				SelectorActivityScale.startForResult(
-						DatabaseEditActor.this, true, actorId);
+						DatabaseEditActorClass.this, true, actorId);
 			}
 		});
 
 		setDefaultButtonActions();
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
 	}
 	
 	@Override
@@ -99,17 +97,19 @@ public class DatabaseEditActor extends DatabaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
 			selectorBehaviors.populate(game);
-			setButtonScaleTest();
+			setButtonScaleText();
 			selectorBehaviors.onActivityResult(requestCode, data);
 		}
 	}
 	
-	private void setButtonScaleTest() {
-		buttonScale.setText(String.format("%.02f", actor.zoom));
+	private void setButtonScaleText() {
+		buttonScale.setText(String.format("%.02f", getActor().zoom));
 	}
 	
 	@Override
 	public void onFinishing() {
+		ActorClass actor = getActor();
+		
 		actor.name = actorName.getText().toString();
 		actor.imageName = imageSpinner.getSelectedImageName();
 		actor.speed = speed.getProgress() / SPEED_SCALE;

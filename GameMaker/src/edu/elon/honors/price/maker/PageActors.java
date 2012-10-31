@@ -49,7 +49,7 @@ public class PageActors extends PageList<ActorClass> {
 
 	@Override
 	protected void editItem(int index) {
-		Intent intent = new Intent(parent, DatabaseEditActor.class);
+		Intent intent = new Intent(parent, DatabaseEditActorClass.class);
 		intent.putExtra("id", getActorId(index));
 		intent.putExtra("game", getGame());
 		parent.startActivityForResult(intent, REQUEST_EDIT_ITEM);

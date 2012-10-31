@@ -548,13 +548,14 @@ public class MapEditorView extends MapView {
 		actors = Arrays.copyOf(actors, newGame.actors.length);
 		darkActors = Arrays.copyOf(darkActors, actors.length);
 		for (int i = 0; i < newGame.actors.length; i++) {
-			ActorClass newActor = i == 0 ? newGame.hero : newGame.actors[i];
+			ActorClass newActor = newGame.actors[i];
 			String newName = newActor.imageName;
 			ActorClass oldActor = null; String oldName = null;
-			oldActor = i == 0 ? this.game.hero : this.game.actors[i];
+			oldActor = this.game.actors[i];
 			oldName = oldActor == null ? null : oldActor.imageName;
-			if (oldActor == null || !oldName.equals(newName)) {
-				actors[i] = Data.loadActorIcon(newGame.actors[i].imageName);
+			if (oldActor == null || !oldName.equals(newName) || 
+					oldActor.zoom != newActor.zoom) {
+				actors[i] = createActor(i, newGame);
 				darkActors[i] = darken(actors[i]);
 			}
 		}
@@ -571,10 +572,7 @@ public class MapEditorView extends MapView {
 			oldName = oldObject == null ? null : oldObject.imageName;
 			if (oldObject == null || !oldName.equals(newName) || 
 					oldObject.zoom != newObject.zoom) {
-				objects[i] = Data.loadObject(newObject.imageName);
-				objects[i] = Bitmap.createScaledBitmap(objects[i],
-						(int)(objects[i].getWidth() * newObject.zoom),
-						(int)(objects[i].getHeight() * newObject.zoom), true);
+				objects[i] = createObject(i, newGame);
 			}
 		}
 	}

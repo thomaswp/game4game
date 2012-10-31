@@ -56,6 +56,7 @@
                             android:id="@+id/editTextActorName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="text"
                             android:maxLength="15"
                             android:maxLines="1"
                             android:singleLine="true" />
@@ -81,9 +82,20 @@
                     <TableRow
                         android:id="@+id/tableRow4"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-                        <TextView android:id="@+id/textView6" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/scale"/>
-                        <Button android:id="@+id/buttonScale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Button"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dip" >
+
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/scale" />
+
+                        <Button
+                            android:id="@+id/buttonScale"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button" />
                     </TableRow>
 
                     <TableRow

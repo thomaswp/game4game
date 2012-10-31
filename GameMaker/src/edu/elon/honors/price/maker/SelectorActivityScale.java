@@ -10,7 +10,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +31,8 @@ public class SelectorActivityScale extends DatabaseActivity {
 	private ImageView imageView;
 	private Button buttonReset;
 	private CharacterUpdater characterUpdater;
+	private boolean isActor;
+	private int index;
 	
 	private Bitmap image;
 	
@@ -50,8 +54,8 @@ public class SelectorActivityScale extends DatabaseActivity {
 		
 		float scale;
 		
-		boolean isActor = getIntent().getBooleanExtra("isActor", true);
-		int index = getIntent().getIntExtra("index", 0);
+		isActor = getIntent().getBooleanExtra("isActor", true);
+		index = getIntent().getIntExtra("index", 0);
 		if (isActor) {
 			final ActorClass actor = game.actors[index];
 			image = Data.loadActorIcon(actor.imageName);
@@ -134,17 +138,59 @@ public class SelectorActivityScale extends DatabaseActivity {
 		@Override
 		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
 				Bitmap bitmap, Paint paint) {
-			ObjectClass objectClass = game.objects[instance.classIndex];
-			bitmap = Data.loadObject(objectClass.imageName);
-			paint.setAlpha(255);
-			paint.setAntiAlias(true);
-			paint.setDither(true);
-			paint.setFilterBitmap(true);
-			c.save();
-			c.scale(objectClass.zoom, objectClass.zoom, x, y);
-			c.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getWidth() / 2, paint);
-			c.restore();
-			paint.reset();
+			if (isActor || instance.classIndex != index) {
+				super.drawObject(c, instance, x, y, bitmap, paint);
+			} else {
+				ObjectClass objectClass = game.objects[instance.classIndex];
+				bitmap = image;
+
+				paint.reset();
+				paint.setAntiAlias(true);
+				paint.setDither(true);
+				paint.setFilterBitmap(true);
+				c.save();
+				c.scale(objectClass.zoom, objectClass.zoom, x, y);
+				c.drawBitmap(bitmap, x - bitmap.getWidth() / 2, y - bitmap.getWidth() / 2, paint);
+				c.restore();
+				paint.reset();
+			}
+		}
+		
+		protected void drawActor(Canvas c, float dx, float dy, int instanceId, 
+				Bitmap bmp, Paint paint) {
+
+			int classIndex;
+			if (isActor && (classIndex = game.getSelectedMap()
+					.actors.get(instanceId).classIndex) == index) {
+				ActorClass actorClass = game.actors[classIndex];
+				bmp = image;
+				float cx = dx + bmp.getWidth() / 2;
+				float cy = dy + bmp.getHeight() / 2;
+
+				paint.reset();
+				paint.setAntiAlias(true);
+				paint.setDither(true);
+				paint.setFilterBitmap(true);
+				c.save();
+				c.scale(actorClass.zoom, actorClass.zoom, cx, cy);
+				c.drawBitmap(bmp, dx, dy, paint);
+				c.restore();
+				paint.reset();
+	
+				String text = "" + instanceId;
+				paint.setColor(Color.WHITE);
+				paint.setAlpha(150);
+				paint.setStyle(Style.FILL);
+				int blX = (int)(cx - bmp.getWidth() * actorClass.zoom / 2);
+				int blY = (int)(cy + bmp.getHeight() * actorClass.zoom / 2);
+				c.drawRect(blX, blY - paint.getTextSize(), 
+						blX + paint.measureText(text), blY, paint);
+				paint.setColor(Color.BLACK);
+				paint.setTextSize(12);
+				c.drawText(text, blX, blY, paint);
+			} else {
+				super.drawActor(c, dx, dy, instanceId, bmp, paint);
+			}
 		}
 		
 	}

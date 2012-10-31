@@ -12,18 +12,22 @@ import android.widget.EditText;
 public class DatabaseEditObjectClass extends DatabaseActivity {
 	
 	private int id;
-	private ObjectClass objectClass;
 	
 	private EditText editTextObjectName;
 	private SelectorObjectImage selectorObjectImage;
 	private SelectorBehaviorInstances selectorBehaviors;
+	private Button buttonScale;
+	
+	public ObjectClass getObject() {
+		return game.objects[id];
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		id = getIntent().getExtras().getInt("id");
-		objectClass = game.objects[id];
+		ObjectClass objectClass = getObject();
 		
 		setContentView(R.layout.database_edit_object);
 		setDefaultButtonActions();
@@ -40,18 +44,25 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 				BehaviorType.Object);
 		selectorBehaviors.populate(game);
 		
-		((Button)findViewById(R.id.buttonEditZoom))
-		.setOnClickListener(new OnClickListener() {
+		buttonScale = (Button)findViewById(R.id.buttonEditScale); 
+		buttonScale.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				SelectorActivityScale.startForResult(
 						DatabaseEditObjectClass.this, false, id);
 			}
 		});
+		
+		setButtonScaleText();
+	}
+	
+	protected void setButtonScaleText() {
+		buttonScale.setText(String.format("%.02f", getObject().zoom));
 	}
 	
 	@Override
 	protected void onFinishing() {
+		ObjectClass objectClass = getObject();
 		objectClass.name = editTextObjectName.getText().toString();
 		objectClass.imageName = selectorObjectImage.getSelectedImageName();
 		objectClass.behaviors = selectorBehaviors.getBehaviors();
@@ -64,6 +75,7 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 		if (resultCode == RESULT_OK) {
 			selectorBehaviors.populate(game);
 			selectorBehaviors.onActivityResult(requestCode, data);
+			setButtonScaleText();
 		}
 	}
 }
