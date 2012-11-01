@@ -111,7 +111,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 					parent.getContext().getResources(), R.drawable.no);
 			return;
 		}
-		ActorClass actor = id == 0 ? game.hero : game.actors[id]; 
+		ActorClass actor = game.actors[id]; 
 		Bitmap bmp = Data.loadActorIcon(actor.imageName);
 		parent.actorImage = bmp;
 	}

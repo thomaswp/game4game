@@ -63,6 +63,10 @@ implements IPopulatable{
 		LayoutInflater.from(getContext()).inflate(
 				R.layout.selector_behavior_instances, this);
 		
+		if (isInEditMode()) {
+			return;
+		}
+		
 		radioGroupBehaviors = 
 			(RadioGroup)findViewById(R.id.radioGroupBehaviors);
 		buttonNew = (Button)findViewById(R.id.buttonNewBehavior);

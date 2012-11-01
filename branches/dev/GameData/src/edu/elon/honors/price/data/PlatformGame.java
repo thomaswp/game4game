@@ -23,7 +23,7 @@ public class PlatformGame extends GameData {
 	public Tileset[] tilesets;
 	public ActorClass[] actors;
 	public ObjectClass[] objects;
-	public Hero hero;
+	public Hero getHero() { return (Hero)actors[0]; }
 
 	public String[] switchNames;
 	public boolean[] switchValues;
@@ -95,7 +95,7 @@ public class PlatformGame extends GameData {
 		vlad.name = "Stick Man";
 		actors[2] = vlad;
 
-		hero = new Hero();
+		Hero hero = new Hero();
 		hero.speed = 3.5f;
 		hero.jumpVelocity = 6f;
 		hero.stunDuration = 600;

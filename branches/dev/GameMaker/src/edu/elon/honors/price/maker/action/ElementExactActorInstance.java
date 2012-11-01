@@ -62,7 +62,7 @@ public class ElementExactActorInstance extends Element {
 			actorString = String.format("%s %03d", 
 					game.actors[instance.classIndex].name, instance.id);
 		else
-			actorString = game.hero.name;
+			actorString = game.getHero().name;
 		TextUtils.addColoredText(sb, actorString, color);
 		return sb.toString();
 	}

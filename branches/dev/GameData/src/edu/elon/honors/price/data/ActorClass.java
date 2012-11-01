@@ -1,14 +1,11 @@
 package edu.elon.honors.price.data;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * Represents an Actor Class, defining characteristics
  * such as look, speed, jump height and behaviors.
  *
  */
-public class ActorClass extends GameData implements Cloneable {
+public class ActorClass extends MapClass implements Cloneable {
 	private static final long serialVersionUID = 1L;
 	
 	public final static float MAX_SPEED = 5f;
@@ -46,8 +43,6 @@ public class ActorClass extends GameData implements Cloneable {
 		"Right of this actor",
 	};
 
-	public String name = "";
-	public String imageName = "ghost.png";
 	public float speed;
 	public float jumpVelocity;
 	public int edgeBehavior;
@@ -56,13 +51,6 @@ public class ActorClass extends GameData implements Cloneable {
 	public int[] actorContactBehaviors = new int[4];
 	public int[] heroContactBehaviors = new int[4];
 	public boolean animated = true;
-	public boolean fixedRotation = true;
-	public float zoom = 1;
-	public boolean collidesWithActors = true;
-	public boolean collidesWithHero = true;
-	public boolean collidesWithObjects = true;
-	public List<BehaviorInstance> behaviors = 
-		new LinkedList<BehaviorInstance>();
 	
 	@Override
 	public ActorClass clone() {
@@ -75,5 +63,10 @@ public class ActorClass extends GameData implements Cloneable {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	protected String getDefaultImageName() {
+		return "ghost.png";
 	}
 }
