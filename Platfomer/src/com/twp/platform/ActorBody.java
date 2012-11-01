@@ -16,6 +16,8 @@ import android.graphics.Color;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.MapClass;
+import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
@@ -40,6 +42,11 @@ public class ActorBody extends PlatformBody {
 	private Vector2 respawnLocation;
 	
 	private int nextAnimUpdate;
+	
+	@Override
+	protected MapClass getMapClass() {
+		return actor;
+	}
 	
 	@Override
 	public List<BehaviorInstance> getBehaviorInstances() {
@@ -120,6 +127,7 @@ public class ActorBody extends PlatformBody {
 //		}
 		this.sprite = new AnimatedSprite(viewport, frames, startX, startY);
 		this.sprite.centerOrigin();
+		Game.debug(actor.imageName + ", " + actor.zoom);
 		this.sprite.setZoom(actor.zoom);
 		super.sprite = sprite;
 		this.isHero = isHero;
@@ -134,7 +142,7 @@ public class ActorBody extends PlatformBody {
 		BodyDef actorDef = new BodyDef();
 		actorDef.position.set(spriteToVect(sprite, null));
 		actorDef.type = BodyType.DynamicBody;
-		actorDef.fixedRotation = actor.fixedRotation;
+		actorDef.fixedRotation = true;
 		body = world.createBody(actorDef);
 		for (int i = -1; i < 2; i += 2) {
 			CircleShape actorShape = new CircleShape();
@@ -147,7 +155,7 @@ public class ActorBody extends PlatformBody {
 				actorShape.setPosition(new Vector2(0, i * (sprite.getHeight() - sprite.getWidth()) / 2 / SCALE));
 			}
 			actorFix.shape = actorShape;
-			actorFix.friction = actor.fixedRotation ? 0 : 1;
+			actorFix.friction = 0.1f;
 			actorFix.restitution = 0;
 			actorFix.density = 1;
 			body.createFixture(actorFix);
@@ -167,22 +175,20 @@ public class ActorBody extends PlatformBody {
 		
 		checkDeath();
 		
-		if (actor.fixedRotation) {
-			float pi = (float)Math.PI;
-			float gAngle = world.getGravity().angle() *	pi / 180 + 3 * pi / 2;
-			float bAngle = body.getAngle();
-			if (Math.abs(bAngle - gAngle) > 0) {
-				if (bAngle - gAngle > pi) {
-					gAngle += 2 * pi;
-				}
-				if (gAngle - bAngle > pi) {
-					bAngle += 2 * pi;
-				}
-				bAngle = bAngle * 0.9f + gAngle * 0.1f;
+		float pi = (float)Math.PI;
+		float gAngle = world.getGravity().angle() *	pi / 180 + 3 * pi / 2;
+		float bAngle = body.getAngle();
+		if (Math.abs(bAngle - gAngle) > 0) {
+			if (bAngle - gAngle > pi) {
+				gAngle += 2 * pi;
 			}
-			body.setTransform(body.getPosition().x, 
-					body.getPosition().y, bAngle);
+			if (gAngle - bAngle > pi) {
+				bAngle += 2 * pi;
+			}
+			bAngle = bAngle * 0.9f + gAngle * 0.1f;
 		}
+		body.setTransform(body.getPosition().x, 
+				body.getPosition().y, bAngle);
 		
 		if (isHero) {
 			directionX = (int)Math.signum(getVelocity().x);
@@ -190,25 +196,6 @@ public class ActorBody extends PlatformBody {
 			if (getVelocity().x != 0)
 				setOnLadder(false);
 		}
-		
-
-//			if (actor.animated && stun <= 0) {
-//				if (onLadder) {
-//					sprite.setFrame(3 * ANIMATION_FRAMES);
-//				} else {
-//					int frame = sprite.getFrame();
-//					if (directionX > 0 && (frame / ANIMATION_FRAMES != 2 || !sprite.isAnimated())) {
-//						sprite.Animate(FRAME, 2 * ANIMATION_FRAMES, ANIMATION_FRAMES);
-//					} else if (directionX < 0 && (frame / ANIMATION_FRAMES != 1 || !sprite.isAnimated())) {
-//						sprite.Animate(FRAME, ANIMATION_FRAMES, ANIMATION_FRAMES);
-//					}
-//					if (sprite.isAnimated()) {
-//						if (stopped) {
-//							sprite.setFrame(frame - frame % ANIMATION_FRAMES);
-//						}
-//					}
-//				}
-//			}
 		
 		nextAnimUpdate -= timeElapsed;
 		if (nextAnimUpdate <= 0) {
@@ -226,9 +213,13 @@ public class ActorBody extends PlatformBody {
 	private void checkDeath() {
 		if (body.getPosition().y - sprite.getHeight() / SCALE > 
 			physics.getMapFloorMeters()) {
-			body.setTransform(respawnLocation, body.getAngle());
-			body.setLinearVelocity(body.getLinearVelocity().mul(0));
-			stun(null);
+			if (isHero) {
+				body.setTransform(respawnLocation, body.getAngle());
+				body.setLinearVelocity(body.getLinearVelocity().mul(0));
+				stun(null);
+			} else {
+				dispose();
+			}
 		}
 	}
 
@@ -438,20 +429,6 @@ public class ActorBody extends PlatformBody {
 			onLadder = false;
 			animationState = AnimationState.Jumping;
 		//}
-	}
-
-	@Override
-	protected boolean collidesWith(PlatformBody body) {
-		if (body instanceof ActorBody) {
-			if (((ActorBody)body).isHero) {
-				return actor.collidesWithHero;
-			}
-			return actor.collidesWithActors;
-		} else if (body instanceof ObjectBody) {
-			return actor.collidesWithObjects;
-		}
-		
-		return false;
 	}
 
 	@Override

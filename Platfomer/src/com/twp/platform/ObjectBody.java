@@ -13,7 +13,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.ObjectClass;
+import edu.elon.honors.price.data.MapClass.CollidesWith;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
@@ -24,6 +26,11 @@ public class ObjectBody extends PlatformBody {
 
 	private ObjectClass object;
 
+	@Override
+	protected MapClass getMapClass() {
+		return object;
+	}
+	
 	public ObjectClass getObject() {
 		return object;
 	}
@@ -38,7 +45,6 @@ public class ObjectBody extends PlatformBody {
 		super(viewport, physics, id, startX, startY);
 
 		this.object = object;
-		//object.zoom = 1f;
 		
 		behaviorRuntimes = new BehaviorRuntime[object.behaviors.size()];
 		for (int i = 0; i < behaviorRuntimes.length; i++) {
@@ -97,7 +103,7 @@ public class ObjectBody extends PlatformBody {
 		poly.set(points);
 		FixtureDef fixture = new FixtureDef();
 		fixture.shape = poly;
-		fixture.density = 1;
+		fixture.density = getDensity(object.density);
 		fixture.friction = 1;
 		fixture.restitution = 0.5f;
 		body.createFixture(fixture);
@@ -121,10 +127,5 @@ public class ObjectBody extends PlatformBody {
 		if (!object.fixedRotation) {
 			sprite.setRotation(body.getAngle() * 180 / (float)Math.PI);
 		}
-	}
-
-	@Override
-	protected boolean collidesWith(PlatformBody body) {
-		return true;
 	}
 }

@@ -165,8 +165,8 @@ public class PhysicsHandler {
 
 			@Override
 			public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-				if (!(bodyMap.containsKey(fixtureA) && bodyMap.containsKey(fixtureB)))
-					return true;
+				if (!bodyMap.containsKey(fixtureA) && !bodyMap.containsKey(fixtureB))
+					return false;
 
 				PlatformBody bodyA = bodyMap.get(fixtureA);
 				PlatformBody bodyB = bodyMap.get(fixtureB);
@@ -399,8 +399,7 @@ public class PhysicsHandler {
 					if (actorId > 0) {
 						addActorBody(game.actors[actorId], instanceId, x, y);
 					} else {
-						game.hero.name = "Hero";
-						heroBody = addActorBody(game.hero, 
+						heroBody = addActorBody(game.getHero(), 
 								instanceId,
 								x,
 								y, 1, true);

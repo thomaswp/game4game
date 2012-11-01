@@ -9,13 +9,24 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.MapClass;
+import edu.elon.honors.price.data.MapClass.CollidesWith;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
 
 public abstract class PlatformBody implements IBehaving {
 	protected static final float SCALE = PlatformLogic.SCALE;
+	
 
+	public final static float MAX_DENSITY = 10; 
+	public final static float DENSITY_SCALE = 2 * (float)Math.log(MAX_DENSITY);
+
+	public static float getDensity(float perc) {
+		float mult = (perc - 0.5f) * DENSITY_SCALE;
+		return (float)Math.exp(mult);
+	}
+	
 	protected Body body;
 	protected Sprite sprite;
 	protected int id;
@@ -165,7 +176,10 @@ public abstract class PlatformBody implements IBehaving {
 	}
 
 	public static boolean collides(PlatformBody body1, PlatformBody body2) {
-		return body1.collidesWith(body2) && body2.collidesWith(body1);
+		if (body1 == null || body1.collidesWith(body2)) {
+			return body2 == null || body2.collidesWith(body1);
+		}
+		return false;
 	}
 
 	public static int getCollisionDirection(PlatformBody bodyA, PlatformBody bodyB) {
@@ -196,7 +210,26 @@ public abstract class PlatformBody implements IBehaving {
 		return dir;
 	}
 	
-	protected abstract boolean collidesWith(PlatformBody body);
+	protected boolean collidesWith(PlatformBody body) {
+		CollidesWith with;
+		if (body == null) {
+			with = CollidesWith.Terrain;
+		} else if (body instanceof ObjectBody) {
+			with = CollidesWith.Objects;
+		} else if (body instanceof ActorBody) {
+			if (((ActorBody) body).isHero()) {
+				with = CollidesWith.Hero;
+			} else {
+				with = CollidesWith.Actors;
+			}
+		} else {
+			return true;
+		}
+		return getMapClass().collidesWith(with);
+	}
+	
+	protected abstract MapClass getMapClass();
+	
 	public abstract void update(long timeElapsed, Vector offset);
 	
 	public void onTouchGround() { }
