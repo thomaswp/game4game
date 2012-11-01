@@ -103,4 +103,8 @@
     <string name="editSize">Edit Size</string>
     <string name="dragToScale">Drag to scale:</string>
     <string name="scale">Scale:</string>
+    <string name="density">Density:</string>
+    <string name="collidesWith">Collides With:</string>
+    <string name="hero">Hero</string>
+    <string name="theGround">The Ground</string>
 </resources>

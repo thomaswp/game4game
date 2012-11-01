@@ -31,6 +31,7 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 	private SeekBar speed, jump;
 	private Button buttonScale;
 	private SelectorBehaviorInstances selectorBehaviors;
+	private SelectorCollidesWith selectorCollidesWith;
 	
 	private ActorClass getActor() {
 		return game.actors[actorId];
@@ -50,6 +51,7 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 		selectorBehaviors = (SelectorBehaviorInstances)findViewById(
 				R.id.selectorBehaviorInstances);
 		buttonScale = (Button)findViewById(R.id.buttonScale);
+		selectorCollidesWith = (SelectorCollidesWith)findViewById(R.id.selectorCollidesWith);
 		
 		selectorBehaviors.populate(game);
 		
@@ -88,6 +90,8 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 			}
 		});
 
+		selectorCollidesWith.setMapClass(actor);
+		
 		setDefaultButtonActions();
 	}
 	
@@ -99,6 +103,7 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 			selectorBehaviors.populate(game);
 			setButtonScaleText();
 			selectorBehaviors.onActivityResult(requestCode, data);
+			selectorCollidesWith.setMapClass(getActor());
 		}
 	}
 	

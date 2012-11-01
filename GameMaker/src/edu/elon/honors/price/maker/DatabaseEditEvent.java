@@ -1111,7 +1111,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					actorString = String.format("%s %03d", 
 							game.actors[instance.classIndex].name, instance.id);
 				else
-					actorString = game.hero.name;
+					actorString = game.getHero().name;
 
 				TextUtils.addColoredText(sb, actorString, COLOR_VARIABLE);
 			} else if (trigger.mode == ActorOrObjectTrigger.MODE_ACTOR_CLASS) {
@@ -1138,7 +1138,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			StringBuilder sb = new StringBuilder();
 
 			if (trigger.who == RegionTrigger.WHO_HERO) {
-				TextUtils.addColoredText(sb, game.hero.name, COLOR_VARIABLE);
+				TextUtils.addColoredText(sb, game.getHero().name, COLOR_VARIABLE);
 			} else if (trigger.who == RegionTrigger.WHO_ACTOR) {
 				sb.append("An actor");
 			} else {

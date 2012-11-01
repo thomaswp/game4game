@@ -58,7 +58,7 @@ public class PageHero extends Page {
 	
 	@Override
 	public void onResume() {
-		actor = getGame().hero;
+		actor = getGame().getHero();
 		
 		imageSpinner.setSelectedImageName(actor.imageName);
 

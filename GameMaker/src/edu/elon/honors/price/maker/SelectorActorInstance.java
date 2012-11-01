@@ -32,7 +32,7 @@ public class SelectorActorInstance extends Button implements IPopulatable {
 		} else {
 			ActorClass actor;
 			if (id == 1) {
-				actor = game.hero;
+				actor = game.getHero();
 			} else {
 				int classIndex = game.getSelectedMap().actors.get(id).classIndex; 
 				actor = game.actors[classIndex];
@@ -65,7 +65,6 @@ public class SelectorActorInstance extends Button implements IPopulatable {
 				Intent intent = new Intent(getContext(), SelectorMapActorInstance.class);
 				intent.putExtra("game", game);
 				intent.putExtra("id", id);
-				//Game.debug(getId());
 				((Activity)getContext()).startActivityForResult(intent, getId());
 			}
 		});

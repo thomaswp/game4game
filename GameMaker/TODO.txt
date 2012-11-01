@@ -24,8 +24,7 @@ Events:
 -add bunches more!
 
 Actors:
--Reset instead of resize group
--get rid of "behavior" and add Behavior Instances
+-zoom change: keep actor in box
 
 Map Editor:
 -redo texture selector
