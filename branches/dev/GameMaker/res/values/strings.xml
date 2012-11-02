@@ -107,4 +107,10 @@
     <string name="collidesWith">Collides With:</string>
     <string name="hero">Hero</string>
     <string name="theGround">The Ground</string>
+    <string name="edit_c">Edit:</string>
+    <string name="background">Background</string>
+    <string name="midground">Midground</string>
+    <string name="size">Size</string>
+    <string name="horizon">Horizon</string>
+    <string name="tileset">Tileset</string>
 </resources>

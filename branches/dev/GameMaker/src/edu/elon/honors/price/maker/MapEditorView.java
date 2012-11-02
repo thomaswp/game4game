@@ -689,7 +689,7 @@ public class MapEditorView extends MapView {
 		getEditor().startActivityForResult(intent, REQ_SELECTOR);
 	}
 
-	public void refresh() {
+	public void refreshLayers() {
 		layers[selectedLayer].refreshSelection();
 	}
 

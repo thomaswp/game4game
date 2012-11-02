@@ -10,7 +10,7 @@ import edu.elon.honors.price.game.Game;
 public class Map extends GameData {
 	private static final long serialVersionUID = 9L;
 
-	
+	public String name;
 	
 	public Event[] events;
 	public int tilesetId;
@@ -28,6 +28,8 @@ public class Map extends GameData {
 
 	public Map(PlatformGame game) {
 
+		name = "New Map";
+		
 		rows = 8;
 		columns = 30;
 

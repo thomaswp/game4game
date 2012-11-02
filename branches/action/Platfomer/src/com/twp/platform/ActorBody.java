@@ -155,7 +155,7 @@ public class ActorBody extends PlatformBody {
 				actorShape.setPosition(new Vector2(0, i * (sprite.getHeight() - sprite.getWidth()) / 2 / SCALE));
 			}
 			actorFix.shape = actorShape;
-			actorFix.friction = 0.1f;
+			actorFix.friction = 0;
 			actorFix.restitution = 0;
 			actorFix.density = 1;
 			body.createFixture(actorFix);

@@ -80,6 +80,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 		protected boolean moving;
 		protected Bitmap[] tiles, actors, objects;
 		protected Bitmap grid;
+		private Bitmap bgBmp;
+		private Bitmap midgrounds;
 		protected ArrayList<Button> buttons;
 
 		public int getButtonRad() {
@@ -95,15 +97,21 @@ public abstract class MapActivityBase extends SaveableActivity {
 			this.game = game;
 			paint = new Paint();
 
+			refresh();
+			
+			if (savedInstanceState != null) {
+				onLoadInstanceState(savedInstanceState);
+			}
+		}
+		
+		public void refresh() {
 			Tileset tileset = game.tilesets[game.getSelectedMap().tilesetId];
 			Bitmap tilesetBmp = Data.loadTileset(tileset.bitmapName, getContext());
 			tiles = createTiles(tilesetBmp, tileset.tileWidth, tileset.tileHeight, 0);
 			createActors();
 			createObjects();
-			
-			if (savedInstanceState != null) {
-				onLoadInstanceState(savedInstanceState);
-			}
+			bgBmp = null;
+			midgrounds = null;
 		}
 		
 		protected void onLoadInstanceState(Bundle savedInstanceState) {
@@ -271,8 +279,6 @@ public abstract class MapActivityBase extends SaveableActivity {
 			return 80;
 		}
 
-		private Bitmap bgBmp;
-		private Bitmap midgrounds;
 		protected void drawBackground(Canvas canvas) {
 			if (bgBmp == null || bgBmp.getWidth() != width ||
 					bgBmp.getHeight() != height) {

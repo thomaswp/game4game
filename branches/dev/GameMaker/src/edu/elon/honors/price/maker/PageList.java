@@ -4,20 +4,30 @@ import edu.elon.honors.price.game.Game;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
 public abstract class PageList<T> extends Page {
 
+	protected final String LAST_SELECTED = "lastSelected";
+	
 	protected ListView listView;
 	protected final static int REQUEST_EDIT_ITEM = 101;
 	protected int editIndex;
+	private LinearLayout linearLayoutButtons;
 	
 	@Override
 	public int getLayoutId() {
 		return R.layout.page_list;
+	}
+	
+	protected int getSelectedIndex() {
+		return listView.getCheckedItemPosition();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -44,6 +54,32 @@ public abstract class PageList<T> extends Page {
 		
 		listView.setAdapter(getAdapter());
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		
+		linearLayoutButtons = (LinearLayout)findViewById(
+				R.id.linearLayoutButtons);
+		
+		listView.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> adapterView, View view,
+					int selectedIndex, long selectedId) {
+				putPreference(LAST_SELECTED, selectedIndex);
+				Game.debug(selectedIndex);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) { }
+		});
+		
+		int selected = getIntPreference(LAST_SELECTED, 0);
+		if (selected < getAdapter().getCount()) {
+			listView.setSelection(selected);
+		}
+	}
+	
+	protected Button addButton() {
+		Button button = new Button(getContext());
+		linearLayoutButtons.addView(button);
+		return button;
 	}
 	
 	protected abstract void editItem(int index);
@@ -89,10 +125,6 @@ public abstract class PageList<T> extends Page {
 			}
 		});
 		add.setText("Add " + getItemCategory());
-	}
-
-	private int getSelectedIndex() {
-		return listView.getCheckedItemPosition();
 	}
 	
 
