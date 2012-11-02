@@ -16,7 +16,7 @@ public class PlatformGame extends GameData {
 	protected int _VERSION_ = 3;
 
 	public ArrayList<Map> maps;
-	public int startMapId;
+	public int selectedMapId;
 
 	public UILayout uiLayout;
 
@@ -68,7 +68,7 @@ public class PlatformGame extends GameData {
 		
 		maps = new ArrayList<Map>();
 		maps.add(new Map(this));
-		startMapId = 0;
+		selectedMapId = 0;
 
 
 		actors = new ActorClass[3];
@@ -145,7 +145,7 @@ public class PlatformGame extends GameData {
 	}
 
 	public Map getSelectedMap() {
-		return maps.get(startMapId);
+		return maps.get(selectedMapId);
 	}
 
 	public Tileset getMapTileset(Map map) {

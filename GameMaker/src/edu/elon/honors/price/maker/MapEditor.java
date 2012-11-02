@@ -133,7 +133,7 @@ public class MapEditor extends MapActivityBase {
 	}
 	
 	private void refresh() {
-		((MapEditorView)view).refresh();
+		((MapEditorView)view).refreshLayers();
 	}
 
 	private void load() {

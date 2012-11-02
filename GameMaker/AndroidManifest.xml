@@ -55,6 +55,7 @@
     	<activity android:name=".DatabaseEditUI" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseNewAction" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditAction" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".DatabaseEditMap" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditMapBackground" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditMapMidground" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditMapSize" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>

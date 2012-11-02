@@ -16,6 +16,11 @@ public class Upgrader {
 				o.collidesWith = new boolean[4];
 			}
 		}
+		for (Map map : game.maps) {
+			if (map.name == null) {
+				map.name = "Map 1";
+			}
+		}
 	}
 	
 	private static void upgraded(PlatformGame game) {
