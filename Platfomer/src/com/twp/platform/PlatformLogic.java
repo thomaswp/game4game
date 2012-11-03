@@ -15,6 +15,7 @@ import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.UILayout;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.AnimatedSprite;
@@ -151,7 +152,7 @@ public class PlatformLogic implements Logic {
 		update(1);
 		
 //		for (int i = 0; i < 100; i++) {
-//			Game.debug(i);
+//			Debug.write(i);
 //			Bitmap b = Data.loadBackground("sky.png");
 //			Sprite s = new Sprite(Viewport.DefaultViewport, b);
 //		}
@@ -252,7 +253,7 @@ public class PlatformLogic implements Logic {
 	}
 
 	public void drawCircle(Paint paint, int x, int y, int rad, boolean world) {
-		Game.debug("Draw: %d %d %d", x, y, rad);
+		Debug.write("Draw: %d %d %d", x, y, rad);
 		Bitmap bmp = Bitmap.createBitmap(rad * 2, rad * 2, Config.ARGB_8888);
 		Sprite s = new Sprite(drawViewport, bmp);
 		s.getBitmapCanvas().drawCircle(rad, rad, rad, paint);
@@ -313,7 +314,7 @@ public class PlatformLogic implements Logic {
 		if (-offset.getY() + Graphics.getHeight() > physics.getMapFloorPx()) {
 			offset.setY(Graphics.getHeight() - physics.getMapFloorPx());
 		}
-		//Game.debug(offset.toString());
+		//Debug.write(offset.toString());
 
 
 		physics.updateScroll(offset);

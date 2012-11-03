@@ -28,7 +28,7 @@ public class BackgroundHandler {
 				Graphics.getWidth(), startForegroundY + bmp.getHeight()), -6);
 
 		bmp = Data.loadBackground(map.skyImageName);
-		//Game.debug("%dx%d", Graphics.getWidth(), Graphics.getHeight());
+		//Debug.write("%dx%d", Graphics.getWidth(), Graphics.getHeight());
 		int startBackgroundY = startForegroundY - Graphics.getHeight();
 		background = new BackgroundSprite(bmp, new Rect(0, startBackgroundY, 
 				Graphics.getWidth(), startForegroundY), -7);

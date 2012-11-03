@@ -2,6 +2,7 @@ package com.twp.platform;
 
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Event.Action;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.ActionControl;
 import edu.elon.honors.price.maker.action.ActionFactory;
@@ -23,17 +24,17 @@ public class Interpreter {
 			return;
 
 		control.setEvent(event);
-		Game.debug("Event: %s", event.name);
+		Debug.write("Event: %s", event.name);
 		
 		while (control.hasNextAction()) {
 			try {
 				Action action = control.getNextAction();
-				Game.debug("Action (%s): %s", 
+				Debug.write("Action (%s): %s", 
 						ActionFactory.ACTION_NAMES[action.id],
 						action.params.toString());
 				control.nextAction(gameState);
 			} catch (ParameterException e) {
-				Game.debug("Param Exception!: %s", e.getMessage());
+				Debug.write("Param Exception!: %s", e.getMessage());
 				break;
 			}
 		}

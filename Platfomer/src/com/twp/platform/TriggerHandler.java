@@ -21,6 +21,7 @@ import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
@@ -313,7 +314,7 @@ public class TriggerHandler {
 			if (triggered) {
 				vector.set(joy.getLastPull());
 				event.tVector = vector;
-				Game.debug((Vector)event.tVector);
+				Debug.write((Vector)event.tVector);
 			}
 		} else {
 			if (Input.isTapped()) {
