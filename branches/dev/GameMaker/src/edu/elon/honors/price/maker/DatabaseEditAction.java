@@ -5,6 +5,7 @@ import java.io.InputStream;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.EventContext;
 import edu.elon.honors.price.maker.action.ActionParser;
@@ -63,7 +64,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 			InputStream is = Data.loadAction(id, this);
 			Xml.parse(is, Xml.Encoding.UTF_8, parser);
 		} catch (Exception e) {
-			Game.debug(e);
+			Debug.write(e);
 		}
 
 		rootElement = parser.getLayout();
@@ -131,7 +132,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 		Action action = new Action(id, params);
 		action.description = rootElement.getDescription(game);
 		intent.putExtra("action", action);
-		Game.debug(params);
+		Debug.write(params);
 	}
 
 	@Override
@@ -139,7 +140,7 @@ public class DatabaseEditAction extends DatabaseActivity {
 		if (originalParameters == null)
 			return false;
 		
-		Game.debug("%s v %s", rootElement.getParameters().toString(), 
+		Debug.write("%s v %s", rootElement.getParameters().toString(), 
 				originalParameters.toString());
 		return super.hasChanged() || 
 		!rootElement.getParameters().equals(originalParameters);

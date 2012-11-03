@@ -2,6 +2,7 @@ package edu.elon.honors.price.graphics;
 
 
 import edu.elon.honors.price.audio.Audio;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.input.Input;
@@ -69,7 +70,7 @@ public class GraphicsView extends GLSurfaceView {
 	public GraphicsView(Context context) {
 		super(context);
 
-		Game.debug("Graphics View Created");
+		Debug.write("Graphics View Created");
 
 		//Create a Touch Listener
 		setOnTouchListener(new OnTouchListener() {
@@ -89,7 +90,7 @@ public class GraphicsView extends GLSurfaceView {
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		Game.debug("Surface Created");
+		Debug.write("Surface Created");
 
 		super.surfaceCreated(holder);
 
@@ -121,7 +122,7 @@ public class GraphicsView extends GLSurfaceView {
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		Game.debug("Surface Destroyed");
+		Debug.write("Surface Destroyed");
 		//End the thread safely
 		boolean retry = true;
 		thread.interrupt();
@@ -165,7 +166,7 @@ public class GraphicsView extends GLSurfaceView {
 				if (logic != null) {
 					synchronized (logic) {
 						if (logic != null) {
-							//Game.debug("Game Loop");
+							//Debug.write("Game Loop");
 							//Update everything
 							long timeElapsed = System.currentTimeMillis() - lastUpdate;
 							lastUpdate += timeElapsed;

@@ -1,5 +1,6 @@
 package edu.elon.honors.price.data;
 
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
 @SuppressWarnings("unused")
@@ -27,7 +28,7 @@ public class Upgrader {
 		int from = game._VERSION_;
 		game._VERSION_++;
 		int to = game._VERSION_;
-		Game.debug("Upgraded game from v%d to v%d...", from, to);
+		Debug.write("Upgraded game from v%d to v%d...", from, to);
 	}
 }
 

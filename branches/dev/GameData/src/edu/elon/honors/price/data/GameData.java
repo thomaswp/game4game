@@ -26,7 +26,7 @@ public abstract class GameData implements Serializable {
 		if (c != o2.getClass())
 			return false;
 		
-		//Game.debug("Comparing %s's", c.toString());
+		//Debug.write("Comparing %s's", c.toString());
 		
 		for (int i = 0; i < shallow.length; i++) {
 			if (shallow[i].equals(c)) {
@@ -76,7 +76,7 @@ public abstract class GameData implements Serializable {
 
 		while (c != null) {
 			for (Field field : c.getDeclaredFields()) {
-				//Game.debug("Field:" + field.getName());
+				//Debug.write("Field:" + field.getName());
 				int mods = field.getModifiers();
 				if (Modifier.isFinal(mods) || Modifier.isStatic(mods) ||
 						Modifier.isTransient(mods)) {
@@ -88,7 +88,7 @@ public abstract class GameData implements Serializable {
 						if (!field.get(o1).equals(field.get(o2)))
 							return false;
 						else {
-//							Game.debug("%s: %o vs %o", field.getName(),
+//							Debug.write("%s: %o vs %o", field.getName(),
 //									field.get(o1), field.get(o2));
 						}
 					} else {

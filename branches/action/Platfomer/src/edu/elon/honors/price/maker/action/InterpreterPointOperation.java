@@ -4,6 +4,7 @@ import com.twp.platform.ActorBody;
 import com.twp.platform.ObjectBody;
 
 import edu.elon.honors.price.data.types.Variable;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.physics.Vector;
 
@@ -33,12 +34,12 @@ ActionInterpreter<ActionPointOperation> {
 			Vector pos = body.getScaledPosition();
 			operand.set(Math.round(pos.getX()), Math.round(pos.getY()));
 		}
-		Game.debug("operand: %s)", operand.toString());
+		Debug.write("operand: %s)", operand.toString());
 
 		int x = gameState.readVariable(vx);
 		int y = gameState.readVariable(vy);
 		
-		Game.debug("var point: (%d, %d)", x, y);
+		Debug.write("var point: (%d, %d)", x, y);
 		
 		if (action.operatorSetItTo) {
 			x = operand.x;

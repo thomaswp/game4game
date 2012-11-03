@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker.action;
 
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
 public class UnsupportedException extends RuntimeException {
@@ -7,7 +8,7 @@ public class UnsupportedException extends RuntimeException {
 
 	public UnsupportedException() {
 		super("Unsupported Operation!");
-		Game.debug("Unsupported operation!! Not Good!");
+		Debug.write("Unsupported operation!! Not Good!");
 	}
 
 }

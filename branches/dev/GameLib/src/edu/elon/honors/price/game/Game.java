@@ -62,7 +62,7 @@ public abstract class Game extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		debug("Activity Created");
+		Debug.write("Activity Created");
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
@@ -82,7 +82,7 @@ public abstract class Game extends Activity {
 
 	@Override
 	public void onPause() {
-		debug("Activity Paused");
+		Debug.write("Activity Paused");
 
 		Logic logic = view.getLogic();
 
@@ -104,7 +104,7 @@ public abstract class Game extends Activity {
 
 	@Override
 	public void onResume() {
-		debug("Activity Resumed");
+		Debug.write("Activity Resumed");
 
 		
 		currentGame = this;
@@ -122,19 +122,19 @@ public abstract class Game extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		Game.debug("Activity Destroyed");
+		Debug.write("Activity Destroyed");
 		super.onDestroy();
 	}
 
 	@Override
 	protected void onStart() {
-		Game.debug("Activity Started");
+		Debug.write("Activity Started");
 		super.onStart();
 	}
 
 	@Override
 	protected void onStop() {
-		Game.debug("Activity Stopped");
+		Debug.write("Activity Stopped");
 		super.onStop();
 	}
 
@@ -152,11 +152,11 @@ public abstract class Game extends Activity {
 	public static Bitmap loadBitmap(int id) {
 		try {
 			if (Cache.isBitmapRegistered(id)) {
-				//Game.debug("Cache: " + id);
+				//Debug.write("Cache: " + id);
 				return Cache.getRegisteredBitmap(id);
 			}
 			else {
-				//Game.debug("Load New: " + id);
+				//Debug.write("Load New: " + id);
 				Bitmap bmp = BitmapFactory.decodeResource(currentGame.getResources(), id);
 				Cache.RegisterBitmap(id, bmp);
 				return bmp;
@@ -217,59 +217,7 @@ public abstract class Game extends Activity {
 		}
 	}
 
-	public static void debug(long x) {
-		Game.debug("" + x);
-	}
 	
-	public static void debug(int x) {
-		Game.debug("" + x);
-	}
-	
-	public static void debug(Object o) {
-		debug(o == null ? "null" : o.toString());
-	}
-
-	public static void debug(float x) {
-		debug("" + x);
-	}
-
-	public static void debug(String format, Object... args) {
-		try {
-			debug(String.format(format, args));
-		} catch (Exception e) {
-			debug(e);
-		}
-	}
-	
-	public static void debug(Exception e) {
-		e.printStackTrace();
-	}
-	
-	/**
-	 * A method to write specially formatted debug text.
-	 * 
-	 * @param text The text to be written.
-	 */
-	public static void debug(String text) {
-		String msg = "---{" + text + "}---";
-		String tag = "Game";
-		try
-		{
-			throw new Exception("Who called me?");
-		}
-		catch( Exception e )
-		{
-			int i = 1;
-			while (e.getStackTrace()[i].getClassName().equals(Game.class.getName()) &&
-					e.getStackTrace()[i].getMethodName().equals("debug")) i++;
-			tag += ": " +
-			e.getStackTrace()[i].getClassName() + 
-			"." +
-			e.getStackTrace()[i].getMethodName() + 
-			"()" ;
-		}
-		Log.d(tag, msg);
-	}
 	
 	public static void showMessage(String message) {
 		new MessageSprite(message);

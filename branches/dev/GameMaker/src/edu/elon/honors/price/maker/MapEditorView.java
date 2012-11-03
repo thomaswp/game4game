@@ -22,6 +22,7 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.maker.MapActivityBase.MapView;
@@ -62,9 +63,7 @@ public class MapEditorView extends MapView {
 	protected Rect tilesetSelection;
 	protected Bitmap tilesetImage;
 	protected int actorSelection;
-	protected Bitmap actorImage;
 	protected int objectSelection;
-	protected Bitmap objectImage;
 	protected int mode;
 
 	private MapEditor getEditor() {
@@ -289,7 +288,7 @@ public class MapEditorView extends MapView {
 		}
 		if (x > this.width - SCROLL_BORDER) {
 			offX -= SCROLL_TICK;
-			Game.debug(offX);
+			Debug.write(offX);
 		}
 		if (y < SCROLL_BORDER) {
 			offY += SCROLL_TICK;

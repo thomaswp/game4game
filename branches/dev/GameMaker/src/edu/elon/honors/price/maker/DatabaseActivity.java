@@ -14,6 +14,7 @@ import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
 /**
@@ -211,11 +212,11 @@ public class DatabaseActivity extends SaveableActivity {
 					int lid = (Integer)id.get(null);
 					View view = findViewById(lid);
 					if (view == null) {
-						Game.debug("No view with id %s in conent view", name);
+						Debug.write("No view with id %s in conent view", name);
 						continue;
 					}
 					if (!field.getType().isAssignableFrom(view.getClass())) {
-						Game.debug("Cannot assign view of type %s to %s of type %s",
+						Debug.write("Cannot assign view of type %s to %s of type %s",
 								view.getClass().getName(),
 								field.getName(),
 								field.getType().getName());
@@ -223,11 +224,11 @@ public class DatabaseActivity extends SaveableActivity {
 					}
 					field.setAccessible(true);
 					field.set(this, view);
-					//Game.debug("%s successfully assigned!", field.getName());
+					//Debug.write("%s successfully assigned!", field.getName());
 				} catch (Exception e) {
-					Game.debug("Problem with AutoAssign for field %s in class %s",
+					Debug.write("Problem with AutoAssign for field %s in class %s",
 							field.getName(), this.getClass().getName());
-					Game.debug(e);
+					Debug.write(e);
 				}
 			}
 		}
@@ -262,7 +263,7 @@ public class DatabaseActivity extends SaveableActivity {
 		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
 		boolean r = !GameData.areEqual(oldGame, game);
 		//time = System.currentTimeMillis() - time;
-		//Game.debug("Game compared in " + time + "ms");
+		//Debug.write("Game compared in " + time + "ms");
 		return r;
 	}
 

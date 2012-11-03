@@ -61,7 +61,7 @@ public class Interpreter extends ActionIds {
 			return;
 
 		control.setEvent(event);
-		//Game.debug(event.name);
+		//Debug.write(event.name);
 
 		actionIndex = 0;
 
@@ -71,7 +71,7 @@ public class Interpreter extends ActionIds {
 
 			Parameters params = action.params;
 
-			Game.debug("%s: %s", ActionFactory.ACTION_NAMES[action.id], params.toString());
+			Debug.write("%s: %s", ActionFactory.ACTION_NAMES[action.id], params.toString());
 
 			try {
 				//003 Debug Box
@@ -405,7 +405,7 @@ public class Interpreter extends ActionIds {
 				}
 
 			} catch (ParameterException e) {
-				Game.debug("Param Exception!: %s", e.getMessage());
+				Debug.write("Param Exception!: %s", e.getMessage());
 			} finally {
 				actionIndex++;
 			}
@@ -648,7 +648,7 @@ public class Interpreter extends ActionIds {
 			JoyStick joy = readJoystick(ps, 1);
 			vector.set(joy.getLastPull());
 			vector.multiply(1f / joy.getLastPull().magnitude());
-			Game.debug(vector);
+			Debug.write(vector);
 		}
 	}
 

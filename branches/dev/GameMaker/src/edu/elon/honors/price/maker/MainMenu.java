@@ -11,6 +11,7 @@ import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
 import android.app.Activity;
@@ -66,14 +67,14 @@ public class MainMenu extends Activity {
 					}
 				}
 			} catch (Exception ex) { 
-				Game.debug("Could not create resource directory on SD Card");
+				Debug.write("Could not create resource directory on SD Card");
 				ex.printStackTrace(); 
 			}
 		} else {
 			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-				Game.debug("SD Card is Read Only");
+				Debug.write("SD Card is Read Only");
 			} else {
-				Game.debug("No SD Card detected");
+				Debug.write("No SD Card detected");
 			}
 		}
 	}

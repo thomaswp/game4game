@@ -403,7 +403,7 @@ public final class Input {
 			}
 		}
 
-		//if (out.length() > 0) Game.debug(out);
+		//if (out.length() > 0) Debug.write(out);
 	}
 
 	public static void update(long timeElapsed) {

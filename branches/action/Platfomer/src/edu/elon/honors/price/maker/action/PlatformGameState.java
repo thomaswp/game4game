@@ -22,6 +22,7 @@ import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
@@ -158,7 +159,7 @@ public class PlatformGameState implements GameState {
 			} else {
 				vector.multiply(1f / vector.magnitude());
 			}
-			Game.debug(vector);
+			Debug.write(vector);
 		}
 		return vector;
 	}

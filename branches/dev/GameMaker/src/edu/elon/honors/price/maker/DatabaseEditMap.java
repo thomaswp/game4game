@@ -86,6 +86,7 @@ public class DatabaseEditMap extends DatabaseActivity {
 	
 	@Override
 	protected void onFinishing() {
+		selectorMapPreview.setVisibility(View.INVISIBLE);
 		map.name = editTextName.getText().toString();
 		game.selectedMapId = formerIndex;
 	}

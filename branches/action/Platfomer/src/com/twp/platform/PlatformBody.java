@@ -191,18 +191,18 @@ public abstract class PlatformBody implements IBehaving {
 		int dir;
 		if (Math.abs(nx) > Math.abs(ny)) {
 			if (nx > 0) {
-				//Game.debug(bodyA.getActor().name + ": Right");
+				//Debug.write(bodyA.getActor().name + ": Right");
 				dir = ActorClass.RIGHT;
 			} else {
-				//Game.debug(bodyA.getActor().name + ": Left");
+				//Debug.write(bodyA.getActor().name + ": Left");
 				dir = ActorClass.LEFT;
 			}
 		} else {
 			if (ny > 0) {
-				//Game.debug(bodyA.getActor().name + ": Below");
+				//Debug.write(bodyA.getActor().name + ": Below");
 				dir = ActorClass.BELOW;
 			} else {
-				//Game.debug(bodyA.getActor().name + ": Above");
+				//Debug.write(bodyA.getActor().name + ": Above");
 				dir = ActorClass.ABOVE;
 			}
 		}

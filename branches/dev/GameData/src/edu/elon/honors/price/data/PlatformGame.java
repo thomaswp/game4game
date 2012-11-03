@@ -134,14 +134,14 @@ public class PlatformGame extends GameData {
 		in.defaultReadObject();
 		Upgrader.upgrade(this);
 		//time = System.currentTimeMillis() - time;
-		//Game.debug("Read in " + time + "ms");
+		//Debug.write("Read in " + time + "ms");
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		//long time = System.currentTimeMillis();
 		out.defaultWriteObject();
 		//time = System.currentTimeMillis() - time;
-		//Game.debug("Written in " + time + "ms");
+		//Debug.write("Written in " + time + "ms");
 	}
 
 	public Map getSelectedMap() {

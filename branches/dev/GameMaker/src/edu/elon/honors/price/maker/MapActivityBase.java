@@ -21,6 +21,7 @@ import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Cache;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
@@ -33,6 +34,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 	public static final int SELECTION_BORDER_WIDTH = 2;
 	
 	private static final int BUTTON_TEXT_SIZE = 26;
+	
+	private static final boolean DEBUG_FPS = false;
 
 	protected PlatformGame game;
 	protected MapView view;
@@ -266,7 +269,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 			long passed = System.currentTimeMillis() - lastUpdate;
 			if (passed > 1000) {
 				int fps = (int)(frames * 1000 / passed);
-				Game.debug("%d fps", fps);
+				if (DEBUG_FPS)
+					Debug.write("%d fps", fps);
 				
 				lastUpdate += 1000;
 				frames = 0;

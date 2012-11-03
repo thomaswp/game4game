@@ -18,7 +18,7 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 	@Override
 	public void drawContentNormal(Canvas c) {
 		if (touchDown && showPreview) {
-			Bitmap bitmap = parent.objectImage;
+			Bitmap bitmap = getSelection();
 			float x = touchX - bitmap.getWidth() / 2;
 			float y = touchY - bitmap.getHeight() / 2;
 			c.drawBitmap(bitmap, x, y, paint);
@@ -48,13 +48,11 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 	}
 
 	@Override
-	public void refreshSelection() {
-		parent.objectImage = parent.objects[parent.objectSelection];
-	}
+	public void refreshSelection() { }
 
 	@Override
 	public Bitmap getSelection() {
-		return parent.objectImage;
+		return parent.objects[parent.objectSelection];
 	}
 
 	@Override

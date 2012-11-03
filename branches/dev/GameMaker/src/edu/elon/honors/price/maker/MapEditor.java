@@ -5,6 +5,7 @@ import com.twp.platform.Platformer;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -116,7 +117,7 @@ public class MapEditor extends MapActivityBase {
 		Intent intent = new Intent(this, Platformer.class);
 		intent.putExtra("map", gameName);
 		startActivity(intent);
-		Game.debug(System.currentTimeMillis());
+		Debug.write(System.currentTimeMillis());
 	}
 
 	private void save() {

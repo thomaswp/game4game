@@ -324,7 +324,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			boolean topIn = viewTop > locTop && viewTop < locBot;
 			boolean bottomIn = viewBot > locTop && viewTop < locBot;
 
-			//Game.debug("%d, %d", viewTop, locTop);
+			//Debug.write("%d, %d", viewTop, locTop);
 			
 			if (topIn || bottomIn) {
 				if (indent == -1) {
@@ -406,7 +406,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			}
 		}
 		game.copyData = actions;
-		//Game.debug(actions);
+		//Debug.write(actions);
 	}
 
 	private void deleteSelection() {

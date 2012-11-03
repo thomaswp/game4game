@@ -25,13 +25,18 @@ public abstract class CheckableArrayAdapter<T> extends ArrayAdapter<T> {
 		for (S item : array) list.add(item);
 		return list;
 	}
+	private static <S> List<S> copyList(List<S> oldList) {
+		LinkedList<S> list = new LinkedList<S>();
+		for (S item : oldList) list.add(item);
+		return list;
+	}
 	
 	public CheckableArrayAdapter(Context context, int listItemResourceId, T[] items) {
 		this(context, listItemResourceId, toList(items));
 	}
 	
 	public CheckableArrayAdapter(Context context, int listItemResourceId, List<T> items) {
-		super(context, 0, items);
+		super(context, 0, (items = copyList(items)));
 		this.items = items;
 		
 		childResource = listItemResourceId;

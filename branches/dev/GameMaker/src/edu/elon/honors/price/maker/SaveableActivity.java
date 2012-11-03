@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
 import android.app.Activity;
@@ -31,7 +32,7 @@ public abstract class SaveableActivity extends Activity {
 		preferences = new Preferences();
 		
 		if (savedInstanceState != null) {
-			//Game.debug("RESTORING INSTANCE!!!");
+			//Debug.write("RESTORING INSTANCE!!!");
 		}
 		
 		//This just makes sure everything has
@@ -254,12 +255,12 @@ public abstract class SaveableActivity extends Activity {
 			for (Entry<String, ?> e : prefs.getAll().entrySet()) {
 				if (e.getKey().startsWith(prefix)) {
 					String pKey = e.getKey().substring(prefix.length());
-					Game.debug("%s -> %o", pKey, e.getValue());
+					Debug.write("%s -> %o", pKey, e.getValue());
 					map.put(pKey, e.getValue());
 				}
 			}
 			
-			Game.debug("Preferences loaded in: %ds", System.currentTimeMillis() - time);
+			Debug.write("Preferences loaded in: %ds", System.currentTimeMillis() - time);
 		}
 		
 		public void save() {
@@ -295,7 +296,7 @@ public abstract class SaveableActivity extends Activity {
 			
 			editor.apply();
 			
-			Game.debug("Preferences saved in: %ds", System.currentTimeMillis() - time);
+			Debug.write("Preferences saved in: %ds", System.currentTimeMillis() - time);
 		}
 	}
 }

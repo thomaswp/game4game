@@ -78,7 +78,7 @@ public class ObjectBody extends PlatformBody {
 //					path.lineTo(xs[i], ys[i]);
 //				first = false;
 //			}
-//			//Game.debug("(%f,%f)", xs[i], ys[i]);
+//			//Debug.write("(%f,%f)", xs[i], ys[i]);
 //		}
 //		path.close();
 //		Paint paint = new Paint();
@@ -95,7 +95,7 @@ public class ObjectBody extends PlatformBody {
 						(xs[i] - bitmap.getWidth() / 2) / SCALE * object.zoom, 
 						(ys[i] - bitmap.getHeight() / 2) / SCALE * object.zoom
 				);
-				//Game.debug(points[pi]);
+				//Debug.write(points[pi]);
 				pi--;
 			}
 		}

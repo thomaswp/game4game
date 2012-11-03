@@ -17,6 +17,7 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.MapClass;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
@@ -127,7 +128,7 @@ public class ActorBody extends PlatformBody {
 //		}
 		this.sprite = new AnimatedSprite(viewport, frames, startX, startY);
 		this.sprite.centerOrigin();
-		Game.debug(actor.imageName + ", " + actor.zoom);
+		Debug.write(actor.imageName + ", " + actor.zoom);
 		this.sprite.setZoom(actor.zoom);
 		super.sprite = sprite;
 		this.isHero = isHero;
@@ -400,7 +401,7 @@ public class ActorBody extends PlatformBody {
 		Vector2 gHat = world.getGravity().tempCopy().nor();
 		//Project b onto gravity to erase horizontal velocity
 		velocity.set(gHat.mul(gHat.dot(velocity)));
-		//Game.debug("%f, %f", newVelocity.x, newVelocity.y);
+		//Debug.write("%f, %f", newVelocity.x, newVelocity.y);
 		Vector2 horizontal = world.getGravity().tempCopy().rotate(-90);
 		horizontal.mul(hv / horizontal.len());
 		velocity.add(horizontal);
@@ -414,7 +415,7 @@ public class ActorBody extends PlatformBody {
 		Vector2 gHat = world.getGravity().tempCopy().nor().rotate(-90);
 		//Project b onto gravity to erase horizontal velocity
 		velocity.set(gHat.mul(gHat.dot(velocity)));
-		//Game.debug("%f, %f", newVelocity.x, newVelocity.y);
+		//Debug.write("%f, %f", newVelocity.x, newVelocity.y);
 		Vector2 vertical = world.getGravity().tempCopy().rotate(180);
 		vertical.mul(hv / vertical.len());
 		velocity.add(vertical);

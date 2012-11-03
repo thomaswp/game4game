@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.Element;
 import edu.elon.honors.price.maker.action.ElementBoolean;
@@ -100,7 +101,7 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 	@Override
 	protected boolean hasChanged() {
 		BehaviorInstance old = (BehaviorInstance)getExtra("instance");
-		Game.debug("%s vs %s", instance.toString(), old.toString());
+		Debug.write("%s vs %s", instance.toString(), old.toString());
 		return !instance.equals(old) || super.hasChanged(); 
 	}
 	
