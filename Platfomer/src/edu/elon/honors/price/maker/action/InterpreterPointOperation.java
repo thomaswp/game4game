@@ -5,7 +5,6 @@ import com.twp.platform.ObjectBody;
 
 import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.physics.Vector;
 
 public class InterpreterPointOperation extends 

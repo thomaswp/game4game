@@ -18,7 +18,6 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;

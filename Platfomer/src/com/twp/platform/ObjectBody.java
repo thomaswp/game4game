@@ -15,7 +15,6 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.ObjectClass;
-import edu.elon.honors.price.data.MapClass.CollidesWith;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
