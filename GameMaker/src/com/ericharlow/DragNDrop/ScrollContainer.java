@@ -135,7 +135,7 @@ public class ScrollContainer extends LinearLayout {
 //			childView.measure(MeasureSpec.makeMeasureSpec(listView.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 //			height += childView.getMeasuredHeight();
 //		}
-//		Game.debug("Height: %d:", height);
+//		Debug.write("Height: %d:", height);
 		if (listView.getChildCount() != 0 && count != 0) {
 			height += count * listView.getChildAt(0).getHeight();
 		}
@@ -149,7 +149,7 @@ public class ScrollContainer extends LinearLayout {
 		});
 		
 //		int scroll = height - (scrollView.getHeight() + scrollView.getScrollY());
-//		Game.debug(scroll);
+//		Debug.write(scroll);
 //		if (scroll < 0) {
 //			scrollView.scrollBy(0, scroll);	
 //		}

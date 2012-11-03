@@ -144,7 +144,7 @@ public class PageActors extends PageList<ActorClass> {
 	//	@Override
 	//	public void onPause() {
 	//		super.onPause();
-	//		Game.debug("write %d", getSelectedIndex());
+	//		Debug.write("write %d", getSelectedIndex());
 	//		putPreference(SELECTED_ACTOR, getSelectedIndex());
 	//	}
 	//	

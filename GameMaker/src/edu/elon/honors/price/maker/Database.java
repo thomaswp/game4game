@@ -25,11 +25,9 @@ public class Database extends DatabaseActivity {
 				new PageEvents(this),
 				new PageActors(this),
 				new PageObjects(this),
-				//new PageHero(this),
 				new PageMap(this),
 				new PageBehaviors(this),
-				new PageUI(this),
-				new PageTest(this)
+				//new PageTest(this)
 			};
 		
 		

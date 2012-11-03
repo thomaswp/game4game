@@ -6,6 +6,7 @@ import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.Event;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -42,6 +43,17 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 	private ScrollView scrollView;
 
 	private Editor[] editors;
+	
+	public static void startForResult(DatabaseActivity activity, int requestCode,
+			Behavior behavior) {
+		Intent intent = activity.getNewGameIntent(DatabaseEditBehavior.class);
+		intent.putExtra("behavior", behavior);
+		activity.startActivityForResult(intent, requestCode);
+	}
+	
+	public static Behavior getBehaviorResult(Intent data) {
+		return (Behavior) data.getSerializableExtra("behavior");
+	}
 
 	private Behavior readBehavior() {
 		if (getIntent().getExtras().containsKey("behavior")) {
@@ -345,7 +357,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 			.getSerializable("event");
 
 			int index = getIndex();
-			Game.debug(index);
+			Debug.write(index);
 			behavior.events.remove(index);
 			behavior.events.add(index, event);
 

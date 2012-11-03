@@ -1,11 +1,10 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.game.Game;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -40,12 +39,6 @@ public abstract class PageList<T> extends Page {
 	}
 	
 	@Override
-	public void onResume() { }
-
-	@Override
-	protected void onPause() { }
-	
-	@Override
 	public void onCreate(ViewGroup parentView) {
 		super.onCreate(parentView);
 		listView = (ListView)findViewById(R.id.listView);
@@ -58,28 +51,22 @@ public abstract class PageList<T> extends Page {
 		linearLayoutButtons = (LinearLayout)findViewById(
 				R.id.linearLayoutButtons);
 		
-		listView.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> adapterView, View view,
-					int selectedIndex, long selectedId) {
-				putPreference(LAST_SELECTED, selectedIndex);
-				Game.debug(selectedIndex);
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) { }
-		});
-		
 		int selected = getIntPreference(LAST_SELECTED, 0);
-		if (selected < getAdapter().getCount()) {
-			listView.setSelection(selected);
+		if (selected >= 0 && selected < getAdapter().getCount()) {
+			listView.setItemChecked(selected, true);
 		}
 	}
 	
-	protected Button addButton() {
-		Button button = new Button(getContext());
-		linearLayoutButtons.addView(button);
-		return button;
+	@Override
+	public void onResume() { }
+
+	@Override
+	protected void onPause() { 
+		putPreference(LAST_SELECTED, getSelectedIndex());
+	}
+	
+	protected void addPanelView(View view) {
+		linearLayoutButtons.addView(view);
 	}
 	
 	protected abstract void editItem(int index);
@@ -106,10 +93,22 @@ public abstract class PageList<T> extends Page {
 		reset.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int index = getSelectedIndex();
+				final int index = getSelectedIndex();
 				if (index < 0) return;
-				resetItem(index);
-				getListViewAdapter().replaceItem(index, getItem(index));
+				
+				new AlertDialog.Builder(parent)
+				.setTitle("Reset?")
+				.setMessage("Are you sure you want to reset this to a new " + 
+				getItemCategory() + "?")
+				.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						resetItem(index);
+						getListViewAdapter().replaceItem(index, getItem(index));
+					}
+				})
+				.setNegativeButton("Cancel", null)
+				.show();
 			}
 		});
 
@@ -119,9 +118,7 @@ public abstract class PageList<T> extends Page {
 			public void onClick(View v) {
 				int startSize = listView.getAdapter().getCount();
 				addItem();
-				if (listView.getAdapter().getCount() == startSize) {
-					getListViewAdapter().insert(getItem(startSize), startSize);
-				}
+				getListViewAdapter().insert(getItem(startSize), startSize);
 			}
 		});
 		add.setText("Add " + getItemCategory());

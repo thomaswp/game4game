@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
@@ -104,7 +105,7 @@ public class SelectorMapRegion extends SelectorMapBase {
 			super.onLoadInstanceState(savedInstanceState);
 			this.selection = 
 				(Rect)savedInstanceState.getParcelable("selection");
-			Game.debug("load: %f,%f",
+			Debug.write("load: %f,%f",
 					savedInstanceState.getFloat("offX"),
 					savedInstanceState.getFloat("offY"));
 		}
@@ -113,7 +114,7 @@ public class SelectorMapRegion extends SelectorMapBase {
 		public void onSaveInstanceState(Bundle outState) {
 			super.onSaveInstanceState(outState);
 			outState.putParcelable("selection", selection);
-			Game.debug("save: %f,%f",
+			Debug.write("save: %f,%f",
 					outState.getFloat("offX"),
 					outState.getFloat("offY"));
 		}
@@ -126,7 +127,7 @@ public class SelectorMapRegion extends SelectorMapBase {
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			super.surfaceCreated(holder);
-			Game.debug("Surface: %f,%f", offX, offY);
+			Debug.write("Surface: %f,%f", offX, offY);
 			if (offX == 0 && offY == 0) {
 				offX = -selection.centerX() + width / 2;
 				offY = -selection.centerY() + height / 2;

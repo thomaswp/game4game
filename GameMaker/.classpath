@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry combineaccessrules="false" kind="src" path="/GameLib"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GameData"/>
-	<classpathentry excluding="edu/elon/honors/price/maker/MapEditor_Old.java|edu/elon/honors/price/maker/MapEditorActorSelector_old.java|edu/elon/honors/price/maker/MapEditorLogic.java|edu/elon/honors/price/maker/PageHero.java" kind="src" path="src"/>
+	<classpathentry excluding="edu/elon/honors/price/maker/MapEditor_Old.java|edu/elon/honors/price/maker/MapEditorActorSelector_old.java|edu/elon/honors/price/maker/MapEditorLogic.java|edu/elon/honors/price/maker/PageHero.java|edu/elon/honors/price/maker/PageUI.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Platformer"/>

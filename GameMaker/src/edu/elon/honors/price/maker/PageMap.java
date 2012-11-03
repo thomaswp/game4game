@@ -30,7 +30,7 @@ public class PageMap extends PageList<Map> {
 	public void onCreate(ViewGroup parentView) {
 		super.onCreate(parentView);
 		
-		Button buttonSelect = addButton();
+		Button buttonSelect = new Button(parent);
 		buttonSelect.setText("Select Map");
 		buttonSelect.setOnClickListener(new OnClickListener() {
 			@Override
@@ -39,6 +39,18 @@ public class PageMap extends PageList<Map> {
 				listView.invalidateViews();
 			}
 		});
+		addPanelView(buttonSelect);
+		
+		Button buttonUI = new Button(parent);
+		buttonUI.setText("Edit UI");
+		buttonUI.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DatabaseEditUI.startForResult(parent, 
+						DatabaseActivity.REQUEST_RETURN_GAME);
+			}
+		});
+		addPanelView(buttonUI);
 	}
 	
 

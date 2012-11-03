@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Event.VariableTrigger;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.EventContext;
 import android.content.Intent;
@@ -80,7 +81,7 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 		radioValue.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Game.debug("changed");
+				Debug.write("changed");
 				selectorVariableTo.setVisibility(isChecked ? View.GONE : View.VISIBLE);
 				editTextValue.setVisibility(!isChecked ? View.GONE : View.VISIBLE);
 				trigger.with = isChecked ? VariableTrigger.WITH_VALUE :

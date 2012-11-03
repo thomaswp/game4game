@@ -131,10 +131,10 @@ public class BackgroundSprite {
 //	private static Bitmap createBitmap(Bitmap original, Rect rect) {
 //		int code = original.hashCode() + BackgroundSprite.class.hashCode();
 //		if (Cache.isBitmapRegistered(code)) {
-//			//Game.debug("Cache: " + code);
+//			//Debug.write("Cache: " + code);
 //			return Cache.getRegisteredBitmap(code);
 //		} else {
-//			//Game.debug("Load New: " + code);
+//			//Debug.write("Load New: " + code);
 //			int width, height;
 //			if (original.getWidth() < rect.width()) {
 //				width = original.getWidth() * ((rect.width() / original.getWidth()) + 2);

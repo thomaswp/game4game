@@ -8,6 +8,7 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import android.graphics.Bitmap;
@@ -122,7 +123,7 @@ public class GraphicsRenderer implements Renderer {
 	 * @param gl
 	 */
 	public void onShutdown(GL10 gl) {
-		Game.debug("Rendere Shut Down");
+		Debug.write("Rendere Shut Down");
 		flush(gl);
 	}
 	
@@ -144,7 +145,7 @@ public class GraphicsRenderer implements Renderer {
 		}
 		//System.gc();
 		time = System.currentTimeMillis() - time;
-		Game.debug("Flush: " + textures.size() + "t, " + time + "ms");
+		Debug.write("Flush: " + textures.size() + "t, " + time + "ms");
 		resources.clear();
 		flush = false;
 	}
@@ -166,7 +167,7 @@ public class GraphicsRenderer implements Renderer {
 		
 		if (logic != null) {
 			synchronized(logic) {
-				//Game.debug("Draw");
+				//Debug.write("Draw");
 				if (Graphics.getBackgroundColor() != lastBGC) {
 					int color = Graphics.getBackgroundColor();
 					gl.glClearColor(Color.red(color), Color.green(color), Color.blue(color), Color.alpha(color));
@@ -203,8 +204,8 @@ public class GraphicsRenderer implements Renderer {
 								//Draw visible Sprites
 								
 								if (!viewport.isSpriteInBounds(sprite)) {
-//									Game.debug(sprite.getRect().toString());
-//									Game.debug(viewport.getRect().toString());
+//									Debug.write(sprite.getRect().toString());
+//									Debug.write(viewport.getRect().toString());
 									continue;
 								}
 
@@ -311,7 +312,7 @@ public class GraphicsRenderer implements Renderer {
 		times += System.currentTimeMillis() - time;
 		frame++;
 		if (frame == 60) {
-			Game.debug("" + (times / frame) + "ms, " + (rendered / frame) + "r, " + textures.size() + "t: " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
+			Debug.write("" + (times / frame) + "ms, " + (rendered / frame) + "r, " + textures.size() + "t: " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
 			frame = 0;
 			times = 0;
 			rendered = 0;
@@ -339,7 +340,7 @@ public class GraphicsRenderer implements Renderer {
 	}
 	
 	private Grid createNewGrid(Bitmap bitmap) {
-		//Game.debug("Create grid");
+		//Debug.write("Create grid");
 
 		int width = bitmap.getWidth(), height = bitmap.getHeight();
 		int targetWidth = 1, targetHeight = 1;
@@ -383,7 +384,7 @@ public class GraphicsRenderer implements Renderer {
 			while (targetHeight < height) targetHeight *= 2;
 			if ((width != targetWidth || height != targetHeight)) {
 				
-				//Game.debug("%s: %dx%d", last.getTag(), targetWidth, targetHeight);
+				//Debug.write("%s: %dx%d", last.getTag(), targetWidth, targetHeight);
 //				int[] bmpPixels = new int[targetWidth * targetHeight];
 //				bitmap.getPixels(bmpPixels, 0, targetWidth, 0, 0, width, height);
 //				for (int i = 0; i < bmpPixels.length; i++) {
@@ -408,7 +409,7 @@ public class GraphicsRenderer implements Renderer {
 
 			} else {
 				if(!bitmap.getConfig().equals(Config.ARGB_8888)) {
-					Game.debug("Non-ARGB_8888 format!!");
+					Debug.write("Non-ARGB_8888 format!!");
 				}
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, bitmap, GL10.GL_UNSIGNED_BYTE, 0);
 				
@@ -435,7 +436,7 @@ public class GraphicsRenderer implements Renderer {
 		time = System.currentTimeMillis() - time;
 		
 		if (bitmap != fpsBitmap) {
-			Game.debug("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
+			Debug.write("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
 					+ time + "ms), " + textures.size() + " in cache (" +
 					textureCacheSize + "b)");
 		}

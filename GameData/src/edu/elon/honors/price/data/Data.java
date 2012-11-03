@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.elon.honors.price.game.Cache;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
 import android.annotation.SuppressLint;
@@ -59,11 +60,11 @@ public final class Data {
 	private static Bitmap loadBitmap(String name, Context parent) {
 		try {
 			if (Cache.isBitmapRegistered(name)) {
-				//Game.debug("Cache: " + id);
+				//Debug.write("Cache: " + id);
 				return Cache.getRegisteredBitmap(name);
 			}
 			else {
-				//Game.debug("Load New: " + id);
+				//Debug.write("Load New: " + id);
 				try {
 					ContentResolver cr = parent.getContentResolver();
 					AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, name), "r");
@@ -74,13 +75,13 @@ public final class Data {
 					Cache.RegisterBitmap(name, bmp);
 					return bmp;
 				} catch (Exception ex) {
-					Game.debug("Could not find '" + name + "' in local resrounces. Attempting external storage.");
+					Debug.write("Could not find '" + name + "' in local resrounces. Attempting external storage.");
 					ex.printStackTrace();
 					if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 						File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + name);
 						return BitmapFactory.decodeFile(file.getAbsolutePath());
 					} else {
-						Game.debug("Failed: No SD Card detected");
+						Debug.write("Failed: No SD Card detected");
 						return null;
 					}
 				}
@@ -115,7 +116,7 @@ public final class Data {
 				}
 			}
 		} catch (Exception ex) {
-			Game.debug("No local resources for '" + dir + "'");
+			Debug.write("No local resources for '" + dir + "'");
 		}
 		
 		try {
@@ -127,7 +128,7 @@ public final class Data {
 				}
 			}
 		} catch (Exception ex) {
-			Game.debug("No external resources for '" + dir + "'");
+			Debug.write("No external resources for '" + dir + "'");
 		}
 		
 		return files;
@@ -141,7 +142,7 @@ public final class Data {
 				return context.getAssets().open(ACTIONS_DIR + "/" + resources.get(i));
 			}
 		}
-		Game.debug("No actions found for id " + idString);
+		Debug.write("No actions found for id " + idString);
 		return null;
 	}
 	
@@ -230,7 +231,7 @@ public final class Data {
 			paint.setFilterBitmap(true);
 			for (String path : midgrounds) {
 				Bitmap bmp = loadMidground(path);
-				//Game.debug("%dx%d", bmp.getWidth(), bmp.getHeight());
+				//Debug.write("%dx%d", bmp.getWidth(), bmp.getHeight());
 				if (mid == null) {
 					mid = bmp.copy(bmp.getConfig(), true);
 				} else {

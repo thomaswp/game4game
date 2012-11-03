@@ -147,7 +147,7 @@ public class Map extends GameData {
 		//TODO: SHIFT EVENTS!!
 
 //		for (int[] a : layers[1].tiles) {
-//			Game.debug(Arrays.toString(a));
+//			Debug.write(Arrays.toString(a));
 //		}
 	}
 

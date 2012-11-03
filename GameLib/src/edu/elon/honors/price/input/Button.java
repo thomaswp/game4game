@@ -80,7 +80,7 @@ public class Button extends UIControl {
 			} else {
 				top.setVisible(true);
 			}
-			//Game.debug(pull);
+			//Debug.write(pull);
 		} else {
 			if (pid >= 0) {
 				released = true;

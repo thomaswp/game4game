@@ -50,7 +50,7 @@ public class PageHero extends Page {
 
 	@Override
 	public void onPause() {
-		//Game.debug(actor);
+		//Debug.write(actor);
 		actor.imageName = (String)imageSpinner.getSelectedItem();
 		actor.speed = speed.getProgress() / speedScale;
 		actor.jumpVelocity = jump.getProgress() / jumpScale;
