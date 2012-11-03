@@ -3,8 +3,6 @@ package edu.elon.honors.price.graphics;
 import java.util.ArrayList;
 
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
-
 import android.graphics.Rect;
 import android.graphics.RectF;
 

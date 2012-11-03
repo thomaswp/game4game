@@ -2,7 +2,6 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.EventContext;
 import android.content.Intent;
 import android.os.Bundle;

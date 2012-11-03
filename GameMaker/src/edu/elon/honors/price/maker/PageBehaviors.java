@@ -6,7 +6,6 @@ import java.util.List;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import edu.elon.honors.price.game.Game;
-
 public class Map extends GameData {
 	private static final long serialVersionUID = 9L;
 

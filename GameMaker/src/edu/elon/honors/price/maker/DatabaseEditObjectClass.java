@@ -2,15 +2,11 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
-import edu.elon.honors.price.data.MapClass.CollidesWith;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;

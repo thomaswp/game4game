@@ -26,7 +26,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
