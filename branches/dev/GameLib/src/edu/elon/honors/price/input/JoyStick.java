@@ -107,6 +107,7 @@ public class JoyStick extends UIControl {
 		}
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		outer.setVisible(visible);
 		inner.setVisible(visible);

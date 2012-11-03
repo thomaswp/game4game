@@ -13,7 +13,6 @@ import android.view.SurfaceHolder;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Input;
 
 public class SelectorMapRegion extends SelectorMapBase {

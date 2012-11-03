@@ -33,6 +33,7 @@ public class DatabaseEditMap extends DatabaseActivity {
 		activity.startActivityForResult(intent, requestCode);
 	}
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		

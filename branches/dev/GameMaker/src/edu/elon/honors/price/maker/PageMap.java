@@ -1,23 +1,10 @@
 package edu.elon.honors.price.maker;
 
-import java.util.ArrayList;
-
-import com.ericharlow.DragNDrop.DragNDropAdapter;
-import com.ericharlow.DragNDrop.DragNDropGroup;
-import com.ericharlow.DragNDrop.DragNDropListView;
-import com.ericharlow.DragNDrop.ScrollContainer;
-
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.maker.SelectorMapBase.SelectorMapView;
-import android.content.Intent;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class PageMap extends PageList<Map> {

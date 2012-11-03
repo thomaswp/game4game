@@ -91,6 +91,7 @@ public class Button extends UIControl {
 		}
 	}
 	
+	@Override
 	public void setVisible(boolean visible) {
 		outer.setVisible(visible);
 	}

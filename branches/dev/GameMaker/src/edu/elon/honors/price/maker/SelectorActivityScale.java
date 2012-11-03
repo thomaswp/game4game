@@ -5,7 +5,6 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,6 +44,7 @@ public class SelectorActivityScale extends DatabaseActivity {
 		activity.startActivityForResult(intent, REQUEST_RETURN_GAME);
 	}
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.selector_activity_scale);
@@ -156,6 +156,7 @@ public class SelectorActivityScale extends DatabaseActivity {
 			}
 		}
 		
+		@Override
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId, 
 				Bitmap bmp, Paint paint) {
 

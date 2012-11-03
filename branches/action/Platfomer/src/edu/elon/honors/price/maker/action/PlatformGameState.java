@@ -23,7 +23,6 @@ import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
 import edu.elon.honors.price.input.UIControl;
@@ -106,6 +105,7 @@ public class PlatformGameState implements GameState {
 		return button;
 	}
 	
+	@Override
 	public UIControl readUi(Parameters params) throws ParameterException {
 		int type = params.getInt(0);
 		if (type == 0) {

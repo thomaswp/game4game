@@ -1,10 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;

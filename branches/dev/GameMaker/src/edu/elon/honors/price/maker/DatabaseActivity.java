@@ -15,7 +15,6 @@ import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 
 /**
  * A {@link SaveableActivity} specifically for {@link PlatformGame}

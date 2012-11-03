@@ -2,7 +2,6 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.MapLayer;
-import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;

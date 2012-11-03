@@ -1,18 +1,10 @@
 package edu.elon.honors.price.maker;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import edu.elon.honors.price.data.Event;
-import edu.elon.honors.price.game.Game;
 import android.content.Intent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class PageEvents extends PageList<Event> {

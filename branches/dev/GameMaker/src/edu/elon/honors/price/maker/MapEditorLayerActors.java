@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.Style;
-import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.maker.MapEditorView;
@@ -16,6 +14,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	private Bitmap[] actors, darkActors;
 	private Bitmap clear; 
 	
+	@Override
 	public void setGame(PlatformGame game) {
 		super.setGame(game);
 		this.actors = parent.actors;

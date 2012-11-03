@@ -2,7 +2,6 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.Tileset;
-import edu.elon.honors.price.game.Game;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
