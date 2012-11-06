@@ -68,6 +68,8 @@ public class Map extends GameData {
 		layers[1] = layer;
 		layer = new MapLayer("l2", rows, columns, false, 0);
 		layers[2] = layer;
+		
+		behaviors = new LinkedList<BehaviorInstance>();
 	}
 
 	public void resize(int dRow, int dCol, boolean anchorTop, boolean anchorLeft,

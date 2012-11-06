@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 public class PageBehaviors extends PageList<Behavior> {
 
-	Spinner spinnerType;
+	private final static String PREF_SPINNER_INDEX = "spinnerIndex";
+	
+	private Spinner spinnerType;
 	
 	private BehaviorType getBehaviorType() {
 		return BehaviorType.values()[spinnerType.getSelectedItemPosition()];
@@ -63,10 +65,19 @@ public class PageBehaviors extends PageList<Behavior> {
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) { }
 		});
-		spinnerType.setSelection(0);
+		int index = getIntPreference(PREF_SPINNER_INDEX, 0);
+		if (index < 0 || index >= types.size()) index = 0; 
+		spinnerType.setSelection(index);
+		
 		
 		super.onCreate(parentView);
 		addPanelView(spinnerType);
+	}
+	
+	@Override
+	protected void onPause() {
+		putPreference(PREF_SPINNER_INDEX, 
+				spinnerType.getSelectedItemPosition());
 	}
 
 	@Override

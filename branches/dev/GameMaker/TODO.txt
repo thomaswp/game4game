@@ -11,10 +11,8 @@ General:
 -versioning - that'd be cool!
 
 Behaviors:
--spiff up editor (to look like the others if possible)
--instance editor
 -export
--handle parameter deletion
+-map
 
 Events:
 -rework placement of map event editor to go along with behaviors theme
@@ -34,8 +32,10 @@ Hero:
 -decide how to handle non-hero games...
 
 Map Properties:
--edit map size creates lag
 -finalize how to add/remove bgs
+-resize should move events!!
+
+Tilesets Editor?
 
 Objects:
 -actually edit them

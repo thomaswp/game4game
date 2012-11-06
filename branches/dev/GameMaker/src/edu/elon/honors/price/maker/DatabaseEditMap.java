@@ -57,12 +57,13 @@ public class DatabaseEditMap extends DatabaseActivity {
 			DatabaseEditMapMidground.class,
 			DatabaseEditMapSize.class,
 			DatabaseEditMapTileset.class,
-			DatabaseEditMapHorizon.class
+			DatabaseEditMapHorizon.class,
+			DatabaseEditMapBehaviors.class
 		};
 		buttonEdit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < editors.length; i++) {
 					if (((RadioButton)radioGroupEdit.getChildAt(i)).isChecked()) {
 						@SuppressWarnings("unchecked")
 						Intent intent = getNewGameIntent(
@@ -87,8 +88,13 @@ public class DatabaseEditMap extends DatabaseActivity {
 	
 	@Override
 	protected void onFinishing() {
-		selectorMapPreview.setVisibility(View.INVISIBLE);
 		map.name = editTextName.getText().toString();
+	}
+	
+	@Override
+	protected void putExtras(Intent intent) {
+		//TODO: Make this cleaner... and stop it from detecting as an unsaved change
+		selectorMapPreview.setVisibility(View.INVISIBLE);
 		game.selectedMapId = formerIndex;
 	}
 	

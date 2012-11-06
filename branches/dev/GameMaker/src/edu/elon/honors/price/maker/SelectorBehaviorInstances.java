@@ -77,6 +77,14 @@ implements IPopulatable{
 			@Override
 			public void onClick(View arg0) {
 				List<Behavior> behaviors = game.getBehaviors(type);
+				if (behaviors.size() == 0) {
+					new AlertDialog.Builder(getContext())
+					.setTitle("No Behaviors")
+					.setMessage("You must create a behavior before you can assign it.")
+					.setPositiveButton("Ok", null)
+					.show();
+					return;
+				}
 				String[] choices = new String[behaviors.size()];
 				for (int i = 0; i < behaviors.size(); i++) {
 					choices[i] = behaviors.get(i).name;

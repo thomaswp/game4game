@@ -1,5 +1,7 @@
 package edu.elon.honors.price.data;
 
+import java.util.LinkedList;
+
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
@@ -18,8 +20,8 @@ public class Upgrader {
 			}
 		}
 		for (Map map : game.maps) {
-			if (map.name == null) {
-				map.name = "Map 1";
+			if (map.behaviors == null) {
+				map.behaviors = new LinkedList<BehaviorInstance>();
 			}
 		}
 	}

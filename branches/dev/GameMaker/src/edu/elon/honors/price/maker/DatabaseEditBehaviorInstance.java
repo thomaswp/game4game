@@ -14,6 +14,7 @@ import edu.elon.honors.price.maker.action.ElementBoolean;
 import edu.elon.honors.price.maker.action.ElementNumber;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -35,8 +36,12 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 		setDefaultButtonActions();
 
 		instance = (BehaviorInstance)getExtra("instance");
-
 		Behavior behavior = instance.getBehavior(game);
+		
+		String name = TextUtils.getColoredText(behavior.name, 
+				TextUtils.COLOR_ACTION);
+		((TextView)findViewById(R.id.textViewTitle)).setText(
+				Html.fromHtml("Edit " + name + "'s Parameters"));
 
 		int id = 100;
 
