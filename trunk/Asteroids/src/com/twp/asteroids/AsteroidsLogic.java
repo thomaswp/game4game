@@ -15,6 +15,7 @@ import android.graphics.Region;
 import android.graphics.Region.Op;
 import android.media.MediaPlayer;
 import edu.elon.honors.price.audio.Audio;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
 import edu.elon.honors.price.graphics.Graphics;
@@ -463,7 +464,7 @@ public class AsteroidsLogic implements Logic {
 			e.expAnimation = expAnimation;
 		}
 		
-		Game.debug(Arrays.toString(Viewport.DefaultViewport.getSprites().toArray()));
+		Debug.write(Arrays.toString(Viewport.DefaultViewport.getSprites().toArray()));
 	}
 
 	private void drawPauseBitmap() {
