@@ -13,7 +13,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 
 	private Bitmap[] actors, darkActors;
 	private Bitmap clear; 
-	
+
 	@Override
 	public void setGame(PlatformGame game) {
 		super.setGame(game);
@@ -30,7 +30,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 		paint.setTextSize(12);
 		paint.setAntiAlias(true);
 	}
-	
+
 	private int getTouchedRow(float touchY) {
 		Tileset tileset = game.getMapTileset(map);
 		int tileHeight = tileset.tileHeight;
@@ -53,11 +53,11 @@ public class MapEditorLayerActors extends MapEditorLayer {
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Style.FILL);
 			Bitmap bmp = getSelection();
-			
+
 			float x = getTouchedCol(touchX) * tileWidth + parent.offX + (tileWidth - bmp.getWidth()) / 2;
 			float y = getTouchedRow(touchY) * tileHeight + parent.offY + (tileHeight - bmp.getHeight());
-			
-			
+
+
 			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
 			c.drawBitmap(bmp, x, y, paint);
 		}
@@ -98,6 +98,13 @@ public class MapEditorLayerActors extends MapEditorLayer {
 
 	@Override
 	public Bitmap getSelection() {
+		if (parent.actorSelection == -1) {
+			if (clear == null) {
+				clear = BitmapFactory.decodeResource(
+						parent.getContext().getResources(), R.drawable.no);
+			}
+			return clear;
+		}
 		return parent.actors[parent.actorSelection];
 	}
 
