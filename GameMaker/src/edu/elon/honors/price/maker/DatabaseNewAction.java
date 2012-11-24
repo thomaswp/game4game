@@ -96,14 +96,13 @@ public class DatabaseNewAction extends DatabaseActivity {
 
 		TextView tv = new TextView(this);
 		tv.setTextSize(20);
-		tv.setWidth((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
-				175, getResources().getDisplayMetrics()));
+		tv.setWidth(dipToPx(175));
 		tv.setText(ActionFactory.ACTION_NAMES[id]);
 		layout.addView(tv);
 
 		Button button = new Button(this);
 		button.setText("Select");
-		button.setWidth(100);
+		button.setWidth(dipToPx(100));
 		layout.addView(button);
 
 		button.setOnClickListener(new OnClickListener() {

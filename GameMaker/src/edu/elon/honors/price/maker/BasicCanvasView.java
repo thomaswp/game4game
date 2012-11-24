@@ -1,8 +1,10 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PixelFormat;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -21,6 +23,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 	public BasicCanvasView(Context context) {
 		super(context);
 		getHolder().addCallback(this);
+		Input.reset();
 		Input.setVibrator((Vibrator)getContext().
 				getSystemService(Context.VIBRATOR_SERVICE));
 		Input.setMultiTouch(false);
@@ -68,6 +71,11 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		}
 	}	
 	
+	/**
+	 * Override this method for initialization
+	 * logic that requires width and height to
+	 * be set
+	 */
 	protected void initializeGraphics() {
 		
 	}
@@ -79,10 +87,16 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		update(timeElapsed);
 		
 		Canvas c = getHolder().lockCanvas();
-		try {
-			onDraw(c);
-		} finally {
-			getHolder().unlockCanvasAndPost(c);
+		if (c != null) {
+			try {
+				onDraw(c);
+			} finally {
+				getHolder().unlockCanvasAndPost(c);
+			}
 		}
+	}
+	
+	protected float toPx(float dip) {
+		return Screen.dipToPx(dip, getContext());
 	}
 }

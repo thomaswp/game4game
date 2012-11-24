@@ -44,8 +44,10 @@ public class ElementActorBehavior extends Element {
 	public void genView() {
 		LinearLayout layout = new LinearLayout(context);
 		spinner = new Spinner(context);
-		spinner.setAdapter(new ArrayAdapter<String>(
-				context, R.layout.spinner_text, ActorClass.BEHAVIORS));
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+				context, R.layout.spinner_text, ActorClass.BEHAVIORS);
+		adapter.setDropDownViewResource(R.layout.spinner_text_dropdown);
+		spinner.setAdapter(adapter);
 		ViewGroup.LayoutParams params = new LayoutParams(
 				ViewGroup.LayoutParams.WRAP_CONTENT, 
 				ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -332,6 +335,8 @@ public class DatabaseActivity extends SaveableActivity {
 		//}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+	
+	
 
 	@Override
 	protected String getPreferenceId() {

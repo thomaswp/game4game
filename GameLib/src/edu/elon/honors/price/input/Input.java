@@ -2,6 +2,8 @@ package edu.elon.honors.price.input;
 
 import java.util.ArrayList;
 
+import edu.elon.honors.price.graphics.Graphics;
+
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -387,8 +389,8 @@ public final class Input {
 					touchState.touchDown = false;
 				}
 
-				touchState.lastTouchX =  event.getX();
-				touchState.lastTouchY =  event.getY();
+				touchState.lastTouchX = event.getX();
+				touchState.lastTouchY = event.getY();
 
 				out += i + "-" + touchState + ";";
 			}
@@ -442,8 +444,8 @@ public final class Input {
 		}
 		
 		public void set(MotionEvent event, int i) {
-			x = event.getX(i);
-			y = event.getY(i);
+			x = event.getX(i) / Graphics.getGlobalScale();
+			y = event.getY(i) / Graphics.getGlobalScale();
 			
 			int eventPid = event.getAction() >> MotionEvent.ACTION_POINTER_ID_SHIFT;
 			

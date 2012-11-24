@@ -1,5 +1,6 @@
 package edu.elon.honors.price.graphics;
 
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -44,6 +45,7 @@ public class GraphicsRenderer implements Renderer {
 	private boolean flush;
 	
 	private float lastR = 1, lastG = 1, lastB = 1, lastA = 1;
+	private float globalScale;
 	
 	public int getFramesRendered() {
 		return framesRendered;
@@ -64,10 +66,10 @@ public class GraphicsRenderer implements Renderer {
 		//this.game = game;
 	}
 	
-	@Override
-	public void onSurfaceChanged(GL10 gl, int width, int height) {
-		Graphics.resize(width, height);
-
+	public void setSize(GL10 gl) {
+		int width = Graphics.getScreenWidth(), 
+				height = Graphics.getScreenHeight();
+		
 		gl.glViewport(0, 0, width, height);
 
 		/*
@@ -77,8 +79,17 @@ public class GraphicsRenderer implements Renderer {
 		 */
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glOrthof(0.0f, width, 0.0f, height, 0.0f, 1.0f);
-
+		globalScale = Graphics.getGlobalScale();
+		gl.glOrthof(0.0f, (int)(width / globalScale), 0.0f, (int)(height / globalScale), 0.0f, 1.0f);
+		//gl.glScalef(Graphics.getGlobalScale(), Graphics.getGlobalScale(), 1f);
+	}
+	
+	@Override
+	public void onSurfaceChanged(GL10 gl, int width, int height) {
+		Graphics.resize(width, height);
+		
+		setSize(gl);
+		
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glEnable(GL10.GL_BLEND);
 		//gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -106,6 +117,7 @@ public class GraphicsRenderer implements Renderer {
 		gl.glShadeModel(GL10.GL_FLAT);
 		gl.glDisable(GL10.GL_DEPTH_TEST);
 		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glEnable(GL10.GL_SCISSOR_TEST);
 		/*
 		 * By default, OpenGL enables features that improve quality but reduce
 		 * performance. One might want to tweak that especially on software
@@ -150,6 +162,7 @@ public class GraphicsRenderer implements Renderer {
 		flush = false;
 	}
 
+	
 	Sprite last;
 	long times = 0;
 	int frame = 0;
@@ -165,6 +178,10 @@ public class GraphicsRenderer implements Renderer {
 			flush(gl);
 		}
 		
+		if (globalScale != Graphics.getGlobalScale()) {
+			setSize(gl);
+		}
+		
 		if (logic != null) {
 			synchronized(logic) {
 				//Debug.write("Draw");
@@ -174,27 +191,17 @@ public class GraphicsRenderer implements Renderer {
 					lastBGC = color;
 				}
 				
+
+				gl.glScissor(0, 0, Graphics.getScreenWidth(), Graphics.getScreenHeight());
 				gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);	
 				gl.glMatrixMode(GL10.GL_MODELVIEW);
 				Grid.beginDrawing(gl, true, false);
-
-				//Allow us to reset the clip to full if we need to
-				boolean clipSet = false;
 
 				for (int i = 0; i < Graphics.getViewports().size(); i++) {
 					Viewport viewport = Graphics.getViewports().get(i);
 					//Draw visible Viewports
 					if (viewport != null && viewport.isVisible()) {
 
-						if (viewport.hasRect()) {
-							//If the Viewport isn't the whole drawable area, set the clip
-							gl.glViewport((int)viewport.getX(), Graphics.getHeight() - (int)viewport.getY() - viewport.getHeight(), viewport.getWidth(), viewport.getHeight());
-							clipSet = true;
-						} else if (clipSet) {
-							gl.glViewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
-							clipSet = false;
-						}
-						
 						int vColor = viewport.getColor();
 						float vOpacity = viewport.getOpacity();
 
@@ -240,13 +247,18 @@ public class GraphicsRenderer implements Renderer {
 
 								gl.glPushMatrix();
 								gl.glLoadIdentity();
-
-								if (clipSet) {
-									float stretchX = Graphics.getWidth() * 1.0f / viewport.getWidth();
-									float stretchY = Graphics.getHeight() * 1.0f / viewport.getHeight();
-									gl.glTranslatef(0, -Graphics.getHeight() * (stretchY - 1), 0);
-									gl.glScalef(stretchX, stretchY, 0);
+								
+								if (viewport.hasRect()) {
+									gl.glTranslatef(viewport.getX(), -viewport.getY(), 0);
+									int x = (int)(viewport.getX() * globalScale);
+									int width = (int)(viewport.getWidth() * globalScale);
+									int y = (int)((Graphics.getHeight() - viewport.getY() - viewport.getHeight()) * globalScale);
+									int height = (int)(viewport.getHeight() * globalScale);
+									gl.glScissor(x, y, width, height);
+								} else {
+									gl.glScissor(0, 0, Graphics.getScreenWidth(), Graphics.getScreenHeight());
 								}
+								
 								
 								float tx = (int)sprite.getX(); 
 								float ty = (int)(Graphics.getHeight() + (bY - targetHeight) * 1 +	sprite.getOriginY() * 2	- sprite.getY());
@@ -280,7 +292,7 @@ public class GraphicsRenderer implements Renderer {
 						}
 					}
 				}
-				gl.glViewport(0, 0, Graphics.getWidth(), Graphics.getHeight());
+				gl.glViewport(0, 0, Graphics.getScreenWidth(), Graphics.getScreenHeight());
 
 				Graphics.updateFPSDraw();
 				//if (fpsBitmap != null) fpsBitmapRefresh = false;

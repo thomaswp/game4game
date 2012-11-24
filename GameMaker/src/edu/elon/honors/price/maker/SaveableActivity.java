@@ -6,13 +6,16 @@ import java.util.Map.Entry;
 import edu.elon.honors.price.game.Debug;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -237,6 +240,10 @@ public abstract class SaveableActivity extends Activity {
 	protected String getStringPreference(String key, String defaultValue) {
 		String v = (String)preferences.map.get(key);
 		return v == null ? defaultValue : v;
+	}
+	
+	protected int dipToPx(float dip) {
+		return Screen.dipToPx(dip, this);
 	}
 	
 	protected abstract String getPreferenceId();

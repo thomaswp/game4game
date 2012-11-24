@@ -22,6 +22,11 @@ public class Graphics {
 	private static boolean showFPS;
 	private static boolean fpsBitmapRefresh;
 	private static int backgroundColor;
+	private static float scale = 1f;
+	
+	public static float getGlobalScale() {
+		return scale;
+	}
 	
 	public static int getBackgroundColor() {
 		return backgroundColor;
@@ -44,7 +49,19 @@ public class Graphics {
 	 * @return The width
 	 */
 	public static int getWidth() {
+		return (int)(width / scale);
+	}
+	
+	public static int getScreenWidth() {
 		return width;
+	}
+	
+	public static void setWidth(int width) {
+		scale = (float)getScreenWidth() / width;
+	}
+	
+	public static void setHeight(int height) {
+		scale = (float)getScreenHeight() / height;
 	}
 
 	/**
@@ -52,15 +69,19 @@ public class Graphics {
 	 * @return
 	 */
 	public static int getHeight() {
+		return (int)(height / scale);
+	}
+	
+	public static int getScreenHeight() {
 		return height;
 	}
 	
 	public static Rect getRect() {
-		return new Rect(0, 0, width, height);
+		return new Rect(0, 0, getWidth(), getHeight());
 	}
 	
 	public static RectF getRectF() {
-		return new RectF(0, 0, width, height);
+		return new RectF(0, 0, getWidth(), getHeight());
 	}
 	
 	public static boolean isShowingFPS() {
@@ -127,6 +148,7 @@ public class Graphics {
 			Viewport viewport = viewports.get(i);
 			viewport.getSprites().clear();
 		}
+		scale = 1f;
 		viewports.clear();
 		viewports.add(Viewport.DefaultViewport);
 	}
