@@ -6,6 +6,7 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.graphics.Graphics;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +27,12 @@ public class MapEditor extends MapActivityBase {
 		super.onCreate(savedInstanceState);
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Graphics.reset();
+	}
+	
 	@Override
 	protected MapView getMapView(PlatformGame game, Bundle savedInstanceState) {
 		return new MapEditorView(this, game, savedInstanceState);

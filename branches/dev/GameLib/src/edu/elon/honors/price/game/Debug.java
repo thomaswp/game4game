@@ -46,7 +46,7 @@ public class Debug {
 		catch( Exception e )
 		{
 			int i = 1;
-			while (e.getStackTrace()[i].getClassName().equals(Game.class.getName()) &&
+			while (e.getStackTrace()[i].getClassName().equals(Debug.class.getName()) &&
 					e.getStackTrace()[i].getMethodName().equals("write")) i++;
 			tag += ": " +
 			e.getStackTrace()[i].getClassName() + 

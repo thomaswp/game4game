@@ -32,9 +32,9 @@ public abstract class MapActivityBase extends SaveableActivity {
 		Color.argb(255, 50, 50, 255);
 	public static final int SELECTION_BORDER_WIDTH = 2;
 	
-	private static final int BUTTON_TEXT_SIZE = 26;
+	private static final int BUTTON_TEXT_SIZE = 18;
 	
-	private static final boolean DEBUG_FPS = false;
+	private static final boolean DEBUG_FPS = true;
 
 	protected PlatformGame game;
 	protected MapView view;
@@ -558,7 +558,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			);
 		}
 
-		protected static class Button {
+		protected class Button {
 			public int cx, cy, radius;
 			float ctx, cty;
 			public String text;
@@ -647,7 +647,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				if (!down && !opaque) {
 					paint.setAlpha((int)(255 * alphaFactor));
 				}
-				paint.setTextSize(BUTTON_TEXT_SIZE);
+				paint.setTextSize(Screen.dipToPx(BUTTON_TEXT_SIZE, getContext()));
 				paint.setAntiAlias(true);
 				float textSize = paint.measureText(text);
 				float textX = ctx - textSize / 2;

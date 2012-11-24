@@ -69,9 +69,11 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 				float x = k * tileset.tileWidth;
 				float y = j * tileset.tileHeight;
 				int tileId = layer.tiles[j][k];
-				Bitmap tileBitmap = mode == DrawMode.Below ?
-						darkTiles[tileId] : tiles[tileId];
-						drawTile(c, x, y, tileId, tileBitmap);
+				if (tileId > 0) {
+					Bitmap tileBitmap = mode == DrawMode.Below ?
+							darkTiles[tileId] : tiles[tileId];
+							drawTile(c, x, y, tileId, tileBitmap);
+				}
 			}
 		}
 	}

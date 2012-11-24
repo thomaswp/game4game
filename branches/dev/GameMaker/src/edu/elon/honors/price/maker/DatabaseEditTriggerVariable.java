@@ -63,8 +63,10 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 
 		selectorVariableSet.setVariable(trigger.variable);
 
-		spinnerOperator.setAdapter(new ArrayAdapter<String>(this, 
-				android.R.layout.simple_spinner_item, VariableTrigger.OPERATORS));
+		ArrayAdapter<String> adapter =new ArrayAdapter<String>(this, 
+				R.layout.spinner_text, VariableTrigger.OPERATORS);
+		adapter.setDropDownViewResource(R.layout.spinner_text_dropdown);
+		spinnerOperator.setAdapter(adapter);
 		spinnerOperator.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,

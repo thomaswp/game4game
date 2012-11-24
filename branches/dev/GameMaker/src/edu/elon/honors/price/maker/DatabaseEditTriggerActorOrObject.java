@@ -72,8 +72,10 @@ public class DatabaseEditTriggerActorOrObject extends DatabaseActivity {
 		populate();
 		
 		
-		spinnerAction.setAdapter(new ArrayAdapter<String>(this, 
-				android.R.layout.simple_spinner_item, ActorOrObjectTrigger.ACTIONS));
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, 
+				android.R.layout.simple_spinner_item, ActorOrObjectTrigger.ACTIONS);
+		adapter.setDropDownViewResource(R.layout.spinner_text_dropdown);
+		spinnerAction.setAdapter(adapter);
 		spinnerAction.setSelection(trigger.action);
 		
 		final View[] selectors = new View[] {
