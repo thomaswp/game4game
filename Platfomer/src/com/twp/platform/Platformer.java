@@ -2,6 +2,7 @@ package com.twp.platform;
 
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
+import edu.elon.honors.price.graphics.Graphics;
 
 public class Platformer extends Game {
 
