@@ -4,7 +4,6 @@ import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.PixelFormat;
 import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -17,6 +16,8 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 	
 	protected Thread thread;
 	protected int width, height;
+	
+	protected boolean paused;
 
 	protected abstract void update(long timeElapsed);
 	
@@ -29,10 +30,18 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		Input.setMultiTouch(false);
 	}
 	
+	public void pause() {
+		paused = true;
+	}
+	
+	public void resume() {
+		paused = false;
+	}
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		Input.onTouch(this, event);
-		return true;//super.onTouchEvent(event);
+		return true;
 	}
 	
 	@Override
@@ -40,6 +49,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 			int height) {
 		this.width = width;
 		this.height = height;
+		Debug.write("Change: %d, %d", width, height);
 	}
 
 	@Override
@@ -83,6 +93,10 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 	private void updateThread() {
 		long timeElapsed = System.currentTimeMillis() - lastUpdate;
 		lastUpdate += timeElapsed;
+		if (paused) {
+			return;
+		}
+		
 		Input.update(timeElapsed);
 		update(timeElapsed);
 		

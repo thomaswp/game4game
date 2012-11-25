@@ -32,7 +32,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 		Color.argb(255, 50, 50, 255);
 	public static final int SELECTION_BORDER_WIDTH = 2;
 	
-	private static final int BUTTON_TEXT_SIZE = 18;
+	public static final int BUTTON_TEXT_SIZE = 18;
 	
 	private static final boolean DEBUG_FPS = true;
 
@@ -64,6 +64,17 @@ public abstract class MapActivityBase extends SaveableActivity {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable("game", game);
 		view.onSaveInstanceState(outState);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		view.pause();
+	}
+	
+	public void onResume() {
+		super.onResume();
+		view.resume();
 	}
 
 	protected abstract MapView getMapView(PlatformGame game, Bundle savedInstanceState);
@@ -271,7 +282,9 @@ public abstract class MapActivityBase extends SaveableActivity {
 				if (DEBUG_FPS)
 					Debug.write("%d fps", fps);
 				
-				lastUpdate += 1000;
+				while (lastUpdate + 1000 < System.currentTimeMillis()) {
+					lastUpdate += 1000;
+				}
 				frames = 0;
 			}
 		}
