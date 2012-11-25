@@ -645,7 +645,7 @@ public class MapEditorView extends MapView {
 	}
 
 	public void selectTileset() {
-		Intent intent = new Intent(getContext(), MapTextureSelector.class);
+		Intent intent = new Intent(getContext(), MapEditorTextureSelector.class);
 		int id = game.getSelectedMap().tilesetId;
 		Tileset tileset = game.tilesets[id];
 		intent.putExtra("id", tileset.bitmapName);

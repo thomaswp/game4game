@@ -11,4 +11,10 @@ public class Screen {
 				TypedValue.COMPLEX_UNIT_DIP, 
 				dip, res.getDisplayMetrics());
 	}
+	
+	public static int spToPx(float sp, Context context) {
+		Resources res = context.getResources();
+		return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 
+				sp, res.getDisplayMetrics());
+	}
 }
