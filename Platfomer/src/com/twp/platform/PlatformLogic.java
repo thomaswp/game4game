@@ -33,6 +33,7 @@ public class PlatformLogic implements Logic {
 	private static final int BORDER = 130;
 	public static final float GRAVITY = PhysicsHandler.GRAVITY;
 	public static final float SCALE = PhysicsHandler.SCALE;
+	public static final int MAX_WIDTH = 1000;
 
 	private Map map;
 	private PlatformGame game;
@@ -115,7 +116,9 @@ public class PlatformLogic implements Logic {
 	@Override
 	public void initialize() {
 
-		Graphics.setWidth(1000);
+		if (Graphics.getWidth() > MAX_WIDTH) {
+			Graphics.setWidth(MAX_WIDTH);
+		}
 		Globals.setInstance(new Globals());
 
 		if (game == null) game = new PlatformGame("");
