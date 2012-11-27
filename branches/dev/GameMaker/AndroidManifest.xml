@@ -31,9 +31,9 @@
                   android:label="@string/app_name" android:screenOrientation="landscape"
                   android:configChanges="keyboardHidden|orientation">
         </activity>
-    	<activity android:name=".MapEditorTextureSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Dialog"></activity>
-    	<activity android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
-    	<activity android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
+    	<activity android:name=".MapEditorTextureSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation" android:theme="@style/Theme.DoNoDim"></activity>
+    	<activity android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation" android:theme="@style/Theme.DoNoDim"></activity>
+    	<activity android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation" android:theme="@style/Theme.DoNoDim"></activity>
     	<activity android:name=".Database" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditActorClass" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>
     	<activity android:name=".DatabaseEditObjectClass" android:screenOrientation="landscape" android:configChanges="keyboardHidden|orientation"></activity>

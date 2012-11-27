@@ -11,10 +11,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
 
 public class MapEditorLayerTiles extends MapEditorLayer {
 
+	public static final int PAINTING_MODE = 1;
+	
 	private int layer;
 	private Bitmap[] tiles, darkTiles;
 
@@ -101,6 +106,16 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 				selection.top * tileset.tileHeight,
 				selection.width() * tileset.tileWidth,
 				selection.height() * tileset.tileHeight);
+		if (selection.left == 0 && selection.top == 0 &&
+				selection.right == 1 && selection.bottom == 1) {
+			Canvas c = new Canvas(bmp);
+			Paint paint = new Paint();
+			paint.setColor(Color.BLACK);
+			paint.setStyle(Style.STROKE);
+			paint.setStrokeWidth(3);
+			paint.setPathEffect(new DashPathEffect(new float[] {5,5}, 0));
+			c.drawRect(0,  0, tileset.tileWidth - 1, tileset.tileHeight - 1, paint);
+		}
 		parent.tilesetImage = bmp;
 	}
 
@@ -119,7 +134,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 	public void onTouchDrag(float x, float y, boolean showPreview) {
 		super.onTouchDrag(x, y, showPreview);
 
-		if (parent.editMode == MapEditorView.EDIT_ALT) {
+		if (parent.editMode == PAINTING_MODE) {
 			placeTiles(x, y);
 		}
 	}
@@ -221,16 +236,17 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		return null;
 
 	}
-
+	
 	@Override
-	protected Bitmap loadEditIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.edit);
-	}
-
-	@Override
-	protected Bitmap loadEditAltIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.paint);
+	protected void loadEditIcons() {
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.edit));
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.paint));
+//		editIcons.add(
+//				BitmapFactory.decodeResource(parent.getResources(),
+//						R.drawable.no));
 	}
 }

@@ -95,7 +95,7 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 	}
 
 	@Override
-	protected Bitmap getBitmap(ObjectInstance item) {
+	protected Bitmap getBitmap(ObjectInstance item, DrawMode mode) {
 		return parent.objects[item.classIndex];
 		
 	}
@@ -123,14 +123,12 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 	}
 
 	@Override
-	protected Bitmap loadEditIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.edit);
-	}
-
-	@Override
-	protected Bitmap loadEditAltIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.select);
+	protected void loadEditIcons() {
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.edit));
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.select));
 	}
 }

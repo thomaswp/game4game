@@ -10,6 +10,7 @@ public class ActorInstance extends GameData {
 
 	public int id;
 	public int classIndex;
+	public int row, column;
 	
 	/**
 	 * Constructs the ActorInstance with the given id and

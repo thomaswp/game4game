@@ -63,8 +63,8 @@ public class PlatformGame extends GameData {
 
 		tilesets = new Tileset[3];
 		tilesets[0] = new Tileset("Default", "StickTiles.png", 64, 64, 8, 8);
-		tilesets[1] = new Tileset("Ice", "ice.png", 48, 48, 8, 8);
-		tilesets[2] = new Tileset("Grass", "grass.png", 64, 64, 8, 8);
+		//tilesets[1] = new Tileset("Ice", "ice.png", 48, 48, 8, 8);
+		tilesets[1] = new Tileset("Grass", "grass.png", 64, 64, 8, 8);
 		
 		maps = new ArrayList<Map>();
 		maps.add(new Map(this));

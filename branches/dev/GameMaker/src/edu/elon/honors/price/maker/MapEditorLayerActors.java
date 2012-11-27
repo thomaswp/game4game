@@ -1,15 +1,20 @@
 package edu.elon.honors.price.maker;
 
+import java.util.ArrayList;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.Style;
+import android.graphics.RectF;
+import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.maker.MapEditorView;
 
-public class MapEditorLayerActors extends MapEditorLayer {
+public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance> {
 
 	private Bitmap[] actors, darkActors;
 	private Bitmap clear; 
@@ -44,7 +49,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	}
 
 	@Override
-	public void drawContent(Canvas c) {
+	public void drawContentNormal(Canvas c) {
 		if (touchDown && showPreview) {
 			Tileset tileset = game.getMapTileset(map);
 			int tileWidth = tileset.tileWidth;
@@ -64,7 +69,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	}
 
 	@Override
-	public void drawLayer(Canvas c, DrawMode mode) {
+	public void drawLayerNormal(Canvas c, DrawMode mode) {
 		Tileset tileset = game.tilesets[map.tilesetId];
 
 		for (int i = 0; i < map.actorLayer.rows; i++) {
@@ -109,8 +114,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	}
 
 	@Override
-	public void onTouchUp(float x, float y) {
-		super.onTouchUp(x, y);
+	public void onTouchUpNormal(float x, float y) {
 
 		final int newClass = parent.actorSelection;
 		final int row = getTouchedRow(touchY);
@@ -167,14 +171,54 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	}
 
 	@Override
-	protected Bitmap loadEditIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.edit);
+	protected void loadEditIcons() {
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.edit));
+//		editIcons.add(
+//				BitmapFactory.decodeResource(parent.getResources(),
+//						R.drawable.no));
 	}
 
 	@Override
-	protected Bitmap loadEditAltIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.edit);
+	protected ArrayList<ActorInstance> getAllItems() {
+		return map.actors;
+	}
+
+	@Override
+	protected void getDrawBounds(ActorInstance item, RectF bounds) {
+		Tileset tileset = game.getMapTileset(map);
+		
+		Bitmap bmp = actors[item.classIndex];
+		float x = item.column * tileset.tileWidth;
+		float y = item.row * tileset.tileHeight;
+		float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
+		float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
+		float dx = x + getOffX() + sx;
+		float dy = y + getOffY() + sy;
+		
+		bounds.set(dx, dy, dx + bmp.getWidth(), dy + bmp.getHeight());
+	}
+
+	@Override
+	protected Bitmap getBitmap(ActorInstance item, DrawMode mode) {
+		int actorClass = item.classIndex;
+		return mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
+	}
+
+	@Override
+	protected void shiftItem(ActorInstance item, float offX, float offY) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void delete(ActorInstance item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void add(ActorInstance item) {
 	}
 }
