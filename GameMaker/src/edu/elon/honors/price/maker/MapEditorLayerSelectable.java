@@ -16,12 +16,16 @@ import android.graphics.Paint.Style;
 
 public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 
+
+	public final static int SELECTING_MODE = 1;
+	
 	protected RectF selection, cSelection;
 	protected RectF drawRect;
 	protected boolean selecting;
 	protected float startDragX, startDragY;
 	protected LinkedList<T> selectedObjects;
 	protected int heldFrames;
+	
 
 	public MapEditorLayerSelectable(MapEditorView parent) {
 		super(parent);
@@ -37,13 +41,13 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	protected abstract void onTouchUpNormal(float x, float y);
 	protected abstract ArrayList<T> getAllItems();
 	protected abstract void getDrawBounds(T item, RectF bounds);
-	protected abstract Bitmap getBitmap(T item);
+	protected abstract Bitmap getBitmap(T item, DrawMode mode);
 	protected abstract void shiftItem(T item, float offX, float offY);
 	protected abstract void delete(T item);
 	protected abstract void add(T item);
 
 	protected boolean inSelectingMode() {
-		return parent.editMode == MapEditorView.EDIT_ALT;
+		return parent.editMode == SELECTING_MODE;
 	}
 
 	@Override
@@ -96,9 +100,9 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 					if (selectedObjects.contains(instance)) {
 						paint.setAlpha(mode == DrawMode.Above ? MapEditorView.TRANS : 255);
 						c.drawRect(drawRect, paint);
-						if (!selecting && touchDown) {
+						if (!selecting && touchDown && showPreview) {
 							paint.setAlpha(paint.getAlpha() / 2);
-							c.drawBitmap(getBitmap(instance), drawRect.left + offX, 
+							c.drawBitmap(getBitmap(instance, mode), drawRect.left + offX, 
 									drawRect.top + offY, paint);
 							drawRect.offset(offX, offY);
 							c.drawRect(drawRect, paint);
@@ -142,6 +146,11 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 			onTouchUpNormal(x, y);
 		}
 	}
+	
+	@Override
+	public void onTouchCanceled(float x, float y) {
+		doDelete();
+	}
 
 	@Override 
 	public void onTouchDrag(float x, float y, boolean showPreview) {
@@ -158,10 +167,10 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 					heldFrames = -1;
 				}
 				if (heldFrames > 30) {
-					Input.getVibrator().vibrate(100);
 					heldFrames = -1;
-					touchDown = false;
-					showContextMenu();
+//					touchDown = false;
+//					Input.getVibrator().vibrate(100);
+//					showContextMenu();
 				}
 			}
 		}
@@ -190,6 +199,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 				startDragX = x - getOffX();
 				startDragY = y - getOffY();
 				heldFrames = 0;
+				parent.showCancelButton(x, y, "Delete");
 			} else {
 				
 				selection.set(x - getOffX(), y - getOffY(), 
@@ -210,27 +220,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == 0) {
-							final LinkedList<T> selected = new LinkedList<T>();
-							selected.addAll(selectedObjects);
-							Action action = new Action() {
-								@Override
-								public void undo(PlatformGame game) {
-									for (int i = 0; i < selected.size(); i++) {
-										add(selected.get(i));
-									}
-								}
-								
-								@Override
-								public void redo(PlatformGame game) {
-									for (int i = 0; i < selected.size(); i++) {
-										delete(selected.get(i));
-										if (selectedObjects.contains(selected.get(i))) {
-											selectedObjects.remove(selected.get(i));
-										}
-									}
-								}
-							};
-							parent.doAction(action);
+							doDelete();
 						}
 					}
 				})
@@ -241,6 +231,30 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 		});
 	}
 
+	private void doDelete() {
+		final LinkedList<T> selected = new LinkedList<T>();
+		selected.addAll(selectedObjects);
+		Action action = new Action() {
+			@Override
+			public void undo(PlatformGame game) {
+				for (int i = 0; i < selected.size(); i++) {
+					add(selected.get(i));
+				}
+			}
+			
+			@Override
+			public void redo(PlatformGame game) {
+				for (int i = 0; i < selected.size(); i++) {
+					delete(selected.get(i));
+					if (selectedObjects.contains(selected.get(i))) {
+						selectedObjects.remove(selected.get(i));
+					}
+				}
+			}
+		};
+		parent.doAction(action);
+	}
+	
 	protected void setCSelection() {
 		cSelection.set(selection);
 		cSelection.offset(getOffX(), getOffY());

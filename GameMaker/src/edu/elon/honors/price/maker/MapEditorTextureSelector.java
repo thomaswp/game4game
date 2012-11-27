@@ -59,9 +59,11 @@ public class MapEditorTextureSelector extends Activity {
 				me.finish();
 			}
 		});
+		
+		int scHeight = getResources().getDisplayMetrics().heightPixels;
 		LinearLayout.LayoutParams lps = new LayoutParams(
 				bitmap.getWidth() + Screen.dipToPx(50, this), 
-				LayoutParams.FILL_PARENT);
+				Math.min(bitmap.getHeight(), scHeight - Screen.dipToPx(40, this)));
 		setContentView(view, lps);
 
 		super.onCreate(savedInstanceState);
@@ -113,19 +115,27 @@ public class MapEditorTextureSelector extends Activity {
 		
 		@Override
 		public void onDraw(Canvas c) {
-			c.drawColor(Color.DKGRAY);
+			c.drawColor(Color.LTGRAY);
 			paint.setColor(Color.WHITE);
-			c.drawRect(bitmapX, bitmapY, bitmapX + bitmap.getWidth(), 
-					bitmapY + bitmap.getHeight(), paint);
+			c.drawRect(bitmapX, 0, bitmapX + bitmap.getWidth(), 
+					height, paint);
 			c.drawBitmap(bitmap, bitmapX, bitmapY, paint);
 			paint.setStyle(Style.STROKE);
 			paint.setStrokeWidth(SelectorMapBase.SELECTION_BORDER_WIDTH);
 			paint.setColor(SelectorMapBase.SELECTION_BORDER_COLOR);
 			paint.setAlpha(255);
-
 			drawRect.set(selection.left * tileWidth, selection.top * tileHeight + (int)bitmapY, 
 					selection.right * tileWidth, selection.bottom * tileHeight + (int)bitmapY);
 			c.drawRect(drawRect, paint);
+			
+			if (height < bitmap.getHeight()) {
+				int barHeight = height * height / bitmap.getHeight();
+				float scrollPerc = -(float)bitmapY / (bitmap.getHeight() - height);
+				int barScroll = (int)(scrollPerc * (height - barHeight));
+				paint.setStyle(Style.FILL);
+				paint.setColor(Color.DKGRAY);
+				c.drawRect(width - 10, barScroll, width, barScroll + barHeight, paint);
+			}
 
 			int alpha = buttonDown ? 255 : 150;
 			paint.setColor(Color.DKGRAY);
@@ -177,7 +187,7 @@ public class MapEditorTextureSelector extends Activity {
 						startBitmapY -= bitmapY;
 						bitmapY = 0;
 					}
-				} else if (!inButton) {
+				} else if (!buttonDown) {
 					float x = Input.getLastTouchX(), y = Input.getLastTouchY() - bitmapY;
 					float left = Math.min(startSelectX, x), right = Math.max(startSelectX, x);
 					float top = Math.min(startSelectY, y), bottom = Math.max(startSelectY, y);

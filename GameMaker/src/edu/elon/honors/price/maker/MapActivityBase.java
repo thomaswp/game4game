@@ -98,6 +98,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 		protected ArrayList<Button> buttons;
 
 		public int getButtonRad() {
+			//return toPx(65);
 			return height / 5;
 		}
 

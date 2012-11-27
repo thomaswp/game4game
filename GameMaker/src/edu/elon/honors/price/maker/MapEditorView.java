@@ -17,6 +17,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.FloatMath;
+import android.view.ViewConfiguration;
+import android.view.WindowManager;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
@@ -36,8 +38,6 @@ public class MapEditorView extends MapView {
 	public static final int MODE_MOVE = 0;
 	public static final int MODE_EDIT = 1;
 	public static final int EDIT_NORMAL = 0;
-	public static final int EDIT_ALT = 1;
-	public static final int N_EDIT_MODES = 2;
 	protected final static int SCROLL_BORDER = 25;
 	protected final static int SCROLL_TICK = 3;
 
@@ -146,7 +146,7 @@ public class MapEditorView extends MapView {
 				data.tileSelectionTop,
 				data.tileSelectionRight,
 				data.tileSelectionBottom
-		);
+				);
 		this.objectSelection = data.objectSelection;
 	}
 
@@ -187,13 +187,32 @@ public class MapEditorView extends MapView {
 		};
 		buttons.add(modeButton);
 
+
+		Button menuButton = null;
+
+		if (android.os.Build.VERSION.SDK_INT > 10) {
+			menuButton = createTopLeftButton("Menu");
+			menuButton.onReleasedHandler = new Runnable() {
+				@Override
+				public void run() {
+					post(new Runnable() {
+						@Override
+						public void run() {
+							getEditor().openOptionsMenu();
+						}
+					});
+				}
+			};
+			buttons.add(menuButton);
+		}
+
 		cancelButtons = new Button[4];
 		cancelReplacedButtons = new Button[4];
 		cancelButtons[0] = createTopLeftButton("");
 		cancelButtons[1] = createTopRightButton("");
 		cancelButtons[2] = createBottomLeftButton("");
 		cancelButtons[3] = createBottomRightButton("");
-		cancelReplacedButtons[0] = null;
+		cancelReplacedButtons[0] = menuButton;
 		cancelReplacedButtons[1] = selectionButton;
 		cancelReplacedButtons[2] = modeButton;
 		cancelReplacedButtons[3] = layerButton;
@@ -244,6 +263,7 @@ public class MapEditorView extends MapView {
 			if (layer.isTouchDown()) {
 				if (checkCancel(x, y)) {
 					layer.touchDown = false;
+					layer.onTouchCanceled(x, y);
 				} else {
 					if (layer.touchDown) {
 						layer.onTouchUp(x, y);
@@ -324,8 +344,18 @@ public class MapEditorView extends MapView {
 		}
 		return false;
 	}
+	
+	protected void cancelShowCancel() {
+		for (int i = 0; i < cancelButtons.length; i++) {
+			cancelButtons[i].showing = false;
+		}
+	}
 
 	protected void showCancelButton(float x, float y) {
+		showCancelButton(x, y, "Cancel");
+	}
+	
+	protected void showCancelButton(float x, float y, String text) {
 		int button = 0;
 		if (x < width / 2) button += 1;
 		if (y < height / 2) button += 2;
@@ -333,6 +363,7 @@ public class MapEditorView extends MapView {
 			cancelReplacedButtons[button].showing = false;
 		}
 		cancelButtons[button].showing = true;
+		cancelButtons[button].text = text;
 	}
 
 	protected boolean checkCancel(float x, float y) {
@@ -372,7 +403,7 @@ public class MapEditorView extends MapView {
 
 	@Override
 	protected void drawContent(Canvas c) {
-		
+
 		int selectedLayer = previewSelectedLayer >= 0 ? 
 				previewSelectedLayer : this.selectedLayer;
 		for (int i = 0; i < layers.length; i++) {
@@ -410,12 +441,13 @@ public class MapEditorView extends MapView {
 	}
 
 	protected int getTouchingEditModeButton() {
+		int nButtons = layers[selectedLayer].editIcons.size();
 		float dx = width - Input.getLastTouchX();
 		float dy = Input.getLastTouchY();
 		float rad = (float)Math.pow(dx * dx + dy * dy, 0.5);
 		if (Math.abs(rad - getOptionButtonOuterRadius()) < getOptionButtonRadius() * 1.5f) {
-			int layer = (int)((Math.atan2(dy, dx)) / (Math.PI / 2) * N_EDIT_MODES);
-			return Math.min(Math.max(layer, 0), N_EDIT_MODES - 1);
+			int layer = (int)((Math.atan2(dy, dx)) / (Math.PI / 2) * nButtons);
+			return Math.min(Math.max(layer, 0), nButtons - 1);
 		}
 		return -1;
 	}
@@ -455,17 +487,13 @@ public class MapEditorView extends MapView {
 
 	private void drawEditModeButtons(Canvas c) {
 		if (selectingEditMode) {
-			//			if (editModeButtonsExtention < 0.001) {
-			//				editModeButtonsExtention += 0.001 / 20;
-			//			} else {
 			editModeButtonsExtention = (5 * editModeButtonsExtention + 1) / 6;
-			//			}
 		} else {
 			editModeButtonsExtention = (5 * editModeButtonsExtention) / 6;
 		}
 
 		if (editModeButtonsExtention > 0.2) {
-			int nOptions = N_EDIT_MODES;
+			int nOptions = layers[selectedLayer].editIcons.size();
 			int button = getTouchingEditModeButton();
 			button = button >= 0 ? button : editMode;
 
@@ -509,7 +537,7 @@ public class MapEditorView extends MapView {
 
 
 	private void drawEditModeButton(Canvas c, int layer, boolean selected) {
-		int nOptions = N_EDIT_MODES;
+		int nOptions = layers[selectedLayer].editIcons.size();
 		float rad = getOptionButtonRadius();
 
 		float degree = (float)(Math.PI + Math.PI / 2 * (layer + 0.5) / (nOptions));
@@ -532,9 +560,7 @@ public class MapEditorView extends MapView {
 
 		c.drawCircle(x, y, rad, paint);
 
-		Bitmap icon = layer == EDIT_NORMAL ? 
-			layers[selectedLayer].getEditIcon() : 
-			layers[selectedLayer].getEditAltIcon();
+		Bitmap icon = layers[selectedLayer].editIcons.get(layer);
 		float demi = (float)(rad / Math.sqrt(2));
 		destRect.set(x - demi, y - demi, x + demi, y + demi);
 		c.drawBitmap(icon, null, destRect, paint);
@@ -573,22 +599,22 @@ public class MapEditorView extends MapView {
 			}
 		}
 	}
-	
+
 	private void updateTileset(PlatformGame newGame) {
 		if (game.getSelectedMap().tilesetId != 
-			newGame.getSelectedMap().tilesetId) {
+				newGame.getSelectedMap().tilesetId) {
 			Tileset t = newGame.tilesets[newGame.getSelectedMap().tilesetId];
 			tiles = createTiles(t, getContext());
 			createDarkTiles();
 		}
 	}
-	
+
 	private void updateMidgrounds(PlatformGame oldGame) {
 		boolean needRefresh = false;
 		List<String> oldMidgrounds = game.getSelectedMap().midGrounds;
 		List<String> newMidgrounds = oldGame.getSelectedMap().midGrounds;
-		
-		
+
+
 		if (oldMidgrounds.size() != newMidgrounds.size()) needRefresh = true;
 		if (!needRefresh) {
 			for (int i = 0; i < oldMidgrounds.size(); i++) {
@@ -667,6 +693,7 @@ public class MapEditorView extends MapView {
 				tilesetSelection.set(left, top, right, bottom);
 			}
 		};
+
 
 		getEditor().startActivityForResult(intent, REQ_SELECTOR);
 	}

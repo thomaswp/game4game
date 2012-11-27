@@ -28,7 +28,7 @@ public class Map extends GameData {
 
 		name = "New Map";
 		
-		rows = 8;
+		rows = 14;
 		columns = 30;
 
 		groundY = 4 * game.tilesets[tilesetId].tileHeight;
@@ -141,6 +141,12 @@ public class Map extends GameData {
 			if (anchorTop)
 				o.startY += dRow * tileHeight;
 		}
+		for (ActorInstance o : actors) {
+			if (anchorLeft)
+				o.column += dCol;
+			if (anchorTop)
+				o.row += dRow;
+		}
 
 		rows += dRow;
 		columns += dCol;
@@ -238,6 +244,7 @@ public class Map extends GameData {
 			ActorInstance actor = new ActorInstance(actors.size(), type);
 			actors.add(actor);
 			actorLayer.tiles[row][column] = actor.id;
+			actor.row = row; actor.column = column;
 			return actor.id;
 		}
 	}

@@ -110,7 +110,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		}
 	}
 	
-	protected float toPx(float dip) {
+	protected int toPx(float dip) {
 		return Screen.dipToPx(dip, getContext());
 	}
 }
