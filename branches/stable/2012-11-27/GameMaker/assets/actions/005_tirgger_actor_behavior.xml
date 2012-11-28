@@ -1,0 +1,8 @@
+<action id="5" name="Trigger Actor Behavior" category="Actor">
+
+	<text text="Cause" />
+	<actorInstance />
+	<text text="to" />
+	<actorBehavior />
+
+</action>

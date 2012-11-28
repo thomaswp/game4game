@@ -1,0 +1,30 @@
+<action id="0" name="Set Switch" category="Variables">
+
+	<text text="For" />
+
+	<radio name="set">
+		<choice text="one switch" mute="true">
+			<switch scope="Global|Local" />
+		</choice>
+		<choice text="all switches from">
+			<switch scope="Global" name="from" />
+			<text text="to" />
+			<switch scope="Global" name="to" />
+		</choice>
+	</radio>
+
+	<radio name="action">
+		<choice text="set it to">
+			<radio name="setTo">
+				<choice text="On" color="value" />
+				<choice text="Off" color="value" />
+				<choice text="a Switch's value" mute="true" >
+					<switch />
+				</choice>
+				<choice text="a random value" />
+			</radio>
+		</choice>
+		<choice text="toggle it" />
+	</radio>
+
+</action>

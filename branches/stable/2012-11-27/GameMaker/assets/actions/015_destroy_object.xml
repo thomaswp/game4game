@@ -1,0 +1,6 @@
+<action id="15" name="Destroy Object" category="Object">
+
+	<text text="Destroy" />
+	<objectInstance />
+
+</action>
