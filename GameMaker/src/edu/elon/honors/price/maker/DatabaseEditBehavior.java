@@ -1,12 +1,12 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.Event;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -43,6 +42,17 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 	private ScrollView scrollView;
 
 	private Editor[] editors;
+	
+	public static void startForResult(DatabaseActivity activity, int requestCode,
+			Behavior behavior) {
+		Intent intent = activity.getNewGameIntent(DatabaseEditBehavior.class);
+		intent.putExtra("behavior", behavior);
+		activity.startActivityForResult(intent, requestCode);
+	}
+	
+	public static Behavior getBehaviorResult(Intent data) {
+		return (Behavior) data.getSerializableExtra("behavior");
+	}
 
 	private Behavior readBehavior() {
 		if (getIntent().getExtras().containsKey("behavior")) {
@@ -54,6 +64,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 	}
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -126,7 +137,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 
 	@Override
 	public boolean hasChanged() {
-		return !PlatformGame.areEqual(behavior, readBehavior()) ||
+		return !GameData.areEqual(behavior, readBehavior()) ||
 		super.hasChanged();
 	}
 
@@ -345,7 +356,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 			.getSerializable("event");
 
 			int index = getIndex();
-			Game.debug(index);
+			Debug.write(index);
 			behavior.events.remove(index);
 			behavior.events.add(index, event);
 

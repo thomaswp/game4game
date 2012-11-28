@@ -8,15 +8,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.elon.honors.price.game.Cache;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -35,13 +40,13 @@ public final class Data {
 	public final static String SD_FOLDER = "Game Maker/";
 	public final static String GRAPHICS = "graphics";
 	public final static String ACTIONS_DIR = "actions";
+	public final static String EDITOR_DIR = "editor/";
 	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
 	public final static String BACKGROUNDS_DIR = GRAPHICS + "/backgrounds/";
 	public final static String FOREGROUNDS_DIR = GRAPHICS + "/foregrounds/";
 	public final static String MIDGROUNDS_DIR = GRAPHICS + "/midgrounds/";
-	
 	private static Context defaultParent;
 	
 	public static Context getDefaultParent() {
@@ -55,11 +60,11 @@ public final class Data {
 	private static Bitmap loadBitmap(String name, Context parent) {
 		try {
 			if (Cache.isBitmapRegistered(name)) {
-				//Game.debug("Cache: " + id);
+				//Debug.write("Cache: " + id);
 				return Cache.getRegisteredBitmap(name);
 			}
 			else {
-				//Game.debug("Load New: " + id);
+				//Debug.write("Load New: " + id);
 				try {
 					ContentResolver cr = parent.getContentResolver();
 					AssetFileDescriptor afd = cr.openAssetFileDescriptor(Uri.withAppendedPath(Data.CONTENT_URI, name), "r");
@@ -70,13 +75,13 @@ public final class Data {
 					Cache.RegisterBitmap(name, bmp);
 					return bmp;
 				} catch (Exception ex) {
-					Game.debug("Could not find '" + name + "' in local resrounces. Attempting external storage.");
+					Debug.write("Could not find '" + name + "' in local resrounces. Attempting external storage.");
 					ex.printStackTrace();
 					if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 						File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + name);
 						return BitmapFactory.decodeFile(file.getAbsolutePath());
 					} else {
-						Game.debug("Failed: No SD Card detected");
+						Debug.write("Failed: No SD Card detected");
 						return null;
 					}
 				}
@@ -105,20 +110,25 @@ public final class Data {
 		try {
 			String[] assets = parent.getAssets().list(dir);
 			for (int i = 0; i < assets.length; i++) {
-				files.add(assets[i]);
+				//To avoid subdirectories
+				if (assets[i].contains(".")) {
+					files.add(assets[i]);
+				}
 			}
 		} catch (Exception ex) {
-			Game.debug("No local resources for '" + dir + "'");
+			Debug.write("No local resources for '" + dir + "'");
 		}
 		
 		try {
 			File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + dir);
 			String[] externals = file.list();
 			for (int i = 0; i < externals.length; i++) {
-				files.add(externals[i]);
+				if (externals[i].contains(".")) {
+					files.add(externals[i]);
+				}
 			}
 		} catch (Exception ex) {
-			Game.debug("No external resources for '" + dir + "'");
+			Debug.write("No external resources for '" + dir + "'");
 		}
 		
 		return files;
@@ -132,7 +142,7 @@ public final class Data {
 				return context.getAssets().open(ACTIONS_DIR + "/" + resources.get(i));
 			}
 		}
-		Game.debug("No actions found for id " + idString);
+		Debug.write("No actions found for id " + idString);
 		return null;
 	}
 	
@@ -160,6 +170,24 @@ public final class Data {
 	 */
 	public static Bitmap loadActor(String name, Context context) {
 		return loadBitmap(ACTORS_DIR + name, context);
+	}
+	
+	public static Bitmap loadActorIcon(String name) {
+		return loadActorIcon(name, getDefaultParent());				
+	}
+	
+	public static Bitmap loadActorIcon(String name, Context context) {
+		Bitmap bmp = loadActor(name, context);
+		String key = ACTORS_DIR + name + "``icon";
+		if (Cache.isBitmapRegistered(key)) {
+			return Cache.getRegisteredBitmap(key);
+		} else {
+			Bitmap icon = Bitmap.createBitmap(bmp, 0, 0, 
+					bmp.getWidth() / 8, 
+					bmp.getHeight() / 7);
+			Cache.RegisterBitmap(key, icon);
+			return icon;
+		}
 	}
 
 	/**
@@ -196,6 +224,49 @@ public final class Data {
 		return loadBitmap(MIDGROUNDS_DIR + name, getDefaultParent());
 	}
 	
+	public static Bitmap loadMidgrounds(List<String> midgrounds) {
+		Bitmap mid = null;
+		if (midgrounds.size() > 0) {
+			Paint paint = new Paint();
+			paint.setFilterBitmap(true);
+			for (String path : midgrounds) {
+				Bitmap bmp = loadMidground(path);
+				//Debug.write("%dx%d", bmp.getWidth(), bmp.getHeight());
+				if (mid == null) {
+					mid = bmp.copy(bmp.getConfig(), true);
+				} else {
+					if (bmp.getWidth() > mid.getWidth() || 
+							bmp.getHeight() > mid.getHeight()) {
+						Bitmap temp = Bitmap.createBitmap(
+								Math.max(mid.getWidth(), bmp.getWidth()),
+								Math.max(mid.getHeight(), bmp.getHeight()),
+								mid.getConfig());
+						Canvas c = new Canvas(temp);
+						c.drawBitmap(mid, 0, 0, paint);
+						mid = temp;
+					}
+					Canvas c = new Canvas(mid);
+					c.drawBitmap(bmp, 0, 0, paint);
+				}
+			}
+		}
+		return mid;
+	}
+	
+	public static Bitmap loadEditorBmp(String name, Context context) {
+		try {
+			return BitmapFactory.decodeStream(
+					context.getAssets().open(EDITOR_DIR + name));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static Bitmap loadEditorBmp(String name) {
+		return loadEditorBmp(name, getDefaultParent());
+	}
+	
 	/**
 	 * Used to load game data stored in the GameMaker namespace. Can
 	 * be used outside of this namespace.
@@ -228,9 +299,11 @@ public final class Data {
 	 * @param data The PlatformGame object.
 	 * @return true if the save was successful.
 	 */
+	@SuppressLint("WorldReadableFiles")
 	public static boolean saveGame(String name, Activity parent, Serializable data) {
 		try {
-			FileOutputStream fos = parent.openFileOutput(name, Context.MODE_WORLD_WRITEABLE);
+			FileOutputStream fos = parent.openFileOutput(name, 
+					Context.MODE_WORLD_READABLE);
 			ObjectOutputStream out = new ObjectOutputStream(fos);
 			out.writeObject(data);
 			out.close();

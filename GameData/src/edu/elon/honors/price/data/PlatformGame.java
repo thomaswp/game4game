@@ -2,17 +2,10 @@ package edu.elon.honors.price.data;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
-
 import edu.elon.honors.price.data.Behavior.BehaviorType;
-import edu.elon.honors.price.game.Game;
-
 import android.graphics.Rect;
 
 public class PlatformGame extends GameData {
@@ -23,14 +16,14 @@ public class PlatformGame extends GameData {
 	protected int _VERSION_ = 3;
 
 	public ArrayList<Map> maps;
-	public int startMapId;
+	public int selectedMapId;
 
 	public UILayout uiLayout;
 
 	public Tileset[] tilesets;
 	public ActorClass[] actors;
 	public ObjectClass[] objects;
-	public Hero hero;
+	public Hero getHero() { return (Hero)actors[0]; }
 
 	public String[] switchNames;
 	public boolean[] switchValues;
@@ -41,6 +34,8 @@ public class PlatformGame extends GameData {
 	actorBehaviors, objectBehaviors;
 
 	public Object copyData;
+	
+	public final String ID;
 
 	public int getVersion() {
 		return _VERSION_;
@@ -55,7 +50,9 @@ public class PlatformGame extends GameData {
 		return null;
 	}
 	
-	public PlatformGame() {
+	public PlatformGame(String id) {
+		ID = id;
+		
 		switchNames = new String[] { };
 		switchValues = new boolean[] { };
 		resizeSwitches(100);
@@ -64,14 +61,15 @@ public class PlatformGame extends GameData {
 		variableValues = new int[] { };
 		resizeVariables(100);
 
-		maps = new ArrayList<Map>();
-		maps.add(new Map());
-		startMapId = 0;
-
 		tilesets = new Tileset[3];
-		tilesets[0] = new Tileset("Default", "tiles.png", 48, 48, 8, 8);
-		tilesets[1] = new Tileset("Ice", "ice.png", 48, 48, 8, 8);
-		tilesets[2] = new Tileset("Grass", "grass.png", 48, 48, 8, 8);
+		tilesets[0] = new Tileset("Default", "StickTiles.png", 64, 64, 8, 8);
+		//tilesets[1] = new Tileset("Ice", "ice.png", 48, 48, 8, 8);
+		tilesets[1] = new Tileset("Grass", "grass.png", 64, 64, 8, 8);
+		
+		maps = new ArrayList<Map>();
+		maps.add(new Map(this));
+		selectedMapId = 0;
+
 
 		actors = new ActorClass[3];
 		actors[1] = new ActorClass();
@@ -87,17 +85,17 @@ public class PlatformGame extends GameData {
 		ghost.name = "Ghost";
 
 		ActorClass vlad = new ActorClass();
-		vlad.imageName = "vamp.png";
+		vlad.imageName = "StickMan.png";
 		vlad.speed = 1f;
 		vlad.edgeBehavior = ActorClass.BEHAVIOR_TURN;
 		vlad.wallBehavior = ActorClass.BEHAVIOR_TURN;
 		vlad.actorContactBehaviors = new int[] {ActorClass.BEHAVIOR_NONE, 
 				ActorClass.BEHAVIOR_NONE, ActorClass.BEHAVIOR_TURN, ActorClass.BEHAVIOR_TURN};
 		vlad.heroContactBehaviors[ActorClass.ABOVE] = ActorClass.BEHAVIOR_DIE;
-		vlad.name = "Vampire!";
+		vlad.name = "Stick Man";
 		actors[2] = vlad;
 
-		hero = new Hero();
+		Hero hero = new Hero();
 		hero.speed = 3.5f;
 		hero.jumpVelocity = 6f;
 		hero.stunDuration = 600;
@@ -136,18 +134,18 @@ public class PlatformGame extends GameData {
 		in.defaultReadObject();
 		Upgrader.upgrade(this);
 		//time = System.currentTimeMillis() - time;
-		//Game.debug("Read in " + time + "ms");
+		//Debug.write("Read in " + time + "ms");
 	}
 	
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		//long time = System.currentTimeMillis();
 		out.defaultWriteObject();
 		//time = System.currentTimeMillis() - time;
-		//Game.debug("Written in " + time + "ms");
+		//Debug.write("Written in " + time + "ms");
 	}
 
 	public Map getSelectedMap() {
-		return maps.get(startMapId);
+		return maps.get(selectedMapId);
 	}
 
 	public Tileset getMapTileset(Map map) {

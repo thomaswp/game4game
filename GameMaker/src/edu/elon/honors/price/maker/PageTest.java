@@ -1,7 +1,9 @@
 package edu.elon.honors.price.maker;
 
 import android.content.Intent;
+import android.view.ViewGroup;
 
+@SuppressWarnings("unused")
 public class PageTest extends Page {
 
 	private SelectorActorInstance sai, sai2;
@@ -17,7 +19,7 @@ public class PageTest extends Page {
 	}
 
 	@Override
-	public int getViewId() {
+	public int getLayoutId() {
 		return R.layout.tab_test;
 	}
 
@@ -27,7 +29,8 @@ public class PageTest extends Page {
 	}
 
 	@Override
-	public void onCreate() {
+	public void onCreate(ViewGroup parentView) {
+		super.onCreate(parentView);
 //		((SelectorActorClass)findViewById(R.id.selectorActorClass)).populate(getGame());
 //		sai = (SelectorActorInstance)findViewById(R.id.selectorActorInstance1);
 //		sai2 = (SelectorActorInstance)findViewById(R.id.selectorActorInstance2);
@@ -81,5 +84,11 @@ public class PageTest extends Page {
 		sp.populate(getGame());
 		so.populate(getGame());
 		soc.populate(getGame());
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		
 	}
 }

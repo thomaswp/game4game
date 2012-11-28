@@ -1,8 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import edu.elon.honors.price.data.Behavior;
@@ -12,14 +9,9 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.data.types.Switch;
-import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.action.Element;
 import edu.elon.honors.price.maker.action.ElementBoolean;
 import edu.elon.honors.price.maker.action.ElementNumber;
-import edu.elon.honors.price.maker.action.ElementSwitch;
-import edu.elon.honors.price.maker.action.ElementVariable;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -29,18 +21,12 @@ import android.graphics.Color;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 public class SelectorBehaviorInstances extends LinearLayout 
 implements IPopulatable{
@@ -77,6 +63,10 @@ implements IPopulatable{
 		LayoutInflater.from(getContext()).inflate(
 				R.layout.selector_behavior_instances, this);
 		
+		if (isInEditMode()) {
+			return;
+		}
+		
 		radioGroupBehaviors = 
 			(RadioGroup)findViewById(R.id.radioGroupBehaviors);
 		buttonNew = (Button)findViewById(R.id.buttonNewBehavior);
@@ -87,6 +77,14 @@ implements IPopulatable{
 			@Override
 			public void onClick(View arg0) {
 				List<Behavior> behaviors = game.getBehaviors(type);
+				if (behaviors.size() == 0) {
+					new AlertDialog.Builder(getContext())
+					.setTitle("No Behaviors")
+					.setMessage("You must create a behavior before you can assign it.")
+					.setPositiveButton("Ok", null)
+					.show();
+					return;
+				}
 				String[] choices = new String[behaviors.size()];
 				for (int i = 0; i < behaviors.size(); i++) {
 					choices[i] = behaviors.get(i).name;
@@ -127,7 +125,10 @@ implements IPopulatable{
 		buttonDelete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				
+				final int index = getSelectedIndex();
+				if (index < 0) return;
+				behaviors.remove(index);
+				radioGroupBehaviors.removeViewAt(index);
 			}
 		});
 	}
@@ -180,7 +181,7 @@ implements IPopulatable{
 					TextUtils.COLOR_MODE);
 			sb.append(" = ");
 			Object param = params.get(i);
-			String name = TextUtils.HTMLEscape("<None>");
+			String name = "<None>";
 			name = TextUtils.getColoredText(name, Color.LTGRAY);
 			if (param != null && param instanceof Parameters) {
 				Element element = null;

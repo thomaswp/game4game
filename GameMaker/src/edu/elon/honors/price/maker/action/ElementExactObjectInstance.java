@@ -56,9 +56,13 @@ public class ElementExactObjectInstance extends Element {
 	public String getDescription(PlatformGame game) {
 		StringBuilder sb = new StringBuilder();
 		int index = selectorObjectInstance.getSelectedInstance();
-		ObjectInstance instance = game.getSelectedMap().objects.get(index);
-		String name = game.objects[instance.classIndex].name;
-		TextUtils.addColoredText(sb, name, color);
+		if (index >= 0) {
+			ObjectInstance instance = game.getSelectedMap().objects.get(index);
+			String name = game.objects[instance.classIndex].name;
+			TextUtils.addColoredText(sb, name, color);
+		} else {
+			sb.append("[None]");
+		}
 		return sb.toString();
 	}
 

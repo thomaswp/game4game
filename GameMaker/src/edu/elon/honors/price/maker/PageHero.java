@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
@@ -8,13 +9,12 @@ import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Hero;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.R;
 
 public class PageHero extends Page {
 	
-	final float speedScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_SPEED;
-	final float jumpScale = DatabaseEditActor.SPEEDS / ActorClass.MAX_JUMP;
+	final float speedScale = DatabaseEditActorClass.SPEEDS / ActorClass.MAX_SPEED;
+	final float jumpScale = DatabaseEditActorClass.SPEEDS / ActorClass.MAX_JUMP;
 	private Hero actor;
 	private Spinner eventSpinner, directionSpinner, behaviorSpinner;
 	private SelectorActorImage imageSpinner;
@@ -22,7 +22,7 @@ public class PageHero extends Page {
 	private boolean forceSelect;
 	
 	@Override
-	public int getViewId() {
+	public int getLayoutId() {
 		return R.layout.page_hero;
 	}
 
@@ -38,7 +38,8 @@ public class PageHero extends Page {
 
 	
 	@Override
-	public void onCreate() {
+	public void onCreate(ViewGroup parentView) {
+		super.onCreate(parentView);
 		imageSpinner = (SelectorActorImage)findViewById(R.id.spinnerActorImage);
 		speed = (SeekBar)findViewById(R.id.seekBarSpeed);
 		jump = (SeekBar)findViewById(R.id.seekBarJump);
@@ -49,7 +50,7 @@ public class PageHero extends Page {
 
 	@Override
 	public void onPause() {
-		Game.debug(actor);
+		//Debug.write(actor);
 		actor.imageName = (String)imageSpinner.getSelectedItem();
 		actor.speed = speed.getProgress() / speedScale;
 		actor.jumpVelocity = jump.getProgress() / jumpScale;
@@ -57,12 +58,12 @@ public class PageHero extends Page {
 	
 	@Override
 	public void onResume() {
-		actor = getGame().hero;
+		actor = getGame().getHero();
 		
 		imageSpinner.setSelectedImageName(actor.imageName);
 
-		speed.setMax(DatabaseEditActor.SPEEDS);
-		jump.setMax(DatabaseEditActor.SPEEDS);
+		speed.setMax(DatabaseEditActorClass.SPEEDS);
+		jump.setMax(DatabaseEditActorClass.SPEEDS);
 		speed.setProgress((int)(actor.speed * speedScale + 0.5f));
 		jump.setProgress((int)(actor.jumpVelocity * jumpScale + 0.5f));
 

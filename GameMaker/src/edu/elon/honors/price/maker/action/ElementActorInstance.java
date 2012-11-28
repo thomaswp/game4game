@@ -1,7 +1,5 @@
 package edu.elon.honors.price.maker.action;
 
-import java.util.LinkedList;
-
 import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.maker.action.EventContext.Scope;
@@ -27,14 +25,18 @@ public class ElementActorInstance extends ElementMulti {
 					new ElementExactActorInstance(attributes, context)),
 			new OptionEmpty(context, "the triggering actor", 
 					"the triggering actor"),
+			new OptionEmpty(context, "the last created actor", 
+					"the last created actor"),
 			new OptionEmpty(context, "this actor", "this actor")
 		};
 		
 		options[0].visible = 
 			eventContext.getScope() == Scope.MapEvent;
 		options[1].enabled = 
-			eventContext.hasTrigger(TriggerType.ActorTrigger);
-		options[2].visible = 
+			eventContext.hasTrigger(TriggerType.ActorTrigger) ||
+			eventContext.hasTrigger(TriggerType.ObjectTrigger) ||
+			eventContext.hasTrigger(TriggerType.RegionTrigger);
+		options[3].visible = 
 			eventContext.getScope() == Scope.ActorBehavior;
 		
 		return options;

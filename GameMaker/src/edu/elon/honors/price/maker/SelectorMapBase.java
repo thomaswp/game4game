@@ -6,9 +6,7 @@ import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.input.Input;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -98,6 +96,15 @@ public class SelectorMapBase extends MapActivityBase {
 			return !leftButton.showing || mode == MODE_SELECT;
 		}
 		
+		/**
+		 * Called when the player taps the screen.
+		 * Start selection here.
+		 * @return true if selection was successful (and
+		 * therefore if the player taps a button it should
+		 * not be ignored in favor of selection on the map).
+		 * This method should return false in at least some
+		 * cases or buttons will be inoperable.
+		 */
 		protected boolean doSelection() {
 			return false;
 		}
@@ -160,6 +167,7 @@ public class SelectorMapBase extends MapActivityBase {
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 			paint.setColor(Color.WHITE);
+			paint.setAlpha(200);
 			for (int i = 0; i < map.layers.length; i++) {
 				MapLayer layer = map.layers[i];
 
@@ -173,7 +181,6 @@ public class SelectorMapBase extends MapActivityBase {
 					}
 				}
 
-				paint.setAlpha(200);
 			}
 		}
 
@@ -181,18 +188,18 @@ public class SelectorMapBase extends MapActivityBase {
 			c.drawBitmap(tileBitmap, x + offX, y + offY, paint);
 		}
 		
-		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
+		protected void drawObject(Canvas c, ObjectInstance instance, float cx, float cy, 
 				Bitmap bitmap, Paint paint) {
-			paint.setAlpha(255);
-			c.drawBitmap(bitmap, x, y, paint);
+			c.drawBitmap(bitmap, cx - bitmap.getWidth() / 2, 
+					cy - bitmap.getWidth() / 2, paint);
 		}
 		
 		protected void drawObjects(Canvas c) {
 			for (int i = 0; i < game.getSelectedMap().objects.size(); i++) {
 				ObjectInstance instance = game.getSelectedMap().objects.get(i);
 				Bitmap bitmap = objects[instance.classIndex];
-				float x = instance.startX - bitmap.getWidth() / 2 + offX;
-				float y = instance.startY - bitmap.getHeight() / 2 + offY;
+				float x = instance.startX + offX;// - bitmap.getWidth() / 2;
+				float y = instance.startY + offY;// - bitmap.getHeight() / 2;
 				drawObject(c, instance, x, y, bitmap, paint);
 			}
 		}
@@ -223,5 +230,10 @@ public class SelectorMapBase extends MapActivityBase {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected String getPreferenceId() {
+		return game.ID;
 	}
 }

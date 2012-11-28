@@ -1,8 +1,8 @@
-<action id="11" name="Debug Message">
+<action id="11" name="Debug Message" category="Debug">
 
 	<text text="Show" />
 	
-	<radio>
+	<radio name="show">
 		<choice text="the message">
 			<string length="100" />
 		</choice>

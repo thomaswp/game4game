@@ -25,6 +25,12 @@ public class DatabaseEditUI extends DatabaseActivity {
 
 	EditUIView view;
 
+	public static void startForResult(DatabaseActivity activity, int requestCode) {
+		activity.startActivityForResult(
+				activity.getNewGameIntent(DatabaseEditUI.class),
+				requestCode);
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

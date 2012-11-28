@@ -19,6 +19,8 @@ package com.ericharlow.DragNDrop;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.elon.honors.price.maker.R;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +36,7 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
     private List<String> mContent;
 
     public DragNDropAdapter(Context context, List<String> content) {
-        init(context,new int[]{android.R.layout.simple_list_item_1},new int[]{android.R.id.text1}, content);
+        init(context,new int[]{R.layout.dragndrop_list_item},new int[]{R.id.dragndrop_list_item}, content);
     }
     
     public DragNDropAdapter(Context context, int[] itemLayouts, int[] itemIDs, ArrayList<String> content) {

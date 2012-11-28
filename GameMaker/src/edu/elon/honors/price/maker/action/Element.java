@@ -4,12 +4,10 @@ import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 
-import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditAction;
-import edu.elon.honors.price.maker.DatabaseEditBehavior;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 
 import android.content.Context;

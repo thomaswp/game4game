@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import java.util.LinkedList;
+
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.maker.MapEditorView;
@@ -21,7 +23,8 @@ public abstract class MapEditorLayer {
 	protected boolean touchDown;
 	protected float touchX, touchY;
 	protected boolean showPreview;
-	protected Bitmap icon, editIcon, editAltIcon;
+	protected Bitmap icon;
+	protected LinkedList<Bitmap> editIcons = new LinkedList<Bitmap>();
 	
 	public boolean isTouchDown() {
 		return touchDown;
@@ -45,6 +48,7 @@ public abstract class MapEditorLayer {
 		this.paint = new Paint();
 		this.map = parent.game.getSelectedMap();
 		this.game = parent.game;
+		loadEditIcons();
 	}
 	
 	public abstract void drawLayer(Canvas c, DrawMode mode);
@@ -53,22 +57,11 @@ public abstract class MapEditorLayer {
 	public abstract Bitmap getSelection();
 	public abstract void onSelect();
 	protected abstract Bitmap loadIcon();
-	protected abstract Bitmap loadEditIcon();
-	protected abstract Bitmap loadEditAltIcon();
+	protected abstract void loadEditIcons();
 	
 	public Bitmap getIcon() {
 		if (icon == null) icon = loadIcon();
 		return icon;
-	}
-	
-	public Bitmap getEditIcon() {
-		if (editIcon == null) editIcon = loadEditIcon();
-		return editIcon;
-	}
-	
-	public Bitmap getEditAltIcon() {
-		if (editAltIcon == null) editAltIcon = loadEditAltIcon();
-		return editAltIcon;
 	}
 	
 	public void onTouchDown(float x, float y) {
@@ -84,6 +77,10 @@ public abstract class MapEditorLayer {
 	public void onTouchUp(float x, float y) {
 		touchDown = false;
 		touchX = x; touchY = y;
+	}
+	
+	public void onTouchCanceled(float x, float y) {
+		
 	}
 	
 	public static abstract class Action {

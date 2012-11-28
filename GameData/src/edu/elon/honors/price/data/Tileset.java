@@ -1,7 +1,5 @@
 package edu.elon.honors.price.data;
 
-import java.io.Serializable;
-
 public class Tileset extends GameData {
 	private static final long serialVersionUID = 2L;
 
@@ -18,4 +16,11 @@ public class Tileset extends GameData {
 		this.columns = columns;
 	}
 	
+	public int width() {
+		return tileWidth * columns;
+	}
+	
+	public int height() {
+		return tileHeight * rows;
+	}
 }

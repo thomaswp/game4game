@@ -1,7 +1,6 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

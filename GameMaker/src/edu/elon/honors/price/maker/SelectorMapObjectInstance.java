@@ -81,15 +81,16 @@ public class SelectorMapObjectInstance extends SelectorMapBase {
 		}
 		
 		@Override
-		protected void drawObject(Canvas c, ObjectInstance instance, float x, float y, 
+		protected void drawObject(Canvas c, ObjectInstance instance, float cx, float cy, 
 				Bitmap bitmap, Paint paint) {
 			if (instance.id == selectedId) {
 				paint.setColor(selectionFillColor);
 				paint.setStyle(Style.FILL);
-				selectedRect.set(x, y, x + bitmap.getWidth(), y + bitmap.getHeight());
+				selectedRect.set(cx - bitmap.getWidth() / 2, cy - bitmap.getHeight() / 2, 
+						cx + bitmap.getWidth() / 2, cy + bitmap.getHeight() / 2);
 				c.drawRect(selectedRect, paint);
 			}
-			super.drawObject(c, instance, x, y, bitmap, paint);
+			super.drawObject(c, instance, cx, cy, bitmap, paint);
 		}
 
 		@Override

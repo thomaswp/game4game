@@ -3,14 +3,11 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Game;
 import android.graphics.Rect;
 
 /**
@@ -26,7 +23,7 @@ public class Event extends GameData {
 	public ArrayList<Action> actions = new ArrayList<Event.Action>();
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
 	
-	public transient Object tActor, tObject, tVector, behaving;
+	public transient Object tActor, tObject, tVector, tUI, tPoint, behaving;
 	public transient int behaviorIndex = -1;
 
 	/**
@@ -59,6 +56,8 @@ public class Event extends GameData {
 		tActor = null;
 		tObject = null;
 		tVector = null;
+		tUI = null;
+		tPoint = null;
 	}
 	
 	public void clearBehavingInfo() {
@@ -106,9 +105,10 @@ public class Event extends GameData {
 			return a;
 		}
 		
-		public String toString() {
-			return String.format("[%d] %s", indent, ActionIds.ACTION_NAMES[id]);
-		}
+//		@Override
+//		public String toString() {
+//			return String.format("[%d] %s", indent, ActionFactory.ACTION_NAMES[id]);
+//		}
 	}
 	
 	/**

@@ -1,7 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import java.util.List;
-
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Tileset;
 import android.graphics.Bitmap;
@@ -18,6 +16,7 @@ public class DatabaseEditMapTileset extends DatabaseActivity {
 	ImageView imageViewPreivew;
 	SelectorMapPreview selectorMapPreview;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		

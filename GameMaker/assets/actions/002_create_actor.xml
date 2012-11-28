@@ -1,4 +1,4 @@
-<action id="2" name="Create Actor">
+<action id="2" name="Create Actor" category="Actor">
 
 	<text text="Create a" />
 	<actorClass />
@@ -7,7 +7,7 @@
 	<point />
 	
 	<text text="facing" />
-	<radio>
+	<radio name="facing">
 		<choice text="left" color="value" />
 		<choice text="right" color="value" />
 	</radio>

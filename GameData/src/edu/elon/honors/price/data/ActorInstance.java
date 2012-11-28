@@ -1,7 +1,5 @@
 package edu.elon.honors.price.data;
 
-import java.io.Serializable;
-
 /**
  * Represents an instance of an actor. This instance can be
  * tied to specific events, but inherits most of its ActorClass.
@@ -12,6 +10,7 @@ public class ActorInstance extends GameData {
 
 	public int id;
 	public int classIndex;
+	public int row, column;
 	
 	/**
 	 * Constructs the ActorInstance with the given id and

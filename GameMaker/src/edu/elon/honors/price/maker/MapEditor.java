@@ -3,14 +3,17 @@ package edu.elon.honors.price.maker;
 import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.graphics.Graphics;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 public class MapEditor extends MapActivityBase {
@@ -26,6 +29,12 @@ public class MapEditor extends MapActivityBase {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		Graphics.reset();
+	}
+	
+	@Override
 	protected MapView getMapView(PlatformGame game, Bundle savedInstanceState) {
 		return new MapEditorView(this, game, savedInstanceState);
 	}
@@ -33,9 +42,10 @@ public class MapEditor extends MapActivityBase {
 	@Override
 	protected boolean hasChanged() {
 		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
-		return !PlatformGame.areEqual(oldGame, game);
+		return !GameData.areEqual(oldGame, game);
 	}
 	
+	@Override
 	protected void finishOk(Intent data) {
 		save();
 		finish();
@@ -114,7 +124,7 @@ public class MapEditor extends MapActivityBase {
 		Intent intent = new Intent(this, Platformer.class);
 		intent.putExtra("map", gameName);
 		startActivity(intent);
-		Game.debug(System.currentTimeMillis());
+		Debug.write(System.currentTimeMillis());
 	}
 
 	private void save() {
@@ -131,7 +141,7 @@ public class MapEditor extends MapActivityBase {
 	}
 	
 	private void refresh() {
-		((MapEditorView)view).refresh();
+		((MapEditorView)view).refreshLayers();
 	}
 
 	private void load() {
@@ -167,5 +177,10 @@ public class MapEditor extends MapActivityBase {
 	
 	public static abstract class ReturnResponse {
 		public abstract void onReturn(Intent data);
+	}
+
+	@Override
+	protected String getPreferenceId() {
+		return game.ID;
 	}
 }

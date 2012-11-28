@@ -62,8 +62,11 @@ public class DatabaseEditTriggerRegion extends DatabaseActivity {
 			selectorRegion.setHasMap(false);
 		}
 		
-		spinnerMode.setAdapter(new ArrayAdapter<String>(this, 
-				android.R.layout.simple_spinner_item, RegionTrigger.MODES));
+		ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this, 
+				R.layout.spinner_text, RegionTrigger.MODES);
+		modeAdapter.setDropDownViewResource(R.layout.spinner_text_dropdown);
+		spinnerMode.setAdapter(modeAdapter);
+		
 		selectorRegion.populate(game);
 		
 		((RadioButton)radioGroupType.getChildAt(trigger.who)).setChecked(true);

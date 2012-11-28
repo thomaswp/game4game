@@ -5,16 +5,13 @@ import java.util.List;
 
 import android.graphics.RectF;
 
-import com.twp.platform.Interpreter.ParameterException;
+import com.badlogic.gdx.math.Vector2;
 import com.twp.platform.PhysicsHandler.BodyCallback;
 
-import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
 import edu.elon.honors.price.data.Event.RegionTrigger;
 import edu.elon.honors.price.data.Event.SwitchTrigger;
@@ -22,13 +19,15 @@ import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.Event.UITrigger;
 import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
+import edu.elon.honors.price.maker.action.ParameterException;
+import edu.elon.honors.price.maker.action.PlatformGameState;
+import edu.elon.honors.price.maker.action.Point;
 import edu.elon.honors.price.physics.Vector;
 
 public class TriggerHandler {
@@ -40,6 +39,8 @@ public class TriggerHandler {
 	private Map map;
 	private PhysicsHandler physics;
 	private Interpreter interpreter;
+	private Vector vector = new Vector();
+	private Point point = new Point();
 
 	private int touchPID;
 	private RectF regionRect = new RectF();
@@ -64,11 +65,7 @@ public class TriggerHandler {
 //		}
 		for (int i = 0; i < physics.getPlatformBodies().size(); i++) {
 			PlatformBody body = physics.getPlatformBodies().get(i);
-			if (body instanceof ActorBody) {
-				checkBehaving(((ActorBody) body));
-			} else if (body instanceof ObjectBody) {
-				checkBehaving(((ObjectBody) body));
-			}
+			checkBehaving(body);
 		}
 	}
 	
@@ -118,7 +115,7 @@ public class TriggerHandler {
 	private void checkTrigger(SwitchTrigger trigger, Event event)
 			throws ParameterException {
 		Switch tSwitch = trigger.triggerSwitch;
-		if (Interpreter.readSwitch(tSwitch, event) == trigger.value) {
+		if (PlatformGameState.readSwitch(tSwitch, event) == trigger.value) {
 			if (Globals.getSwitches()[tSwitch.id] == trigger.value) {
 				trigger(event);
 			}			
@@ -129,14 +126,14 @@ public class TriggerHandler {
 			throws ParameterException {
 		Variable variable = trigger.variable;
 
-		int value1 = Interpreter.readVariable(variable, event);
+		int value1 = PlatformGameState.readVariable(variable, event);
 		
 		int value2;
 		if (trigger.with == VariableTrigger.WITH_VALUE) {
 			value2 = trigger.withValue;
 		} else {
 			variable = trigger.withVariable;
-			value2 = Interpreter.readVariable(variable, event);
+			value2 = PlatformGameState.readVariable(variable, event);
 		}
 
 		boolean result = false;
@@ -186,14 +183,14 @@ public class TriggerHandler {
 					PlatformBody collided = body.getCollidedBodies().get(l);
 					if (collided instanceof ActorBody && 
 							((ActorBody)collided).isHero()) {
-						trigger(event, body);
+						trigger(event, body, collided);
 					}
 				}
 			} else if (trigger.action == ActorOrObjectTrigger.ACTION_COLLIDES_ACTOR) {
 				for (int l = 0; l < body.getCollidedBodies().size(); l++) {
 					PlatformBody collided = body.getCollidedBodies().get(l);
 					if (collided instanceof ActorBody) {
-						trigger(event, body);
+						trigger(event, body, collided);
 					}
 				}
 			} else if (trigger.action == ActorOrObjectTrigger.ACTION_COLLIDES_WALL) {
@@ -314,7 +311,9 @@ public class TriggerHandler {
 			}
 			
 			if (triggered) {
-				event.tVector = joy.getPull();
+				vector.set(joy.getLastPull());
+				event.tVector = vector;
+				Debug.write(event.tVector);
 			}
 		} else {
 			if (Input.isTapped()) {
@@ -333,6 +332,9 @@ public class TriggerHandler {
 				if (!inUse) {
 					touchPID = pid;
 					if (trigger.condition == UITrigger.CONDITION_PRESS) {
+						point.setF(Input.getLastTouchX() - logic.getOffset().getX(), 
+								Input.getLastTouchY() - logic.getOffset().getY());
+						event.tPoint = point;
 						triggered = true;	
 					}
 				}
@@ -368,6 +370,19 @@ public class TriggerHandler {
 			event.tObject = body;
 		}
 		trigger(event);
+	}
+	
+	private void trigger(Event event, PlatformBody body, PlatformBody collided) {
+		Vector2 point = body.getPosition().add(
+				collided.getPosition()).mul(0.5f);
+		if (collided instanceof ActorBody) {
+			event.tActor = collided;
+		} else {
+			event.tObject = collided;
+		}
+		this.point.setF(point.x * SCALE, point.y * SCALE);
+		event.tPoint = point;
+		trigger(event, body);
 	}
 
 	private boolean inRegion(PlatformBody body, RegionTrigger trigger) {

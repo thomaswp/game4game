@@ -76,10 +76,10 @@ public class SelectorUIControl extends Spinner implements IPopulatable {
 			
 		}
 		
+		
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-				getContext(), android.R.layout.simple_spinner_dropdown_item,
-				items
-				);
+				getContext(), R.layout.spinner_text, items);
+		adapter.setDropDownViewResource(R.layout.spinner_text_dropdown);
 		
 		setAdapter(adapter);
 		

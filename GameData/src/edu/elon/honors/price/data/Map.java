@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import edu.elon.honors.price.game.Game;
-
 public class Map extends GameData {
 	private static final long serialVersionUID = 9L;
 
-	
+	public String name;
 	
 	public Event[] events;
 	public int tilesetId;
@@ -26,19 +24,27 @@ public class Map extends GameData {
 	public String skyImageName;
 	public LinkedList<String> midGrounds = new LinkedList<String>();
 
-	public Map() {
+	public Map(PlatformGame game) {
 
-		rows = 8;
+		name = "New Map";
+		
+		rows = 14;
 		columns = 30;
 
-		groundY = 4 * 48;
+		groundY = 4 * game.tilesets[tilesetId].tileHeight;
 		groundImageName = "ground.png";
 		skyImageName = "sky.png";
 
+		midGrounds = new LinkedList<String>();
+		midGrounds.add("whiteclouds.png");
+		midGrounds.add("mountain.png");
+		midGrounds.add("trees.png");
+		
 		tilesetId = 0;
 
 		//layer with tiles representing indices in the actors ArrayList 
 		actorLayer = new MapLayer("actors", rows, columns, false, -1);
+		actorLayer.defaultValue = -1;
 
 		actors = new ArrayList<ActorInstance>();
 		actors.add(null);
@@ -62,6 +68,8 @@ public class Map extends GameData {
 		layers[1] = layer;
 		layer = new MapLayer("l2", rows, columns, false, 0);
 		layers[2] = layer;
+		
+		behaviors = new LinkedList<BehaviorInstance>();
 	}
 
 	public void resize(int dRow, int dCol, boolean anchorTop, boolean anchorLeft,
@@ -101,15 +109,26 @@ public class Map extends GameData {
 			layer.rows += dRow;
 
 			for (int i = 0; i < layer.rows; i++) {
+				int[] tiles = layer.tiles[i];
 				if (dCol > 0) {
-					layer.tiles[i] = Arrays.copyOf(layer.tiles[i], columns + dCol);
-					if (layer.defaultValue != 0) {
-						for (int j = columns; j < columns + dCol; j++) {
-							layer.tiles[i][j] = layer.defaultValue;
-						}
+					int[] newTiles = new int[tiles.length + dCol];
+					for (int j = 0; j < newTiles.length; j++) {
+						boolean deflt = anchorLeft ? 
+								j < dCol : j >= tiles.length;
+						int offset = anchorLeft ? -dCol : 0;
+						int value = deflt ? layer.defaultValue :
+							layer.tiles[i][j + offset];
+						newTiles[j] = value;
 					}
+					layer.tiles[i] = newTiles;
 				} else if (dCol < 0) {
-					layer.tiles[i] = Arrays.copyOf(layer.tiles[i], columns + dCol);
+					if (anchorLeft) {
+						int start = -dCol;
+						int end = tiles.length;
+						layer.tiles[i] = Arrays.copyOfRange(tiles, start, end);
+					} else {
+						layer.tiles[i] = Arrays.copyOf(tiles, columns + dCol);	
+					}
 				}
 			}
 
@@ -122,14 +141,20 @@ public class Map extends GameData {
 			if (anchorTop)
 				o.startY += dRow * tileHeight;
 		}
+		for (ActorInstance o : actors) {
+			if (anchorLeft)
+				o.column += dCol;
+			if (anchorTop)
+				o.row += dRow;
+		}
 
 		rows += dRow;
 		columns += dCol;
 		//TODO: SHIFT EVENTS!!
 
-		for (int[] a : layers[1].tiles) {
-			Game.debug(Arrays.toString(a));
-		}
+//		for (int[] a : layers[1].tiles) {
+//			Debug.write(Arrays.toString(a));
+//		}
 	}
 
 	public int addObject(int classIndex, int startX, int startY) {
@@ -169,12 +194,14 @@ public class Map extends GameData {
 	//	}
 
 	public int getActorType(int row, int column) {
+		if (!inMap(row, column)) return 0;
 		int id = actorLayer.tiles[row][column];
 		if (id == -1) return -1;
 		return id > 0 ? actors.get(id).classIndex : 0;
 	}
 
 	public ActorInstance getActorInstance(int row, int column) {
+		if (!inMap(row, column)) return null;
 		return actors.get(actorLayer.tiles[row][column]);
 	}
 
@@ -196,6 +223,7 @@ public class Map extends GameData {
 	 * 1 is always the hero, and 0 indicates the actor was cleared.
 	 */
 	public int setActor(int row, int column, int type) {
+		if (!inMap(row, column)) return 0;
 		if (type == -1) {
 			if (actorLayer.tiles[row][column] > 0) {
 				//Dispose actor?
@@ -216,8 +244,13 @@ public class Map extends GameData {
 			ActorInstance actor = new ActorInstance(actors.size(), type);
 			actors.add(actor);
 			actorLayer.tiles[row][column] = actor.id;
+			actor.row = row; actor.column = column;
 			return actor.id;
 		}
+	}
+	
+	public boolean inMap(int row, int column) {
+		return !(row < 0 || row >= rows || column < 0 || column >= columns);
 	}
 
 	public int getHeroRow() {
@@ -240,5 +273,13 @@ public class Map extends GameData {
 			}
 		}
 		return -1;
+	}
+	
+	public int width(PlatformGame game) {
+		return game.tilesets[tilesetId].tileWidth * columns;
+	}
+	
+	public int height(PlatformGame game) {
+		return game.tilesets[tilesetId].tileHeight * rows;
 	}
 }
