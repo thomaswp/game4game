@@ -1,39 +1,42 @@
+Dev Branch!
+
 General:
 -saveInstanceState not fully implemented
 --returnResponse is problematic because it's not serializable. It only works if it's a static class, not anonymous
 -choose whether actors/objects/events should be deletable
 -map selector (oh yeah.. that)
--figure out hi-res
 -server
+-make sure rendering stops on pauses
+-support resource loading (update ContentProvider)
+-versioning - that'd be cool!
 
 Behaviors:
--spiff up editor (to look like the others if possible)
--instance editor
 -export
--handle parameter deletion
+-map
 
 Events:
 -rework placement of map event editor to go along with behaviors theme
 -rename actions when var names change
 -reset instead of resize global variables
+-copy/paste
 -add bunches more!
 
 Actors:
--Reset instead of resize group
--get rid of "behavior" and add Behavior Instances
+-zoom change: keep actor in box
 
 Map Editor:
--Update appropriately when actors/objects/etc change
 -redo texture selector
--gap in bg (why?)
+-actors second edit brush
 -work with out of bounds
 
 Hero:
 -decide how to handle non-hero games...
 
 Map Properties:
--edit map size needs fixing
 -finalize how to add/remove bgs
+-resize should move events!!
+
+Tilesets Editor?
 
 Objects:
 -actually edit them

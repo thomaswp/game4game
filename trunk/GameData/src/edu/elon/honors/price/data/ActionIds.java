@@ -2,26 +2,26 @@ package edu.elon.honors.price.data;
 
 public class ActionIds {
 	
-	public static final String[] ACTION_NAMES = new String[] {
-		"Set Switch",
-		"Set Variable",
-		"Create Actor",
-		"Show Debug Box",
-		"Move Actor",
-		"Trigger Actor Behavior",
-		"Set Hero On/Off Ladder",
-		"If...",
-		"Create Object",
-		"Move Object",
-		"Set Velocity",
-		"Show Debug Message",
-		"Point Operation",
-		"Change Gravity",
-		"UI Action",
-		"Destroy Object",
-		"Draw to Screen",
-		"Loop..."
-	};
+//	public static final String[] ACTION_NAMES = new String[] {
+//		"Set Switch",
+//		"Set Variable",
+//		"Create Actor",
+//		"Show Debug Box",
+//		"Move Actor",
+//		"Trigger Actor Behavior",
+//		"Set Hero On/Off Ladder",
+//		"If...",
+//		"Create Object",
+//		"Move Object",
+//		"Set Velocity",
+//		"Show Debug Message",
+//		"Point Operation",
+//		"Change Gravity",
+//		"UI Action",
+//		"Destroy Object",
+//		"Draw to Screen",
+//		"Loop..."
+//	};
 	
 	/**
 	 * P0: Specific | Range

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.graphics.RectF;
+import android.util.SparseArray;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -60,14 +61,24 @@ public class PhysicsHandler {
 	private HashMap<Fixture, PlatformBody> bodyMap = new HashMap<Fixture, PlatformBody>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
+	private float mapFloor;
+	
 	public World getWorld() {
 		return world;
 	}
-	
+
 	public PlatformGame getGame() {
 		return game;
 	}
 
+	public float getMapFloorMeters() {
+		return mapFloor / SCALE;
+	}
+	
+	public float getMapFloorPx() {
+		return mapFloor;
+	}
+	
 	public ActorBody getHero() {
 		return heroBody;
 	}
@@ -85,11 +96,21 @@ public class PhysicsHandler {
 	}
 
 	public ObjectBody getLastCreatedObject() {
+		if (objectBodies.size() == 0) return null;
 		return objectBodies.get(objectBodies.size() - 1);
+	}
+	
+	public ActorBody getLastCreatedActor() {
+		if (actorBodies.size() == 0) return null;
+		return actorBodies.get(actorBodies.size() - 1);
 	}
 
 	public void setGravity(Vector vector) {
-		gravity.set(vector.getX(), vector.getY());
+		if (vector.magnitude() < 0.001) {
+			gravity.set(0, 0.001f);
+		} else {
+			gravity.set(vector.getX(), vector.getY());
+		}
 		world.setGravity(gravity);
 		for (PlatformBody body : platformBodies) {
 			if (body != null) {
@@ -136,14 +157,16 @@ public class PhysicsHandler {
 		while (actorBodies.size() < map.actors.size()) actorBodies.add(null);
 		while (objectBodies.size() < map.objects.size()) objectBodies.add(null);
 
+		mapFloor = map.height(game);
+		
 		world = new World(new Vector2(0, GRAVITY), true);
 
 		ContactFilter filter = new ContactFilter() {
 
 			@Override
 			public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
-				if (!(bodyMap.containsKey(fixtureA) && bodyMap.containsKey(fixtureB)))
-					return true;
+				if (!bodyMap.containsKey(fixtureA) && !bodyMap.containsKey(fixtureB))
+					return false;
 
 				PlatformBody bodyA = bodyMap.get(fixtureA);
 				PlatformBody bodyB = bodyMap.get(fixtureB);
@@ -176,7 +199,99 @@ public class PhysicsHandler {
 			layers[i] = new Tilemap(Data.loadTileset(tileset.bitmapName), 
 					tileset.tileWidth, tileset.tileHeight, tileset.tileSpacing, 
 					layer.tiles, Graphics.getRect(), i * 2);
+
 		}
+
+		//Coordinates from the center of the box, using Cartesian (not texture) coordinates, going clockwise
+		SparseArray<double[]> shapeMap = new SparseArray<double[]>(12);
+
+		//Ground Up 30 Left
+		shapeMap.put(12, new double[] {
+				-0.5, -0.5,
+				0.5, 0,
+				0.5, -0.5
+		});
+
+		//Ground Up 30 Right
+		shapeMap.put(13, new double[] {
+				-0.5, -0.5,
+				-0.5, 0,
+				0.5, 0.5,
+				0.5, -0.5
+		});
+
+		//Ground Down 30 Left
+		shapeMap.put(14, new double[] {
+				-0.5, -0.5,
+				-0.5, 0.5,
+				0.5, 0,
+				0.5, -0.5
+		});
+
+		//Ground Down 30 Right
+		shapeMap.put(15, new double[] {
+				-0.5, -0.5,
+				-0.5, 0,
+				0.5, -0.5
+		});
+
+		//Ground Up 45
+		shapeMap.put(36, new double[] {
+				-0.5, -0.5,
+				0.5, 0.5,
+				0.5, -0.5
+
+		});
+		//Ground Down 45
+		shapeMap.put(37, new double[] {
+				-0.5, 0.5,
+				0.5, -0.5,
+				-0.5, -0.5
+		});
+
+		//Roof Up 30 Left
+		shapeMap.put(28, new double[] {
+				-0.5, -0.5,
+				-0.5, 0.5,
+				0.5, 0.5,
+				0.5, 0
+		});
+
+		//Roof Up 30 Right
+		shapeMap.put(29, new double[] {
+				-0.5, 0,
+				-0.5, 0.5,
+				0.5, 0.5
+		});
+
+		//Roof Down 30 Left
+		shapeMap.put(30, new double[] {
+				-0.5, 0.5,
+				0.5, 0.5,
+				0.5, 0
+		});
+
+		//Roof Down 30 Right
+		shapeMap.put(31, new double[] {
+				-0.5, 0,
+				-0.5, 0.5,
+				0.5, 0.5,
+				0.5, -0.5
+		});
+
+		//Roof Up 45
+		shapeMap.put(46, new double[] {
+				-0.5, -0.5,
+				-0.5, 0.5,
+				0.5, 0.5
+
+		});
+		//Roof Down 45
+		shapeMap.put(47, new double[] {
+				-0.5, 0.5,
+				0.5, 0.5,
+				0.5, -0.5
+		});
 
 		for (int k = 0; k < layers.length; k++) {
 			if (!map.layers[k].active)
@@ -197,53 +312,71 @@ public class PhysicsHandler {
 						tileDef.type = BodyType.StaticBody;
 						Body tileBody = world.createBody(tileDef);
 						PolygonShape tileShape = new PolygonShape();
-						int tileId = map.layers[k].tiles[i][j]; 
-						if (tileId == 14) {
-							Vector2[] vertices = new Vector2[] {
-									new Vector2(-width / 2, height / 2),
-									new Vector2(width / 2, -height / 2),
-									new Vector2(width / 2, height / 2)
-							};
-							tileShape.set(vertices);
-						} else if (tileId == 22) {
-							Vector2[] vertices = new Vector2[] {
-									new Vector2(-width / 2, height / 2),
-									new Vector2(-width / 2, -height / 2),
-									new Vector2(width / 2, height / 2)
-							};
-							tileShape.set(vertices);
-						} else if (tileId == 28) {
-							Vector2[] vertices = new Vector2[] {
-									new Vector2(-width / 2, height / 2),
-									new Vector2(-width / 2, -height / 2),
-									new Vector2(width / 2, 0),
-									new Vector2(width / 2, height / 2)
-							};
-							tileShape.set(vertices);
-						} else if (tileId == 29) {
-							Vector2[] vertices = new Vector2[] {
-									new Vector2(-width / 2, height / 2),
-									new Vector2(-width / 2, 0),
-									new Vector2(width / 2, height / 2)
-							};
-							tileShape.set(vertices);
-						} else if (tileId == 37) {
-							Vector2[] vertices = new Vector2[] {
-									new Vector2(-width / 2, height / 2),
-									new Vector2(-width / 2, 0),
-									new Vector2(width / 2, -height / 2),
-									new Vector2(width / 2, height / 2)
-							};
-							tileShape.set(vertices);
-						} else if (tileId == 36) {
-							Vector2[] vertices = new Vector2[] {
-									new Vector2(-width / 2, height / 2),
-									new Vector2(width / 2, 0),
-									new Vector2(width / 2, height / 2)
-							};
+						int tileId = map.layers[k].tiles[i][j];
+						if (shapeMap.get(tileId) != null) {
+							double[] set = shapeMap.get(tileId);
+							Vector2[] vertices = new Vector2[set.length / 2];
+							for (int v = 0; v < vertices.length; v++) {
+								vertices[v] = new Vector2(
+										(float)set[v * 2] * width,
+										(float)set[v * 2 + 1] * -height
+										);
+							}
 							tileShape.set(vertices);
 						} else {
-							tileShape.setAsBox(width / 2, height / 2);
+							if (tileId == 36) {
+								//Ground Up 45
+								Vector2[] vertices = new Vector2[] {
+										new Vector2(-width / 2, height / 2),
+										new Vector2(width / 2, -height / 2),
+										new Vector2(width / 2, height / 2)
+								};
+								tileShape.set(vertices);
+							} else if (tileId == 37) {
+								//Ground Down 45
+								Vector2[] vertices = new Vector2[] {
+										new Vector2(-width / 2, height / 2),
+										new Vector2(-width / 2, -height / 2),
+										new Vector2(width / 2, height / 2)
+								};
+								tileShape.set(vertices);
+							} else if (tileId == 14) {
+								//Ground Down 30 high
+								Vector2[] vertices = new Vector2[] {
+										new Vector2(-width / 2, height / 2),
+										new Vector2(-width / 2, -height / 2),
+										new Vector2(width / 2, 0),
+										new Vector2(width / 2, height / 2)
+								};
+								tileShape.set(vertices);
+							} else if (tileId == 15) {
+								//Ground Down 30 low
+								Vector2[] vertices = new Vector2[] {
+										new Vector2(-width / 2, height / 2),
+										new Vector2(-width / 2, 0),
+										new Vector2(width / 2, height / 2)
+								};
+								tileShape.set(vertices);
+							} else if (tileId == 13) {
+								//Ground Up 30 high
+								Vector2[] vertices = new Vector2[] {
+										new Vector2(-width / 2, height / 2),
+										new Vector2(-width / 2, 0),
+										new Vector2(width / 2, -height / 2),
+										new Vector2(width / 2, height / 2)
+								};
+								tileShape.set(vertices);
+							} else if (tileId == 12) {
+								//Ground Up 30 low
+								Vector2[] vertices = new Vector2[] {
+										new Vector2(-width / 2, height / 2),
+										new Vector2(width / 2, 0),
+										new Vector2(width / 2, height / 2)
+								};
+								tileShape.set(vertices);
+							} else {
+								tileShape.setAsBox(width / 2, height / 2);
+							}
 						}
 						tileBody.createFixture(tileShape, 1);
 						for (int l = 0; l < tileBody.getFixtureList().size(); l++) {
@@ -266,9 +399,7 @@ public class PhysicsHandler {
 					if (actorId > 0) {
 						addActorBody(game.actors[actorId], instanceId, x, y);
 					} else {
-						game.hero.zoom = 0.9f;
-						game.hero.name = "Hero";
-						heroBody = addActorBody(game.hero, 
+						heroBody = addActorBody(game.getHero(), 
 								instanceId,
 								x,
 								y, 1, true);

@@ -1,16 +1,14 @@
 package edu.elon.honors.price.data;
 
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-
-public class ObjectClass extends GameData {
+public class ObjectClass extends MapClass {
 	private static final long serialVersionUID = 1L;
 	
-	public String name = "New Object";
-	public String imageName = "rock.png";
-	public float zoom = 1;
+	
 	public boolean fixedRotation = false;
-	public List<BehaviorInstance> behaviors = 
-		new LinkedList<BehaviorInstance>();
+	public float density = 0.5f;
+	@Override
+	protected String getDefaultImageName() {
+		return "rock.png";
+	}
 }
+

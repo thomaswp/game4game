@@ -11,10 +11,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
 
 public class MapEditorLayerTiles extends MapEditorLayer {
 
+	public static final int PAINTING_MODE = 1;
+	
 	private int layer;
 	private Bitmap[] tiles, darkTiles;
 
@@ -22,7 +27,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 	public void setGame(PlatformGame game) {
 		super.setGame(game);
 		tiles = parent.tiles;
-		darkTiles = parent.tiles;
+		darkTiles = parent.darkTiles;
 	}
 	
 	public MapEditorLayerTiles(MapEditorView parent, int layer) {
@@ -40,22 +45,25 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 			int tileHeight = tileset.tileHeight;
 
 			paint.setColor(Color.WHITE);
-			Bitmap bmp = parent.tilesetImage;
-			int x = (int)(touchX - bmp.getWidth() / 2);
-			int edgeX = (int)parent.offX % tileWidth;
-			x = (x - edgeX + tileWidth / 2) / tileWidth;
-			x = x * tileWidth + edgeX;
-			int y = (int)(touchY - bmp.getHeight() / 2);
-			int edgeY = (int)parent.offY % tileHeight;
-			y = (y - edgeY + tileHeight / 2) / tileHeight;
-			y = y * tileHeight + edgeY;
-			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
+//			Bitmap bmp = parent.tilesetImage;
+//			int x = (int)(touchX - bmp.getWidth() / 2);
+//			int edgeX = (int)parent.offX % tileWidth;
+//			x = (x - edgeX + tileWidth / 2) / tileWidth;
+//			x = x * tileWidth + edgeX;
+//			int y = (int)(touchY - bmp.getHeight() / 2);
+//			int edgeY = (int)parent.offY % tileHeight;
+//			y = (y - edgeY + tileHeight / 2) / tileHeight;
+//			y = y * tileHeight + edgeY;
+//			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
+			float x = getBitmapCol(touchX) * tileWidth + parent.offX;
+			float y = getBitmapRow(touchY) * tileHeight + parent.offY;
 			c.drawBitmap(parent.tilesetImage, x, y, paint);
 		}
 	}
 
 	@Override
 	public void drawLayer(Canvas c, DrawMode mode) {
+		
 		MapLayer layer = map.layers[this.layer];
 		Tileset tileset = game.tilesets[map.tilesetId];
 
@@ -66,9 +74,11 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 				float x = k * tileset.tileWidth;
 				float y = j * tileset.tileHeight;
 				int tileId = layer.tiles[j][k];
-				Bitmap tileBitmap = mode == DrawMode.Below ?
-						darkTiles[tileId] : tiles[tileId];
-						drawTile(c, x, y, tileId, tileBitmap);
+				if (tileId > 0) {
+					Bitmap tileBitmap = mode == DrawMode.Below ?
+							darkTiles[tileId] : tiles[tileId];
+							drawTile(c, x, y, tileId, tileBitmap);
+				}
 			}
 		}
 	}
@@ -96,6 +106,16 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 				selection.top * tileset.tileHeight,
 				selection.width() * tileset.tileWidth,
 				selection.height() * tileset.tileHeight);
+		if (selection.left == 0 && selection.top == 0 &&
+				selection.right == 1 && selection.bottom == 1) {
+			Canvas c = new Canvas(bmp);
+			Paint paint = new Paint();
+			paint.setColor(Color.BLACK);
+			paint.setStyle(Style.STROKE);
+			paint.setStrokeWidth(3);
+			paint.setPathEffect(new DashPathEffect(new float[] {5,5}, 0));
+			c.drawRect(0,  0, tileset.tileWidth - 1, tileset.tileHeight - 1, paint);
+		}
 		parent.tilesetImage = bmp;
 	}
 
@@ -114,20 +134,31 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 	public void onTouchDrag(float x, float y, boolean showPreview) {
 		super.onTouchDrag(x, y, showPreview);
 
-		if (parent.editMode == MapEditorView.EDIT_ALT) {
+		if (parent.editMode == PAINTING_MODE) {
 			placeTiles(x, y);
 		}
 	}
-
-	private void placeTiles(float x, float y) {
+	
+	private int getBitmapRow(float touchY) {
 		Tileset tileset = game.getMapTileset(map);
-		int tileWidth = tileset.tileWidth;
 		int tileHeight = tileset.tileHeight;
 		Bitmap bmp = parent.tilesetImage;
+		return Math.round((touchY - parent.offY - bmp.getHeight() / 2) / tileHeight);
+	}
+
+	private int getBitmapCol(float touchX) {
+		Tileset tileset = game.getMapTileset(map);
+		int tileWidth = tileset.tileWidth;
+		Bitmap bmp = parent.tilesetImage;
+		return Math.round((touchX - parent.offX - bmp.getWidth() / 2) / tileWidth);
+	}
+	
+	private void placeTiles(float x, float y) {
+		Tileset tileset = game.getMapTileset(map);
 		Rect rect = parent.tilesetSelection;
 
-		int row = (int)(y - parent.offY - bmp.getHeight() / 2 + tileHeight / 2) / tileHeight;
-		int col = (int)(x - parent.offX - bmp.getWidth() / 2 + tileWidth / 2) / tileWidth;
+		int row = getBitmapRow(y);
+		int col = getBitmapCol(x);
 
 		MapLayer layer = map.layers[this.layer];
 
@@ -138,7 +169,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 			for (int j = 0; j < rect.width(); j++) {
 				int destRow = row + i;
 				int destCol = col + j;
-				if (destRow < layer.rows && destCol < layer.columns) {
+				if (destRow >= 0 && destRow < layer.rows && destCol >=0 && destCol < layer.columns) {
 					int srcRow = rect.top + i;
 					int srcCol = rect.left + j;
 					int redoId = srcRow * tileset.columns + srcCol;
@@ -205,16 +236,17 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		return null;
 
 	}
-
+	
 	@Override
-	protected Bitmap loadEditIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.edit);
-	}
-
-	@Override
-	protected Bitmap loadEditAltIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.paint);
+	protected void loadEditIcons() {
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.edit));
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.paint));
+//		editIcons.add(
+//				BitmapFactory.decodeResource(parent.getResources(),
+//						R.drawable.no));
 	}
 }

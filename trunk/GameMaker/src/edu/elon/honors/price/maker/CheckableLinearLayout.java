@@ -1,6 +1,5 @@
 package edu.elon.honors.price.maker;
 
-import edu.elon.honors.price.game.Game;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -14,7 +13,12 @@ import android.widget.LinearLayout;
  */
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
 	private CheckedTextView _checkbox;
+	private OnCheckedChangedListener onCheckedChangedListener;
     	
+	public void setOnCheckedChangedListener(OnCheckedChangedListener onCheckedChangedListener) {
+		this.onCheckedChangedListener = onCheckedChangedListener;
+	}
+	
     public CheckableLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 	}
@@ -39,18 +43,25 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
     
     @Override 
     public void setChecked(boolean checked) {
-    	//int c = Color.argb(255, 255, 200, 0);
-    	//setBackgroundColor(checked ? c : Color.TRANSPARENT);
+    	boolean wasChecked = isChecked();
     	if (_checkbox != null) {
     		_checkbox.setChecked(checked);
+    	}
+    	if (wasChecked != checked) {
+    		if (onCheckedChangedListener != null) {
+    			onCheckedChangedListener.onCheckChanged(checked);
+        	}
     	}
     }
     
     @Override 
     public void toggle() {
-    	Game.debug("!!");
     	if (_checkbox != null) {
     		_checkbox.toggle();
     	}
     } 
+    
+    public interface OnCheckedChangedListener {
+    	public void onCheckChanged(boolean checked);
+    }
 } 

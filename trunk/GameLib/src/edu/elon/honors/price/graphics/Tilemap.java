@@ -2,11 +2,7 @@ package edu.elon.honors.price.graphics;
 
 import edu.elon.honors.price.game.Cache;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Paint.Style;
 
 public class Tilemap {
 	private Bitmap[] tiles;
@@ -17,13 +13,12 @@ public class Tilemap {
 	private int rows, columns, tileWidth, tileHeight;
 	private float scrollX, scrollY;
 	
-	private boolean showingGrid;
-	private Bitmap gridBitmap;
-	private BackgroundSprite grid;
+//	private Bitmap gridBitmap;
+//	private BackgroundSprite grid;
 	
-	public BackgroundSprite getGrid() {
-		return grid;
-	}
+//	public BackgroundSprite getGrid() {
+//		return grid;
+//	}
 	
 	public float getScrollX() {
 		return scrollX;
@@ -75,27 +70,27 @@ public class Tilemap {
 
 	public void setOpacity(float opacity) {
 		viewport.setOpacity(opacity);
-		grid.setOpacity(opacity);
+		//grid.setOpacity(opacity);
 	}
 
 	public Sprite[][] getSprites() {
 		return sprites;
 	}
 	
-	public boolean isShowingGrid() {
-		return grid != null && grid.isVisible();
-	}
+//	public boolean isShowingGrid() {
+//		return grid != null && grid.isVisible();
+//	}
 	
-	public void setShowingGrid(boolean showing) {
-		if (showing) {
-			if (grid == null)
-				createGrid();
-			grid.setVisible(true);
-		} else {
-			if (grid != null)
-				grid.setVisible(false);
-		}
-	}
+//	public void setShowingGrid(boolean showing) {
+//		if (showing) {
+//			if (grid == null)
+//				createGrid();
+//			grid.setVisible(true);
+//		} else {
+//			if (grid != null)
+//				grid.setVisible(false);
+//		}
+//	}
 	
 	public boolean isVisible() {
 		return viewport.isVisible();
@@ -167,7 +162,7 @@ public class Tilemap {
 			(int)((scrollY + viewport.getHeight()) / tileHeight) != (int)((scrollY + viewport.getHeight() + y) / tileHeight);
 		scrollX += x;
 		scrollY += y;
-		if (grid != null) grid.scroll(x, y);
+		//if (grid != null) grid.scroll(x, y);
 		updateScroll(updateVisible);
 	}
 	
@@ -233,27 +228,27 @@ public class Tilemap {
 	}
 	
 	
-	private void createGrid() {
-		if (Cache.isBitmapRegistered(getGridId())) {
-			gridBitmap = Cache.getRegisteredBitmap(getGridId());
-		} else {
-			gridBitmap = Bitmap.createBitmap(tileWidth, tileHeight, Sprite.defaultConfig);
-			Canvas c = new Canvas();
-			Paint p = new Paint();
-			p.setColor(Color.argb(200, 200, 200, 200));
-			p.setStyle(Style.STROKE);
-			c.setBitmap(gridBitmap);
-			c.drawRect(0, 0, tileWidth, tileHeight, p);
-			c.drawRect(1, 1, tileWidth - 1, tileHeight - 1, p);
-			Cache.RegisterBitmap(getGridId(), gridBitmap);
-		}
-		
-		//grid = new BackgroundSprite(gridBitmap, viewport);
-		grid = new BackgroundSprite(gridBitmap, viewport.getRect(), viewport.getZ());
-		grid.setZ(10);
-	}
+//	private void createGrid() {
+//		if (Cache.isBitmapRegistered(getGridId())) {
+//			gridBitmap = Cache.getRegisteredBitmap(getGridId());
+//		} else {
+//			gridBitmap = Bitmap.createBitmap(tileWidth, tileHeight, Sprite.defaultConfig);
+//			Canvas c = new Canvas();
+//			Paint p = new Paint();
+//			p.setColor(Color.argb(200, 200, 200, 200));
+//			p.setStyle(Style.STROKE);
+//			c.setBitmap(gridBitmap);
+//			c.drawRect(0, 0, tileWidth, tileHeight, p);
+//			c.drawRect(1, 1, tileWidth - 1, tileHeight - 1, p);
+//			Cache.RegisterBitmap(getGridId(), gridBitmap);
+//		}
+//		
+//		//grid = new BackgroundSprite(gridBitmap, viewport);
+//		grid = new BackgroundSprite(gridBitmap, viewport.getRect(), viewport.getZ());
+//		grid.setZ(10);
+//	}
 	
-	private int getGridId() {
-		return this.getClass().hashCode() + tileWidth * (tileHeight + 5);
-	}
+//	private int getGridId() {
+//		return this.getClass().hashCode() + tileWidth * (tileHeight + 5);
+//	}
 }

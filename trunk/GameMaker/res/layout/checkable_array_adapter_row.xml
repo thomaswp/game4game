@@ -6,19 +6,9 @@ android:orientation="horizontal">
 <CheckedTextView
 android:checkMark="?android:attr/listChoiceIndicatorSingle"
 android:layout_width="wrap_content"
-android:layout_height="wrap_content" android:paddingRight="5dip" android:id="@+id/checkedTextView1"/>
-<RelativeLayout 
-android:id="@+id/relativeLayout1" 
-android:layout_height="fill_parent"
-android:layout_width="wrap_content">
+android:layout_height="wrap_content" 
+android:paddingRight="5dip" 
+android:id="@+id/checkedTextView"
+android:layout_gravity="center_vertical"/>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:minWidth="150dip"
-        android:paddingRight="10dip" >
-</TextView>
-</RelativeLayout>
 </edu.elon.honors.price.maker.CheckableLinearLayout>

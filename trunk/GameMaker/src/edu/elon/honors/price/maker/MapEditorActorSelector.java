@@ -48,9 +48,8 @@ public class MapEditorActorSelector extends Activity {
 			Bitmap[] bitmaps = new Bitmap[game.actors.length + 1];
 			bitmaps[0] = BitmapFactory.decodeResource(getResources(), R.drawable.no);
 			for (int i = 0; i < game.actors.length; i++) {
-				ActorClass actor = i == 0 ? game.hero : game.actors[i];
-				Bitmap source = Data.loadActor(actor.imageName);
-				bitmaps[i+1] = Bitmap.createBitmap(source, 0, 0, source.getWidth() / 4, source.getHeight() / 4);
+				ActorClass actor = game.actors[i];
+				bitmaps[i+1] = Data.loadActorIcon(actor.imageName);
 				bitmaps[i+1] = Bitmap.createScaledBitmap(bitmaps[i+1], bitmaps[i+1].getWidth() * 2, bitmaps[i+1].getHeight() * 2, false);
 			}
 			return bitmaps;
@@ -60,8 +59,6 @@ public class MapEditorActorSelector extends Activity {
 		protected String getDescription(int id) {
 			if (id == 0) {
 				return "Remove Actor";
-			} else if (id == 1) {
-				return game.hero.name;
 			} else {
 				return game.actors[id - 1].name;
 			}

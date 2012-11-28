@@ -16,6 +16,7 @@ public class DatabaseEditMapSize extends DatabaseActivity {
 	
 	private Map map;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -67,7 +68,7 @@ public class DatabaseEditMapSize extends DatabaseActivity {
 		
 		synchronized (game) {
 			map.resize(dx, dy, anchorTL, anchorTL, 
-					tileset.tileWidth, tileset.tileHeight);	
+					tileset.tileWidth, tileset.tileHeight);
 		}
 		
 		setMapSizeText();

@@ -95,4 +95,23 @@
     <string name="switch_">Switch</string>
     <string name="variable">Variable</string>
     <string name="test">Test</string>
+    <string name="editHorizon">Edit Horizon</string>
+    <string name="editMidground">Edit Midground</string>
+    <string name="used">Used:</string>
+    <string name="unused">Unused:</string>
+    <string name="add">Add</string>
+    <string name="editSize">Edit Size</string>
+    <string name="dragToScale">Drag to scale:</string>
+    <string name="scale">Scale:</string>
+    <string name="density">Density:</string>
+    <string name="collidesWith">Collides With:</string>
+    <string name="hero">Hero</string>
+    <string name="theGround">The Ground</string>
+    <string name="edit_c">Edit:</string>
+    <string name="background">Background</string>
+    <string name="midground">Midground</string>
+    <string name="size">Size</string>
+    <string name="horizon">Horizon</string>
+    <string name="tileset">Tileset</string>
+    <string name="editBehaviors">Edit Behaviors</string>
 </resources>

@@ -1,7 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Event.VariableTrigger;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.action.EventContext;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,8 +63,10 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 
 		selectorVariableSet.setVariable(trigger.variable);
 
-		spinnerOperator.setAdapter(new ArrayAdapter<String>(this, 
-				android.R.layout.simple_spinner_item, VariableTrigger.OPERATORS));
+		ArrayAdapter<String> adapter =new ArrayAdapter<String>(this, 
+				R.layout.spinner_text, VariableTrigger.OPERATORS);
+		adapter.setDropDownViewResource(R.layout.spinner_text_dropdown);
+		spinnerOperator.setAdapter(adapter);
 		spinnerOperator.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
@@ -80,7 +82,7 @@ public class DatabaseEditTriggerVariable extends DatabaseActivity {
 		radioValue.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Game.debug("changed");
+				Debug.write("changed");
 				selectorVariableTo.setVisibility(isChecked ? View.GONE : View.VISIBLE);
 				editTextValue.setVisibility(!isChecked ? View.GONE : View.VISIBLE);
 				trigger.with = isChecked ? VariableTrigger.WITH_VALUE :

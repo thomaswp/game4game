@@ -173,7 +173,7 @@ public class MapEditor_Old extends Game {
 		Intent intent = new Intent(MapEditor_Old.this, Platformer.class);
 		intent.putExtra("map", gameName);
 		startActivity(intent);
-		Game.debug(System.currentTimeMillis());
+		Debug.write(System.currentTimeMillis());
 	}
 
 	private void save() {

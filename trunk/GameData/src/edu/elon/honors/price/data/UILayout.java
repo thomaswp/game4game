@@ -12,8 +12,8 @@ public class UILayout extends GameData {
 	public LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
 	
 	public UILayout() {
-		buttons.add(new Button(-65, -65, 50, Color.argb(150, 255, 0, 0), true));
-		joysticks.add(new JoyStick(65, -65, 50, Color.argb(150, 0, 0, 255), true));
+		buttons.add(new Button(-80, -80, 65, Color.argb(150, 255, 0, 0), true));
+		joysticks.add(new JoyStick(80, -80, 65, Color.argb(150, 0, 0, 255), true));
 	}
 	
 	public static abstract class CircleControl implements Serializable {

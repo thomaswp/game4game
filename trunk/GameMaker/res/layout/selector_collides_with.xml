@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:paddingRight="5dip">
+        <CheckBox android:id="@+id/checkBoxHero" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/hero"/>
+        <CheckBox android:id="@+id/checkBoxObjects" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/objects"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <CheckBox android:id="@+id/checkBoxActors" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/actors"/>
+        <CheckBox android:id="@+id/checkBoxGround" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/theGround"/>
+    </LinearLayout>
+    
+
+</LinearLayout>

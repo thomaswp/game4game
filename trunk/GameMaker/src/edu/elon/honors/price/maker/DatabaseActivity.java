@@ -1,30 +1,23 @@
 package edu.elon.honors.price.maker;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Vibrator;
+import android.util.TypedValue;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
 
 /**
  * A {@link SaveableActivity} specifically for {@link PlatformGame}
@@ -221,11 +214,11 @@ public class DatabaseActivity extends SaveableActivity {
 					int lid = (Integer)id.get(null);
 					View view = findViewById(lid);
 					if (view == null) {
-						Game.debug("No view with id %s in conent view", name);
+						Debug.write("No view with id %s in conent view", name);
 						continue;
 					}
 					if (!field.getType().isAssignableFrom(view.getClass())) {
-						Game.debug("Cannot assign view of type %s to %s of type %s",
+						Debug.write("Cannot assign view of type %s to %s of type %s",
 								view.getClass().getName(),
 								field.getName(),
 								field.getType().getName());
@@ -233,11 +226,11 @@ public class DatabaseActivity extends SaveableActivity {
 					}
 					field.setAccessible(true);
 					field.set(this, view);
-					//Game.debug("%s successfully assigned!", field.getName());
+					//Debug.write("%s successfully assigned!", field.getName());
 				} catch (Exception e) {
-					Game.debug("Problem with AutoAssign for field %s in class %s",
+					Debug.write("Problem with AutoAssign for field %s in class %s",
 							field.getName(), this.getClass().getName());
-					Game.debug(e);
+					Debug.write(e);
 				}
 			}
 		}
@@ -270,9 +263,9 @@ public class DatabaseActivity extends SaveableActivity {
 	protected boolean hasChanged() {
 		//long time = System.currentTimeMillis();
 		PlatformGame oldGame = (PlatformGame)getIntent().getExtras().getSerializable("game");
-		boolean r = !PlatformGame.areEqual(oldGame, game);
+		boolean r = !GameData.areEqual(oldGame, game);
 		//time = System.currentTimeMillis() - time;
-		//Game.debug("Game compared in " + time + "ms");
+		//Debug.write("Game compared in " + time + "ms");
 		return r;
 	}
 
@@ -284,6 +277,7 @@ public class DatabaseActivity extends SaveableActivity {
 	 * passed back to the parent. This method cannot
 	 * itself be overwritten.
 	 */
+	@Override
 	protected final void finishOk(Intent intent) {
 		onFinishing();
 		intent.putExtra("game", game);
@@ -340,5 +334,12 @@ public class DatabaseActivity extends SaveableActivity {
 		}
 		//}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	
+
+	@Override
+	protected String getPreferenceId() {
+		return game.ID;
 	}
 }

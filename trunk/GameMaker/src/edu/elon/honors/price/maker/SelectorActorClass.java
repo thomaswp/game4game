@@ -59,9 +59,7 @@ public class SelectorActorClass extends Spinner implements IPopulatable {
 		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 		for (int i = 1; i < game.actors.length; i++) {
 			labels.add(game.actors[i].name);
-			String name = game.actors[i].imageName;
-			Bitmap bmp = Data.loadActor(name); 
-			bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
+			Bitmap bmp = Data.loadActorIcon(game.actors[i].imageName);
 			images.add(bmp);
 		}
 		

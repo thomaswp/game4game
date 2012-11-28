@@ -6,7 +6,7 @@ import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
 
-public class Button {
+public class Button extends UIControl {
 	private Viewport viewport;
 	private float radius;
 	private Vector center, touch, dragStart, pull, temp;
@@ -80,7 +80,7 @@ public class Button {
 			} else {
 				top.setVisible(true);
 			}
-			//Game.debug(pull);
+			//Debug.write(pull);
 		} else {
 			if (pid >= 0) {
 				released = true;
@@ -91,7 +91,13 @@ public class Button {
 		}
 	}
 	
+	@Override
 	public void setVisible(boolean visible) {
 		outer.setVisible(visible);
+	}
+
+	@Override
+	public boolean isVisible() {
+		return outer.isVisible();
 	}
 }

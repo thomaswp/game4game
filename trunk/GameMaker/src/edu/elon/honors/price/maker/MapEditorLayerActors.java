@@ -1,30 +1,55 @@
 package edu.elon.honors.price.maker;
 
+import java.util.ArrayList;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.Style;
+import android.graphics.RectF;
 import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.maker.MapEditorView;
 
-public class MapEditorLayerActors extends MapEditorLayer {
+public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance> {
 
 	private Bitmap[] actors, darkActors;
+	private Bitmap clear; 
+
+	@Override
+	public void setGame(PlatformGame game) {
+		super.setGame(game);
+		this.actors = parent.actors;
+		this.darkActors = parent.darkActors;
+	}
 
 	public MapEditorLayerActors(MapEditorView parent) {
 		super(parent);
 		this.actors = parent.actors;
 		this.darkActors = parent.darkActors;
+		this.clear = BitmapFactory.decodeResource(
+				parent.getContext().getResources(), R.drawable.no);
 		paint.setTextSize(12);
 		paint.setAntiAlias(true);
 	}
 
+	private int getTouchedRow(float touchY) {
+		Tileset tileset = game.getMapTileset(map);
+		int tileHeight = tileset.tileHeight;
+		return Math.round((touchY - parent.offY) / tileHeight - 0.5f);
+	}
+
+	private int getTouchedCol(float touchX) {
+		Tileset tileset = game.getMapTileset(map);
+		int tileWidth = tileset.tileWidth;
+		return Math.round((touchX - parent.offX) / tileWidth - 0.5f);
+	}
+
 	@Override
-	public void drawContent(Canvas c) {
+	public void drawContentNormal(Canvas c) {
 		if (touchDown && showPreview) {
 			Tileset tileset = game.getMapTileset(map);
 			int tileWidth = tileset.tileWidth;
@@ -32,17 +57,11 @@ public class MapEditorLayerActors extends MapEditorLayer {
 
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Style.FILL);
-			Bitmap bmp = parent.actorImage;
+			Bitmap bmp = getSelection();
 
-			int x = (int)(touchX - bmp.getWidth() / 2);
-			int edgeX = (int)parent.offX % tileWidth;
-			x = (x - edgeX + tileWidth / 2) / tileWidth;
-			x = x * tileWidth + edgeX + (tileWidth - bmp.getWidth()) / 2;
+			float x = getTouchedCol(touchX) * tileWidth + parent.offX + (tileWidth - bmp.getWidth()) / 2;
+			float y = getTouchedRow(touchY) * tileHeight + parent.offY + (tileHeight - bmp.getHeight());
 
-			int y = (int)(touchY - bmp.getHeight() / 2);
-			int edgeY = (int)parent.offY % tileHeight;
-			y = (y - edgeY + tileHeight / 2) / tileHeight;
-			y = y * tileHeight + edgeY  + (tileHeight- bmp.getHeight()) / 2;
 
 			c.drawRect(x, y, x + bmp.getWidth(), y + bmp.getHeight(), paint);
 			c.drawBitmap(bmp, x, y, paint);
@@ -50,7 +69,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	}
 
 	@Override
-	public void drawLayer(Canvas c, DrawMode mode) {
+	public void drawLayerNormal(Canvas c, DrawMode mode) {
 		Tileset tileset = game.tilesets[map.tilesetId];
 
 		for (int i = 0; i < map.actorLayer.rows; i++) {
@@ -63,7 +82,7 @@ public class MapEditorLayerActors extends MapEditorLayer {
 				if (actorClass > -1) {
 					Bitmap bmp = mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
 					float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
-					float sy = (tileset.tileHeight - bmp.getHeight()) / 2f;
+					float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
 					float dx = x + getOffX() + sx;
 					float dy = y + getOffY() + sy;
 
@@ -80,36 +99,26 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	}
 
 	@Override
-	public void refreshSelection() {
-		int id = parent.actorSelection;
-		if (id == -1) {
-			parent.actorImage = BitmapFactory.decodeResource(
-					parent.getContext().getResources(), R.drawable.no);
-			return;
-		}
-		ActorClass actor = id == 0 ? game.hero : game.actors[id]; 
-		Bitmap bmp = Data.loadActor(actor.imageName);
-		bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth() / 4, bmp.getHeight() / 4);
-		parent.actorImage = bmp;
-	}
+	public void refreshSelection() { }
 
 	@Override
 	public Bitmap getSelection() {
-		return parent.actorImage;
+		if (parent.actorSelection == -1) {
+			if (clear == null) {
+				clear = BitmapFactory.decodeResource(
+						parent.getContext().getResources(), R.drawable.no);
+			}
+			return clear;
+		}
+		return parent.actors[parent.actorSelection];
 	}
 
 	@Override
-	public void onTouchUp(float x, float y) {
-		super.onTouchUp(x, y);
-
-		Tileset tileset = game.getMapTileset(map);
-		int tileWidth = tileset.tileWidth;
-		int tileHeight = tileset.tileHeight;
-		Bitmap bmp = parent.actorImage;
+	public void onTouchUpNormal(float x, float y) {
 
 		final int newClass = parent.actorSelection;
-		final int row = (int)(y - parent.offY - bmp.getHeight() / 2 + tileHeight / 2) / tileHeight;
-		final int col = (int)(x - parent.offX - bmp.getWidth() / 2 + tileWidth / 2) / tileWidth;
+		final int row = getTouchedRow(touchY);
+		final int col = getTouchedCol(touchX);
 		final int oldClass = map.getActorType(row, col);
 
 		//int previousId = game.getSelectedMap().actorLayer.tiles[row][col];
@@ -162,14 +171,54 @@ public class MapEditorLayerActors extends MapEditorLayer {
 	}
 
 	@Override
-	protected Bitmap loadEditIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.edit);
+	protected void loadEditIcons() {
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.edit));
+//		editIcons.add(
+//				BitmapFactory.decodeResource(parent.getResources(),
+//						R.drawable.no));
 	}
 
 	@Override
-	protected Bitmap loadEditAltIcon() {
-		return BitmapFactory.decodeResource(parent.getResources(),
-				R.drawable.edit);
+	protected ArrayList<ActorInstance> getAllItems() {
+		return map.actors;
+	}
+
+	@Override
+	protected void getDrawBounds(ActorInstance item, RectF bounds) {
+		Tileset tileset = game.getMapTileset(map);
+		
+		Bitmap bmp = actors[item.classIndex];
+		float x = item.column * tileset.tileWidth;
+		float y = item.row * tileset.tileHeight;
+		float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
+		float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
+		float dx = x + getOffX() + sx;
+		float dy = y + getOffY() + sy;
+		
+		bounds.set(dx, dy, dx + bmp.getWidth(), dy + bmp.getHeight());
+	}
+
+	@Override
+	protected Bitmap getBitmap(ActorInstance item, DrawMode mode) {
+		int actorClass = item.classIndex;
+		return mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
+	}
+
+	@Override
+	protected void shiftItem(ActorInstance item, float offX, float offY) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void delete(ActorInstance item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void add(ActorInstance item) {
 	}
 }

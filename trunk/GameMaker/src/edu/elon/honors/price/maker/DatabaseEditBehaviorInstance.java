@@ -6,24 +6,18 @@ import java.util.List;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
-import edu.elon.honors.price.data.types.Switch;
-import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.action.Element;
 import edu.elon.honors.price.maker.action.ElementBoolean;
 import edu.elon.honors.price.maker.action.ElementNumber;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -35,14 +29,19 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 	private List<Element> elements;
 	private View root;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.database_edit_behavior_instance);
 		setDefaultButtonActions();
 
 		instance = (BehaviorInstance)getExtra("instance");
-
 		Behavior behavior = instance.getBehavior(game);
+		
+		String name = TextUtils.getColoredText(behavior.name, 
+				TextUtils.COLOR_ACTION);
+		((TextView)findViewById(R.id.textViewTitle)).setText(
+				Html.fromHtml("Edit " + name + "'s Parameters"));
 
 		int id = 100;
 
@@ -106,7 +105,7 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 	@Override
 	protected boolean hasChanged() {
 		BehaviorInstance old = (BehaviorInstance)getExtra("instance");
-		Game.debug("%s vs %s", instance.toString(), old.toString());
+		Debug.write("%s vs %s", instance.toString(), old.toString());
 		return !instance.equals(old) || super.hasChanged(); 
 	}
 	

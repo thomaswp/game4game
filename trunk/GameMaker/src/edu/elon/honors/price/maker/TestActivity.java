@@ -1,34 +1,47 @@
 package edu.elon.honors.price.maker;
 
-import android.app.Activity;
-import android.app.TabActivity;
-import android.content.Intent;
+import java.util.ArrayList;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class TestActivity extends DatabaseActivity {
-	public SelectorSwitch ss;
-	public SelectorVariable sv;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		ss = new SelectorSwitch(this);
-		ss.populate(game);
-		sv = new SelectorVariable(this);
-		sv.populate(game);
 		LinearLayout layout = new LinearLayout(this);
-		layout.addView(ss);
-		layout.addView(sv);
+		layout.setBackgroundColor(Color.WHITE);
+		
+		ListView lv = new ListView(this);
+		layout.addView(lv);
+		ArrayList<String> items = new ArrayList<String>();
+		String[] itemsA =
+		"Hello this is a bunch of words and I think you should use them".split(" ");
+		for (String item : itemsA) items.add(item);
+		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		lv.setAdapter(new MyAdapter(this, R.layout.spinner_text, items));
+		
 		setContentView(layout);
 	}
 	
-	public void onActivityResult(int requestCode, 
-			int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK) {
-			ss.onActivityResult(requestCode, data);
-			sv.onActivityResult(requestCode, data);
+	private static class MyAdapter extends CheckableArrayAdapter<String> {
+
+		public MyAdapter(Context context, int listItemResourceId,
+				ArrayList<String> items) {
+			super(context, listItemResourceId, items);
 		}
+
+		@Override
+		protected void setRow(int position, String item, View view) {
+			((TextView)view).setText(item);
+		}
+		
 	}
+	
 }

@@ -1,76 +1,91 @@
 package edu.elon.honors.price.maker;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
-public class CheckableArrayAdapter extends ArrayAdapter<String> {
+public abstract class CheckableArrayAdapter<T> extends ArrayAdapter<T> {
 	
-	ArrayList<String> items;
+	List<T> items;
+	int childResource;
+	LayoutInflater inflater;
 	
-	public CheckableArrayAdapter(Context context, int textViewResourceId, ArrayList<String> items) {
-		super(context, textViewResourceId, items);
+	protected abstract void setRow(int position, T item, View view);
+	
+	private static <S> List<S> toList(S[] array) {
+		LinkedList<S> list = new LinkedList<S>();
+		for (S item : array) list.add(item);
+		return list;
+	}
+	private static <S> List<S> copyList(List<S> oldList) {
+		LinkedList<S> list = new LinkedList<S>();
+		for (S item : oldList) list.add(item);
+		return list;
+	}
+	
+	public CheckableArrayAdapter(Context context, int listItemResourceId, T[] items) {
+		this(context, listItemResourceId, toList(items));
+	}
+	
+	public CheckableArrayAdapter(Context context, int listItemResourceId, List<T> items) {
+		super(context, 0, (items = copyList(items)));
 		this.items = items;
+		
+		childResource = listItemResourceId;
+		inflater = ((Activity)getContext()).getLayoutInflater();
 	}
 	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-		View row=inflater.inflate(R.layout.checkable_array_adapter_row, parent, false);
-		setRow(row, getItem(position));
-		return row;
+	public View getView(final int position, View convertView, ViewGroup parent) {
+		
+		if (convertView == null) {
+			convertView = inflater.inflate(R.layout.checkable_array_adapter_row, parent, false);
+		}
+		CheckableLinearLayout checkable = (CheckableLinearLayout)convertView;
+		
+		View child = null;
+		if (checkable.getChildCount() == 2) {
+			child = checkable.getChildAt(1);
+		} else {
+			child = inflater.inflate(childResource, null);
+			LayoutParams lps = new LayoutParams(
+					LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT);
+			lps.gravity = Gravity.CENTER_VERTICAL;
+			checkable.addView(child, lps);
+		}
+		setRow(position, getItem(position), child);
+		
+		return convertView;
 	}		
 
-	public void addItem(String item) {
-		items.add(item);
-		notifyDataSetChanged();
-	}
+//	public void addItem(T item) {
+//		items.add(item);
+//		notifyDataSetChanged();
+//	}
+//	
+//	public T removeItem(int index) {
+//		T s = items.remove(index);
+//		notifyDataSetChanged();
+//		return s;
+//	}
+//	
+//	public void insertItem(T item, int index) {
+//		items.add(index, item);
+//		notifyDataSetChanged();
+//	}
 	
-	public String removeItem(int index) {
-		String s = items.remove(index);
-		notifyDataSetChanged();
-		return s;
-	}
-	
-	public void insertItem(String item, int index) {
-		items.add(index, item);
-		notifyDataSetChanged();
-	}
-	
-	public void replaceItem(int index, String newItem) {
+	public void replaceItem(int index, T newItem) {
 		items.remove(index);
 		items.add(index, newItem);
 		notifyDataSetChanged();
-	}
-	
-//	public static int getSelectedId(ListView listView) {
-//		for (int i = 0; i < listView.getChildCount(); i++) {
-//			if (listView.getChildAt(i) instanceof Checkable) {
-//				if (((Checkable)listView.getChildAt(i)).isChecked()) {
-//					return i + listView.getFirstVisiblePosition();
-//				}
-//			}
-//		}
-//		return -1;
-//	}
-//	
-//	public static void setSelectedId(ListView listView, int id) {
-//		for (int i = 0; i < listView.getChildCount(); i++) {
-//			if (listView.getChildAt(i) instanceof Checkable && i == id) {
-//				((Checkable)listView.getChildAt(i)).setChecked(true);
-//			}
-//		}
-//	}
-
-	private static void setRow(View row, String string) {
-		TextView label=(TextView)row.findViewById(R.id.textView);
-		label.setText(string);
-		label.setTextSize(20);
 	}
 }

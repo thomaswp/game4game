@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
@@ -24,6 +25,11 @@ public class ObjectBody extends PlatformBody {
 
 	private ObjectClass object;
 
+	@Override
+	protected MapClass getMapClass() {
+		return object;
+	}
+	
 	public ObjectClass getObject() {
 		return object;
 	}
@@ -38,7 +44,6 @@ public class ObjectBody extends PlatformBody {
 		super(viewport, physics, id, startX, startY);
 
 		this.object = object;
-		//object.zoom = 1f;
 		
 		behaviorRuntimes = new BehaviorRuntime[object.behaviors.size()];
 		for (int i = 0; i < behaviorRuntimes.length; i++) {
@@ -72,7 +77,7 @@ public class ObjectBody extends PlatformBody {
 //					path.lineTo(xs[i], ys[i]);
 //				first = false;
 //			}
-//			//Game.debug("(%f,%f)", xs[i], ys[i]);
+//			//Debug.write("(%f,%f)", xs[i], ys[i]);
 //		}
 //		path.close();
 //		Paint paint = new Paint();
@@ -89,7 +94,7 @@ public class ObjectBody extends PlatformBody {
 						(xs[i] - bitmap.getWidth() / 2) / SCALE * object.zoom, 
 						(ys[i] - bitmap.getHeight() / 2) / SCALE * object.zoom
 				);
-				//Game.debug(points[pi]);
+				//Debug.write(points[pi]);
 				pi--;
 			}
 		}
@@ -97,7 +102,7 @@ public class ObjectBody extends PlatformBody {
 		poly.set(points);
 		FixtureDef fixture = new FixtureDef();
 		fixture.shape = poly;
-		fixture.density = 1;
+		fixture.density = getDensity(object.density);
 		fixture.friction = 1;
 		fixture.restitution = 0.5f;
 		body.createFixture(fixture);
@@ -121,10 +126,5 @@ public class ObjectBody extends PlatformBody {
 		if (!object.fixedRotation) {
 			sprite.setRotation(body.getAngle() * 180 / (float)Math.PI);
 		}
-	}
-
-	@Override
-	protected boolean collidesWith(PlatformBody body) {
-		return true;
 	}
 }

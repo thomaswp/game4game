@@ -1,21 +1,19 @@
-<action id="1" name="Set Variable">
+<action id="1" name="Set Variable" category="Variables">
 
 	<text text="For" />
 
-	<radio>
+	<radio name="set">
 		<choice text="one variable">
 			<variable scope="Global|Local" />
 		</choice>
 		<choice text="all variables from">
-			<group>
-				<variable scope="Global" />
-				<text text="to" />
-				<variable scope="Global" />
-			</group>
+			<variable name="from" scope="Global" />
+			<text text="to" />
+			<variable name="to" scope="Global" />
 		</choice>
 	</radio>
 
-	<radio>
+	<radio name="operation">
 		<choice text="set it to" />
 		<choice text="add" />
 		<choice text="subtract" />
@@ -24,7 +22,7 @@
 		<choice text="mod by" />	
 	</radio>
 
-	<radio>
+	<radio name="with">
 		<choice text="the value">
 			<exactNumber />
 		</choice>
@@ -43,9 +41,9 @@
 			<description text=":" />
 			<actorInstance />
 			<description text=";" />
-			<radio>
-				<choice text="x-coordinate" />
-				<choice text="y-coordinate" />
+			<radio name="coordinate">
+				<choice name="x" text="x-coordinate" />
+				<choice name="y" text="y-coordinate" />
 			</radio>
 		</choice>
 		

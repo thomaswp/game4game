@@ -8,6 +8,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.Paint.Style;
+import android.util.FloatMath;
 import edu.elon.honors.price.input.Input;
 
 public abstract class ScrollingImageSelectorView extends BasicCanvasView {
@@ -95,13 +96,13 @@ public abstract class ScrollingImageSelectorView extends BasicCanvasView {
 			if (i == selectedId) {
 				paint.setStyle(Style.FILL);
 				paint.setColor(Color.BLACK);
-				paint.setTextSize(36);
+				paint.setTextSize(Screen.spToPx(20, getContext()));
 				float ty = paint.getTextSize();
 				c.drawText(getDescription(i), 5, ty, paint);
 
 				if (visible) {
 					String text = "Tap again to select";
-					paint.setTextSize(18);
+					paint.setTextSize(Screen.spToPx(14, getContext()));
 					c.drawText(text, width - paint.measureText(text) - 5, 
 							height - 5, paint);
 				}
@@ -145,7 +146,7 @@ public abstract class ScrollingImageSelectorView extends BasicCanvasView {
 
 				float dx = Input.getDistanceTouchX();
 				float dy = Input.getDistanceTouchY();
-				if (Math.sqrt(dx * dx + dy * dy) < 15) {
+				if (FloatMath.sqrt(dx * dx + dy * dy) < 15) {
 					doTouch(Input.getLastTouchX(), Input.getLastTouchY());
 				}
 			}

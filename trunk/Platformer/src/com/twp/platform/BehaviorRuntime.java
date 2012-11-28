@@ -1,9 +1,6 @@
 package com.twp.platform;
 
-import java.util.LinkedList;
-
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 

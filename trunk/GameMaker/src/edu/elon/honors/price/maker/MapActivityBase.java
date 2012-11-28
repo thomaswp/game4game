@@ -2,15 +2,16 @@ package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
 import android.graphics.Paint.Style;
+import android.graphics.Shader.TileMode;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.Window;
@@ -20,7 +21,7 @@ import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.game.Cache;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
 
 public abstract class MapActivityBase extends SaveableActivity {
@@ -30,6 +31,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 	public static final int SELECTION_BORDER_COLOR = 
 		Color.argb(255, 50, 50, 255);
 	public static final int SELECTION_BORDER_WIDTH = 2;
+	
+	public static final int BUTTON_TEXT_SIZE = 18;
+	
+	private static final boolean DEBUG_FPS = true;
 
 	protected PlatformGame game;
 	protected MapView view;
@@ -60,6 +65,17 @@ public abstract class MapActivityBase extends SaveableActivity {
 		outState.putSerializable("game", game);
 		view.onSaveInstanceState(outState);
 	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		view.pause();
+	}
+	
+	public void onResume() {
+		super.onResume();
+		view.resume();
+	}
 
 	protected abstract MapView getMapView(PlatformGame game, Bundle savedInstanceState);
 
@@ -77,9 +93,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 		protected boolean moving;
 		protected Bitmap[] tiles, actors, objects;
 		protected Bitmap grid;
+		private Bitmap bgBmp;
+		private Bitmap midgrounds;
 		protected ArrayList<Button> buttons;
 
 		public int getButtonRad() {
+			//return toPx(65);
 			return height / 5;
 		}
 
@@ -92,15 +111,21 @@ public abstract class MapActivityBase extends SaveableActivity {
 			this.game = game;
 			paint = new Paint();
 
+			refresh();
+			
+			if (savedInstanceState != null) {
+				onLoadInstanceState(savedInstanceState);
+			}
+		}
+		
+		public void refresh() {
 			Tileset tileset = game.tilesets[game.getSelectedMap().tilesetId];
 			Bitmap tilesetBmp = Data.loadTileset(tileset.bitmapName, getContext());
 			tiles = createTiles(tilesetBmp, tileset.tileWidth, tileset.tileHeight, 0);
 			createActors();
 			createObjects();
-			
-			if (savedInstanceState != null) {
-				onLoadInstanceState(savedInstanceState);
-			}
+			bgBmp = null;
+			midgrounds = null;
 		}
 		
 		protected void onLoadInstanceState(Bundle savedInstanceState) {
@@ -158,28 +183,39 @@ public abstract class MapActivityBase extends SaveableActivity {
 			}
 		}
 
-		protected void doOriginBounding(int width, int height) {
-			if (offX > 0) {
-				startDragOffX -= offX;
-				offX = 0;
+		protected void doOriginBounding(int mapWidth, int mapHeight) {
+			if (mapWidth < width) {
+				offX = (width - mapWidth) / 2;
+			} else {
+				float edgeX = 0;
+				if (offX > edgeX) {
+					startDragOffX += edgeX - offX;
+					offX = edgeX;
+				}
+				edgeX = Math.min(edgeX, this.width - mapWidth);
+				if (offX < edgeX) {
+					startDragOffX += edgeX - offX; 
+					offX = edgeX;
+				}
 			}
-			float edgeX = this.width - width;
-			if (offX < edgeX) {
-				startDragOffX += edgeX - offX; 
-				offX = edgeX;
-			}
-			if (offY > 0) {
-				startDragOffY -= offY;
-				offY = 0;
-			}
-			float edgeY = this.height - height;
-			if (offY < edgeY) {
-				startDragOffY += edgeY - offY; 
-				offY = edgeY;
+			
+			if (mapHeight < height) {
+				offY = (height - mapHeight) / 2;
+			} else {
+				float edgeY = 0;
+				if (offY > edgeY) {
+					startDragOffY += edgeY - offY;
+					offY = edgeY;
+				}
+				edgeY = Math.min(edgeY, this.height - mapHeight);
+				if (offY < edgeY) {
+					startDragOffY += edgeY - offY; 
+					offY = edgeY;
+				}
 			}
 		}
 
-		protected abstract void doUpdate(int width, int height, float x, float y);
+		protected abstract void doUpdate(int mapWidth, int mapHeight, float x, float y);
 
 		protected void createButtons() { }
 
@@ -190,68 +226,138 @@ public abstract class MapActivityBase extends SaveableActivity {
 				createButtons();
 			}
 
-			int width = game.getMapWidth(game.getSelectedMap());
-			int height = game.getMapHeight(game.getSelectedMap());
+			int mapWidth = game.getMapWidth(game.getSelectedMap());
+			int mapHeight = game.getMapHeight(game.getSelectedMap());
 
 			float x = Input.getLastTouchX();
 			float y = Input.getLastTouchY();
 
-			doUpdate(width, height, x, y);
+			doUpdate(mapWidth, mapHeight, x, y);
 		}
 
+		private BitmapShader transShader;
 		@Override
 		public void onDraw(Canvas c) {
 			if (width == 0 || height == 0) return;
 			if (grid == null) createGrid();
 
+			updateFPS();
+			
+			if (transShader == null) {
+				Bitmap transBg = Data.loadEditorBmp("trans.png");
+				transShader = new BitmapShader(transBg, 
+						TileMode.REPEAT, TileMode.REPEAT);
+			}
+
 			c.drawColor(Color.WHITE);
-
-
-			synchronized (game) {
+			
+			int mapHeight = game.getMapHeight(game.getSelectedMap());
+			if (mapHeight < height) {
+				paint.setShader(transShader);
+				paint.setAlpha(getBackgroundTransparency());
+				c.drawRect(0,  mapHeight - 1, width, height, paint);
+				paint.setShader(null);
+			}
+			
+			synchronized (game) {	
 				drawBackground(c);
 				drawContent(c);
 				drawGrid(c);
 				drawButtons(c);
 			}
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
+		int frames = 0;
+		long lastUpdate = System.currentTimeMillis();
+		
+		private void updateFPS() {
+			frames++;
+			long passed = System.currentTimeMillis() - lastUpdate;
+			if (passed > 1000) {
+				int fps = (int)(frames * 1000 / passed);
+				if (DEBUG_FPS)
+					Debug.write("%d fps", fps);
+				
+				while (lastUpdate + 1000 < System.currentTimeMillis()) {
+					lastUpdate += 1000;
+				}
+				frames = 0;
+			}
+		}
+		
 		protected abstract void drawContent(Canvas c);
 
 		protected int getBackgroundTransparency() {
 			return 80;
 		}
 
-		protected void drawBackground(Canvas c) {
+		protected void drawBackground(Canvas canvas) {
+			if (bgBmp == null || bgBmp.getWidth() != width ||
+					bgBmp.getHeight() != height) {
+				bgBmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+			}
+			//Canvas canvas = new Canvas(bgBmp);
+//			canvas.drawColor(Color.WHITE);
+			
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 			int mapWidth = tileset.tileWidth * map.columns;
 			int mapHeight = tileset.tileHeight * map.rows;
-
+			
+			paint.setColor(Color.WHITE);
+			paint.setStyle(Style.FILL);
+			//should be main canvas whether rendering offscreen or not
+			canvas.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
+			canvas.drawRect(0, 0, width, (int)offY + mapHeight, paint);
+			
+			
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
-			int pOffY = (int)(paralax * offY);
-
+			float mOffY = offY + mapHeight - height;
+			int pOffY = (int)(paralax * mOffY);
+			if (offY > 0) pOffY = (mapHeight - height) / 2;
+			
+			int endWidth = Math.max(mapWidth, width);
+			
 			paint.reset();
 			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
-			int fgHeight = mapHeight - map.groundY;
-			for (int i = 0; i < mapWidth; i += foreground.getWidth()) {
-				c.drawBitmap(foreground, i + pOffX, fgHeight + pOffY, paint);
+			int fgHeight = height - map.groundY;
+			for (int i = -foreground.getWidth(); i < endWidth; i += foreground.getWidth()) {
+				int x = i + pOffX, y = fgHeight + pOffY;
+				canvas.drawBitmap(foreground, x, y, paint);
 			}
 			Bitmap background = Data.loadBackground(map.skyImageName);
 			int bgHeight = fgHeight - background.getHeight();
-			for (int i = 0; i < mapWidth; i += background.getWidth()) {
+			for (int i = -background.getWidth(); i < endWidth; i += background.getWidth()) {
 				for (int j = bgHeight; j > -mapHeight; j -= background.getHeight()) {
-					c.drawBitmap(background, i + pOffX, j + pOffY, paint);
+					canvas.drawBitmap(background, i + pOffX, j + pOffY, paint);
 				}
 			}
-			int mgHeight = bgHeight + 80;
-			for (int j = 0; j < map.midGrounds.size(); j++) {
-				Bitmap midground = Data.loadMidground(map.midGrounds.get(j));
-				for (int i = 0; i < mapWidth; i += midground.getWidth()) {
-					c.drawBitmap(midground, i + pOffX, mgHeight + pOffY, paint);
+			
+			if (map.midGrounds.size() > 0 && midgrounds == null) {
+				createMidgrounds();
+			}
+			
+			if (midgrounds != null) {
+				int mgHeight = fgHeight - foreground.getHeight();
+				for (int i = -midgrounds.getWidth(); i < endWidth; i += midgrounds.getWidth()) {
+					canvas.drawBitmap(midgrounds, i + pOffX, mgHeight + pOffY, paint);
 				}
 			}
+			
+			//paint.setAlpha(getBackgroundTransparency());
+			//c.drawBitmap(bgBmp, 0, 0, paint);
+		}
+		
+		protected void createMidgrounds() {
+			midgrounds = Data.loadMidgrounds(
+					game.getSelectedMap().midGrounds);
 		}
 
 		protected void drawButtons(Canvas c) {
@@ -264,10 +370,31 @@ public abstract class MapActivityBase extends SaveableActivity {
 		}
 
 		protected void drawGrid(Canvas c) {
+		
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
-			paint.setAlpha(200);
-			c.drawBitmap(grid, offX % tileset.tileWidth, offY % tileset.tileHeight, paint);
+			
+			
+			float minX = Math.max(0, offX), minY = Math.max(0, offY);
+			float maxX = Math.min(width, map.width(game) + offX);
+			float maxY = Math.min(height, map.height(game) + offY);
+			paint.setColor(Color.argb(123, 123, 123, 123));
+			paint.setStrokeWidth(2);
+			paint.setStyle(Style.STROKE);
+			
+			for (int i = 0; i <= map.columns; i++) {
+				float x = offX + i * tileset.tileWidth;
+				if (x < minX || x > maxX) continue;
+				c.drawLine(x, minY, x, maxY, paint);
+			}
+
+			for (int i = 0; i < map.rows; i++) {
+				float y = offY + i * tileset.tileHeight;
+				if (y < minY || y > maxY) continue;
+				c.drawLine(minX, y, maxX, y, paint);
+			}
+			
+			paint.setStyle(Style.FILL);
 		}
 
 		private void createGrid() {
@@ -280,10 +407,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int cols = this.width / tileWidth + 2;
 			int rows = this.height / tileHeight + 2;
 
+			cols = 1; rows = 1;
+			
 			int width = cols * tileWidth;
 			int height = rows * tileHeight;
 
-			grid = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+			Bitmap grid = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 
 			Canvas c = new Canvas();
 			c.setBitmap(grid);
@@ -299,28 +428,40 @@ public abstract class MapActivityBase extends SaveableActivity {
 					c.drawRect(x + 1, y + 1, x + tileWidth - 1, y + tileHeight - 1, paint);
 				}
 			}
+			
+			this.grid = grid;
 		}
 
-		private void createActors() {
+		protected void createActors() {
 			actors = new Bitmap[game.actors.length];
-			actors[0] = Data.loadActor(game.hero.imageName);
-			for (int i = 1; i < actors.length; i++) {
-				actors[i] = Data.loadActor(game.actors[i].imageName);
-			}
 			for (int i = 0; i < actors.length; i++) {
-				actors[i] = Bitmap.createBitmap(actors[i], 0, 0, 
-						actors[i].getWidth() / 4, actors[i].getHeight() / 4);
+				actors[i] = createActor(i, game);
 			}
 		}
+		
+		protected Bitmap createActor(int index, PlatformGame game) {
+			Bitmap bmp = Data.loadActorIcon(game.actors[index].imageName);
+			bmp = Bitmap.createScaledBitmap(bmp,
+					(int)(bmp.getWidth() * game.actors[index].zoom),
+					(int)(bmp.getHeight() * game.actors[index].zoom),
+					true);
+			return bmp;
+		}
 
-		private void createObjects() {
+		protected void createObjects() {
 			objects = new Bitmap[game.objects.length];
 			for (int i = 0; i < objects.length; i++) {
-				objects[i] = Data.loadObject(game.objects[i].imageName);
-				objects[i] = Bitmap.createScaledBitmap(objects[i], 
-						(int)(objects[i].getWidth() * game.objects[i].zoom), 
-						(int)(objects[i].getHeight() * game.objects[i].zoom), true);
+				objects[i] = createObject(i, game);
 			}
+		}
+		
+		protected Bitmap createObject(int index, PlatformGame game) {
+			Bitmap bmp = Data.loadObject(game.objects[index].imageName);
+			bmp = Bitmap.createScaledBitmap(bmp,
+					(int)(bmp.getWidth() * game.objects[index].zoom),
+					(int)(bmp.getHeight() * game.objects[index].zoom),
+					true);
+			return bmp;
 		}
 
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId, 
@@ -431,7 +572,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			);
 		}
 
-		protected static class Button {
+		protected class Button {
 			public int cx, cy, radius;
 			float ctx, cty;
 			public String text;
@@ -520,7 +661,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				if (!down && !opaque) {
 					paint.setAlpha((int)(255 * alphaFactor));
 				}
-				paint.setTextSize(20);
+				paint.setTextSize(Screen.dipToPx(BUTTON_TEXT_SIZE, getContext()));
 				paint.setAntiAlias(true);
 				float textSize = paint.measureText(text);
 				float textX = ctx - textSize / 2;

@@ -89,20 +89,16 @@
                             android:id="@+id/textView3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/zoom"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                            android:text="@string/scale" android:textAppearance="?android:attr/textAppearanceSmall"/>
 
                         <Button
-                            android:id="@+id/buttonEditZoom"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/edit" />
+                            android:id="@+id/buttonScale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/edit"/>
                     </TableRow>
 
                     <TableRow
                         android:id="@+id/tableRow5"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content" android:visibility="gone">
 
                         <TextView
                             android:id="@+id/textView4"
@@ -115,6 +111,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/edit" />
+                    </TableRow>
+                    <TableRow android:id="@+id/tableRow6" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="visible">
+                        <TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:text="@string/density"/>
+                        <SeekBar android:id="@+id/seekBarDensity" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                    </TableRow>
+                    <TableRow android:id="@+id/tableRow7" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="visible">
+                        <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:text="@string/collidesWith"/>
+                        <edu.elon.honors.price.maker.SelectorCollidesWith android:id="@+id/selectorCollidesWith" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorCollidesWith>
                     </TableRow>
                 </TableLayout>
 

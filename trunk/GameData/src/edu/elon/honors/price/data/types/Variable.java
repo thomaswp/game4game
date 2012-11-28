@@ -1,9 +1,7 @@
 package edu.elon.honors.price.data.types;
 
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Behavior.ParameterType;
 
 public class Variable extends ScopedData {
 	private static final long serialVersionUID = 1L;

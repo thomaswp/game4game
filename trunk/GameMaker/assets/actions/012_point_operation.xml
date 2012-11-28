@@ -1,29 +1,29 @@
-<action id="12" name="Point Operation">
+<action id="12" name="Point Operation" category="Variables">
 
 	<text text="For the point" />
 	
-	<variablePoint scope="Global|Local" />
+	<variablePoint name="point" scope="Global|Local" />
 	
-	<radio>
+	<radio name="operator">
 		<choice text="set it to" />
 		<choice text="add" />
 		<choice text="subtract" />
 	</radio>
 	
-	<radio>
+	<radio name="with">
 		<choice text="point" mute="true">
 			<point />
 		</choice>
 		<choice text="vector" mute="true">
 			<vector />
 			<text text="with the magnitude" />
-			<number />
+			<number name="magnitude" />
 		</choice>
-		<choice text="actor" mute="true">
+		<choice name="actorLocation" text="actor" mute="true">
 			<text text="the location of" />
 			<actorInstance />
 		</choice>
-		<choice text="object" mute="true">
+		<choice name="objectLocation" text="object" mute="true">
 			<text text="the location of" />
 			<objectInstance />
 		</choice>

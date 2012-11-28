@@ -1,9 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.maker.action.EventContext;
@@ -64,7 +62,16 @@ public class SelectorSwitch extends Button implements IPopulatable{
 		_switch = aSwitch;
 		Behavior behavior = eventContext == null ?
 				null : eventContext.getBehavior();
+		validateSwitch();
 		setText(_switch.getName(game, behavior));
+	}
+	
+	private void validateSwitch() {
+		Behavior behavior = eventContext == null ?
+				null : eventContext.getBehavior();
+		if (_switch.scope != DataScope.Global) {
+			if (behavior == null) _switch = new Switch();
+		}
 	}
 		
 	public SelectorSwitch(Context context) {

@@ -1,4 +1,4 @@
-<action id="8" name="Create Object">
+<action id="8" name="Create Object" category="Object">
 
 	<text text="Create a" />
 	<objectClass />

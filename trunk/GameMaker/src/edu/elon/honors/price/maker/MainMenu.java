@@ -11,14 +11,14 @@ import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Game;
-
+import edu.elon.honors.price.game.Debug;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings.Secure;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -65,14 +65,14 @@ public class MainMenu extends Activity {
 					}
 				}
 			} catch (Exception ex) { 
-				Game.debug("Could not create resource directory on SD Card");
+				Debug.write("Could not create resource directory on SD Card");
 				ex.printStackTrace(); 
 			}
 		} else {
 			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-				Game.debug("SD Card is Read Only");
+				Debug.write("SD Card is Read Only");
 			} else {
-				Game.debug("No SD Card detected");
+				Debug.write("No SD Card detected");
 			}
 		}
 	}
@@ -194,9 +194,12 @@ public class MainMenu extends Activity {
 					FileInputStream fis = new FileInputStream(new File(dir, file));
 					ObjectInputStream ois = new ObjectInputStream(fis);
 					PlatformGame game = (PlatformGame)ois.readObject();
-					FileOutputStream fos = openFileOutput(file, MODE_WORLD_WRITEABLE);
+					ois.close();
+					
+					FileOutputStream fos = openFileOutput(file, MODE_PRIVATE);
 					ObjectOutputStream oos = new ObjectOutputStream(fos);
 					oos.writeObject(game);
+					oos.close();
 					loadMaps();
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -218,7 +221,7 @@ public class MainMenu extends Activity {
 					FileOutputStream fos = new FileOutputStream(file2);
 					ObjectOutputStream oos = new ObjectOutputStream(fos);
 					oos.writeObject(game);
-
+					oos.close();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -238,7 +241,9 @@ public class MainMenu extends Activity {
 				exists |= files[i].equals(name); 
 		} while (exists);
 
-		Data.saveGame(name, this, new PlatformGame());
+		String id = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+		id += "_" + System.currentTimeMillis();
+		Data.saveGame(name, this, new PlatformGame(id));
 
 		loadMaps();
 	}
@@ -254,8 +259,6 @@ public class MainMenu extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					deleteFile(selectedMap);
-					//String name = selectedMap.substring(PREFIX.length());
-					//deleteFile(name + MapEditorLogic.DATA);
 					loadMaps();
 				}
 

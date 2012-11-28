@@ -12,6 +12,7 @@ public class TextUtils {
 	}
 
 	public static void  addColoredText(StringBuilder sb, String text, String color) {
+		text = android.text.TextUtils.htmlEncode(text);
 		if (color == null) {
 			sb.append(text);
 			return;

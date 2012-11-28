@@ -16,6 +16,8 @@
 
 package com.ericharlow.DragNDrop;
 
+import java.util.LinkedList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -40,6 +42,9 @@ public class DragNDropListView extends ListView {
 
 	ImageView mDragView;
 	GestureDetector mGestureDetector;
+	
+	private LinkedList<DragNDropListener> dragNDropListeners =
+			new LinkedList<DragNDropListener>();
 
 	DropListener mDropListener = new DropListener() {
 		@Override
@@ -47,6 +52,9 @@ public class DragNDropListView extends ListView {
 			if (getAdapter() instanceof DragNDropAdapter) {
 				((DragNDropAdapter)getAdapter()).onDropTo(to, item);
 				invalidateViews();
+				for (DragNDropListener dragNDropListener : dragNDropListeners) {
+					dragNDropListener.onItemDroppedTo(item, to);
+				}
 			}
 		}
 		
@@ -54,7 +62,13 @@ public class DragNDropListView extends ListView {
 		public String onDropFrom(int from) {
 			if (getAdapter() instanceof DragNDropAdapter) {
 				invalidateViews();
-				return ((DragNDropAdapter)getAdapter()).onDropFrom(from);
+				String item = ((DragNDropAdapter)getAdapter()).onDropFrom(from);
+				
+				for (DragNDropListener dragNDropListener : dragNDropListeners) {
+					dragNDropListener.onItemDroppedFrom(item, from);
+				}
+			
+				return item;
 			}
 			return null;
 		}
@@ -97,16 +111,13 @@ public class DragNDropListView extends ListView {
 		this.setPadding(0, 0, 0, MARGIN);
 	}
 
-	public void setDropListener(DropListener l) {
-		mDropListener = l;
+	public void addOnDragNDropListener(DragNDropListener dragAndDropListener) {
+		this.dragNDropListeners.add(dragAndDropListener);
 	}
-
-	//	public void setRemoveListener(RemoveListener l) {
-	//		mRemoveListener = l;
-	//	}
-
-	public void setDragListener(DragListener l) {
-		mDragListener = l;
+	
+	public interface DragNDropListener {
+		public void onItemDroppedFrom(String item, int from);
+		public void onItemDroppedTo(String item, int to);
 	}
 
 	@Override

@@ -5,13 +5,14 @@ import org.xml.sax.Attributes;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.maker.DatabaseActivity;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.R;
+import edu.elon.honors.price.maker.Screen;
 import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -71,8 +72,10 @@ public abstract class ElementMulti extends Element {
 		Parameters ps = params.getParameters();
 		Iterator iterator = ps.iterator();
 		int mode = iterator.getInt();
-		((RadioButton)radioGroup.getChildAt(mode)).setChecked(true);
-		options[mode].readParams(iterator);
+		if (options[mode].visible) {
+			((RadioButton)radioGroup.getChildAt(mode)).setChecked(true);
+			options[mode].readParams(iterator);
+		}
 	}
 
 	@Override
@@ -158,7 +161,7 @@ public abstract class ElementMulti extends Element {
 			new RelativeLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, 
 					LayoutParams.WRAP_CONTENT);
-		lps.topMargin = 10;
+		lps.topMargin = Screen.dipToPx(12, context);
 		layout.setPadding(5, 5, 5, 5);
 		rl.addView(layout, lps);
 
@@ -176,7 +179,7 @@ public abstract class ElementMulti extends Element {
 					LayoutParams.WRAP_CONTENT);
 		lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		lps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-		lps.leftMargin = 7;
+		lps.leftMargin = Screen.dipToPx(7, context);
 		rl.addView(title, lps);
 		
 		main = rl;

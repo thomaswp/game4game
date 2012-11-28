@@ -1,7 +1,6 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.input.Input;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -9,11 +8,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 public class SelectorActivityVector extends SaveableActivity {
@@ -21,6 +17,7 @@ public class SelectorActivityVector extends SaveableActivity {
 	private float x, y, originalX, originalY;
 	private SelectorVectorView view;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -77,7 +74,7 @@ public class SelectorActivityVector extends SaveableActivity {
 				double tx = Input.getLastTouchX() - cx;
 				double ty = Input.getLastTouchY() - cy;
 				
-				double tRad = Math.sqrt(tx * tx + ty * ty);
+				//double tRad = Math.sqrt(tx * tx + ty * ty);
 				
 				double deg = Math.atan2(ty, tx);
 				double degD = deg * 180 / Math.PI;
@@ -143,5 +140,10 @@ public class SelectorActivityVector extends SaveableActivity {
 			c.drawLine(cx + dx, cy + dy, cx + ax, cy + ay, paint);
 			
 		}
+	}
+
+	@Override
+	protected String getPreferenceId() {
+		return "";
 	}
 }

@@ -1,7 +1,5 @@
 package edu.elon.honors.price.data;
 
-import java.io.Serializable;
-
 public class ObjectInstance extends GameData {
 	private static final long serialVersionUID = 1L;
 	

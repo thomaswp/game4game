@@ -11,8 +11,6 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
-import edu.elon.honors.price.maker.SelectorActorClass.OnActorClassChangedListener;
-import edu.elon.honors.price.maker.SelectorObjectClass.OnObjectClassChangedListener;
 import edu.elon.honors.price.maker.action.EventContext;
 import edu.elon.honors.price.maker.action.EventContext.Scope;
 
@@ -74,8 +72,10 @@ public class DatabaseEditTriggerActorOrObject extends DatabaseActivity {
 		populate();
 		
 		
-		spinnerAction.setAdapter(new ArrayAdapter<String>(this, 
-				android.R.layout.simple_spinner_item, ActorOrObjectTrigger.ACTIONS));
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, 
+				android.R.layout.simple_spinner_item, ActorOrObjectTrigger.ACTIONS);
+		adapter.setDropDownViewResource(R.layout.spinner_text_dropdown);
+		spinnerAction.setAdapter(adapter);
 		spinnerAction.setSelection(trigger.action);
 		
 		final View[] selectors = new View[] {

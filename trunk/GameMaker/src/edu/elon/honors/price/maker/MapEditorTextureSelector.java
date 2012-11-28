@@ -1,8 +1,9 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
+import edu.elon.honors.price.maker.MapActivityBase.MapView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Paint.Style;
@@ -20,8 +22,10 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
-public class MapTextureSelector extends Activity {
+public class MapEditorTextureSelector extends Activity {
 
 	TSView view;
 
@@ -39,7 +43,9 @@ public class MapTextureSelector extends Activity {
 		int right = getIntent().getExtras().getInt("right");
 		int bottom = getIntent().getExtras().getInt("bottom");
 		Rect r = new Rect(left, top, right, bottom);
-		final MapTextureSelector me = this;
+		final MapEditorTextureSelector me = this;
+		
+		
 		view = new TSView(this, bitmap, r, tileWidth, tileHeight, new TSView.Poster() {
 			@Override
 			void post(Rect rect) {
@@ -49,35 +55,34 @@ public class MapTextureSelector extends Activity {
 				intent.putExtra("top", rect.top);
 				intent.putExtra("right", rect.right);
 				intent.putExtra("bottom", rect.bottom);
-				view.getThread().interrupt();
 				me.setResult(RESULT_OK, intent);
 				me.finish();
 			}
 		});
-		setContentView(view);
+		
+		int scHeight = getResources().getDisplayMetrics().heightPixels;
+		LinearLayout.LayoutParams lps = new LayoutParams(
+				bitmap.getWidth() + Screen.dipToPx(50, this), 
+				Math.min(bitmap.getHeight(), scHeight - Screen.dipToPx(40, this)));
+		setContentView(view, lps);
 
 		super.onCreate(savedInstanceState);
 	}
 
-	private static class TSView extends SurfaceView implements SurfaceHolder.Callback{
+	private static class TSView extends BasicCanvasView {
 
 		private Bitmap bitmap;
-		private int height;
 		private SurfaceHolder holder;
 		private Paint paint = new Paint();
-		private Thread thread;
-		private long lastTime;
 		private float bitmapX, bitmapY, startBitmapY;
 		private boolean move;
 		private Rect selection = new Rect(0, 0, 1, 1), drawRect = new Rect();
 		private int tileWidth, tileHeight;
 		private float startSelectX, startSelectY;
-		private RectF okRect;
+		private PointF okCenter;
+		private float okRad;
 		private Poster poster;
-		
-		public Thread getThread() {
-			return thread;
-		}
+		private boolean buttonDown;
 
 		public TSView(Context context, Bitmap bitmap, Rect selection, int tileWidth, int tileHeight, Poster poster) {
 			super(context);
@@ -99,105 +104,108 @@ public class MapTextureSelector extends Activity {
 		}
 
 		@Override
-		public void surfaceChanged(SurfaceHolder holder, int format, int width,
-				int height) {
-			this.height = height;
-			okRect = new RectF(width - 50, 0, width, 50);
+		protected void initializeGraphics() {
+			okRad = toPx(40);
+			float x = bitmap.getWidth() + okRad;
+			float y = width - x;
+			okCenter = new PointF(x, y);
+			
+			Debug.write("%d, %d", width, height);
 		}
-
+		
 		@Override
-		public void surfaceCreated(SurfaceHolder holder) {
-			thread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					lastTime = System.currentTimeMillis();
-					while (true) {
-						update();
-						draw();
-						if (thread.isInterrupted()) {
-							break;
-						}
-					}
-				}
-			});
-			thread.start();
-		}
-
-		@Override
-		public void surfaceDestroyed(SurfaceHolder holder) {
-			boolean retry = true;
-			thread.interrupt();
-			while (retry) {
-				try {
-					thread.join();
-					retry = false;
-				} catch (InterruptedException e) {
-				}
-			}
-			thread = null;
-		}
-
-		public void draw() {
-			Canvas canvas = holder.lockCanvas(null);
-			try {
-				canvas.drawColor(Color.WHITE);
-				canvas.drawBitmap(bitmap, bitmapX, bitmapY, paint);
-				paint.setStyle(Style.STROKE);
-				paint.setStrokeWidth(2);
-				paint.setColor(Color.GRAY);
-				
-				drawRect.set(selection.left * tileWidth, selection.top * tileHeight + (int)bitmapY, 
-						selection.right * tileWidth, selection.bottom * tileHeight + (int)bitmapY);
-				canvas.drawRect(drawRect, paint);
-				
-				paint.setColor(Color.GREEN);
+		public void onDraw(Canvas c) {
+			c.drawColor(Color.LTGRAY);
+			paint.setColor(Color.WHITE);
+			c.drawRect(bitmapX, 0, bitmapX + bitmap.getWidth(), 
+					height, paint);
+			c.drawBitmap(bitmap, bitmapX, bitmapY, paint);
+			paint.setStyle(Style.STROKE);
+			paint.setStrokeWidth(SelectorMapBase.SELECTION_BORDER_WIDTH);
+			paint.setColor(SelectorMapBase.SELECTION_BORDER_COLOR);
+			paint.setAlpha(255);
+			drawRect.set(selection.left * tileWidth, selection.top * tileHeight + (int)bitmapY, 
+					selection.right * tileWidth, selection.bottom * tileHeight + (int)bitmapY);
+			c.drawRect(drawRect, paint);
+			
+			if (height < bitmap.getHeight()) {
+				int barHeight = height * height / bitmap.getHeight();
+				float scrollPerc = -(float)bitmapY / (bitmap.getHeight() - height);
+				int barScroll = (int)(scrollPerc * (height - barHeight));
 				paint.setStyle(Style.FILL);
-				canvas.drawRect(okRect, paint);
-			} finally {
-				holder.unlockCanvasAndPost(canvas);
+				paint.setColor(Color.DKGRAY);
+				c.drawRect(width - 10, barScroll, width, barScroll + barHeight, paint);
 			}
+
+			int alpha = buttonDown ? 255 : 150;
+			paint.setColor(Color.DKGRAY);
+			paint.setAlpha(alpha);
+			paint.setStyle(Style.FILL);
+			c.drawCircle(okCenter.x, okCenter.y, okRad, paint);
+			paint.setColor(Color.LTGRAY);
+			paint.setAlpha(alpha);
+			c.drawCircle(okCenter.x, okCenter.y, okRad * 0.9f, paint);
+			
+			paint.setTextSize(Screen.spToPx(
+					MapActivityBase.BUTTON_TEXT_SIZE - 2, getContext()));
+			String text = "Ok";
+			paint.setColor(Color.BLACK);
+			float textWidth = paint.measureText(text);
+			float x = (width + bitmap.getWidth()) / 2f - textWidth * 1 / 3;
+			float y = paint.getTextSize() * 1.4f;
+			c.drawText(text, x, y, paint);
 		}
 
-		private void update() {
-			long timeElapsed = System.currentTimeMillis() - lastTime;
-			lastTime += timeElapsed;
-			Input.update(timeElapsed);
-
+		@Override
+		protected void update(long timeElapsed) {
+			float dx = Input.getLastTouchX() - okCenter.x;
+			float dy = Input.getLastTouchY() - okCenter.y;
+			boolean inButton = (dx * dx + dy * dy < okRad * okRad);
+			
 			if (Input.isTapped()) {
-				if (okRect.contains(Input.getLastTouchX(), Input.getLastTouchY())) {
-					poster.post(selection);
-					return;
-				}
-				startBitmapY = bitmapY;
-				move = Input.getLastTouchX() > bitmap.getWidth();
-				if (!move) {
-					startSelectX = Input.getLastTouchX();
-					startSelectY = Input.getLastTouchY() - bitmapY;
+				if (inButton) {
+					buttonDown = true;
+					move = false;
+				} else {
+					startBitmapY = bitmapY;
+					move = Input.getLastTouchX() > bitmap.getWidth();
+					if (!move) {
+						startSelectX = Input.getLastTouchX();
+						startSelectY = Input.getLastTouchY() - bitmapY;
+					}
 				}
 			}
 
 			if (Input.isTouchDown()) {
 				if (move) {
 					bitmapY = startBitmapY + Input.getDistanceTouchY();
+					if (bitmapY + bitmap.getHeight() < height) {
+						startBitmapY -= (bitmapY - (height - bitmap.getHeight()));
+						bitmapY = height - bitmap.getHeight();
+					}
 					if (bitmapY > 0) {
 						startBitmapY -= bitmapY;
 						bitmapY = 0;
 					}
-					if (bitmapY < height - bitmap.getHeight()) {
-						startBitmapY -= (bitmapY - (height - bitmap.getHeight()));
-						bitmapY = height - bitmap.getHeight();
-					}
-				} else {
+				} else if (!buttonDown) {
 					float x = Input.getLastTouchX(), y = Input.getLastTouchY() - bitmapY;
 					float left = Math.min(startSelectX, x), right = Math.max(startSelectX, x);
 					float top = Math.min(startSelectY, y), bottom = Math.max(startSelectY, y);
 					selection.set((int)(left / tileWidth), (int)(top / tileHeight), 
 							(int)(right / tileWidth) + 1, (int)(bottom / tileHeight) + 1);
+					selection.left = Math.max(selection.left, 0);
+					selection.top = Math.max(selection.top, 0);
 					selection.right = Math.min(selection.right, bitmap.getWidth() / tileWidth);
+					selection.bottom = Math.min(selection.bottom, bitmap.getHeight() / tileHeight);
 				}
+			} else {
+				if (buttonDown && inButton) {
+					poster.post(selection);
+				}
+				buttonDown = false;
 			}
 		}
-		
+
 		public static abstract class Poster {
 			abstract void post(Rect rect);
 		}
