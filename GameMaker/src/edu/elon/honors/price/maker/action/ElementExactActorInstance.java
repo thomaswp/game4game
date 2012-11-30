@@ -29,7 +29,7 @@ public class ElementExactActorInstance extends Element {
 
 	@Override
 	protected void addParameters(Parameters params) {
-		params.addParam(selectorActorInstance.getSelectedInstance());
+		params.addParam(selectorActorInstance.getSelectedInstanceId());
 	}
 
 	@Override
@@ -54,17 +54,21 @@ public class ElementExactActorInstance extends Element {
 
 	@Override
 	public String getDescription(PlatformGame game) {
-		StringBuilder sb = new StringBuilder();
-		int index = selectorActorInstance.getSelectedInstance();
-		ActorInstance instance = game.getSelectedMap().actors.get(index);
-		String actorString;
-		if (instance.classIndex > 0)
-			actorString = String.format("%s %03d", 
-					game.actors[instance.classIndex].name, instance.id);
-		else
-			actorString = game.getHero().name;
-		TextUtils.addColoredText(sb, actorString, color);
-		return sb.toString();
+		int id = selectorActorInstance.getSelectedInstanceId();
+		ActorInstance instance = game.getSelectedMap().getActorInstanceById(id);
+		if (instance != null) {
+			StringBuilder sb = new StringBuilder();
+			String actorString;
+			if (instance.classIndex > 0)
+				actorString = String.format("%s %03d", 
+						game.actors[instance.classIndex].name, instance.id);
+			else
+				actorString = game.getHero().name;
+			TextUtils.addColoredText(sb, actorString, color);
+			return sb.toString();
+		} else {
+			return "[None]";
+		}
 	}
 
 }

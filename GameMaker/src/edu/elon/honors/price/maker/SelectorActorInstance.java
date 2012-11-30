@@ -1,7 +1,9 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import android.app.Activity;
 import android.content.Context;
@@ -17,30 +19,27 @@ public class SelectorActorInstance extends Button implements IPopulatable {
 	private PlatformGame game;
 	private int id = 1;
 	
-	public int getSelectedInstance() {
+	public int getSelectedInstanceId() {
 		return id;
 	}
 	
 	public void setSelectedInstance(int id) {
 		this.id = id;
 		
+		ActorInstance instance = game.getSelectedMap().getActorInstanceById(id);
+
 		BitmapDrawable drawable;
 		String text;
-		if (id < 1) {
+		if (instance == null) {
 			drawable = null;
 			text = "None";
 		} else {
-			ActorClass actor;
-			if (id == 1) {
-				actor = game.getHero();
-			} else {
-				int classIndex = game.getSelectedMap().actors.get(id).classIndex; 
-				actor = game.actors[classIndex];
-			}
+			ActorClass actor = instance.getActorClass(game);
 			Bitmap bmp = Data.loadActorIcon(actor.imageName);
 			
 			drawable = new BitmapDrawable(bmp);
-			text = String.format("%03d: ", id) + actor.name;
+			//text = String.format("%03d: ", id) + actor.name;
+			text = actor.name;
 		}
 		
 		setText(text);

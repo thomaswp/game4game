@@ -20,16 +20,16 @@ public class SelectorObjectInstance extends Button implements IPopulatable {
 	private PlatformGame game;
 	private int id = -1;
 
-	public int getSelectedInstance() {
+	public int getSelectedInstanceId() {
 		return id;
 	}
 
 	public void setSelectedInstance(int id) {
 		this.id = id;
 
-		if (id >= 0) {
-			ObjectInstance instance = game.getSelectedMap().objects.get(id);
-			ObjectClass objectClass = game.objects[instance.classIndex];
+		ObjectInstance instance = game.getSelectedMap().getObjectInstanceById(id);
+		if (instance != null) {
+			ObjectClass objectClass = instance.getObjectClass(game);
 			Bitmap bitmap = Data.loadObject(objectClass.imageName);
 			float zoom = objectClass.zoom;
 			int width = (int)(bitmap.getWidth() * zoom);
@@ -44,7 +44,6 @@ public class SelectorObjectInstance extends Button implements IPopulatable {
 			height = (int)(bitmap.getHeight() * zoom);
 			bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
 			BitmapDrawable drawable = new BitmapDrawable(bitmap);
-			//String text = String.format("%03d: ", id) + objectClass.name;
 			String text = objectClass.name;
 
 			setText(text);

@@ -175,13 +175,13 @@ public class DatabaseEditTriggerActorOrObject extends DatabaseActivity {
 	protected void onFinishing() {
 		switch (trigger.mode) {
 		case ActorOrObjectTrigger.MODE_ACTOR_INSTANCE:
-			trigger.id = selectorActorInstance.getSelectedInstance();
+			trigger.id = selectorActorInstance.getSelectedInstanceId();
 			break;
 		case ActorOrObjectTrigger.MODE_ACTOR_CLASS:
 			trigger.id = selectorActorClass.getSelectedActorId();
 			break;
 		case ActorOrObjectTrigger.MODE_OBJECT_INSTANCE:
-			trigger.id = selectorObjectInstance.getSelectedInstance();
+			trigger.id = selectorObjectInstance.getSelectedInstanceId();
 			break;
 		case ActorOrObjectTrigger.MODE_OBJECT_CLASS:
 			trigger.id = selectorObjectClass.getSelectedObjectId();

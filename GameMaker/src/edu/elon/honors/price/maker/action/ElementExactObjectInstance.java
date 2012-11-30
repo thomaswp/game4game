@@ -29,7 +29,7 @@ public class ElementExactObjectInstance extends Element {
 
 	@Override
 	protected void addParameters(Parameters params) {
-		params.addParam(selectorObjectInstance.getSelectedInstance());
+		params.addParam(selectorObjectInstance.getSelectedInstanceId());
 	}
 
 	@Override
@@ -55,9 +55,9 @@ public class ElementExactObjectInstance extends Element {
 	@Override
 	public String getDescription(PlatformGame game) {
 		StringBuilder sb = new StringBuilder();
-		int index = selectorObjectInstance.getSelectedInstance();
-		if (index >= 0) {
-			ObjectInstance instance = game.getSelectedMap().objects.get(index);
+		int id = selectorObjectInstance.getSelectedInstanceId();
+		ObjectInstance instance = game.getSelectedMap().getObjectInstanceById(id);
+		if (instance != null) {
 			String name = game.objects[instance.classIndex].name;
 			TextUtils.addColoredText(sb, name, color);
 		} else {

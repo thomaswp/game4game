@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.ObjectInstance;
@@ -14,25 +15,25 @@ import android.graphics.Paint;
 import android.os.Bundle;
 
 public class SelectorMapBase extends MapActivityBase {
-	
+
 	@Override
 	protected MapView getMapView(PlatformGame game, 
 			Bundle savedInstanceState) {
 		return new SelectorMapView(this, game, savedInstanceState);
 	}
-	
+
 	public static class SelectorMapView extends MapView {
 		protected final static int MODE_MOVE = 0;
 		protected final static int MODE_SELECT = 1;
 		protected int mode;
 		protected Button leftButton, rightButton;
-		
-		
+
+
 		public SelectorMapView(Context context, PlatformGame game, 
 				Bundle savedInstanceState) {
 			super(context, game, savedInstanceState);
 		}
-		
+
 		@Override
 		protected void createButtons() {
 			leftButton = createBottomLeftButton(getLeftButtonText());
@@ -50,7 +51,7 @@ public class SelectorMapBase extends MapActivityBase {
 				}
 			};
 			buttons.add(leftButton);
-			
+
 			rightButton = createBottomRightButton(getRightButtonText());
 			rightButton.showing = showRightButton();
 			rightButton.onReleasedHandler = new Runnable() {
@@ -67,19 +68,19 @@ public class SelectorMapBase extends MapActivityBase {
 			};
 			buttons.add(rightButton);
 		}
-		
+
 		protected boolean showRightButton() {
 			return true;
 		}
-		
+
 		protected boolean showLeftButton() {
 			return false;
 		}
-		
+
 		protected String getRightButtonText() {
 			return "Ok";
 		}
-		
+
 		protected String getLeftButtonText() {
 			switch (mode) {
 			case MODE_MOVE: return "Move";
@@ -87,7 +88,7 @@ public class SelectorMapBase extends MapActivityBase {
 			}
 			return "";
 		}
-		
+
 		protected boolean shouldMove() {
 			return !leftButton.showing || mode == MODE_MOVE; 
 		}
@@ -95,7 +96,7 @@ public class SelectorMapBase extends MapActivityBase {
 		protected boolean shouldSelect() {
 			return !leftButton.showing || mode == MODE_SELECT;
 		}
-		
+
 		/**
 		 * Called when the player taps the screen.
 		 * Start selection here.
@@ -112,7 +113,7 @@ public class SelectorMapBase extends MapActivityBase {
 		protected void updateSelection() {
 
 		}
-		
+
 		protected void onRightButtonReleased() {
 			((SelectorMapBase)getContext()).finishOk();
 		}
@@ -120,11 +121,11 @@ public class SelectorMapBase extends MapActivityBase {
 		protected void onLeftButtonReleased() {
 			mode = (mode + 1) % 2;
 		}
-		
+
 		protected void onRightButtonPressed() { }
 
 		protected void onLeftButtonPressed() { }
-		
+
 		@Override
 		protected void doUpdate(int width, int height, float x, float y) {
 			doReleaseTouch(x, y);
@@ -146,7 +147,7 @@ public class SelectorMapBase extends MapActivityBase {
 			}
 
 			doMovement();
-			
+
 			if (!moving && shouldSelect()) {
 				updateSelection();
 			}
@@ -155,14 +156,14 @@ public class SelectorMapBase extends MapActivityBase {
 			leftButton.text = getLeftButtonText();
 			rightButton.text = getRightButtonText();
 		}
-		
+
 		@Override
 		protected void drawContent(Canvas c) {
 			drawTiles(c);
 			drawActors(c);
 			drawObjects(c);
 		}
-		
+
 		protected void drawTiles(Canvas c) {
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
@@ -176,8 +177,10 @@ public class SelectorMapBase extends MapActivityBase {
 						float x = k * tileset.tileWidth;
 						float y = j * tileset.tileHeight;
 						int tileId = layer.tiles[j][k];
-						Bitmap tileBitmap = tiles[tileId];
-						drawTile(c, x, y, tileId, tileBitmap);
+						if (tileId != 0) {
+							Bitmap tileBitmap = tiles[tileId];
+							drawTile(c, x, y, tileId, tileBitmap);
+						}
 					}
 				}
 
@@ -187,47 +190,43 @@ public class SelectorMapBase extends MapActivityBase {
 		protected void drawTile(Canvas c, float x, float y, int tileId, Bitmap tileBitmap) {
 			c.drawBitmap(tileBitmap, x + offX, y + offY, paint);
 		}
-		
+
 		protected void drawObject(Canvas c, ObjectInstance instance, float cx, float cy, 
 				Bitmap bitmap, Paint paint) {
 			c.drawBitmap(bitmap, cx - bitmap.getWidth() / 2, 
 					cy - bitmap.getWidth() / 2, paint);
 		}
-		
+
 		protected void drawObjects(Canvas c) {
 			for (int i = 0; i < game.getSelectedMap().objects.size(); i++) {
 				ObjectInstance instance = game.getSelectedMap().objects.get(i);
 				Bitmap bitmap = objects[instance.classIndex];
-				float x = instance.startX + offX;// - bitmap.getWidth() / 2;
-				float y = instance.startY + offY;// - bitmap.getHeight() / 2;
+				float x = instance.startX + offX;
+				float y = instance.startY + offY;
 				drawObject(c, instance, x, y, bitmap, paint);
 			}
 		}
-		
+
 		protected void drawActors(Canvas c) {
 			paint.setAlpha(255);
 			paint.setAntiAlias(true);
-			
+
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 
-			for (int i = 0; i < map.actorLayer.rows; i++) {
-				for (int j = 0; j < map.actorLayer.columns; j++) {
-					float x = j * tileset.tileWidth;
-					float y = i * tileset.tileHeight;
-					int instanceId = map.actorLayer.tiles[i][j];
-					int actorClass = map.getActorType(i, j);
+			for (int i = 0; i < map.actors.size(); i++) {
+				ActorInstance actor = map.actors.get(i);
+				float x = actor.column * tileset.tileWidth;
+				float y = actor.row * tileset.tileHeight;
+				int actorClass = actor.classIndex;
 
-					if (actorClass > -1) {
-						Bitmap bmp = actors[actorClass];
-						float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
-						float sy = (tileset.tileHeight - bmp.getHeight()) / 2f;
-						float dx = x + offX + sx;
-						float dy = y + offY + sy;
+				Bitmap bmp = actors[actorClass];
+				float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
+				float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
+				float dx = x + offX + sx;
+				float dy = y + offY + sy;
 
-						drawActor(c, dx, dy, instanceId, actors[actorClass], paint);
-					}
-				}
+				drawActor(c, dx, dy, actor.id, actors[actorClass], paint);
 			}
 		}
 	}
