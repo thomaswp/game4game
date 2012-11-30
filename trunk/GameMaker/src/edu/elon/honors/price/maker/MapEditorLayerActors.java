@@ -72,23 +72,21 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 	public void drawLayerNormal(Canvas c, DrawMode mode) {
 		Tileset tileset = game.tilesets[map.tilesetId];
 
-		for (int i = 0; i < map.actorLayer.rows; i++) {
-			for (int j = 0; j < map.actorLayer.columns; j++) {
-				float x = j * tileset.tileWidth;
-				float y = i * tileset.tileHeight;
-				int instanceId = map.actorLayer.tiles[i][j];
-				int actorClass = map.getActorType(i, j);
+		for (int i = 0; i < map.actors.size(); i++) {
+			ActorInstance actor = map.actors.get(i);
+			float x = actor.column * tileset.tileWidth;
+			float y = actor.row * tileset.tileHeight;
+			int actorClass = actor.classIndex;
 
-				if (actorClass > -1) {
-					Bitmap bmp = mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
-					float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
-					float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
-					float dx = x + getOffX() + sx;
-					float dy = y + getOffY() + sy;
+			if (actorClass > -1) {
+				Bitmap bmp = mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
+				float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
+				float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
+				float dx = x + getOffX() + sx;
+				float dy = y + getOffY() + sy;
 
-					paint.setAlpha(mode == DrawMode.Above ? MapEditorView.TRANS : 255);
-					parent.drawActor(c, dx, dy, instanceId, bmp, paint);
-				}
+				paint.setAlpha(mode == DrawMode.Above ? MapEditorView.TRANS : 255);
+				parent.drawActor(c, dx, dy, actor.id, bmp, paint);
 			}
 		}
 	}
@@ -119,9 +117,10 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 		final int newClass = parent.actorSelection;
 		final int row = getTouchedRow(touchY);
 		final int col = getTouchedCol(touchX);
-		final int oldClass = map.getActorType(row, col);
-
-		//int previousId = game.getSelectedMap().actorLayer.tiles[row][col];
+		
+		ActorInstance oldInstance = map.getActorInstance(row, col);
+		final int oldClass = (oldInstance == null) ? -1 : oldInstance.classIndex;
+		final int oldId = (oldInstance == null) ? -1 : oldInstance.id;
 
 		if (newClass == oldClass) {
 			return;
@@ -138,13 +137,12 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 			action = new Action() {
 				@Override
 				public void undo(PlatformGame game) {
-					map.setActor(row, col, oldClass);
-					map.setActor(heroRow, heroCol, 0);
+					map.setActor(heroRow, heroCol, newClass);
+					map.setActor(row, col, oldClass, oldId);
 				}
 
 				@Override
 				public void redo(PlatformGame game) {
-					map.setActor(heroRow, heroCol, -1);
 					map.setActor(row, col, newClass);
 				}
 			};
@@ -152,7 +150,7 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 			action = new Action() {
 				@Override
 				public void undo(PlatformGame game) {
-					map.setActor(row, col, oldClass);
+					map.setActor(row, col, oldClass, oldId);
 				}
 
 				@Override
@@ -175,9 +173,9 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 		editIcons.add(
 				BitmapFactory.decodeResource(parent.getResources(),
 						R.drawable.edit));
-//		editIcons.add(
-//				BitmapFactory.decodeResource(parent.getResources(),
-//						R.drawable.no));
+				editIcons.add(
+						BitmapFactory.decodeResource(parent.getResources(),
+								R.drawable.select));
 	}
 
 	@Override
@@ -188,15 +186,18 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 	@Override
 	protected void getDrawBounds(ActorInstance item, RectF bounds) {
 		Tileset tileset = game.getMapTileset(map);
-		
+
 		Bitmap bmp = actors[item.classIndex];
+		float zoom = item.getActorClass(game).zoom;
+		float width = bmp.getWidth() * zoom;
+		float height = bmp.getHeight() * zoom;
 		float x = item.column * tileset.tileWidth;
 		float y = item.row * tileset.tileHeight;
-		float sx = (tileset.tileWidth - bmp.getWidth()) / 2f;
-		float sy = (tileset.tileHeight - bmp.getHeight());// / 2f;
+		float sx = (tileset.tileWidth - width) / 2f;
+		float sy = (tileset.tileHeight - height);
 		float dx = x + getOffX() + sx;
 		float dy = y + getOffY() + sy;
-		
+
 		bounds.set(dx, dy, dx + bmp.getWidth(), dy + bmp.getHeight());
 	}
 
@@ -208,17 +209,19 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 
 	@Override
 	protected void shiftItem(ActorInstance item, float offX, float offY) {
-		// TODO Auto-generated method stub
+		Tileset tileset = map.getTileset(game);
 		
+		item.column = Math.round(offX / tileset.tileWidth);
+		item.row = Math.round(offY / tileset.tileHeight);
 	}
 
 	@Override
 	protected void delete(ActorInstance item) {
-		// TODO Auto-generated method stub
-		
+		map.actors.remove(item);
 	}
 
 	@Override
 	protected void add(ActorInstance item) {
+		map.setActor(item.row, item.column, item.classIndex, item.id);
 	}
 }

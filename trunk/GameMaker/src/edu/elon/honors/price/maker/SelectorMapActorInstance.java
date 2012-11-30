@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
+import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
@@ -56,14 +57,13 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 			
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.getMapTileset(map);
-			for (int i = 0; i < map.rows; i++) {
-				for (int j = 0; j < map.columns; j++) {
-					if (map.actorLayer.tiles[i][j] == selectedId) {
-						float x = j * (tileset.tileWidth + 1);
-						float y = i * (tileset.tileHeight + 1);
-						offX = width / 2 - x;
-						offY = height / 2 - y;
-					}
+			for (int i = 0; i < map.actors.size(); i++) {
+				ActorInstance instance = map.actors.get(i);
+				if (instance.id == selectedId) {
+					float x = instance.column * (tileset.tileWidth + 1);
+					float y = instance.row * (tileset.tileHeight + 1);
+					offX = width / 2 - x;
+					offY = height / 2 - y;
 				}
 			}
 		}
@@ -110,12 +110,10 @@ public class SelectorMapActorInstance extends SelectorMapBase {
 				int ix = (int)(x / tileset.tileWidth);
 				int iy = (int)(y / tileset.tileHeight);
 				
-				if (ix < map.actorLayer.columns && iy < map.actorLayer.rows) {
-					int id = map.actorLayer.tiles[iy][ix];
-					if (id > 0) {
-						selectedId = id;
-						return true;
-					}
+				ActorInstance selected = map.getActorInstance(iy, ix);
+				if (selected != null) {
+					selectedId = selected.id;
+					return true;
 				}
 			}
 			

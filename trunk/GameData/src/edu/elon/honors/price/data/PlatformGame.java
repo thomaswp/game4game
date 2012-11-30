@@ -13,7 +13,7 @@ public class PlatformGame extends GameData {
 
 	private transient Rect mapRect = new Rect();
 
-	protected int _VERSION_ = 3;
+	protected int _VERSION_ = Upgrader.LATEST_VERSION;
 
 	public ArrayList<Map> maps;
 	public int selectedMapId;

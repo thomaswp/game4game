@@ -55,6 +55,8 @@ public class PhysicsHandler {
 	private PlatformGame game;
 	private Map map;
 	private Tilemap[] layers;
+	
+	private int nextActorId = 0, nextObjectId = 0;
 
 	private Vector2 gravity = new Vector2();
 
@@ -62,7 +64,7 @@ public class PhysicsHandler {
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
 	private float mapFloor;
-	
+
 	public World getWorld() {
 		return world;
 	}
@@ -74,11 +76,11 @@ public class PhysicsHandler {
 	public float getMapFloorMeters() {
 		return mapFloor / SCALE;
 	}
-	
+
 	public float getMapFloorPx() {
 		return mapFloor;
 	}
-	
+
 	public ActorBody getHero() {
 		return heroBody;
 	}
@@ -99,7 +101,7 @@ public class PhysicsHandler {
 		if (objectBodies.size() == 0) return null;
 		return objectBodies.get(objectBodies.size() - 1);
 	}
-	
+
 	public ActorBody getLastCreatedActor() {
 		if (actorBodies.size() == 0) return null;
 		return actorBodies.get(actorBodies.size() - 1);
@@ -120,17 +122,19 @@ public class PhysicsHandler {
 	}
 
 	public ActorBody getActorBodyFromId(int id) {
-		if (id < 0 || id >= actorBodies.size()) {
-			return null;
+		for (int i = 0; i < actorBodies.size(); i++) {
+			ActorBody body = actorBodies.get(i);
+			if (body.id == id) return body;
 		}
-		return actorBodies.get(id);
+		return null;
 	}
 
 	public ObjectBody getObjectBodyFromId(int id) {
-		if (id < 0 || id >= objectBodies.size()) {
-			return null;
+		for (int i = 0; i < objectBodies.size(); i++) {
+			ObjectBody body = objectBodies.get(i);
+			if (body.id == id) return body;
 		}
-		return objectBodies.get(id);
+		return null;
 	}
 
 	public PhysicsHandler(PlatformLogic logic) {
@@ -146,19 +150,16 @@ public class PhysicsHandler {
 	public void destroyBody(PlatformBody body) {
 		world.destroyBody(body.getBody());
 		if (body instanceof ObjectBody) {
-			objectBodies.set(body.id, null);
+			objectBodies.remove(getObjectBodyFromId(body.id));
 		} else if (body instanceof ActorBody) {
-			actorBodies.set(body.id, null);
+			actorBodies.remove(getActorBodyFromId(body.id));
 		}
 		platformBodies.remove(body);
 	}
 
 	private void initPhysics() {
-		while (actorBodies.size() < map.actors.size()) actorBodies.add(null);
-		while (objectBodies.size() < map.objects.size()) objectBodies.add(null);
-
 		mapFloor = map.height(game);
-		
+
 		world = new World(new Vector2(0, GRAVITY), true);
 
 		ContactFilter filter = new ContactFilter() {
@@ -387,26 +388,22 @@ public class PhysicsHandler {
 			}
 		}
 
-		MapLayer actorLayer = map.actorLayer;
-		for (int i = 0; i < actorLayer.rows; i++) {
-			for (int j = 0; j < actorLayer.columns; j++) {
-				float x = (j + 0.5f) * game.getMapTileset(map).tileWidth;
-				float y = (i + 0.5f) * game.getMapTileset(map).tileHeight;
-				int instanceId = actorLayer.tiles[i][j];
-				if (instanceId >= 0) {
-					ActorInstance instance = this.map.actors.get(instanceId);
-					int actorId = instance.classIndex;
-					if (actorId > 0) {
-						addActorBody(game.actors[actorId], instanceId, x, y);
-					} else {
-						heroBody = addActorBody(game.getHero(), 
-								instanceId,
-								x,
-								y, 1, true);
-					}
-				}
-
+		for (int i = 0; i < map.actors.size(); i++) {
+			ActorInstance instance = map.actors.get(i);
+			float x = (instance.column + 0.5f) * game.getMapTileset(map).tileWidth;
+			float y = (instance.row + 0.5f) * game.getMapTileset(map).tileHeight;
+			int instanceId = instance.id;
+			int actorId = instance.classIndex;
+			if (actorId > 0) {
+				addActorBody(game.actors[actorId], instanceId, x, y);
+			} else {
+				heroBody = addActorBody(game.getHero(), 
+						instanceId,
+						x,
+						y, 1, true);
 			}
+
+
 		}
 
 		for (int i = 0; i < map.objects.size(); i++) {
@@ -499,14 +496,13 @@ public class PhysicsHandler {
 
 	private ObjectBody addObjectBody(ObjectClass object, int id, float startX, float startY) {
 		if (id < 0) {
-			id = objectBodies.size();
-			objectBodies.add(null);
+			id = nextObjectId;
 		}
 		ObjectBody body = new ObjectBody(Viewport.DefaultViewport, this, 
 				object, id, startX, startY);
-		while (objectBodies.size() < id + 1) objectBodies.add(null);
-		objectBodies.set(id, body);
+		objectBodies.add(body);
 		platformBodies.add(body);
+		nextObjectId = Math.max(id, nextObjectId) + 1;
 
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			bodyMap.put(body.getBody().getFixtureList().get(i), body);
@@ -529,14 +525,17 @@ public class PhysicsHandler {
 
 	private ActorBody addActorBody(ActorClass actor, int id, float startX, float startY, 
 			int startDir, boolean isHero) {
+		
 		if (id < 0) {
-			id = actorBodies.size();
-			actorBodies.add(null);
+			id = nextActorId;
 		}
+		
 		ActorBody body = new ActorBody(Viewport.DefaultViewport, this, actor, id,
 				startX, startY, startDir, isHero);
-		actorBodies.set(id, body);
+		actorBodies.add(body);
 		platformBodies.add(body);
+		
+		nextActorId = Math.max(id, nextActorId) + 1;
 
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			bodyMap.put(body.getBody().getFixtureList().get(i), body);

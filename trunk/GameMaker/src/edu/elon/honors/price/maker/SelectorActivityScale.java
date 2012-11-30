@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.ActorClass;
+import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
@@ -160,10 +161,10 @@ public class SelectorActivityScale extends DatabaseActivity {
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId, 
 				Bitmap bmp, Paint paint) {
 
-			int classIndex;
-			if (isActor && (classIndex = game.getSelectedMap()
-					.actors.get(instanceId).classIndex) == index) {
-				ActorClass actorClass = game.actors[classIndex];
+			ActorInstance instance;
+			if (isActor && (instance = game.getSelectedMap().
+					getActorInstanceById(instanceId)).classIndex == index) {
+				ActorClass actorClass = instance.getActorClass(game);
 				bmp = image;
 				float cx = dx + bmp.getWidth() / 2;
 				float cy = dy + bmp.getHeight() / 2;
