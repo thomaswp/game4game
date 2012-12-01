@@ -39,7 +39,7 @@ public class Upgrader {
 					map.actorLayer = null;
 				}
 			}
-			upgrade(game);
+			upgraded(game);
 		}
 	}
 

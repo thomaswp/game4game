@@ -44,7 +44,7 @@ public class PlatformLogic implements Logic {
 
 	private LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
 	private LinkedList<Button> buttons = new LinkedList<Button>();
-	private AnimatedSprite hero;
+	private Sprite hero;
 	private Vector cameraOffset = new Vector(), joystickPull = new Vector();
 	private Vector offset;
 

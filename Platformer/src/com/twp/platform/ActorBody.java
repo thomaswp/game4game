@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.twp.platform.ActorAnimator.Action;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.graphics.AnimatedSprite;
+import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.input.Input;
@@ -26,11 +28,9 @@ import edu.elon.honors.price.physics.Vector;
 
 public class ActorBody extends PlatformBody {
 
-	public final static int ANIMATION_FRAMES = 8, ANIMATION_SETS = 7;
-	private static final int FRAME = 900 / ANIMATION_FRAMES;
 	private static final int BEHAVIOR_REST = 3;
 
-	private AnimatedSprite sprite;
+	private Sprite sprite;
 	private ActorClass actor;
 	private boolean isHero;
 	private int directionX = 1;
@@ -40,8 +40,8 @@ public class ActorBody extends PlatformBody {
 	private boolean onLadder;
 	private World world;
 	private Vector2 respawnLocation;
-	
-	private int nextAnimUpdate;
+	private ActorAnimator animator;
+	private Bitmap[][] frames;
 	
 	@Override
 	protected MapClass getMapClass() {
@@ -84,22 +84,22 @@ public class ActorBody extends PlatformBody {
 		return actor;
 	}
 
-	public int getFacingDirectionX() {
-		int set = getCurrentAnimSet();
-		if (set == SET_WALK_LEFT ||
-				set == SET_JUMP_LEFT ||
-				set == SET_ATTACK_LEFT) {
-			return -1;
-		} else if (set == SET_WALK_RIGHT ||
-				set == SET_JUMP_RIGHT ||
-				set == SET_ATTACK_RIGHT) {
-			return 1;
-		}
-		return 0;
-	}
+//	public int getFacingDirectionX() {
+//		int set = getCurrentAnimSet();
+//		if (set == SET_WALK_LEFT ||
+//				set == SET_JUMP_LEFT ||
+//				set == SET_ATTACK_LEFT) {
+//			return -1;
+//		} else if (set == SET_WALK_RIGHT ||
+//				set == SET_JUMP_RIGHT ||
+//				set == SET_ATTACK_RIGHT) {
+//			return 1;
+//		}
+//		return 0;
+//	}
 
 	@Override
-	public AnimatedSprite getSprite() {
+	public Sprite getSprite() {
 		return sprite;
 	}
 
@@ -109,12 +109,24 @@ public class ActorBody extends PlatformBody {
 		
 		this.actor = actor;
 		this.directionX = startDir;
+		this.animator = new ActorAnimator7();
+		
 		Bitmap bitmap = Data.loadActor(actor.imageName);
-		Bitmap[] frames;
-		if (actor.animated) {
-			frames = Tilemap.createTiles(bitmap, bitmap.getWidth() / ANIMATION_FRAMES, bitmap.getHeight() / ANIMATION_SETS, 0); 
-		} else {
-			frames = new Bitmap[] { bitmap.copy(bitmap.getConfig(), true) };
+		Action[] actions = Action.values();
+		frames = new Bitmap[actions.length][];
+		int frameWidth = bitmap.getWidth() / animator.getTotalCols();
+		int frameHeight = bitmap.getHeight() / animator.getTotalRows();
+		for (int i = 0; i < actions.length; i++) {
+			Action action = actions[i];
+			ActorAnimator.ActionParams actionParams =
+					animator.getActionParams(action);
+			frames[i] = new Bitmap[actionParams.frames];
+			for (int j = 0; j < actionParams.frames; j++) {
+				frames[i][j] = Bitmap.createBitmap(bitmap,
+						(actionParams.column + j) * frameWidth, 
+						actionParams.row * frameHeight, 
+						frameWidth, frameHeight);
+			}
 		}
 //		for (Bitmap bmp : frames) {
 //			Canvas c = new Canvas();
@@ -125,7 +137,8 @@ public class ActorBody extends PlatformBody {
 //			c.drawOval(new RectF(0, 0, bmp.getWidth(), bmp.getHeight()), p);
 //			//c.drawRect(new Rect(0, 0, bmp.getWidth() - 1, bmp.getHeight() - 1), p);
 //		}
-		this.sprite = new AnimatedSprite(viewport, frames, startX, startY);
+		this.sprite = new Sprite(viewport, frames[0][0]);
+		sprite.setX(startX); sprite.setY(startY);
 		this.sprite.centerOrigin();
 		Debug.write(actor.imageName + ", " + actor.zoom);
 		this.sprite.setZoom(actor.zoom);
@@ -196,12 +209,9 @@ public class ActorBody extends PlatformBody {
 			if (getVelocity().x != 0)
 				setOnLadder(false);
 		}
-		
-		nextAnimUpdate -= timeElapsed;
-		if (nextAnimUpdate <= 0) {
-			updateAnimation();
-			nextAnimUpdate += FRAME;
-		}
+
+		animator.update(timeElapsed, directionX, isGrounded(), isOnLadder());
+		sprite.setBitmap(frames[animator.getAction()][animator.getFrame()]);
 		
 		if (!isHero && actor.speed > 0)
 			setVelocityX(stopped ? 0 : directionX * actor.speed);
@@ -221,114 +231,6 @@ public class ActorBody extends PlatformBody {
 				dispose();
 			}
 		}
-	}
-
-	private enum AnimationState {
-		Walking,
-		Jumping,
-		Landing,
-		Attacking,
-		Climbing
-	}
-	
-	private AnimationState animationState = AnimationState.Walking;
-	@SuppressWarnings("unused")
-	private final static int SET_STAND_CLIMB = 0, SET_WALK_LEFT = 1, 
-			SET_WALK_RIGHT = 2, SET_ATTACK_LEFT = 3, SET_ATTACK_RIGHT = 4, 
-			SET_JUMP_LEFT = 5, SET_JUMP_RIGHT = 6;
-	private final static int JUMP_FRAME = 3;
-	
-	private void updateAnimation() {
-		int frame = getCurrentAnimFrame();
-		int set = getCurrentAnimSet();
-		
-		switch(animationState) {
-		case Walking:
-			if (set != SET_WALK_LEFT && set != SET_WALK_RIGHT) {
-				setCurrentAnimSet(getFacingDirectionX() > 0 ? 
-						SET_WALK_RIGHT : SET_WALK_LEFT);
-			}
-			if (directionX != 0) {
-				int nSet = directionX > 0 ? SET_WALK_RIGHT : SET_WALK_LEFT;
-				if (set != nSet || !isGrounded()) {
-					setCurrentAnimSet(nSet);
-				} else {
-					setCurrentAnimFrame((frame + 1) % ANIMATION_FRAMES);
-				}
-			} else {
-				setCurrentAnimFrame(0);
-			}
-			break;
-		case Jumping:
-			if (set != SET_JUMP_LEFT && set != SET_JUMP_RIGHT) {
-				setCurrentAnimSet(getFacingDirectionX() > 0 ? 
-						SET_JUMP_RIGHT : SET_JUMP_LEFT);
-				frame = 0;
-			} else {
-				if (directionX != 0) {
-					int nSet = directionX > 0 ? SET_JUMP_RIGHT : SET_JUMP_LEFT;
-					if (set != nSet) {
-						setCurrentAnimSet(nSet);
-						setCurrentAnimFrame(frame);
-					}	
-				}
-				if (frame < JUMP_FRAME) {
-					setCurrentAnimFrame(frame + 1);
-				}
-			}
-			if (frame > 0 && isGrounded()) {
-				animationState = AnimationState.Landing;
-				break;
-			}
-			break;
-		case Landing:
-			if (directionX != 0) {
-				animationState = AnimationState.Walking;
-				break;
-			}
-			if (set != SET_JUMP_LEFT && set != SET_JUMP_RIGHT) {
-				setCurrentAnimSet(getFacingDirectionX() > 0 ? 
-						SET_JUMP_RIGHT : SET_JUMP_LEFT);
-			}
-			frame = getCurrentAnimFrame();
-//			if (directionX != 0) {
-//				int nSet = directionX > 0 ? SET_JUMP_RIGHT : SET_JUMP_LEFT;
-//				if (set != nSet) {
-//					setCurrentAnimSet(nSet);
-//					setCurrentAnimFrame(frame);
-//				}
-//			}
-			if (frame < JUMP_FRAME) {
-				setCurrentAnimFrame(JUMP_FRAME);
-			} else if (frame < ANIMATION_FRAMES - 1) {
-				setCurrentAnimFrame(frame + 1);
-			} else {
-				animationState = AnimationState.Walking;
-			}
-			break;
-		case Attacking:
-			break;
-		case Climbing:
-			break;
-		}
-	}
-	
-	private int getCurrentAnimFrame() {
-		return sprite.getFrame() % ANIMATION_FRAMES;
-	}
-	
-	private int getCurrentAnimSet() {
-		return sprite.getFrame() / ANIMATION_FRAMES;
-	}
-	
-	private void setCurrentAnimFrame(int frame) {
-		int nFrame = (sprite.getFrame() / ANIMATION_FRAMES) * 
-				ANIMATION_FRAMES + frame;
-		sprite.setFrame(nFrame);
-	}
-	
-	private void setCurrentAnimSet(int set) {
-		sprite.setFrame(set * ANIMATION_FRAMES);
 	}
 	
 	public void doBehaviorWall() {
@@ -427,7 +329,7 @@ public class ActorBody extends PlatformBody {
 		//if (!checkGrounded || isGrounded() || isOnLadder()) {
 			setVerticalVelocity(actor.jumpVelocity);	
 			onLadder = false;
-			animationState = AnimationState.Jumping;
+			animator.jump();
 		//}
 	}
 
