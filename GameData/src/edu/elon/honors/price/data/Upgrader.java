@@ -10,7 +10,7 @@ import edu.elon.honors.price.game.Game;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 4;
+	public final static int LATEST_VERSION = 5;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -38,6 +38,14 @@ public class Upgrader {
 					map.actors = newActors;
 					map.actorLayer = null;
 				}
+			}
+			upgraded(game);
+		}
+		
+		if (version < 5) {
+			for (ActorClass actor : game.actors) {
+				actor.imageName = Data.ACTOR_7 + actor.imageName;
+				Debug.write(actor.imageName);
 			}
 			upgraded(game);
 		}

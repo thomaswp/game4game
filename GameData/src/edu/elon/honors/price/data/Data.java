@@ -42,6 +42,10 @@ public final class Data {
 	public final static String ACTIONS_DIR = "actions";
 	public final static String EDITOR_DIR = "editor/";
 	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
+	public final static String ACTOR_7 = "a7/";
+	public final static String ACTOR_5 = "a5/";
+	public final static String ACTORS5_DIR = GRAPHICS + "/actors/" + ACTOR_5;
+	public final static String ACTORS7_DIR = GRAPHICS + "/actors/" + ACTOR_7;
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
 	public final static String BACKGROUNDS_DIR = GRAPHICS + "/backgrounds/";
@@ -133,6 +137,21 @@ public final class Data {
 		
 		return files;
 	}
+	
+	public static ArrayList<String> getActorResources(Context parent) {
+		ArrayList<String> actors7 = Data.getResources(ACTORS7_DIR, parent);
+		ArrayList<String> actors5 = Data.getResources(ACTORS5_DIR, parent);
+		
+		ArrayList<String> imageNames = new ArrayList<String>();
+		for (String actor : actors7) {
+			imageNames.add(ACTOR_7 + actor);
+		}
+		for (String actor : actors5) {
+			imageNames.add(ACTOR_5 + actor);
+		}
+		
+		return imageNames;
+	}
 
 	public static InputStream loadAction(int id, Context context) throws IOException {
 		ArrayList<String> resources = getResources(ACTIONS_DIR, context);
@@ -179,12 +198,13 @@ public final class Data {
 	public static Bitmap loadActorIcon(String name, Context context) {
 		Bitmap bmp = loadActor(name, context);
 		String key = ACTORS_DIR + name + "``icon";
+		int actions = name.contains(ACTOR_5) ? 5 : 7;
 		if (Cache.isBitmapRegistered(key)) {
 			return Cache.getRegisteredBitmap(key);
 		} else {
 			Bitmap icon = Bitmap.createBitmap(bmp, 0, 0, 
 					bmp.getWidth() / 8, 
-					bmp.getHeight() / 7);
+					bmp.getHeight() / actions);
 			Cache.RegisterBitmap(key, icon);
 			return icon;
 		}

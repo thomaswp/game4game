@@ -1,0 +1,5 @@
+<action id="18" name="Trigger Actor Action" category="Actor">
+    <text text="For" />
+    <actorInstance />
+    <text text="trigger the action animation" />
+</action>
