@@ -85,7 +85,7 @@ public class ActionFactoryWriter extends Writer {
 			writeLn("try {");
 			tab++;
 			writeLn("classes.add(Class.forName(\"%s.%s\"));", ActionWriter.PACKAGE, 
-					action.name.replace("Action", "Interpreter"));
+					action.name.replaceFirst("Action", "Interpreter"));
 			tab--;
 			writeLn("} catch (Exception e) { }");
 		}
