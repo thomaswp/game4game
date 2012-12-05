@@ -109,7 +109,10 @@ public class ActorBody extends PlatformBody {
 		
 		this.actor = actor;
 		this.directionX = startDir;
-		this.animator = new ActorAnimator7();
+		if (actor.imageName.contains(Data.ACTOR_7))
+			this.animator = new ActorAnimator7();
+		else
+			this.animator = new ActorAnimator5();
 		
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Action[] actions = Action.values();
@@ -295,6 +298,10 @@ public class ActorBody extends PlatformBody {
 			}
 			onLadder = false;
 		}
+	}
+	
+	public void triggerAction() { 
+		animator.action();
 	}
 	
 	public void setHorizontalVelocity(float hv) {

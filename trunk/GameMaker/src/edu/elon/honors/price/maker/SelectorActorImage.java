@@ -38,7 +38,8 @@ public class SelectorActorImage extends Spinner {
 	private void setup() {
 		Context context = getContext();
 		
-		ArrayList<String> imageNames = Data.getResources(Data.ACTORS_DIR, context);
+		
+		ArrayList<String> imageNames = Data.getActorResources(context);
 		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 		for (int i = 0; i < imageNames.size(); i++) {
 			Bitmap bmp = Data.loadActorIcon(imageNames.get(i));
