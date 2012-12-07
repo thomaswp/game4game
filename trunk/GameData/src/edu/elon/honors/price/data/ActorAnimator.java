@@ -1,6 +1,7 @@
-package com.twp.platform;
+package edu.elon.honors.price.data;
 
 import java.util.HashMap;
+
 
 public abstract class ActorAnimator {
 		
@@ -38,6 +39,21 @@ public abstract class ActorAnimator {
 		return action.ordinal();
 	}
 	
+	public boolean isFlipped() {
+		return getActionParams(action).flipped;
+	}
+	
+	public static ActorAnimator create(String imagePath) { 
+		if (imagePath.contains(Data.ACTOR_5)) {
+			return new ActorAnimator5();
+		} else if (imagePath.contains(Data.ACTOR_7)) {
+			return new ActorAnimator7();
+		} else if (imagePath.contains(Data.ACTOR_2)){
+			return new ActorAnimator2();
+		}
+		return null;
+	}
+	
 	public boolean isWalking() {
 		return action == Action.WalkingLeft || 
 				action == Action.WalkingRight; 
@@ -59,8 +75,16 @@ public abstract class ActorAnimator {
 
 	public static class ActionParams {
 		public int row, column, frames;
+		public boolean flipped;
 		public ActionParams(int row, int column, int frames) {
 			this.row = row; this.column = column; this.frames = frames;
+		}
+		public ActionParams(int row, int column, int frames, boolean flipped) {
+			this(row, column, frames);
+			this.flipped = flipped;
+		}
+		public ActionParams() {
+			this(0, 0, 0);
 		}
 	}
 	
@@ -68,6 +92,15 @@ public abstract class ActorAnimator {
 	protected abstract int getJumpHold();
 	public abstract int getTotalRows();
 	public abstract int getTotalCols();
+	
+	protected boolean hasJump() { 
+		return getActionParams(Action.JumpingLeft).frames > 0 &&
+				getActionParams(Action.JumpingRight).frames > 0;
+	}
+	
+	protected boolean hasClimb() {
+		return getActionParams(Action.Climbing).frames > 0;
+	}
 	
 	public ActionParams getActionParams(Action action) {
 		return actionParams.get(action);
@@ -113,9 +146,10 @@ public abstract class ActorAnimator {
 			lastDir = dir;
 		}
 		
-		if (climbing) {
+		if (hasClimb() && climbing) {
 			state = State.Climbing;
 		}
+		
 		
 		switch(state) {
 		case Landing:
@@ -180,10 +214,12 @@ public abstract class ActorAnimator {
 			action = lastDir > 0 ? Action.ActionRight :
 				Action.ActionLeft;
 			if (updateFrame(timeElapsed)) {
-				if (climbing) {
+				if (climbing && hasClimb()) {
 					state = State.Climbing;
+				} else if (!grounded && hasJump()) {
+					state = State.Jumping;
 				} else {
-					state = grounded ? State.Walking : State.Jumping;
+					state = State.Walking;
 				}
 				updateFrame(0);
 				if (isJumping()) {
@@ -209,7 +245,9 @@ public abstract class ActorAnimator {
 	
 	public void jump() {
 		if (state != State.Jumping) {
-			state = State.Jumping;
+			if (hasJump()) {
+				state = State.Jumping;
+			}
 			resetFrame();
 		}
 	}

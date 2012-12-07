@@ -1,4 +1,4 @@
-package com.twp.platform;
+package edu.elon.honors.price.data;
 
 public class ActorAnimator5 extends ActorAnimator {
 	protected ActionParams createActionParams(Action action) {

@@ -1,15 +1,18 @@
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import javax.management.RuntimeErrorException;
 
-import com.twp.platform.ActorAnimator;
-import com.twp.platform.ActorAnimator.Action;
-import com.twp.platform.ActorAnimator5;
-import com.twp.platform.ActorAnimator7;
+import edu.elon.honors.price.data.ActorAnimator;
+import edu.elon.honors.price.data.ActorAnimator2;
+import edu.elon.honors.price.data.ActorAnimator5;
+import edu.elon.honors.price.data.ActorAnimator7;
+import edu.elon.honors.price.data.ActorAnimator.Action;
 
 
 public class Hero implements KeyListener  {
@@ -111,7 +114,14 @@ public class Hero implements KeyListener  {
 	
 	public void draw(Graphics g, int width, int height) {
 		if (frames != null) {
-			g.drawImage(frames[action][frame], (int)x, (int)y, null);
+			AffineTransform a = new AffineTransform();
+			a.translate(x, y);
+			if (animator.isFlipped()) {
+				a.translate(frameWidth, 0);
+				a.scale(-1, 1);
+			}
+			((Graphics2D)g).drawImage(frames[action][frame], a, null);
+			//g.drawImage(frames[action][frame], (int)x, (int)y, null);
 		}
 	}
 
