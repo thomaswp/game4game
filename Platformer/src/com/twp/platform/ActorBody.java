@@ -10,14 +10,15 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.twp.platform.ActorAnimator.Action;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import edu.elon.honors.price.data.ActorAnimator;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.MapClass;
+import edu.elon.honors.price.data.ActorAnimator.Action;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Sprite;
@@ -109,10 +110,7 @@ public class ActorBody extends PlatformBody {
 		
 		this.actor = actor;
 		this.directionX = startDir;
-		if (actor.imageName.contains(Data.ACTOR_7))
-			this.animator = new ActorAnimator7();
-		else
-			this.animator = new ActorAnimator5();
+		this.animator = ActorAnimator.create(actor.imageName);
 		
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Action[] actions = Action.values();
@@ -140,7 +138,7 @@ public class ActorBody extends PlatformBody {
 //			c.drawOval(new RectF(0, 0, bmp.getWidth(), bmp.getHeight()), p);
 //			//c.drawRect(new Rect(0, 0, bmp.getWidth() - 1, bmp.getHeight() - 1), p);
 //		}
-		this.sprite = new Sprite(viewport, frames[0][0]);
+		this.sprite = new Sprite(viewport, frames[ActorAnimator.Action.WalkingRight.ordinal()][0]);
 		sprite.setX(startX); sprite.setY(startY);
 		this.sprite.centerOrigin();
 		Debug.write(actor.imageName + ", " + actor.zoom);
@@ -215,6 +213,9 @@ public class ActorBody extends PlatformBody {
 
 		animator.update(timeElapsed, directionX, isGrounded(), isOnLadder());
 		sprite.setBitmap(frames[animator.getAction()][animator.getFrame()]);
+		if (sprite.getZoomX() < 0 != animator.isFlipped()) {
+			sprite.setZoomX(sprite.getZoomX() * -1);
+		}
 		
 		if (!isHero && actor.speed > 0)
 			setVelocityX(stopped ? 0 : directionX * actor.speed);
