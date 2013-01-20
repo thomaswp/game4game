@@ -8,18 +8,18 @@
 	<uses-permission android:name="android.permission.USE_CREDENTIALS"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	
-   <application android:icon="@drawable/icon" android:label="@string/app_name">
+   <application android:icon="@drawable/icon" android:label="@string/app_name" android:allowBackup="true">
     	<activity android:label="@string/app_name" android:name=".MainMenu" android:screenOrientation="landscape">
-            <intent-filter>
+    		<intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".share.MyGamesActivity" android:screenOrientation="landscape">
+    	</activity>
     
-        <activity android:label="@string/app_name" android:name=".MapEditor_Old" android:screenOrientation="landscape">
-        </activity>
-        <activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".MapEditor" android:screenOrientation="landscape">
-        </activity>
+        <activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".MapEditor" android:screenOrientation="landscape" />
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorTextureSelector" android:screenOrientation="landscape" android:theme="@style/Theme.DoNoDim"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:theme="@style/Theme.DoNoDim"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:theme="@style/Theme.DoNoDim"/>
@@ -54,9 +54,7 @@
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditBehavior" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".TestActivity" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditBehaviorInstance" android:screenOrientation="landscape"/>
-    	
-    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="com.twp.platform.Platformer" android:screenOrientation="landscape">
-        </activity>
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="com.twp.platform.Platformer" android:screenOrientation="landscape" />
     	
     	<provider android:authorities="edu.elon.honors.price.maker" android:name="ResourceProvider"/>
     

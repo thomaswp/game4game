@@ -12,6 +12,7 @@ import com.twp.platform.Platformer;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.maker.share.MyGamesActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -40,6 +41,9 @@ public class MainMenu extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		Intent intent = new Intent(this, MyGamesActivity.class);
+		startActivity(intent);
+		
 		setContentView(R.layout.main_menu);
 		
 		createDirs();
@@ -117,6 +121,14 @@ public class MainMenu extends Activity {
 		Button delete = (Button)findViewById(R.id.buttonDelete);
 		Button copy = (Button)findViewById(R.id.buttonCopy);
 		Button test = (Button)findViewById(R.id.buttonTest);
+		Button myGames = (Button)findViewById(R.id.buttonGames);
+		
+		myGames.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MainMenu.this, MyGamesActivity.class));
+			}
+		});
 
 		edit.setOnClickListener(new OnClickListener() {
 			@Override
