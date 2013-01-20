@@ -11,6 +11,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.eujeux.Debug;
 import com.eujeux.LoginUtils;
 import com.eujeux.QueryUtils;
+import com.google.gdata.data.contacts.Website;
 
 @PersistenceCapable
 public class EJUser extends EJData {
@@ -28,8 +29,11 @@ public class EJUser extends EJData {
 	private Long lastLogin;
 	
 	public EJUser(String email) {
-		this.email = email;
-		this.userName = email;
+		this.email = email.toLowerCase();
+		this.userName = email.toLowerCase();
+		if (userName.length() > WebSettings.MAX_USERNAME_LENGTH) {
+			userName = userName.substring(0, WebSettings.MAX_USERNAME_LENGTH);
+		}
 		this.lastLogin = System.currentTimeMillis();
 	}
 	
@@ -53,6 +57,24 @@ public class EJUser extends EJData {
 		return info;
 	}
 
+	public boolean hasEditPermission(MyUserInfo user) {
+		return user.email.equals(email);
+	}
+	
+	public boolean update(MyUserInfo info) {
+		if (!hasEditPermission(info)) return false;
+		if (!MyUserInfo.validUsername(info.userName)) return false;
+		
+		if (!info.userName.equals(userName)) {
+			EJUser user = QueryUtils.queryUnique(
+					EJUser.class, "userName == %s", info.userName);
+			if (user != null) return false;
+		}
+		
+		setUserName(info.userName);
+		return true;
+	}
+	
 	@Override
 	public boolean hasPermission() {
 		EJUser user = LoginUtils.getUser();
@@ -90,4 +112,5 @@ public class EJUser extends EJData {
 	public void setLastLogin(Long lastLogin) {
 		this.lastLogin = lastLogin;
 	}
+
 }

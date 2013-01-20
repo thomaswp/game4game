@@ -20,6 +20,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -28,6 +29,7 @@ import org.apache.http.util.EntityUtils;
 import com.eujeux.data.WebSettings;
 
 import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.input.Input;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
@@ -51,6 +53,8 @@ public class LoginUtils {
 	public final static String PREF_ACCOUNT_KEY = "currentAccount";
 	public final static String PREF_ACSID_KEY = "acsid";
 	public final static String PREF_DOMAIN_KEY = "domain";
+
+	public final static int TIMEOUT = 5000;
 	
 	private static Thread loginThread;
 
@@ -72,11 +76,12 @@ public class LoginUtils {
 	 * protected resources. Must be logged in to access the client.
 	 */
 	public static HttpClient getClient(Context context) {
-		if (!hasLogin(context)) throw new RuntimeException("Not logged in");
+		if (!hasLogin(context)) return null;
 		SharedPreferences pref = getPrefs(context);
 		BasicClientCookie cookie = new BasicClientCookie(ASCID, getACSID(context));
 		cookie.setDomain(pref.getString(PREF_DOMAIN_KEY, ""));
 		DefaultHttpClient client = new DefaultHttpClient();
+		HttpConnectionParams.setConnectionTimeout(client.getParams(), TIMEOUT);
 		CookieStore store = client.getCookieStore();
 		store.addCookie(cookie);
 		return client;
@@ -138,13 +143,25 @@ public class LoginUtils {
 		editor.apply();
 	} 
 
+	public static boolean isLoggingIn() {
+		return loginThread != null;
+	}
+	
+	private static void checkLoginException() {
+		if (isLoggingIn()) {
+			throw new RuntimeException("Already logging in!");
+		}
+	}
+
 	/**
 	 * Attempts to log in, but if permissions are needed, it will call the
 	 * appropriate method in the callback instead of continuing.
 	 */
 	public static void tryLogIn(final Activity context, final Account account, 
 			final LoginCallback callback) {
-		Thread thread = new Thread(new Runnable() {
+		checkLoginException();
+
+		loginThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				AccountManagerFuture<Bundle> amf = getManager(context).getAuthToken(
@@ -155,9 +172,10 @@ public class LoginUtils {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				loginThread = null;
 			}
 		});
-		thread.start();
+		loginThread.start();
 	}
 
 	/**
@@ -165,7 +183,9 @@ public class LoginUtils {
 	 */
 	public static void logIn(final Activity context, final Account account, 
 			final LoginCallback callback) {
-		Thread thread = new Thread(new Runnable() {
+		checkLoginException();
+
+		loginThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				AccountManagerFuture<Bundle> amf = getManager(context).getAuthToken(
@@ -179,9 +199,10 @@ public class LoginUtils {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				loginThread = null;
 			}
 		});
-		thread.start();
+		loginThread.start();
 	}
 
 	private static void handleResule(Activity context, LoginCallback callback, Account account, Bundle bundle) {
@@ -213,53 +234,31 @@ public class LoginUtils {
 				token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 
 				DefaultHttpClient httpclient = new DefaultHttpClient();
-
+				HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), TIMEOUT);
 
 				HttpUriRequest request;
 
 				if (LOCAL) {
-					//					HttpGet httpget = new HttpGet(SITE + "/android/login?auth=" + account.name);
-					//					HttpResponse resp = httpclient.execute(httpget);
-					//					
-					//					HttpEntity entity = resp.getEntity();
-					//					String body = EntityUtils.toString(entity);
-					//					Debug.write(account.name);
-					//					Debug.write("body: " + body);
-					//
-					//					if (body.length() > 0) {
-					//						SharedPreferences prefs = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
-					//						Editor editor = prefs.edit();
-					//						editor.putString(PREF_ACCOUNT_KEY, account.name);
-					//						editor.putString(PREF_ACSID_KEY, account.name);
-					//						editor.putString(PREF_DOMAIN_KEY, Settings.IP);
-					//						editor.apply();
-					//						
-					//						callback.loginFinished(true);
-					//						return;
-					//					}
-
+					//If it's local, we just emulate a form post
 					HttpPost httppost = new HttpPost(SITE + "/_ah/login?continue=" + SITE + "/android/login");
 					ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 					params.add(new BasicNameValuePair("email", account.name));
 					params.add(new BasicNameValuePair("isAdmin", "false"));
 					httppost.setEntity(new UrlEncodedFormEntity(params));
-
+					
 					request = httppost;
 
-
 				} else {
-
-					Debug.write(token);
 
 					HttpGet httpget = new HttpGet(SITE + "/_ah/login?continue=" + SITE + "/android/login&auth=" + token);
 					request = httpget;
 				}
 
+				//Either way, it comes back with a cookie to snag
 				HttpResponse resp = httpclient.execute(request);
 
 				HttpEntity entity = resp.getEntity();
 				String body = EntityUtils.toString(entity);
-				Debug.write("body: " + body);
 
 				if (body.length() > 0) {
 					for(Cookie cookie : httpclient.getCookieStore().getCookies()) {
