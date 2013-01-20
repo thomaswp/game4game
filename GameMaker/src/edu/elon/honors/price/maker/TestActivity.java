@@ -24,6 +24,8 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.accounts.OperationCanceledException;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -53,12 +55,40 @@ public class TestActivity extends DatabaseActivity {
 
 		am.getAuthToken(
 				accounts[0],                    // Account retrieved using getAccountsByType()
-				"ah",            				// Auth scope
+				"cp",            				// Auth scope
 				options,                        // Authenticator-specific options
 				this,                           // Your activity
 				new OnTokenAcquired(),          // Callback called when a token is successfully acquired
 				new Handler(new OnError()));
+		
+		
+//		Thread t = new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//
+//				String token = getUserToken(TestActivity.this);
+//				Debug.write(token);
+//			}
+//		});
 
+	}
+	
+	public static String getUserToken(Activity activity)
+	{
+	    AccountManager accountManager = AccountManager.get(activity);
+	    AccountManagerFuture<Bundle> amf = accountManager.getAuthTokenByFeatures("com.google", "cp", null, activity, Bundle.EMPTY, Bundle.EMPTY, null, null );
+
+	    Bundle bundle = null;
+	    try {
+	        bundle = amf.getResult();
+	        String name = (String) bundle.get(AccountManager.KEY_ACCOUNT_NAME);
+	        String type = (String) bundle.get(AccountManager.KEY_ACCOUNT_TYPE);
+	        String token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+	        return token;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
 	}
 
 	private class OnError implements Callback {
@@ -103,8 +133,7 @@ public class TestActivity extends DatabaseActivity {
 							
 							HttpClient client = new DefaultHttpClient();
 							
-							HttpGet get = new HttpGet("https://eujeux-test.appspot.com/eujeux");
-							get.setHeader("Authorization", token);
+							HttpGet get = new HttpGet("https://192.168.1.108:8888/oauth?token=" + token);
 
 							HttpResponse resp = client.execute(get);
 							HttpEntity entity = resp.getEntity();
