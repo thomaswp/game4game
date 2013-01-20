@@ -4,8 +4,6 @@ import com.eujeux.data.GameInfo;
 import com.eujeux.data.MyUserInfo;
 import com.eujeux.data.UserInfo;
 
-import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.maker.AutoAssign;
 import edu.elon.honors.price.maker.AutoAssignUtils;
 import edu.elon.honors.price.maker.IViewContainer;
@@ -25,12 +23,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 @AutoAssign
 public class MyGamesActivity extends Activity implements IViewContainer {
@@ -39,6 +39,8 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	private static final int DIALOG_CONFIRM_LOGIN = 1;
 	private static final int DIALOG_FAIL = 2;
 	private static final int DIALOG_LOADING = 3;
+	private static final int DIALOG_BAD_NAME = 4;
+	private static final int DIALOG_BAD_UPDATE = 5;
 
 	private Button buttonLogin;
 	private TextView textViewEmail;
@@ -46,8 +48,9 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	private LinearLayout linearLayoutGames;
 	private ProgressDialog progressDialog;
 	
-	private boolean loggedIn;
 	private Handler handler = new Handler();
+	
+	private MyUserInfo userInfo;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,18 +60,49 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		
 		progressDialog = new ProgressDialog(this);
 		progressDialog.setTitle("Logging in");
-		progressDialog.setMessage("Logging in to you account... Please wait.");
-		progressDialog.setCancelable(true);
+		progressDialog.setMessage("Logging in to your account... Please wait.");
+		progressDialog.setCancelable(false);
 		progressDialog.setIndeterminate(true);
 
 		buttonLogin.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (loggedIn) {
+				if (userInfo != null) {
 					logOut();
 				} else {
 					logIn();
 				}
+			}
+		});
+		
+		editTextUsername.setOnEditorActionListener(new OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (userInfo != null) {
+					String name = editTextUsername.getText().toString();
+					if (name != userInfo.userName) {
+						if (MyUserInfo.validUsername(name)) {
+							final String oldName = userInfo.userName;
+							userInfo.userName = name;
+							DataUtils.updateMyUserInfo(MyGamesActivity.this, userInfo, new DataUtils.PostCallback() {
+								@Override
+								public void postComplete(boolean success) {
+									if (success) {
+										
+									} else {
+										userInfo.userName = oldName;
+										editTextUsername.setText(oldName);
+										showDialog(DIALOG_BAD_UPDATE);
+									}
+								}
+							});
+						} else {
+							showDialog(DIALOG_BAD_NAME);
+							editTextUsername.setText(userInfo.userName);
+						}
+					}
+				}
+				return false;
 			}
 		});
 
@@ -143,6 +177,20 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 			.create();
 		} else if (id == DIALOG_LOADING) {
 			return progressDialog;
+		} else if (id == DIALOG_BAD_NAME) {
+			return new AlertDialog.Builder(this)
+			.setTitle("Invalid Username")
+			.setMessage("Usernames must be 3-15 lowercase alphanumeric characters, " +
+					"underscores (_) dashes (-), at signs (@) or periods (.). " +
+					"Ex: user_name")
+			.setNeutralButton("Ok", null)
+			.create();
+		} else if (id == DIALOG_BAD_UPDATE) {
+			return new AlertDialog.Builder(this)
+			.setTitle("Username Update Failed")
+			.setMessage("The name you have chosen is already in use. Please choose another.")
+			.setNeutralButton("Ok", null)
+			.create();
 		}
 		return null;
 	}
@@ -157,12 +205,12 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		if (success) {
 			buttonLogin.setEnabled(true);
 			buttonLogin.setText("Log Out");
-			loggedIn = true;
 
 			DataUtils.fetchMyUserInfo(this, 
 					new FetchCallback<MyUserInfo>() {
 				@Override
 				public void fetchComplete(MyUserInfo result) {
+					userInfo = result;
 					editTextUsername.setVisibility(View.VISIBLE);
 					editTextUsername.setText(result.userName);
 					textViewEmail.setText(result.email);
@@ -173,10 +221,17 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 						linearLayoutGames.addView(gameView);
 					}
 				}
+
+				@Override
+				public void fetchFailed() {
+					loginFailed();
+				}
 			});
 		} else {
 			loginFailed();
 		}
+
+		progressDialog.dismiss();
 	}
 
 	private void loginFailed() {
@@ -204,7 +259,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	private void logOut() {
 		buttonLogin.setText("Log In");
 		LoginUtils.logOut(this);
-		loggedIn = false;
+		userInfo = null;
 		editTextUsername.setVisibility(View.INVISIBLE);
 		editTextUsername.setText("");
 		textViewEmail.setText("");
