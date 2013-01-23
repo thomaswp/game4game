@@ -1,12 +1,19 @@
 package edu.elon.honors.price.maker.share;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.eujeux.data.GameInfo;
 import com.eujeux.data.MyUserInfo;
 import com.eujeux.data.UserInfo;
 
+import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.maker.AutoAssign;
 import edu.elon.honors.price.maker.AutoAssignUtils;
 import edu.elon.honors.price.maker.IViewContainer;
+import edu.elon.honors.price.maker.MainMenu;
 import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.share.DataUtils.FetchCallback;
 import edu.elon.honors.price.maker.share.LoginUtils.LoginCallback;
@@ -41,12 +48,14 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	private static final int DIALOG_LOADING = 3;
 	private static final int DIALOG_BAD_NAME = 4;
 	private static final int DIALOG_BAD_UPDATE = 5;
+	private static final int DIALOG_ADD_GAME = 6;
 
 	private Button buttonLogin;
 	private TextView textViewEmail;
 	private EditText editTextUsername;
 	private LinearLayout linearLayoutGames;
 	private ProgressDialog progressDialog;
+	private Button buttonAddGame;
 	
 	private Handler handler = new Handler();
 	
@@ -75,33 +84,17 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 			}
 		});
 		
+		buttonAddGame.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				addGame();
+			}
+		});
+		
 		editTextUsername.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (userInfo != null) {
-					String name = editTextUsername.getText().toString();
-					if (name != userInfo.userName) {
-						if (MyUserInfo.validUsername(name)) {
-							final String oldName = userInfo.userName;
-							userInfo.userName = name;
-							DataUtils.updateMyUserInfo(MyGamesActivity.this, userInfo, new DataUtils.PostCallback() {
-								@Override
-								public void postComplete(boolean success) {
-									if (success) {
-										
-									} else {
-										userInfo.userName = oldName;
-										editTextUsername.setText(oldName);
-										showDialog(DIALOG_BAD_UPDATE);
-									}
-								}
-							});
-						} else {
-							showDialog(DIALOG_BAD_NAME);
-							editTextUsername.setText(userInfo.userName);
-						}
-					}
-				}
+				changeUsername();
 				return false;
 			}
 		});
@@ -111,6 +104,52 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		}
 	}
 
+	private void addGame() {
+		List<String> games = MainMenu.getGameFilenames(this);
+		
+		LinkedList<String> files = new LinkedList<String>();
+		LinkedList<String> names = new LinkedList<String>();
+		for (String gameName : games) {
+			PlatformGame game = (PlatformGame)Data.loadGame(gameName, this);
+			if (game.websiteId == null) {
+				names.add(gameName.substring(MainMenu.PREFIX.length()));
+				files.add(gameName);
+			}
+		}
+		Bundle bundle = new Bundle();
+		
+		String[] filesA = games.toArray(new String[games.size()]);
+		String[] namesA = names.toArray(new String[names.size()]);
+		bundle.putStringArray("files", filesA);
+		bundle.putStringArray("names", namesA);
+		
+		showDialog(DIALOG_ADD_GAME, bundle);
+	}
+	
+	private void changeUsername() {
+		if (userInfo != null) {
+			String name = editTextUsername.getText().toString();
+			if (name != userInfo.userName) {
+				if (MyUserInfo.validUsername(name)) {
+					final String oldName = userInfo.userName;
+					userInfo.userName = name;
+					DataUtils.updateMyUserInfo(MyGamesActivity.this, userInfo, new DataUtils.PostCallback() {
+						@Override
+						public void postComplete(boolean success) {
+							if (!success) {
+								userInfo.userName = oldName;
+								editTextUsername.setText(oldName);
+								showDialog(DIALOG_BAD_UPDATE);
+							}
+						}
+					});
+				} else {
+					showDialog(DIALOG_BAD_NAME);
+					editTextUsername.setText(userInfo.userName);
+				}
+			}
+		}
+	}
 
 
 	@Override
@@ -191,8 +230,37 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 			.setMessage("The name you have chosen is already in use. Please choose another.")
 			.setNeutralButton("Ok", null)
 			.create();
+		} else if (id == DIALOG_ADD_GAME) {
+			String[] names = args.getStringArray("names");
+			final String[] files = args.getStringArray("files");
+			
+			return new AlertDialog.Builder(this)
+			.setTitle("Choose game to upload")
+			.setItems(names, new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					addGame(files[which]);
+				}
+			})
+			.setNeutralButton("Cancel", new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					cancelLogin();
+				}
+			})
+			.setOnCancelListener(new Dialog.OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					cancelLogin();
+				}
+			})
+			.create();
 		}
 		return null;
+	}
+	
+	private void addGame(String filename) {
+		
 	}
 
 	private void loginWithAccountIndex(int index) {

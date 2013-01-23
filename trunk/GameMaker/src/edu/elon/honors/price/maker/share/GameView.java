@@ -27,7 +27,7 @@ public class GameView extends LinearLayout implements IViewContainer {
 		inflator.inflate(R.layout.gameinfo, this);
 		AutoAssignUtils.autoAssign(this);
 		
-		textViewName.setText(info.name + " v" + info.version);
+		textViewName.setText(info.name + " v" + info.majorVersion + "." + info.minorVersion);
 		textViewCreator.setText("Created by: " + info.creator.userName);
 		textViewDownloads.setText("Downloads: " + info.downloads);
 		SimpleDateFormat df = new SimpleDateFormat();

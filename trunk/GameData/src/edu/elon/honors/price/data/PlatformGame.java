@@ -14,6 +14,10 @@ public class PlatformGame extends GameData {
 	private transient Rect mapRect = new Rect();
 
 	protected int _VERSION_ = Upgrader.LATEST_VERSION;
+	
+	public Long websiteId;
+	public String name;
+	public long lastEdited;
 
 	public ArrayList<Map> maps;
 	public int selectedMapId;
@@ -50,8 +54,9 @@ public class PlatformGame extends GameData {
 		return null;
 	}
 	
-	public PlatformGame(String id) {
+	public PlatformGame(String id, String name) {
 		ID = id;
+		this.name = name;
 		
 		switchNames = new String[] { };
 		switchValues = new boolean[] { };

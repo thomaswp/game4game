@@ -133,7 +133,6 @@ public class DataUtils {
 					results.add(item);
 				} catch (Exception e) {
 					e.printStackTrace();
-					callback.fetchFailed();
 				}
 			}
 			return null;
@@ -141,8 +140,12 @@ public class DataUtils {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			for (T res : results) {
-				callback.fetchComplete(res);
+			if (results.size() == 0) {
+				callback.fetchFailed();
+			} else {
+				for (T res : results) {
+					callback.fetchComplete(res);
+				}
 			}
 		}
 	}

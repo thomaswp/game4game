@@ -33,7 +33,7 @@ public class UploadServlet extends HttpServlet {
 			EJGame aGame = new EJGame();
 			aGame.setCreatorId(Long.parseLong(req.getParameter("creatorId")));
 			aGame.setName(req.getParameter("name"));
-			aGame.setVersion(Integer.parseInt(req.getParameter("version")));
+			aGame.setMajorVersion(Integer.parseInt(req.getParameter("version")));
 
 			Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
 			List<BlobKey> blobKeyList = blobs.get("blob");

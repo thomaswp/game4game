@@ -11,5 +11,5 @@ public class GameInfo implements Serializable {
 	public int downloads;
 	public Date uploadDate;
 	public UserInfo creator;
-	public int version;
+	public int majorVersion, minorVersion;
 }

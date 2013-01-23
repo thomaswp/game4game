@@ -20,10 +20,16 @@ public class EJGame extends EJData {
 	private String name;
 	
 	@Persistent
-	private int version = 0;
+	private int majorVersion = 1;
+
+	@Persistent
+	private int minorVersion = 0;
 	
 	@Persistent
 	private Date uploadDate = new Date();
+	
+	@Persistent
+	private long lastEdited;
 	
 	@Persistent
 	private Long creatorId;
@@ -55,7 +61,8 @@ public class EJGame extends EJData {
 		game.blobKeyString = blobKey.getKeyString();
 		game.downloads = downloads == null ? 0 : downloads;
 		game.uploadDate = uploadDate;
-		game.version = version;
+		game.majorVersion = majorVersion;
+		game.minorVersion = majorVersion;
 		game.creator = info;
 		return game;
 	}
@@ -73,11 +80,23 @@ public class EJGame extends EJData {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getVersion() {
-		return version;
+	public int getMajorVersion() {
+		return majorVersion;
 	}
-	public void setVersion(int version) {
-		this.version = version;
+	public void setMajorVersion(int majorVersion) {
+		this.majorVersion = majorVersion;
+	}
+	public int getMinorVersion() {
+		return minorVersion;
+	}
+	public void setMinorVersion(int minorVersion) {
+		this.minorVersion = minorVersion;
+	}
+	public long getLastEdited() {
+		return lastEdited;
+	}
+	public void setLastEdited(long lastEdited) {
+		this.lastEdited = lastEdited;
 	}
 	public Date getUploadDate() {
 		return uploadDate;
