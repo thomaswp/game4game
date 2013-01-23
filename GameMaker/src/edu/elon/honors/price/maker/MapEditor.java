@@ -130,6 +130,7 @@ public class MapEditor extends MapActivityBase {
 	private void save() {
 		try {
 			((MapEditorView)view).saveMapData();
+			game.lastEdited = System.currentTimeMillis();
 			Data.saveGame(gameName, this, game);
 			PlatformGame gameCopy = (PlatformGame) Data.loadGame(gameName, this);
 			getIntent().putExtra("game", gameCopy);

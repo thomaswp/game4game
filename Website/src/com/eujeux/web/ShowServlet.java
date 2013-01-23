@@ -38,7 +38,7 @@ public class ShowServlet extends HttpServlet {
 					game.getCreatorId());
 			
 			pw.println("<p>" + game.getName() + 
-					" (v" + game.getVersion() + ")" +
+					" (v" + game.getMajorVersion() + "." + game.getMinorVersion() + ")" +
 					" by " + creator.getUserName() + " " +
 					"<a href=\"/serve?blobKey=" + game.getBlobKey().getKeyString() + "\">the game</a>" + 
 					"</p> <br/>");

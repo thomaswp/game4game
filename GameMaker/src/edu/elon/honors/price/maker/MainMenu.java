@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.twp.platform.Platformer;
 
@@ -15,6 +17,7 @@ import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.share.MyGamesActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -81,6 +84,18 @@ public class MainMenu extends Activity {
 		}
 	}
 
+	public static List<String> getGameFilenames(Context context) {
+		LinkedList<String> games = new LinkedList<String>();
+		
+		String[] files = context.fileList();
+		for (String file : files) {
+			if (file.indexOf(PREFIX) == 0) {
+				games.add(file);
+			}
+		}
+		return games;
+	}
+	
 	private void loadMaps() {
 		LinearLayout layout = (LinearLayout)findViewById(R.id.linearLayout1);
 		layout.removeAllViews();
@@ -89,27 +104,26 @@ public class MainMenu extends Activity {
 
 		selectedMap = null;
 
-		String[] files = fileList();
-		for (String file : files) {
-			if (file.indexOf(PREFIX) == 0) {
-				final String name = file.substring(PREFIX.length());
-				final String fileName = file;
-				RadioButton b = new RadioButton(this);
-				b.setText(name);
-				b.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						if (selectedMap == fileName)
-							edit();
-						else
-							selectedMap = fileName;
-					}
-				});
-				group.addView(b);
-				if (selectedMap == null) {
-					selectedMap = fileName;
-					b.setChecked(true);
+		List<String> games = getGameFilenames(this);
+		
+		for (String file : games) {
+			final String name = file.substring(PREFIX.length());
+			final String fileName = file;
+			RadioButton b = new RadioButton(this);
+			b.setText(name);
+			b.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (selectedMap == fileName)
+						edit();
+					else
+						selectedMap = fileName;
 				}
+			});
+			group.addView(b);
+			if (selectedMap == null) {
+				selectedMap = fileName;
+				b.setChecked(true);
 			}
 		}
 	}
@@ -255,7 +269,8 @@ public class MainMenu extends Activity {
 
 		String id = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 		id += "_" + System.currentTimeMillis();
-		Data.saveGame(name, this, new PlatformGame(id));
+		PlatformGame game = new PlatformGame(id, name.substring(PREFIX.length()));
+		Data.saveGame(name, this, game);
 
 		loadMaps();
 	}

@@ -10,7 +10,7 @@ import edu.elon.honors.price.game.Game;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 5;
+	public final static int LATEST_VERSION = 6;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -48,6 +48,10 @@ public class Upgrader {
 				Debug.write(actor.imageName);
 			}
 			upgraded(game);
+		}
+		
+		if (version < 6) {
+			game.name = "New Game";
 		}
 	}
 
