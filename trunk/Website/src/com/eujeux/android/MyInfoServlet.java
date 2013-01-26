@@ -21,7 +21,10 @@ public class MyInfoServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		EJUser user = LoginUtils.getUser();
-		if (user == null) return;
+		if (user == null) {
+			LoginUtils.sendNoUserError(resp);
+			return;
+		}
 		
 		String action = req.getParameter(WebSettings.PARAM_ACTION);
 		

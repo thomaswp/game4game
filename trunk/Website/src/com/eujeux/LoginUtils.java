@@ -1,10 +1,12 @@
 package com.eujeux;
 
+import java.io.IOException;
 import java.net.URL;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.eujeux.data.EJUser;
 import com.eujeux.data.WebSettings;
@@ -46,6 +48,12 @@ public class LoginUtils {
 //	    String nameLang = person.getNameLang();
 
 	    return externalId;
+	}
+	
+	public static void sendNoUserError(HttpServletResponse resp) 
+			throws IOException {
+		resp.sendError(HttpServletResponse.SC_FORBIDDEN, 
+				"Must be logged in to access this resource.");
 	}
 	
 	public static EJUser getUser() {

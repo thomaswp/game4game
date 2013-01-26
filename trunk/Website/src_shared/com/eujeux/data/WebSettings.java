@@ -3,7 +3,7 @@ package com.eujeux.data;
 public class WebSettings {
 	public final static int VERSION = 1;
 	
-	public final static String IP = "192.168.0.12";
+	public final static String IP = "192.168.1.113";
 	public final static boolean LOCAL = true;
 	public final static String LOCAL_SITE = "http://" + IP + ":8888";
 	public final static String APP_SITE = "https://eujeux-test.appspot.com";
@@ -17,4 +17,5 @@ public class WebSettings {
 	public final static String PARAM_ACTION = "action";
 	public final static String ACTION_FETCH = "fetch";
 	public final static String ACTION_POST = "post";
+	public final static String ACTION_CREATE = "create";
 }

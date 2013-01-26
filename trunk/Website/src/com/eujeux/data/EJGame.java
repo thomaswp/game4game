@@ -50,19 +50,20 @@ public class EJGame extends EJData {
 	public GameInfo getInfo() {
 		GameInfo game = getInfo(null);
 		game.creator = QueryUtils.queryUnique(
-				EJUser.class, "id == %s", creatorId.toString())
+				EJUser.class, "id == %s", creatorId)
 				.getInfo();
 		return game;
 	}
 
 	public GameInfo getInfo(MyUserInfo info) {
 		GameInfo game = new GameInfo();
+		game.id = id;
 		game.name = name;
 		game.blobKeyString = blobKey.getKeyString();
 		game.downloads = downloads == null ? 0 : downloads;
 		game.uploadDate = uploadDate;
 		game.majorVersion = majorVersion;
-		game.minorVersion = majorVersion;
+		game.minorVersion = minorVersion;
 		game.creator = info;
 		return game;
 	}

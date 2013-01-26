@@ -73,17 +73,11 @@
             android:id="@+id/buttonAddGame"
             android:layout_width="40dip"
             android:layout_height="40dip"
-            android:layout_marginLeft="15dip"
-            android:text="@string/plus" />
+            android:layout_marginLeft="15dip" android:enabled="false" android:text="@string/plus"/>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayoutGames"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-    </LinearLayout>
+    <ScrollView android:id="@+id/scrollView1" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <LinearLayout android:id="@+id/linearLayoutGames" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical"></LinearLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/buttonLogin"

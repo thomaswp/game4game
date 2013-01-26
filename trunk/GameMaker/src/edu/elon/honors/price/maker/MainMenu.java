@@ -44,8 +44,8 @@ public class MainMenu extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		Intent intent = new Intent(this, MyGamesActivity.class);
-		startActivity(intent);
+//		Intent intent = new Intent(this, MyGamesActivity.class);
+//		startActivity(intent);
 		
 		setContentView(R.layout.main_menu);
 		
@@ -66,7 +66,7 @@ public class MainMenu extends Activity {
 				dirs.add("export/");
 
 				for (int i = 0; i < dirs.size(); i++) {
-					File file = new File(Environment.getExternalStorageDirectory(), Data.SD_FOLDER + dirs.get(i));
+					File file = new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), Data.SD_FOLDER + dirs.get(i));
 					if (!file.exists()) {
 						file.mkdirs();
 					}

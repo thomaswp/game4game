@@ -119,4 +119,12 @@
     <string name="email_c">Email:</string>
     <string name="login">Login</string>
     <string name="games_c">Games:</string>
+    <string name="creator_c">Creator:</string>
+    <string name="version_c">Version:</string>
+    <string name="description_c">Description:</string>
+    <string name="dateCreated_c">Date Created:</string>
+    <string name="update">Update</string>
+    <string name="download">Download</string>
+    <string name="publish">Publish Update</string>
+    <string name="downloads_c">Downloads:</string>
 </resources>
