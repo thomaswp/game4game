@@ -34,6 +34,14 @@
 		<url-pattern>/android/usersGames</url-pattern>
 	</servlet-mapping>
 	<servlet>
+	    <servlet-name>GameServlet</servlet-name>
+	    <servlet-class>com.eujeux.android.GameServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>GameServlet</servlet-name>
+	    <url-pattern>/android/game</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>Login</servlet-name>
 		<servlet-class>com.eujeux.android.LoginServlet</servlet-class>
 	</servlet>

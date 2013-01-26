@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker.share;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,11 +11,13 @@ import com.eujeux.data.UserInfo;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.AutoAssign;
 import edu.elon.honors.price.maker.AutoAssignUtils;
 import edu.elon.honors.price.maker.IViewContainer;
 import edu.elon.honors.price.maker.MainMenu;
 import edu.elon.honors.price.maker.R;
+import edu.elon.honors.price.maker.share.DataUtils.CreateCallback;
 import edu.elon.honors.price.maker.share.DataUtils.FetchCallback;
 import edu.elon.honors.price.maker.share.LoginUtils.LoginCallback;
 import android.accounts.Account;
@@ -44,11 +47,13 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 
 	private static final int DIALOG_ACCOUNTS = 0;
 	private static final int DIALOG_CONFIRM_LOGIN = 1;
-	private static final int DIALOG_FAIL = 2;
+	private static final int DIALOG_FAIL_LOGIN = 2;
 	private static final int DIALOG_LOADING = 3;
 	private static final int DIALOG_BAD_NAME = 4;
 	private static final int DIALOG_BAD_UPDATE = 5;
 	private static final int DIALOG_ADD_GAME = 6;
+	private static final int DIALOG_NO_GAMES = 7;
+	private static final int DIALOG_FAIL_UPLOAD_GAME = 8;
 
 	private Button buttonLogin;
 	private TextView textViewEmail;
@@ -56,9 +61,9 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	private LinearLayout linearLayoutGames;
 	private ProgressDialog progressDialog;
 	private Button buttonAddGame;
-	
+
 	private Handler handler = new Handler();
-	
+
 	private MyUserInfo userInfo;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,10 +71,10 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		setContentView(R.layout.my_games);
 
 		AutoAssignUtils.autoAssign(this);
-		
+
 		progressDialog = new ProgressDialog(this);
-		progressDialog.setTitle("Logging in");
-		progressDialog.setMessage("Logging in to your account... Please wait.");
+		progressDialog.setTitle("Connecting");
+		progressDialog.setMessage("Connecting to website... Please wait.");
 		progressDialog.setCancelable(false);
 		progressDialog.setIndeterminate(true);
 
@@ -83,14 +88,14 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 				}
 			}
 		});
-		
+
 		buttonAddGame.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				addGame();
 			}
 		});
-		
+
 		editTextUsername.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -105,11 +110,11 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	}
 
 	private void addGame() {
-		List<String> games = MainMenu.getGameFilenames(this);
-		
+		List<String> allGames = MainMenu.getGameFilenames(this);
+
 		LinkedList<String> files = new LinkedList<String>();
 		LinkedList<String> names = new LinkedList<String>();
-		for (String gameName : games) {
+		for (String gameName : allGames) {
 			PlatformGame game = (PlatformGame)Data.loadGame(gameName, this);
 			if (game.websiteId == null) {
 				names.add(gameName.substring(MainMenu.PREFIX.length()));
@@ -118,14 +123,20 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		}
 		Bundle bundle = new Bundle();
 		
-		String[] filesA = games.toArray(new String[games.size()]);
-		String[] namesA = names.toArray(new String[names.size()]);
-		bundle.putStringArray("files", filesA);
-		bundle.putStringArray("names", namesA);
 		
-		showDialog(DIALOG_ADD_GAME, bundle);
+
+		if (files.size() > 0) {
+			String[] filesA = files.toArray(new String[files.size()]);
+			String[] namesA = names.toArray(new String[names.size()]);
+			bundle.putStringArray("files", filesA);
+			bundle.putStringArray("names", namesA);
+			
+			showDialog(DIALOG_ADD_GAME, bundle);
+		} else {
+			showDialog(DIALOG_NO_GAMES);
+		}
 	}
-	
+
 	private void changeUsername() {
 		if (userInfo != null) {
 			String name = editTextUsername.getText().toString();
@@ -206,31 +217,24 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 						}
 					})
 					.create();
-		} else if (id == DIALOG_FAIL) {
-			return new AlertDialog.Builder(this)
-			.setTitle("Login Failed")
-			.setMessage("Login failed! Please ensure your device is connected " +
+		} else if (id == DIALOG_FAIL_LOGIN) {
+			return alertDialog("Login Failed",
+					"Login failed! Please ensure your device is connected " +
 					"to the internet and that you have accepted all requested " +
-					"permissions and try again.")
-			.setNeutralButton("Ok", null)
-			.create();
+					"permissions and try again.");
 		} else if (id == DIALOG_LOADING) {
 			return progressDialog;
 		} else if (id == DIALOG_BAD_NAME) {
-			return new AlertDialog.Builder(this)
-			.setTitle("Invalid Username")
-			.setMessage("Usernames must be 3-15 lowercase alphanumeric characters, " +
+			return alertDialog("Invalid Username",
+					"Usernames must be 3-15 lowercase alphanumeric characters, " +
 					"underscores (_) dashes (-), at signs (@) or periods (.). " +
-					"Ex: user_name")
-			.setNeutralButton("Ok", null)
-			.create();
+					"Ex: user_name");
 		} else if (id == DIALOG_BAD_UPDATE) {
-			return new AlertDialog.Builder(this)
-			.setTitle("Username Update Failed")
-			.setMessage("The name you have chosen is already in use. Please choose another.")
-			.setNeutralButton("Ok", null)
-			.create();
+			return alertDialog("Username Update Failed",
+					"The name you have chosen is already in use. " +
+					"Please choose another.");
 		} else if (id == DIALOG_ADD_GAME) {
+			
 			String[] names = args.getStringArray("names");
 			final String[] files = args.getStringArray("files");
 			
@@ -240,27 +244,49 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					addGame(files[which]);
+					removeDialog(DIALOG_ADD_GAME);
 				}
 			})
-			.setNeutralButton("Cancel", new Dialog.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					cancelLogin();
-				}
-			})
-			.setOnCancelListener(new Dialog.OnCancelListener() {
-				@Override
-				public void onCancel(DialogInterface dialog) {
-					cancelLogin();
-				}
-			})
+			.setNeutralButton("Cancel", null)
 			.create();
+		} else if (id == DIALOG_NO_GAMES) {
+			return alertDialog("No Games", "There are no games to upload. " +
+					"All games have already been uploaded.");
+		} else if (id == DIALOG_FAIL_UPLOAD_GAME) {
+			return alertDialog("Upload Failed", "Could not upload the game.");
 		}
 		return null;
 	}
-	
-	private void addGame(String filename) {
-		
+
+	private AlertDialog alertDialog(String title, String message) {
+		return new AlertDialog.Builder(this)
+		.setTitle(title)
+		.setMessage(message)
+		.setNeutralButton("Ok", null)
+		.create();
+	}
+
+	private void addGame(final String filename) {
+		Debug.write(filename);
+		final PlatformGame game = (PlatformGame)Data.loadGame(filename, this);
+		showDialog(DIALOG_LOADING);
+		DataUtils.createGame(this, game, new CreateCallback<GameInfo>() {
+			@Override
+			public void createComplete(GameInfo result) {
+				progressDialog.dismiss();
+				
+				if (result != null) {
+					game.websiteId = result.id;
+					Debug.write(game.websiteId);
+					Data.saveGame(filename, MyGamesActivity.this, game);
+					GameView gameView = new GameView(
+							MyGamesActivity.this, result);
+					linearLayoutGames.addView(gameView);
+				} else {
+					showDialog(DIALOG_FAIL_UPLOAD_GAME);
+				}
+			}
+		});
 	}
 
 	private void loginWithAccountIndex(int index) {
@@ -282,6 +308,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 					editTextUsername.setVisibility(View.VISIBLE);
 					editTextUsername.setText(result.userName);
 					textViewEmail.setText(result.email);
+					buttonAddGame.setEnabled(true);
 					linearLayoutGames.removeAllViews();
 					for (GameInfo info : result.games) {
 						GameView gameView = new GameView(
@@ -305,7 +332,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	private void loginFailed() {
 		cancelLogin();
 		LoginUtils.logOut(this);
-		showDialog(DIALOG_FAIL);
+		showDialog(DIALOG_FAIL_LOGIN);
 	}
 
 	private void cancelLogin() {
@@ -332,6 +359,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		editTextUsername.setText("");
 		textViewEmail.setText("");
 		linearLayoutGames.removeAllViews();
+		buttonAddGame.setEnabled(false);
 	}
 
 	private class LoginCallbackHandler implements LoginCallback {

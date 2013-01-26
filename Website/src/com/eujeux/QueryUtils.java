@@ -37,6 +37,15 @@ public class QueryUtils {
 		return (List<T>)query(pm, c, false, filter, parameters);
 	}
 
+	/**
+	 * 
+	 * @param pm
+	 * @param c
+	 * @param unique
+	 * @param filter Write a filter using %s as a standin for each parameter
+	 * @param parameters List parameters using actual data type (not toString)
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private static <T> Object query(PersistenceManager pm, 
 			Class<T> c, boolean unique, String filter, Object... parameters) {
@@ -54,8 +63,8 @@ public class QueryUtils {
 			declaredParams += parameters[i].getClass().getName() + " " +
 					peqs[i];
 		}
-//		Debug.write(declaredParams);
-//		Debug.write(String.format(filter, peqs));
+		Debug.write(declaredParams);
+		Debug.write(String.format(filter, peqs));
 		
 		Query q = pm.newQuery(c);
 		q.setFilter(String.format(filter, peqs));

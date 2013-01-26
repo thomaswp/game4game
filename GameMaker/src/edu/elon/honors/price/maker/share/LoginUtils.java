@@ -171,6 +171,7 @@ public class LoginUtils {
 					handleResule(context, callback, account, bundle);
 				} catch (Exception e) {
 					e.printStackTrace();
+					callback.loginFinished(false);
 				}
 				loginThread = null;
 			}
@@ -198,6 +199,7 @@ public class LoginUtils {
 					callback.loginFinished(false);
 				} catch (Exception e) {
 					e.printStackTrace();
+					callback.loginFinished(false);
 				}
 				loginThread = null;
 			}
