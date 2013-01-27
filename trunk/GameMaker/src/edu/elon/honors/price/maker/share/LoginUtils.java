@@ -26,6 +26,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import com.eujeux.data.MyUserInfo;
+import com.eujeux.data.UserInfo;
 import com.eujeux.data.WebSettings;
 
 import edu.elon.honors.price.game.Debug;
@@ -53,6 +55,7 @@ public class LoginUtils {
 	public final static String PREF_ACCOUNT_KEY = "currentAccount";
 	public final static String PREF_ACSID_KEY = "acsid";
 	public final static String PREF_DOMAIN_KEY = "domain";
+	public final static String PREF_USER_ID_KEY = "userId";
 
 	public final static int TIMEOUT = 5000;
 	
@@ -69,6 +72,16 @@ public class LoginUtils {
 	public static String getACSID(Context context) {
 		SharedPreferences pref = getPrefs(context);
 		return pref.getString(PREF_ACSID_KEY, null);
+	}
+	
+	public static long getUserId(Context context) {
+		SharedPreferences prefs = getPrefs(context);
+		return prefs.getLong(PREF_USER_ID_KEY, -1);
+	}
+	
+	public static void registerUser(Context context, MyUserInfo info) {
+		SharedPreferences prefs = getPrefs(context);
+		prefs.edit().putLong(PREF_USER_ID_KEY, info.id).apply();
 	}
 
 	/**

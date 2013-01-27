@@ -2,6 +2,8 @@ package com.eujeux;
 
 
 public class Debug {
+	public static boolean DEBUG = true;
+	
 	public static void write(long x) {
 		write("" + x);
 	}
@@ -27,7 +29,7 @@ public class Debug {
 	}
 	
 	public static void write(Exception e) {
-		e.printStackTrace();
+		if (DEBUG) e.printStackTrace();
 	}
 	
 	/**
@@ -36,6 +38,8 @@ public class Debug {
 	 * @param text The text to be written.
 	 */
 	public static void write(String text) {
+		if (!DEBUG) return;
+		
 		String msg = "---{" + text + "}---";
 		String tag = "Game";
 		try

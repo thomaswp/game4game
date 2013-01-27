@@ -128,7 +128,7 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 	 * or if it is not castable to the given type.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getExtra(String key, Class<T> c) {
+	public <T extends Serializable> T getExtra(String key, Class<T> c) {
 		Serializable s = getIntent().getExtras().getSerializable(key);
 		if (s == null || !c.isInstance(s)) return null;
 		return (T)s;
@@ -160,16 +160,6 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 		AutoAssignUtils.autoAssign(this);
 	}
 
-	/**
-	 * Calls {@link #onFinishing()} before 
-	 * passing on control to the super implementation,
-	 * {@link SaveableActivity#onBackPressed()}.
-	 */
-	@Override
-	public void onBackPressed() {
-		onFinishing();
-		super.onBackPressed();
-	}
 
 	/**
 	 * Compares the game field to the original
@@ -203,18 +193,11 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 	 */
 	@Override
 	protected final void finishOk(Intent intent) {
-		onFinishing();
 		intent.putExtra("game", game);
 		putExtras(intent);
 		super.finishOk(intent);
 	}	
 
-	/**
-	 * Called before the game is Serialized.
-	 * This is an activity's opportunity to
-	 * save any form data to the game.
-	 */
-	protected void onFinishing() { }
 
 	/**
 	 * Called when the game is finishing and passing
@@ -260,8 +243,6 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
-	
-
 	@Override
 	protected String getPreferenceId() {
 		return game.ID;

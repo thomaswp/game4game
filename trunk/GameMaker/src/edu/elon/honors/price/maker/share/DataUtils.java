@@ -55,6 +55,11 @@ public class DataUtils {
 		PostTask<MyUserInfo> task = new PostTask<MyUserInfo>(context, MY_USER_INFO, callback);
 		task.execute(info);
 	}
+
+	public static void updateGame(Context context, GameInfo info, PostCallback callback) {
+		PostTask<GameInfo> task = new PostTask<GameInfo>(context, GAME, callback);
+		task.execute(info);
+	}
 	
 	public static void createGame(Context context, PlatformGame game, CreateCallback<GameInfo> callback) {
 		String escapedName = URLEncoder.encode(game.name);
@@ -62,6 +67,13 @@ public class DataUtils {
 		CreateTask<PlatformGame, GameInfo> task = new CreateTask<PlatformGame, GameInfo>(context, 
 				GAME + "?name=" + escapedName, callback);
 		task.execute(game);
+	}
+	
+	private static void printResponseError(HttpResponse response) {
+		StatusLine status = response.getStatusLine(); 
+		if (status != null && status.getStatusCode() != 200) {
+			Debug.write("Error %d: %s", status.getStatusCode(), status.getReasonPhrase());
+		}
 	}
 
 	public static interface CreateCallback<T> {
@@ -100,6 +112,7 @@ public class DataUtils {
 					post.setEntity(bae);
 					
 					HttpResponse response = client.execute(post);
+					printResponseError(response);
 					ObjectInputStream ois = new ObjectInputStream(
 							response.getEntity().getContent());
 					result = (S) ois.readObject();
@@ -148,6 +161,7 @@ public class DataUtils {
 					ByteArrayEntity bae = new ByteArrayEntity(boas.toByteArray());
 					post.setEntity(bae);
 					HttpResponse response = client.execute(post);
+					printResponseError(response);
 					success = response.getStatusLine().getStatusCode() == 200; 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -190,6 +204,7 @@ public class DataUtils {
 				HttpGet get = new HttpGet(url + "?" + param);
 				try {
 					HttpResponse resp = client.execute(get);
+					printResponseError(resp);
 					ByteArrayOutputStream boas = new ByteArrayOutputStream();
 					resp.getEntity().writeTo(boas);
 					byte[] ba = boas.toByteArray();

@@ -54,6 +54,13 @@ public class LoginUtils {
 			throws IOException {
 		resp.sendError(HttpServletResponse.SC_FORBIDDEN, 
 				"Must be logged in to access this resource.");
+		Debug.write("No user!");
+	}
+	
+	public static void sendBadRequestError(HttpServletResponse resp, String message) 
+			throws IOException {
+		resp.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+		Debug.write(message);
 	}
 	
 	public static EJUser getUser() {
@@ -75,6 +82,7 @@ public class LoginUtils {
 		if (user == null && createNew) {
 			user = new EJUser(email);
 			pm.makePersistent(user);
+			user.generateDefaultName();
 		}
 		pm.close();
 		

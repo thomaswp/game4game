@@ -63,8 +63,6 @@ public class QueryUtils {
 			declaredParams += parameters[i].getClass().getName() + " " +
 					peqs[i];
 		}
-		Debug.write(declaredParams);
-		Debug.write(String.format(filter, peqs));
 		
 		Query q = pm.newQuery(c);
 		q.setFilter(String.format(filter, peqs));
@@ -73,21 +71,32 @@ public class QueryUtils {
 		
 		Object result;
 		
+		String query = null;
+		if (Debug.DEBUG) {
+			Object[] params = new String[parameters.length];
+			for (int i = 0; i < params.length; i++) params[i] = parameters[i].toString();
+			query = String.format(filter, params);
+		}
+		
 		if (parameters.length == 0) {
 			result = q.execute();
 		} else if (parameters.length == 1) {
 			result = q.execute(parameters[0]);
-			Debug.write(result);
 		} else if (parameters.length == 2) {
 			result = q.execute(parameters[0], parameters[1]);
 		} else if (parameters.length == 3) {
 			result = q.execute(parameters[0], parameters[1], parameters[2]);
 		} else {
+			Debug.write("Search (%s): '%s' fails", c.getSimpleName(), query);
 			return null;
 		}
+		Debug.write("Search (%s): '%s' yields: %s", c.getSimpleName(), query, result.toString());
 		
-		if (unique) return (T)result;
+		if (unique) {
+			return (T)result;
+		} else {
+			return (List<T>)result;
+		}
 		
-		return (List<T>)result;
 	}
 }
