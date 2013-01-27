@@ -38,6 +38,9 @@ public class EJGame extends EJData {
 	private Integer downloads = 0;
 	
 	@Persistent
+	private String description = "Game description here...";
+	
+	@Persistent
 	private BlobKey blobKey;
 	
 	public EJGame() { }
@@ -45,6 +48,11 @@ public class EJGame extends EJData {
 		this.name = name;
 		this.creatorId = creatorKey;
 		this.blobKey = blobKey;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s v%d.%d", name, majorVersion, minorVersion);
 	}
 	
 	public GameInfo getInfo() {
@@ -65,10 +73,16 @@ public class EJGame extends EJData {
 		game.majorVersion = majorVersion;
 		game.minorVersion = minorVersion;
 		game.creator = info;
+		game.description = description;
+		game.lastEdited = lastEdited;
 		return game;
 	}
 	
-
+	public void update(GameInfo info) {
+		setName(info.name);
+		setDescription(info.description);
+	}
+	
 	@Override
 	public boolean hasPermission() {
 		EJUser user = LoginUtils.getUser();
@@ -122,6 +136,12 @@ public class EJGame extends EJData {
 	}
 	public void setDownloads(Integer downloads) {
 		this.downloads = downloads;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 }

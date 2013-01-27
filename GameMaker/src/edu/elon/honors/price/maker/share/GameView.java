@@ -22,7 +22,7 @@ public class GameView extends LinearLayout implements IViewContainer {
 	private TextView textViewName, textViewCreator, 
 	textViewDownloads, textViewCreated;
 	
-	public GameView(Context context, final GameInfo info) {
+	public GameView(Context context, GameInfo info) {
 		super(context);
 		this.info = info;
 		LayoutInflater inflator = LayoutInflater.from(context);
@@ -32,14 +32,13 @@ public class GameView extends LinearLayout implements IViewContainer {
 		textViewName.setText(info.name + " v" +  info.getVersionString());
 		textViewCreator.setText("Created by: " + info.creator.userName);
 		textViewDownloads.setText("Downloads: " + info.downloads);
-		SimpleDateFormat df = new SimpleDateFormat();
-		textViewCreated.setText("Uploaded: " + df.format(info.uploadDate));
+		textViewCreated.setText("Uploaded: " + info.getUploadDateString());
 		
 		setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getContext(), ShowGameActivity.class);
-				intent.putExtra("gameInfo", info);
+				intent.putExtra("gameInfo", GameView.this.info);
 				getContext().startActivity(intent);
 			}
 		});

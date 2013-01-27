@@ -304,6 +304,8 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 					new FetchCallback<MyUserInfo>() {
 				@Override
 				public void fetchComplete(MyUserInfo result) {
+					LoginUtils.registerUser(MyGamesActivity.this, result);
+					
 					userInfo = result;
 					editTextUsername.setVisibility(View.VISIBLE);
 					editTextUsername.setText(result.userName);

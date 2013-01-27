@@ -69,6 +69,12 @@ public abstract class SaveableActivity extends Activity {
 	}
 
 	/**
+	 * Called before the activity
+	 * is checked for changes or saved.
+	 */
+	protected void onFinishing() { }
+
+	/**
 	 * Checks {@link #hasChanged()} for any changes
 	 * and then, if there are any, shows an alert dialog
 	 * asking if the user wants to save these changes
@@ -78,6 +84,7 @@ public abstract class SaveableActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		if (!loaded) return;
+		onFinishing();
 		if (hasChanged()) {
 			new AlertDialog.Builder(this)
 			.setIcon(android.R.drawable.ic_dialog_alert)
@@ -112,6 +119,7 @@ public abstract class SaveableActivity extends Activity {
 	 * is final an not meant to be overridden.
 	 */
 	protected final void finishOk() {
+		onFinishing();
 		Intent intent = new Intent();
 		finishOk(intent);
 	}
@@ -246,7 +254,9 @@ public abstract class SaveableActivity extends Activity {
 		return Screen.dipToPx(dip, this);
 	}
 	
-	protected abstract String getPreferenceId();
+	protected String getPreferenceId() {
+		return "default_prefs";
+	}
 	
 	protected class Preferences {
 		private HashMap<String, Object> map;

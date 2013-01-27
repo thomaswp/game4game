@@ -37,9 +37,24 @@ public class EJUser extends EJData {
 		this.lastLogin = System.currentTimeMillis();
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("User '%s': %s", userName, email);
+	}
+
+	public void generateDefaultName() {
+		if (id != null) {
+			userName = "user" + id.toString();
+		}
+		if (userName.length() > WebSettings.MAX_USERNAME_LENGTH) {
+			userName = userName.substring(0, WebSettings.MAX_USERNAME_LENGTH);
+		}
+	}
+	
 	public UserInfo getInfo() {
 		UserInfo info = new UserInfo();
 		info.userName = userName;
+		info.id = id;
 		return info;
 	}
 	

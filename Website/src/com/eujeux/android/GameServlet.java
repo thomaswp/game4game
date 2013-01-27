@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.eujeux.FileUtils;
 import com.eujeux.LoginUtils;
 import com.eujeux.PMF;
+import com.eujeux.QueryUtils;
 import com.eujeux.data.EJGame;
 import com.eujeux.data.EJUser;
 import com.eujeux.data.GameInfo;
@@ -43,19 +44,30 @@ public class GameServlet extends HttpServlet {
 		if (WebSettings.ACTION_FETCH.equals(action)) {
 			
 		} else if (WebSettings.ACTION_POST.equals(action)) {
-			ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
-			try {
-				GameInfo info = (GameInfo)ois.readObject();
+			GameInfo info = FileUtils.readObject(req, GameInfo.class);
+			if (info != null) {
+				EJGame game = QueryUtils.queryUnique(EJGame.class, "id == %s", info.id);
+				if (game == null) {
+					LoginUtils.sendBadRequestError(resp, 
+							"No such game to update");
+					return;
+				}
+				if (!game.getCreatorId().equals(user.getId())) {
+					LoginUtils.sendBadRequestError(resp, 
+							"User does not have permission to update this game.");
+					return;
+				}
+				
+				game.update(info);
+				PMF.get().getPersistenceManager().makePersistent(game);
 				return;
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		} else if (WebSettings.ACTION_CREATE.equals(action)) {
 			
 			String name = req.getParameter("name");
 			if (name == null) {
-				resp.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+				LoginUtils.sendBadRequestError(resp, 
 						"Must provide a name");
 				return;
 			}
@@ -63,8 +75,8 @@ public class GameServlet extends HttpServlet {
 			byte[] bytes = FileUtils.readBytes(req);
 			
 			if (bytes.length == 0) {
-				resp.sendError(HttpServletResponse.SC_BAD_REQUEST, 
-						"No game uploaded");
+				LoginUtils.sendBadRequestError(resp, 
+						"No game to upload");
 				return;
 			} 
 			
@@ -86,7 +98,7 @@ public class GameServlet extends HttpServlet {
 			boolean success = FileUtils.writeObject(resp, game.getInfo());
 			
 			if (!success) {
-				resp.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+				LoginUtils.sendBadRequestError(resp, 
 						"Error serving game");
 				return;
 			}
