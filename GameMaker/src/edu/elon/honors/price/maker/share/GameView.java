@@ -8,6 +8,7 @@ import edu.elon.honors.price.maker.AutoAssign;
 import edu.elon.honors.price.maker.AutoAssignUtils;
 import edu.elon.honors.price.maker.IViewContainer;
 import edu.elon.honors.price.maker.R;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -22,26 +23,43 @@ public class GameView extends LinearLayout implements IViewContainer {
 	private TextView textViewName, textViewCreator, 
 	textViewDownloads, textViewCreated;
 	
-	public GameView(Context context, GameInfo info) {
+	public GameView(Activity context, GameInfo info) {
 		super(context);
+		setId((int)info.id);
+		
 		this.info = info;
 		LayoutInflater inflator = LayoutInflater.from(context);
 		inflator.inflate(R.layout.gameinfo, this);
 		AutoAssignUtils.autoAssign(this);
 		
-		textViewName.setText(info.name + " v" +  info.getVersionString());
-		textViewCreator.setText("Created by: " + info.creator.userName);
-		textViewDownloads.setText("Downloads: " + info.downloads);
-		textViewCreated.setText("Uploaded: " + info.getUploadDateString());
-		
 		setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getContext(), ShowGameActivity.class);
-				intent.putExtra("gameInfo", GameView.this.info);
-				getContext().startActivity(intent);
+				editGameInfo();
 			}
 		});
+		
+		populate();
 	}
-
+	
+	public void editGameInfo() {
+		ShowGameActivity.startForResult((Activity)getContext(), getId(), info);
+	}
+	
+	public boolean onActivityResult(int requestCode, Intent data) {
+		if (requestCode == getId()) {
+			info = (GameInfo)data.getExtras().getSerializable("gameInfo");
+			populate();
+			return true;
+		}
+		return false;
+	}
+	
+	private void populate() {
+		textViewName.setText(info.name + " v" +  info.getVersionString());
+		textViewCreator.setText("Created by: " + info.creatorName);
+		textViewDownloads.setText("Downloads: " + info.downloads);
+		textViewCreated.setText("Uploaded: " + info.getUploadDateString());
+		
+	}
 }

@@ -57,13 +57,13 @@ public class EJGame extends EJData {
 	
 	public GameInfo getInfo() {
 		GameInfo game = getInfo(null);
-		game.creator = QueryUtils.queryUnique(
+		game.creatorName = QueryUtils.queryUnique(
 				EJUser.class, "id == %s", creatorId)
-				.getInfo();
+				.getUserName();
 		return game;
 	}
 
-	public GameInfo getInfo(MyUserInfo info) {
+	public GameInfo getInfo(UserInfo info) {
 		GameInfo game = new GameInfo();
 		game.id = id;
 		game.name = name;
@@ -72,7 +72,8 @@ public class EJGame extends EJData {
 		game.uploadDate = uploadDate;
 		game.majorVersion = majorVersion;
 		game.minorVersion = minorVersion;
-		game.creator = info;
+		game.creatorId = creatorId;
+		game.creatorName = info.userName;
 		game.description = description;
 		game.lastEdited = lastEdited;
 		return game;

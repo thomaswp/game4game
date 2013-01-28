@@ -1,6 +1,7 @@
 package com.eujeux;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
 public final class PMF {
@@ -13,5 +14,11 @@ public final class PMF {
 	
 	public static PersistenceManagerFactory get() {
 		return pmfInstance;
+	}
+	
+	public static void makePersistent(Object obj) {
+		PersistenceManager pm = get().getPersistenceManager();
+		pm.makePersistent(obj);
+		pm.close();
 	}
 }

@@ -13,7 +13,8 @@ public class GameInfo implements Serializable {
 	public String blobKeyString;
 	public int downloads;
 	public Date uploadDate;
-	public UserInfo creator;
+	public long creatorId;
+	public String creatorName;
 	public int majorVersion, minorVersion;
 	public String description;
 	public long lastEdited;

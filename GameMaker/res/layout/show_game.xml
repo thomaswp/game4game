@@ -156,7 +156,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-                <Button android:id="@+id/buttonDownload" android:layout_width="100dip" android:layout_height="wrap_content" android:layout_marginRight="10dip" android:text="@string/download"/>
+                <Button android:id="@+id/buttonDownload" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10dip" android:minWidth="100dip" android:text="@string/download"/>
                 <Button android:id="@+id/buttonPublish" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/publish"/>
             </LinearLayout>
         </LinearLayout>

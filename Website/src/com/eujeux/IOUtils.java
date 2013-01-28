@@ -10,7 +10,7 @@ import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class FileUtils {
+public class IOUtils {
 	
 	public static boolean writeObject(HttpServletResponse resp, Serializable object) {
 		try {
@@ -51,4 +51,31 @@ public class FileUtils {
 		
 		return baos.toByteArray();
 	}
+	
+	public static long getLongParameter(HttpServletRequest req, HttpServletResponse resp,
+			String paramName) throws IOException {
+		String paramS = req.getParameter(paramName);
+		if (paramS != null) {
+			try {
+				return Long.parseLong(paramS);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+		}
+		String message = "Could not read long parameter:" + paramName;
+		LoginUtils.sendBadRequestError(resp, message);
+		throw new IOException(message);
+	}
+
+	public static boolean getBoolParameter(HttpServletRequest req,
+			HttpServletResponse resp, String paramName) throws IOException {
+		String paramS = req.getParameter(paramName);
+		if (paramS != null) {
+			return Boolean.parseBoolean(paramS);
+		}
+		String message = "Could not read boolean parameter:" + paramName;
+		LoginUtils.sendBadRequestError(resp, message);
+		throw new IOException(message);
+	}
+	
 }

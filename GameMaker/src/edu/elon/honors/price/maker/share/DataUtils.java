@@ -40,6 +40,7 @@ public class DataUtils {
 	public final static String USER_INFO = SITE + "/android/userInfo";
 	public final static String MY_USER_INFO = SITE + "/android/myInfo";
 	public final static String GAME = SITE + "/android/game"; 
+	public final static String BLOB = SITE + "/android/serve"; 
 
 	public static void fetchUserInfo(Context context, String username, FetchCallback<UserInfo> callback) {
 		FetchTask<UserInfo> task = new FetchTask<UserInfo>(context, USER_INFO, callback);
@@ -49,6 +50,11 @@ public class DataUtils {
 	public static void fetchMyUserInfo(Context context, FetchCallback<MyUserInfo> callback) {
 		FetchTask<MyUserInfo> task = new FetchTask<MyUserInfo>(context, MY_USER_INFO, callback);
 		task.execute(WebSettings.PARAM_ACTION + "=" + WebSettings.ACTION_FETCH);
+	}
+	
+	public static void fetchGameBlob(Context context, GameInfo info, FetchCallback<PlatformGame> callback) {
+		FetchTask<PlatformGame> task = new FetchTask<PlatformGame>(context, BLOB, callback);
+		task.execute("blobKey=" + info.blobKeyString + "&id=" + info.id);
 	}
 
 	public static void updateMyUserInfo(Context context, MyUserInfo info, PostCallback callback) {
@@ -65,7 +71,14 @@ public class DataUtils {
 		String escapedName = URLEncoder.encode(game.name);
 		
 		CreateTask<PlatformGame, GameInfo> task = new CreateTask<PlatformGame, GameInfo>(context, 
-				GAME + "?name=" + escapedName, callback);
+				GAME + "?name=" + escapedName + "&lastEdited=" + game.lastEdited, callback);
+		task.execute(game);
+	}
+	
+	public static void updateGame(Context context, PlatformGame game, boolean majorUpdate, CreateCallback<GameInfo> callback) {
+		CreateTask<PlatformGame, GameInfo> task = new CreateTask<PlatformGame, GameInfo>(context, 
+			String.format("%s?lastEdited=%d&majorUpdate=%s&id=%d", GAME,
+						game.lastEdited, "" + majorUpdate, game.websiteInfo.id), callback);
 		task.execute(game);
 	}
 	
