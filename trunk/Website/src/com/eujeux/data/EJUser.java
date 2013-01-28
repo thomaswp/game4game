@@ -53,14 +53,18 @@ public class EJUser extends EJData {
 	
 	public UserInfo getInfo() {
 		UserInfo info = new UserInfo();
+		setUserInfo(info);
+		return info;
+	}
+	
+	private void setUserInfo(UserInfo info) {
 		info.userName = userName;
 		info.id = id;
-		return info;
 	}
 	
 	public MyUserInfo getMyInfo() {
 		MyUserInfo info = new MyUserInfo();
-		info.userName = userName;
+		setUserInfo(info);
 		info.email = email;
 		List<EJGame> games = QueryUtils.query(
 				EJGame.class, "creatorId == %s", id);

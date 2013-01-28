@@ -5,6 +5,9 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+
+import com.eujeux.data.GameInfo;
+
 import edu.elon.honors.price.data.Behavior.BehaviorType;
 import android.graphics.Rect;
 
@@ -15,7 +18,8 @@ public class PlatformGame extends GameData {
 
 	protected int _VERSION_ = Upgrader.LATEST_VERSION;
 	
-	public Long websiteId;
+	public GameInfo websiteInfo;
+	
 	public String name;
 	public long lastEdited;
 
@@ -43,6 +47,16 @@ public class PlatformGame extends GameData {
 
 	public int getVersion() {
 		return _VERSION_;
+	}
+	
+	public boolean hasWebisiteId(long id) {
+		return websiteInfo != null &&
+				websiteInfo.id == id;
+	}
+	
+	public String getName(String fallback) {
+		return websiteInfo == null ? fallback :
+			websiteInfo.name;
 	}
 	
 	public LinkedList<Behavior> getBehaviors(BehaviorType type) {

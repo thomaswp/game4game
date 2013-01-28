@@ -51,10 +51,15 @@ public class MainMenu extends Activity {
 		
 		createDirs();
 
-		loadMaps();
 		loadButtons();
 
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		loadMaps();
 	}
 
 	private void createDirs() {
@@ -107,23 +112,26 @@ public class MainMenu extends Activity {
 		List<String> games = getGameFilenames(this);
 		
 		for (String file : games) {
-			final String name = file.substring(PREFIX.length());
-			final String fileName = file;
-			RadioButton b = new RadioButton(this);
-			b.setText(name);
-			b.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (selectedMap == fileName)
-						edit();
-					else
-						selectedMap = fileName;
+			PlatformGame game = (PlatformGame)Data.loadGame(file, this);
+			if (game != null) {
+				final String fileName = file;
+				String name = game.getName(file.substring(PREFIX.length()));
+				RadioButton b = new RadioButton(this);
+				b.setText(name);
+				b.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if (selectedMap == fileName)
+							edit();
+						else
+							selectedMap = fileName;
+					}
+				});
+				group.addView(b);
+				if (selectedMap == null) {
+					selectedMap = fileName;
+					b.setChecked(true);
 				}
-			});
-			group.addView(b);
-			if (selectedMap == null) {
-				selectedMap = fileName;
-				b.setChecked(true);
 			}
 		}
 	}
@@ -255,17 +263,26 @@ public class MainMenu extends Activity {
 		}
 	}
 
-	private void newGame() {
-		String[] files = fileList();
+	public static String getNewMapName(Context context, String base) {
+		String[] files = context.fileList();
 		int n = 0;
 		String name;
 		boolean exists = false;
 		do {
-			name = PREFIX + "Map_" + ++n;
+			name = PREFIX + base + ++n;
 			exists = false;
 			for (int i = 0; i < files.length; i++) 
 				exists |= files[i].equals(name); 
 		} while (exists);
+		return name;
+	}
+	
+	public static String getNewMapName(Context context) {
+		return getNewMapName(context, "Map");
+	}
+	
+	private void newGame() {
+		String name = getNewMapName(this);
 
 		String id = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 		id += "_" + System.currentTimeMillis();

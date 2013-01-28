@@ -72,11 +72,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 
 		AutoAssignUtils.autoAssign(this);
 
-		progressDialog = new ProgressDialog(this);
-		progressDialog.setTitle("Connecting");
-		progressDialog.setMessage("Connecting to website... Please wait.");
-		progressDialog.setCancelable(false);
-		progressDialog.setIndeterminate(true);
+		progressDialog = DialogUtils.createLoadingDialog(this);
 
 		buttonLogin.setOnClickListener(new OnClickListener() {
 			@Override
@@ -108,6 +104,17 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 			logIn();
 		}
 	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			for (int i = 0; i < linearLayoutGames.getChildCount(); i++) {
+				((GameView)linearLayoutGames.getChildAt(i))
+				.onActivityResult(requestCode, data);
+			}
+		}
+	}
 
 	private void addGame() {
 		List<String> allGames = MainMenu.getGameFilenames(this);
@@ -116,7 +123,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		LinkedList<String> names = new LinkedList<String>();
 		for (String gameName : allGames) {
 			PlatformGame game = (PlatformGame)Data.loadGame(gameName, this);
-			if (game.websiteId == null) {
+			if (game.websiteInfo == null) {
 				names.add(gameName.substring(MainMenu.PREFIX.length()));
 				files.add(gameName);
 			}
@@ -135,6 +142,29 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		} else {
 			showDialog(DIALOG_NO_GAMES);
 		}
+	}
+
+	private void addGame(final String filename) {
+		Debug.write(filename);
+		final PlatformGame game = (PlatformGame)Data.loadGame(filename, this);
+		showDialog(DIALOG_LOADING);
+		DataUtils.createGame(this, game, new CreateCallback<GameInfo>() {
+			@Override
+			public void createComplete(GameInfo result) {
+				progressDialog.dismiss();
+				
+				if (result != null) {
+					game.websiteInfo = result;
+					Data.saveGame(filename, MyGamesActivity.this, game);
+					GameView gameView = new GameView(
+							MyGamesActivity.this, result);
+					linearLayoutGames.addView(gameView);
+					
+				} else {
+					showDialog(DIALOG_FAIL_UPLOAD_GAME);
+				}
+			}
+		});
 	}
 
 	private void changeUsername() {
@@ -259,34 +289,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	}
 
 	private AlertDialog alertDialog(String title, String message) {
-		return new AlertDialog.Builder(this)
-		.setTitle(title)
-		.setMessage(message)
-		.setNeutralButton("Ok", null)
-		.create();
-	}
-
-	private void addGame(final String filename) {
-		Debug.write(filename);
-		final PlatformGame game = (PlatformGame)Data.loadGame(filename, this);
-		showDialog(DIALOG_LOADING);
-		DataUtils.createGame(this, game, new CreateCallback<GameInfo>() {
-			@Override
-			public void createComplete(GameInfo result) {
-				progressDialog.dismiss();
-				
-				if (result != null) {
-					game.websiteId = result.id;
-					Debug.write(game.websiteId);
-					Data.saveGame(filename, MyGamesActivity.this, game);
-					GameView gameView = new GameView(
-							MyGamesActivity.this, result);
-					linearLayoutGames.addView(gameView);
-				} else {
-					showDialog(DIALOG_FAIL_UPLOAD_GAME);
-				}
-			}
-		});
+		return DialogUtils.createAlertDialog(this, title, message);
 	}
 
 	private void loginWithAccountIndex(int index) {
@@ -305,7 +308,6 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 				@Override
 				public void fetchComplete(MyUserInfo result) {
 					LoginUtils.registerUser(MyGamesActivity.this, result);
-					
 					userInfo = result;
 					editTextUsername.setVisibility(View.VISIBLE);
 					editTextUsername.setText(result.userName);

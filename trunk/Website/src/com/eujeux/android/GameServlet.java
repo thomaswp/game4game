@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.eujeux.FileUtils;
+import com.eujeux.IOUtils;
 import com.eujeux.LoginUtils;
 import com.eujeux.PMF;
 import com.eujeux.QueryUtils;
@@ -44,7 +44,7 @@ public class GameServlet extends HttpServlet {
 		if (WebSettings.ACTION_FETCH.equals(action)) {
 			
 		} else if (WebSettings.ACTION_POST.equals(action)) {
-			GameInfo info = FileUtils.readObject(req, GameInfo.class);
+			GameInfo info = IOUtils.readObject(req, GameInfo.class);
 			if (info != null) {
 				EJGame game = QueryUtils.queryUnique(EJGame.class, "id == %s", info.id);
 				if (game == null) {
@@ -59,26 +59,21 @@ public class GameServlet extends HttpServlet {
 				}
 				
 				game.update(info);
-				PMF.get().getPersistenceManager().makePersistent(game);
+				PMF.makePersistent(game);
 				return;
 			}
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		} else if (WebSettings.ACTION_CREATE.equals(action)) {
+			long lastEdited = IOUtils.getLongParameter(req, resp, "lastEdited");
 			
-			String name = req.getParameter("name");
-			if (name == null) {
-				LoginUtils.sendBadRequestError(resp, 
-						"Must provide a name");
-				return;
-			}
-			
-			byte[] bytes = FileUtils.readBytes(req);
+			byte[] bytes = IOUtils.readBytes(req);
 			
 			if (bytes.length == 0) {
 				LoginUtils.sendBadRequestError(resp, 
 						"No game to upload");
 				return;
 			} 
+			
 			
 			FileService fileService = FileServiceFactory.getFileService();
 			AppEngineFile file = fileService.createNewBlobFile("application/octet-stream");
@@ -87,15 +82,43 @@ public class GameServlet extends HttpServlet {
 			writeChannel.closeFinally();
 			
 			BlobKey key = fileService.getBlobKey(file);
-			System.out.println(user.getId());
-			EJGame game = new EJGame(name, user.getId(), key);
 			
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			pm.makePersistent(game);
+			EJGame game;
+			String name = req.getParameter("name");
+			if (name != null) {
+				game = new EJGame(name, user.getId(), key);
+			} else {
+				long id = IOUtils.getLongParameter(req, resp, "id");
+				boolean majorUpdate = IOUtils.getBoolParameter(req, resp, "majorUpdate");
+				game = QueryUtils.queryUnique(EJGame.class, "id == %s", id);
+				if (game == null) { 
+					LoginUtils.sendBadRequestError(resp, "No game to update");
+					return;
+				}
+				if (game.getCreatorId() != user.getId()) {
+					LoginUtils.sendBadRequestError(resp, "No permission to publish an update");
+					return;
+				}
+				try {
+					BlobKey oldKey = game.getBlobKey();
+					AppEngineFile oldFile = fileService.getBlobFile(oldKey);
+					fileService.delete(oldFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				game.setBlobKey(key);
+				if (majorUpdate) {
+					game.setMinorVersion(0);
+					game.setMajorVersion(game.getMajorVersion() + 1);
+				} else {
+					game.setMinorVersion(game.getMinorVersion() + 1);
+				}
+			}
+
+			game.setLastEdited(lastEdited);
+			PMF.makePersistent(game);
 			
-			System.out.println(game.getId());
-			
-			boolean success = FileUtils.writeObject(resp, game.getInfo());
+			boolean success = IOUtils.writeObject(resp, game.getInfo(user.getInfo()));
 			
 			if (!success) {
 				LoginUtils.sendBadRequestError(resp, 

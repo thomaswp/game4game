@@ -52,9 +52,10 @@ public class LoginUtils {
 	
 	public static void sendNoUserError(HttpServletResponse resp) 
 			throws IOException {
+		String message = "Must be logged in to access this resource.";
 		resp.sendError(HttpServletResponse.SC_FORBIDDEN, 
-				"Must be logged in to access this resource.");
-		Debug.write("No user!");
+				message);
+		Debug.write(message);
 	}
 	
 	public static void sendBadRequestError(HttpServletResponse resp, String message) 
