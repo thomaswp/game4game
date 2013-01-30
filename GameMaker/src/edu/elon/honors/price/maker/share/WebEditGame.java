@@ -44,7 +44,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.webs_edit_game);
+		setContentView(R.layout.web_edit_game);
 		
 		gameInfo = getCancelResult();
 		
