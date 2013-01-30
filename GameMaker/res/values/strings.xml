@@ -127,4 +127,6 @@
     <string name="download">Download</string>
     <string name="publish">Publish Update</string>
     <string name="downloads_c">Downloads:</string>
+    <string name="getGames">Get Games</string>
+    <string name="uploadNew">Upload a New Game</string>
 </resources>

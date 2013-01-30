@@ -49,6 +49,14 @@
 		<servlet-name>Login</servlet-name>
 		<url-pattern>/android/login</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>Browse</servlet-name>
+		<servlet-class>com.eujeux.android.BrowseServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Browse</servlet-name>
+		<url-pattern>/android/browse</url-pattern>
+	</servlet-mapping>
 	
 	<servlet>
 		<servlet-name>Eujeux</servlet-name>

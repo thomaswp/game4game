@@ -17,8 +17,9 @@
             </intent-filter>
         </activity>
         
-    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".share.MyGamesActivity" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged"/>
-    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".share.ShowGameActivity" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebLogin" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebEditGame" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebBrowseGames" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />
     
         <activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".MapEditor" android:screenOrientation="landscape" />
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorTextureSelector" android:screenOrientation="landscape" android:theme="@style/Theme.DoNoDim"/>
