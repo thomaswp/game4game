@@ -43,7 +43,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 @AutoAssign
-public class MyGamesActivity extends Activity implements IViewContainer {
+public class WebLogin extends Activity implements IViewContainer {
 
 	private static final int DIALOG_ACCOUNTS = 0;
 	private static final int DIALOG_CONFIRM_LOGIN = 1;
@@ -55,12 +55,11 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	private static final int DIALOG_NO_GAMES = 7;
 	private static final int DIALOG_FAIL_UPLOAD_GAME = 8;
 
-	private Button buttonLogin;
 	private TextView textViewEmail;
 	private EditText editTextUsername;
 	private LinearLayout linearLayoutGames;
 	private ProgressDialog progressDialog;
-	private Button buttonAddGame;
+	private Button buttonLogin, buttonAddGame, buttonBrowse;
 
 	private Handler handler = new Handler();
 
@@ -68,7 +67,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.my_games);
+		setContentView(R.layout.web_login);
 
 		AutoAssignUtils.autoAssign(this);
 
@@ -92,6 +91,14 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 			}
 		});
 
+		buttonBrowse.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(WebLogin.this, WebBrowseGames.class);
+				startActivity(intent);
+			}
+		});
+		
 		editTextUsername.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -110,7 +117,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
 			for (int i = 0; i < linearLayoutGames.getChildCount(); i++) {
-				((GameView)linearLayoutGames.getChildAt(i))
+				((WebGameView)linearLayoutGames.getChildAt(i))
 				.onActivityResult(requestCode, data);
 			}
 		}
@@ -155,10 +162,11 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 				
 				if (result != null) {
 					game.websiteInfo = result;
-					Data.saveGame(filename, MyGamesActivity.this, game);
-					GameView gameView = new GameView(
-							MyGamesActivity.this, result);
+					Data.saveGame(filename, WebLogin.this, game);
+					WebGameView gameView = new WebGameView(
+							WebLogin.this, result);
 					linearLayoutGames.addView(gameView);
+					gameView.editGameInfo();
 					
 				} else {
 					showDialog(DIALOG_FAIL_UPLOAD_GAME);
@@ -174,7 +182,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 				if (MyUserInfo.validUsername(name)) {
 					final String oldName = userInfo.userName;
 					userInfo.userName = name;
-					DataUtils.updateMyUserInfo(MyGamesActivity.this, userInfo, new DataUtils.PostCallback() {
+					DataUtils.updateMyUserInfo(WebLogin.this, userInfo, new DataUtils.PostCallback() {
 						@Override
 						public void postComplete(boolean success) {
 							if (!success) {
@@ -231,7 +239,7 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							Account account = (Account)args.get("account");
-							LoginUtils.logIn(MyGamesActivity.this, account, new LoginCallbackHandler());
+							LoginUtils.logIn(WebLogin.this, account, new LoginCallbackHandler());
 						}
 					})
 					.setOnCancelListener(new Dialog.OnCancelListener() {
@@ -307,18 +315,9 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 					new FetchCallback<MyUserInfo>() {
 				@Override
 				public void fetchComplete(MyUserInfo result) {
-					LoginUtils.registerUser(MyGamesActivity.this, result);
+					LoginUtils.registerUser(WebLogin.this, result);
 					userInfo = result;
-					editTextUsername.setVisibility(View.VISIBLE);
-					editTextUsername.setText(result.userName);
-					textViewEmail.setText(result.email);
-					buttonAddGame.setEnabled(true);
-					linearLayoutGames.removeAllViews();
-					for (GameInfo info : result.games) {
-						GameView gameView = new GameView(
-								MyGamesActivity.this, info);
-						linearLayoutGames.addView(gameView);
-					}
+					updateUIForLogin();
 				}
 
 				@Override
@@ -356,14 +355,28 @@ public class MyGamesActivity extends Activity implements IViewContainer {
 	}
 
 	private void logOut() {
-		buttonLogin.setText("Log In");
 		LoginUtils.logOut(this);
 		userInfo = null;
-		editTextUsername.setVisibility(View.INVISIBLE);
-		editTextUsername.setText("");
-		textViewEmail.setText("");
+		buttonLogin.setText("Log In");
+		updateUIForLogin();
+	}
+	
+	private void updateUIForLogin() {
+		boolean loggedIn = userInfo != null;
+		
+		editTextUsername.setVisibility(loggedIn ? View.VISIBLE : View.INVISIBLE);
+		editTextUsername.setText(loggedIn ? userInfo.userName : "");
+		textViewEmail.setText(loggedIn ? userInfo.email : "");
+		buttonAddGame.setEnabled(loggedIn);
+		buttonBrowse.setEnabled(loggedIn);
 		linearLayoutGames.removeAllViews();
-		buttonAddGame.setEnabled(false);
+		if (loggedIn) {
+			for (GameInfo info : userInfo.games) {
+				WebGameView gameView = new WebGameView(
+						WebLogin.this, info);
+				linearLayoutGames.addView(gameView);
+			}
+		}
 	}
 
 	private class LoginCallbackHandler implements LoginCallback {

@@ -28,7 +28,7 @@ import edu.elon.honors.price.maker.share.DataUtils.FetchCallback;
 import edu.elon.honors.price.maker.share.DataUtils.PostCallback;
 
 @AutoAssign
-public class ShowGameActivity extends SaveableActivity implements IViewContainer {
+public class WebEditGame extends SaveableActivity implements IViewContainer {
 
 	private EditText editTextName, editTextDescription;
 	private TextView textViewName, textViewDescription, textViewVersion, textViewDateCreated, textViewCreator, textViewDownloads; 
@@ -44,9 +44,9 @@ public class ShowGameActivity extends SaveableActivity implements IViewContainer
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.show_game);
+		setContentView(R.layout.webs_edit_game);
 		
-		gameInfo = (GameInfo)getIntent().getExtras().getSerializable("gameInfo");
+		gameInfo = getCancelResult();
 		
 		AutoAssignUtils.autoAssign(this);
 		
@@ -76,10 +76,10 @@ public class ShowGameActivity extends SaveableActivity implements IViewContainer
 	
 	private void download() {
 		loadingDialog.show();
-		DataUtils.fetchGameBlob(ShowGameActivity.this, gameInfo, new FetchCallback<PlatformGame>() {
+		DataUtils.fetchGameBlob(WebEditGame.this, gameInfo, new FetchCallback<PlatformGame>() {
 			@Override
 			public void fetchFailed() {
-				DialogUtils.createAlertDialog(ShowGameActivity.this, 
+				DialogUtils.createAlertDialog(WebEditGame.this, 
 						"Download Failed", "Could not download the " +
 								"requested game. Check your connection " +
 								"and try again later.").show();
@@ -93,20 +93,24 @@ public class ShowGameActivity extends SaveableActivity implements IViewContainer
 				String name = gamePath;
 				if (name == null) {
 					name = MainMenu.getNewMapName(
-							ShowGameActivity.this, result.name);
+							WebEditGame.this, result.name);
 				}
 				try {
+					GameInfo cancelResult = getCancelResult();
+					cancelResult.downloads++;
+					setCancelResult(cancelResult);
+					
 					gameInfo.downloads++;
 					result.websiteInfo = gameInfo;
-					Data.saveGame(name, ShowGameActivity.this, result);
+					Data.saveGame(name, WebEditGame.this, result);
 					loadInfo();
-					DialogUtils.createAlertDialog(ShowGameActivity.this, 
+					DialogUtils.createAlertDialog(WebEditGame.this, 
 							"Download Successful", 
 							"The game has been successfully downloaded.").show();
 					
 				} catch (Exception e) {
 					Debug.write(e);
-					DialogUtils.createAlertDialog(ShowGameActivity.this, 
+					DialogUtils.createAlertDialog(WebEditGame.this, 
 							"Download Failed", 
 							"The game has been successfully downloaded, " +
 							"but could not be saved. Try again later.").show();
@@ -116,48 +120,79 @@ public class ShowGameActivity extends SaveableActivity implements IViewContainer
 	}
 	
 	private void publish() {
-		final PlatformGame game = (PlatformGame)Data.loadGame(gamePath, ShowGameActivity.this);
+		final PlatformGame game = (PlatformGame)Data.loadGame(gamePath, WebEditGame.this);
 		if (game == null) {
-			DialogUtils.createAlertDialog(ShowGameActivity.this, 
+			DialogUtils.createAlertDialog(WebEditGame.this, 
 					"No game to publish", 
 					"An error has occured, and this game cannot be found on " +
 					"this device.");
 			return;
 		}
+		//Try to update gameinfo first...
+
 		new AlertDialog.Builder(this)
-		.setTitle("Update")
+		.setTitle("Publish Update - Cannot be Undone")
 		.setItems(new String[] {"Major Update",  "Minor Update" }, 
 				new Dialog.OnClickListener() {
 			
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onClick(DialogInterface dialog, final int which) {
 				loadingDialog.show();
-				DataUtils.updateGame(ShowGameActivity.this, game, which == 0, 
-						new CreateCallback<GameInfo>() {
+				onFinishing();
+				DataUtils.updateGame(WebEditGame.this, gameInfo, 
+						new PostCallback() {
 					@Override
-					public void createComplete(GameInfo result) {
-						loadingDialog.dismiss();
-						if (result == null) {
-							DialogUtils.createAlertDialog(ShowGameActivity.this, 
-									"Publish Failed", 
-									"Failed to publish game. Check connection and try again");
+					public void postComplete(boolean success) {
+						if (success) {
+							DataUtils.updateGame(WebEditGame.this, game, which == 0, 
+									new CreateCallback<GameInfo>() {
+								@Override
+								public void createComplete(GameInfo result) {
+									if (result == null) {
+										publishFailed();
+									} else {
+										loadingDialog.dismiss();
+										gameInfo = result;
+										setCancelResult(result);
+										game.websiteInfo = result;
+										Data.saveGame(gamePath, WebEditGame.this, game);
+										loadInfo();
+									}
+								}
+							});
 						} else {
-							gameInfo = result;
-							game.websiteInfo = result;
-							Data.saveGame(gamePath, ShowGameActivity.this, game);
-							loadInfo();
+							publishFailed();
 						}
 					}
 				});
 			}
 		})
 		.show();
-		
-		
+	}
+	
+	private void publishFailed() {
+		loadingDialog.dismiss();
+		DialogUtils.createAlertDialog(WebEditGame.this, 
+				"Publish Failed", 
+				"Failed to publish game. Check connection and try again");
+	}
+	
+	private void setCancelResult(GameInfo info) {
+		getIntent().putExtra("gameInfo", info.clone());
+	}
+	
+	public GameInfo getCancelResult() {
+		return (GameInfo)getIntent().getExtras().getSerializable("gameInfo");
+	}
+	
+	@Override
+	public void finishCancel() {
+		setResult(RESULT_OK, getIntent());
+		super.finishCancel();
 	}
 	
 	public static void startForResult(Activity activity, int requestCode, GameInfo gameInfo) {
-		Intent intent = new Intent(activity, ShowGameActivity.class);
+		Intent intent = new Intent(activity, WebEditGame.class);
 		intent.putExtra("gameInfo", gameInfo);
 		activity.startActivityForResult(intent, requestCode);
 	}
@@ -200,7 +235,7 @@ public class ShowGameActivity extends SaveableActivity implements IViewContainer
 	@Override
 	public boolean hasChanged() {
 		if (!owner) return false;
-		GameInfo oldInfo = (GameInfo)getIntent().getExtras().getSerializable("gameInfo");
+		GameInfo oldInfo = getCancelResult();
 		return !(gameInfo.name.equals(oldInfo.name) &&
 				gameInfo.description.equals(oldInfo.description));
 	}
@@ -222,15 +257,15 @@ public class ShowGameActivity extends SaveableActivity implements IViewContainer
 					if (success) {
 						data.putExtra("gameInfo", gameInfo);
 						if (gamePath != null) {
-							PlatformGame game = (PlatformGame)Data.loadGame(gamePath, ShowGameActivity.this);
+							PlatformGame game = (PlatformGame)Data.loadGame(gamePath, WebEditGame.this);
 							if (game != null) {
 								game.websiteInfo = gameInfo;
-								Data.saveGame(gamePath, ShowGameActivity.this, game);
+								Data.saveGame(gamePath, WebEditGame.this, game);
 							}
 						}
-						ShowGameActivity.super.finishOk(data);
+						WebEditGame.super.finishOk(data);
 					} else {
-						new AlertDialog.Builder(ShowGameActivity.this)
+						new AlertDialog.Builder(WebEditGame.this)
 						.setTitle("Update Failed")
 						.setMessage("Failed to update game info. Check connection " +
 								"and try again.")

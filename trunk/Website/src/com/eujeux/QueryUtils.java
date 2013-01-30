@@ -1,10 +1,16 @@
 package com.eujeux;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+
+import org.datanucleus.store.appengine.query.JDOCursorHelper;
+
+import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.PreparedQuery;
 
 
 public class QueryUtils {
@@ -35,6 +41,24 @@ public class QueryUtils {
 	public static <T> List<T> query(PersistenceManager pm, 
 			Class<T> c, String filter, Object... parameters) {
 		return (List<T>)query(pm, c, false, filter, parameters);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> queryRange(PersistenceManager pm,
+			Class<T> c, String ordering, int numResults, String cursorString) {
+		
+		Query query = pm.newQuery(c);
+		query.setRange(0, numResults);
+		query.setOrdering(ordering);
+		
+		if (cursorString != null) {
+			Cursor cursor = Cursor.fromWebSafeString(cursorString);
+			HashMap<String, Object> extensionMap = new HashMap<String, Object>();
+			extensionMap.put(JDOCursorHelper.CURSOR_EXTENSION, cursor);
+			query.setExtensions(extensionMap);
+		}
+		
+		return (List<T>)query.execute();
 	}
 
 	/**
@@ -68,6 +92,7 @@ public class QueryUtils {
 		q.setFilter(String.format(filter, peqs));
 		q.declareParameters(declaredParams);
 		q.setUnique(unique);
+		
 		
 		Object result;
 		

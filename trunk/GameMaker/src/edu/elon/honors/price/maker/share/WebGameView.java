@@ -1,7 +1,5 @@
 package edu.elon.honors.price.maker.share;
 
-import java.text.SimpleDateFormat;
-
 import com.eujeux.data.GameInfo;
 
 import edu.elon.honors.price.maker.AutoAssign;
@@ -9,7 +7,6 @@ import edu.elon.honors.price.maker.AutoAssignUtils;
 import edu.elon.honors.price.maker.IViewContainer;
 import edu.elon.honors.price.maker.R;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,19 +14,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 @AutoAssign
-public class GameView extends LinearLayout implements IViewContainer {
+public class WebGameView extends LinearLayout implements IViewContainer {
 
 	private GameInfo info;
 	private TextView textViewName, textViewCreator, 
-	textViewDownloads, textViewCreated;
+	textViewDownloads, textViewCreated, textViewDescription;
 	
-	public GameView(Activity context, GameInfo info) {
+	public WebGameView(Activity context, GameInfo info) {
 		super(context);
 		setId((int)info.id);
 		
 		this.info = info;
 		LayoutInflater inflator = LayoutInflater.from(context);
-		inflator.inflate(R.layout.gameinfo, this);
+		inflator.inflate(R.layout.web_gameview, this);
 		AutoAssignUtils.autoAssign(this);
 		
 		setOnClickListener(new OnClickListener() {
@@ -43,7 +40,7 @@ public class GameView extends LinearLayout implements IViewContainer {
 	}
 	
 	public void editGameInfo() {
-		ShowGameActivity.startForResult((Activity)getContext(), getId(), info);
+		WebEditGame.startForResult((Activity)getContext(), getId(), info);
 	}
 	
 	public boolean onActivityResult(int requestCode, Intent data) {
@@ -60,6 +57,12 @@ public class GameView extends LinearLayout implements IViewContainer {
 		textViewCreator.setText("Created by: " + info.creatorName);
 		textViewDownloads.setText("Downloads: " + info.downloads);
 		textViewCreated.setText("Uploaded: " + info.getUploadDateString());
+		textViewDescription.setText(info.description);
 		
+	}
+
+	public void setGame(GameInfo info) {
+		this.info = info;
+		populate();
 	}
 }

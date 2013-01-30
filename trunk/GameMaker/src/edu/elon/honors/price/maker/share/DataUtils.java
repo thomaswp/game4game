@@ -24,6 +24,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 
 import com.eujeux.data.GameInfo;
+import com.eujeux.data.GameList;
 import com.eujeux.data.MyUserInfo;
 import com.eujeux.data.UserInfo;
 import com.eujeux.data.WebSettings;
@@ -40,7 +41,8 @@ public class DataUtils {
 	public final static String USER_INFO = SITE + "/android/userInfo";
 	public final static String MY_USER_INFO = SITE + "/android/myInfo";
 	public final static String GAME = SITE + "/android/game"; 
-	public final static String BLOB = SITE + "/android/serve"; 
+	public final static String BLOB = SITE + "/android/serve";
+	public final static String GAME_LIST = SITE + "/android/browse"; 
 
 	public static void fetchUserInfo(Context context, String username, FetchCallback<UserInfo> callback) {
 		FetchTask<UserInfo> task = new FetchTask<UserInfo>(context, USER_INFO, callback);
@@ -55,6 +57,15 @@ public class DataUtils {
 	public static void fetchGameBlob(Context context, GameInfo info, FetchCallback<PlatformGame> callback) {
 		FetchTask<PlatformGame> task = new FetchTask<PlatformGame>(context, BLOB, callback);
 		task.execute("blobKey=" + info.blobKeyString + "&id=" + info.id);
+	}
+	
+	public static void fetchGameList(Context context, int count, String cursor, FetchCallback<GameList> callback) {
+		FetchTask<GameList> task = new FetchTask<GameList>(context, GAME_LIST, callback);
+		String params = "count=" + count;
+		if (cursor != null) {
+			params += "&cursor=" + cursor;
+		}
+		task.execute(params);
 	}
 
 	public static void updateMyUserInfo(Context context, MyUserInfo info, PostCallback callback) {

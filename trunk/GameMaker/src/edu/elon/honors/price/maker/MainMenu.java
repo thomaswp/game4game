@@ -14,7 +14,7 @@ import com.twp.platform.Platformer;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.maker.share.MyGamesActivity;
+import edu.elon.honors.price.maker.share.WebLogin;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -148,7 +148,7 @@ public class MainMenu extends Activity {
 		myGames.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(MainMenu.this, MyGamesActivity.class));
+				startActivity(new Intent(MainMenu.this, WebLogin.class));
 			}
 		});
 

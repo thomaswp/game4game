@@ -73,7 +73,7 @@ public class EJGame extends EJData {
 		game.majorVersion = majorVersion;
 		game.minorVersion = minorVersion;
 		game.creatorId = creatorId;
-		game.creatorName = info.userName;
+		if (info != null) game.creatorName = info.userName;
 		game.description = description;
 		game.lastEdited = lastEdited;
 		return game;

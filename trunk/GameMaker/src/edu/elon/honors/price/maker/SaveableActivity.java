@@ -79,7 +79,7 @@ public abstract class SaveableActivity extends Activity {
 	 * and then, if there are any, shows an alert dialog
 	 * asking if the user wants to save these changes
 	 * (or cancel the back action). If there are no changes
-	 * just calls {@link #finish()}.
+	 * or they're not being saved, calls {@link #finishCancel()}.
 	 */
 	@Override
 	public void onBackPressed() {
@@ -102,17 +102,27 @@ public abstract class SaveableActivity extends Activity {
 			.setNeutralButton("Discard Changes", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					finish();
+					finishCancel();
 				}
 
 			})
 			.setNegativeButton("Stay Here", null)
 			.show();	
 		} else {
-			finish();
+			finishCancel();
 		}
 	}
 
+	/**
+	 * Called when the activity is finishing without
+	 * saving changes (or if there are no changes).
+	 * By default, just calls {@link #finish()}, but can
+	 * be overwritten to change this behavior.
+	 */
+	protected void finishCancel() {
+		finish();
+	}
+	
 	/**
 	 * Calls {@link #finishOk(Intent)} with a
 	 * new Intent as an argument. This method
@@ -159,7 +169,7 @@ public abstract class SaveableActivity extends Activity {
 	/**
 	 * Sets the onClick action of the button with id "buttonOk"
 	 * to call {@link #finishOk()} and of the button with id
-	 * "buttonCancel" to {@link #finish()}. Also sets the 
+	 * "buttonCancel" to {@link #finishCancel()}. Also sets the 
 	 * okLongClick behavior of the ok button to 
 	 * {@link #finishOkAll()}.  
 	 */
@@ -193,7 +203,7 @@ public abstract class SaveableActivity extends Activity {
 			buttonCancel.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					finish();
+					finishCancel();
 				}
 			});
 		}

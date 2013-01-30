@@ -66,6 +66,21 @@ public class IOUtils {
 		LoginUtils.sendBadRequestError(resp, message);
 		throw new IOException(message);
 	}
+	
+	public static int getIntParameter(HttpServletRequest req, HttpServletResponse resp,
+			String paramName) throws IOException {
+		String paramS = req.getParameter(paramName);
+		if (paramS != null) {
+			try {
+				return Integer.parseInt(paramS);
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+		}
+		String message = "Could not read int parameter:" + paramName;
+		LoginUtils.sendBadRequestError(resp, message);
+		throw new IOException(message);
+	}
 
 	public static boolean getBoolParameter(HttpServletRequest req,
 			HttpServletResponse resp, String paramName) throws IOException {
