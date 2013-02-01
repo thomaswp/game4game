@@ -1,5 +1,6 @@
 package com.eujeux.data;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 

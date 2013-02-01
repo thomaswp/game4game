@@ -115,7 +115,11 @@ public class QueryUtils {
 			Debug.write("Search (%s): '%s' fails", c.getSimpleName(), query);
 			return null;
 		}
-		Debug.write("Search (%s): '%s' yields: %s", c.getSimpleName(), query, result.toString());
+		
+		if (Debug.DEBUG) {
+			Debug.write("Search (%s): '%s' yields: %s", c.getSimpleName(), query, 
+					result == null ? "null" : result.toString());
+		}
 		
 		if (unique) {
 			return (T)result;

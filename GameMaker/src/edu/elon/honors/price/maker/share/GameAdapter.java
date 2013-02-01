@@ -23,11 +23,14 @@ public class GameAdapter extends ArrayAdapter<GameInfo>{
 	public GameAdapter(Activity context, List<GameInfo> objects) {
 		super(context, 0, objects);
 	}
+	
+	public void resetLoadPosition() {
+		lastLoadPosition = 0;
+	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-
 		if (onScrolledToBottomListener != null) {
 			if (position == getCount() - 1 && lastLoadPosition < position) {
 				lastLoadPosition = position;

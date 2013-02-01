@@ -4,50 +4,53 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.eujeux.IOUtils;
 import com.eujeux.LoginUtils;
 import com.eujeux.PMF;
 import com.eujeux.data.EJUser;
 import com.eujeux.data.MyUserInfo;
 import com.eujeux.data.WebSettings;
 
-public class MyInfoServlet extends HttpServlet {
+public class MyInfoServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
-		EJUser user = LoginUtils.getUser();
-		if (user == null) {
-			LoginUtils.sendNoUserError(resp);
-			return;
+	protected void doFetch(HttpServletRequest req, HttpServletResponse resp,
+			EJUser user, PersistenceManager pm) throws IOException, BadRequest {
+		int version = IOUtils.getIntParameter(req, "version");
+		if (version != WebSettings.VERSION) {
+			throw new BadRequest("Outdated app version (v%d) does not match " +
+							"website version (v%d)", version, WebSettings.VERSION);
 		}
 		
-		String action = req.getParameter(WebSettings.PARAM_ACTION);
-		
-		if (WebSettings.ACTION_POST.equals(action)) {
-			ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
-			try {
-				MyUserInfo info = (MyUserInfo) ois.readObject();
-				if (user.update(info)) {
-					PMF.get().getPersistenceManager().makePersistent(user);
-					return;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		} else if (WebSettings.ACTION_FETCH.equals(action)) {
-			ObjectOutputStream oos = new ObjectOutputStream(resp.getOutputStream());
-			oos.writeObject(user.getMyInfo());
+		boolean success = IOUtils.writeObject(resp, user.getMyInfo());
+		if (!success) {
+			throw new BadRequest("Error serving user info");
 		}
 	}
-	
-	public void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
-		doGet(req, resp);
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp,
+			EJUser user, PersistenceManager pm) throws IOException, BadRequest {
+		
+		MyUserInfo info = IOUtils.readObject(req, MyUserInfo.class);
+		if (info == null) { 
+			throw new BadRequest("No info uploaded");
+		}
+		
+		if (user.update(info)) {
+			pm.makePersistent(user);
+		}
+	}
+
+	@Override
+	protected void doCreate(HttpServletRequest req, HttpServletResponse resp,
+			EJUser user, PersistenceManager pm) throws IOException, BadRequest {
+
 	}
 }

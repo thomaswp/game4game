@@ -18,6 +18,7 @@ public class GameInfo implements Serializable, Cloneable {
 	public int majorVersion, minorVersion;
 	public String description;
 	public long lastEdited;
+	public int rating, ratingImpressive, ratingFun, ratingCreative;
 	
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat();	
 
