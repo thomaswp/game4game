@@ -1,7 +1,5 @@
 package edu.elon.honors.price.data;
 
-import edu.elon.honors.price.data.ActorAnimator.ActionParams;
-
 public class ActorAnimator2 extends ActorAnimator {
 
 	@Override

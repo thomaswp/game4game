@@ -72,6 +72,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 		view.pause();
 	}
 	
+	@Override
 	public void onResume() {
 		super.onResume();
 		view.resume();

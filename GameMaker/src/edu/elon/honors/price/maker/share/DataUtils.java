@@ -2,28 +2,18 @@ package edu.elon.honors.price.maker.share;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.cookie.BasicClientCookie;
-
 import com.eujeux.data.GameInfo;
 import com.eujeux.data.GameList;
 import com.eujeux.data.MyUserInfo;

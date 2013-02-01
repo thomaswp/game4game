@@ -1,28 +1,18 @@
 package com.eujeux.android;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 
 import javax.jdo.PersistenceManager;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.eujeux.Debug;
 import com.eujeux.IOUtils;
-import com.eujeux.LoginUtils;
-import com.eujeux.PMF;
 import com.eujeux.QueryUtils;
 import com.eujeux.data.EJGame;
 import com.eujeux.data.EJUser;
 import com.eujeux.data.GameInfo;
-import com.eujeux.data.WebSettings;
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreServicePb.BlobstoreService;
 import com.google.appengine.api.files.AppEngineFile;
 import com.google.appengine.api.files.FileService;
 import com.google.appengine.api.files.FileServiceFactory;

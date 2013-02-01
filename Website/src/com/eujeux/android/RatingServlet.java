@@ -1,25 +1,16 @@
 package com.eujeux.android;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 import javax.jdo.PersistenceManager;
-import javax.jws.WebService;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tools.ant.util.FileUtils;
-
 import com.eujeux.IOUtils;
-import com.eujeux.LoginUtils;
-import com.eujeux.PMF;
 import com.eujeux.QueryUtils;
 import com.eujeux.data.EJGame;
 import com.eujeux.data.EJRating;
 import com.eujeux.data.EJUser;
 import com.eujeux.data.RatingInfo;
-import com.eujeux.data.WebSettings;
 
 public class RatingServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
@@ -30,7 +21,7 @@ public class RatingServlet extends BaseServlet {
 		long gameId = IOUtils.getLongParameter(req, "gameId");
 		long userId = IOUtils.getLongParameter(req, "userId");
 		
-		if (!user.getId().equals(gameId)) {
+		if (!user.getId().equals(userId)) {
 			throw new BadRequest("No permission to access this rating");
 		}
 		

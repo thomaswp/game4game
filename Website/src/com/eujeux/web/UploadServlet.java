@@ -1,7 +1,6 @@
 package com.eujeux.web;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -14,14 +13,12 @@ import com.eujeux.data.EJGame;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
 public class UploadServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(UploadServlet.class.getName());
 
+	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 

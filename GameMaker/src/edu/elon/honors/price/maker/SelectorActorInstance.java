@@ -3,7 +3,6 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import android.app.Activity;
 import android.content.Context;

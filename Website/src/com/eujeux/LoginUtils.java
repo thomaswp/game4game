@@ -1,15 +1,10 @@
 package com.eujeux;
 
 import java.io.IOException;
-import java.net.URL;
-
 import javax.jdo.PersistenceManager;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.eujeux.data.EJUser;
-import com.eujeux.data.WebSettings;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;

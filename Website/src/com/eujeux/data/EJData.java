@@ -1,7 +1,5 @@
 package com.eujeux.data;
 
-import java.io.Serializable;
-
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.PersistenceCapable;

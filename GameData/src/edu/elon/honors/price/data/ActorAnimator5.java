@@ -1,6 +1,7 @@
 package edu.elon.honors.price.data;
 
 public class ActorAnimator5 extends ActorAnimator {
+	@Override
 	protected ActionParams createActionParams(Action action) {
 		switch (action) {
 		case Climbing: return new ActionParams(0, 4, 4);

@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
-import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;

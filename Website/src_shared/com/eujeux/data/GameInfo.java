@@ -30,6 +30,7 @@ public class GameInfo implements Serializable, Cloneable {
 		return dateFormat.format(uploadDate);
 	}
 	
+	@Override
 	public GameInfo clone() {
 		try {
 			GameInfo cloned = (GameInfo)super.clone();

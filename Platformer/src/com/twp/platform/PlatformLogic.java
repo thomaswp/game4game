@@ -6,7 +6,6 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Bitmap.Config;
@@ -19,7 +18,6 @@ import edu.elon.honors.price.data.UILayout;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 import edu.elon.honors.price.game.Logic;
-import edu.elon.honors.price.graphics.AnimatedSprite;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
