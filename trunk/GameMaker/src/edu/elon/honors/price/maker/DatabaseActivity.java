@@ -1,14 +1,10 @@
 package edu.elon.honors.price.maker;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,7 +13,6 @@ import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Debug;
 
 /**
  * A {@link SaveableActivity} specifically for {@link PlatformGame}

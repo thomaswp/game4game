@@ -2,15 +2,11 @@ package com.eujeux.data;
 
 import java.util.Date;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-
 import com.eujeux.LoginUtils;
 import com.eujeux.QueryUtils;
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.apphosting.api.UserServicePb.UserService;
 
 @PersistenceCapable
 public class EJGame extends EJData {

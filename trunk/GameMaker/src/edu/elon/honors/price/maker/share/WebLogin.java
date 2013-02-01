@@ -1,14 +1,10 @@
 package edu.elon.honors.price.maker.share;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.eujeux.data.GameInfo;
 import com.eujeux.data.MyUserInfo;
-import com.eujeux.data.UserInfo;
-
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
@@ -21,14 +17,10 @@ import edu.elon.honors.price.maker.share.DataUtils.CreateCallback;
 import edu.elon.honors.price.maker.share.DataUtils.FetchCallback;
 import edu.elon.honors.price.maker.share.LoginUtils.LoginCallback;
 import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,6 +56,7 @@ public class WebLogin extends Activity implements IViewContainer {
 
 	private MyUserInfo userInfo;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.web_login);

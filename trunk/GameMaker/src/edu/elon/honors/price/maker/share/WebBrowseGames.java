@@ -6,8 +6,6 @@ import com.eujeux.data.GameInfo;
 import com.eujeux.data.GameList;
 import com.eujeux.data.WebSettings.SortType;
 
-import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.AutoAssign;
 import edu.elon.honors.price.maker.AutoAssignUtils;
 import edu.elon.honors.price.maker.IViewContainer;
@@ -15,7 +13,6 @@ import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.share.DataUtils.FetchCallback;
 import edu.elon.honors.price.maker.share.GameAdapter.OnScrolledToBottomListener;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -47,6 +44,7 @@ public class WebBrowseGames extends Activity implements IViewContainer {
 	private SortType sortType;
 	private boolean sortDesc;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.web_browse_games);

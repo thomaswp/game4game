@@ -1,13 +1,10 @@
 package com.eujeux.android;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +12,6 @@ import org.datanucleus.store.appengine.query.JDOCursorHelper;
 
 import com.eujeux.IOUtils;
 import com.eujeux.LoginUtils;
-import com.eujeux.PMF;
 import com.eujeux.QueryUtils;
 import com.eujeux.data.EJGame;
 import com.eujeux.data.EJUser;

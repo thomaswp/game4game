@@ -1,6 +1,5 @@
 package com.eujeux.data;
 
-import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.Persistent;
 
 public class EJRating extends EJData {

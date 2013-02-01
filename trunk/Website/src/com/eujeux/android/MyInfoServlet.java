@@ -1,17 +1,11 @@
 package com.eujeux.android;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import javax.jdo.PersistenceManager;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.eujeux.IOUtils;
-import com.eujeux.LoginUtils;
-import com.eujeux.PMF;
 import com.eujeux.data.EJUser;
 import com.eujeux.data.MyUserInfo;
 import com.eujeux.data.WebSettings;

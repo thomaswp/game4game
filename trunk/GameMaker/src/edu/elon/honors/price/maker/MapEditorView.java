@@ -17,8 +17,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.FloatMath;
-import android.view.ViewConfiguration;
-import android.view.WindowManager;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;

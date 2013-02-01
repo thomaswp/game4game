@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.eujeux.IOUtils;
 import com.eujeux.PMF;
 import com.eujeux.QueryUtils;
 import com.eujeux.data.EJGame;
@@ -18,6 +17,7 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 public class ServeServlet extends HttpServlet {
 	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
+	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		try {
