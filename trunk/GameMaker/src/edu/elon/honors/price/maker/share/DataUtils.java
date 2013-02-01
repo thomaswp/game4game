@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -26,8 +27,10 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import com.eujeux.data.GameInfo;
 import com.eujeux.data.GameList;
 import com.eujeux.data.MyUserInfo;
+import com.eujeux.data.RatingInfo;
 import com.eujeux.data.UserInfo;
 import com.eujeux.data.WebSettings;
+import com.eujeux.data.WebSettings.SortType;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
@@ -42,7 +45,8 @@ public class DataUtils {
 	public final static String MY_USER_INFO = SITE + "/android/myInfo";
 	public final static String GAME = SITE + "/android/game"; 
 	public final static String BLOB = SITE + "/android/serve";
-	public final static String GAME_LIST = SITE + "/android/browse"; 
+	public final static String GAME_LIST = SITE + "/android/browse";
+	public final static String RATING = SITE + "/android/rating"; 
 
 	public static void fetchUserInfo(Context context, String username, FetchCallback<UserInfo> callback) {
 		FetchTask<UserInfo> task = new FetchTask<UserInfo>(context, USER_INFO, callback);
@@ -51,7 +55,7 @@ public class DataUtils {
 
 	public static void fetchMyUserInfo(Context context, FetchCallback<MyUserInfo> callback) {
 		FetchTask<MyUserInfo> task = new FetchTask<MyUserInfo>(context, MY_USER_INFO, callback);
-		task.execute(WebSettings.PARAM_ACTION + "=" + WebSettings.ACTION_FETCH);
+		task.execute("version=" + WebSettings.VERSION);
 	}
 	
 	public static void fetchGameBlob(Context context, GameInfo info, FetchCallback<PlatformGame> callback) {
@@ -59,15 +63,27 @@ public class DataUtils {
 		task.execute("blobKey=" + info.blobKeyString + "&id=" + info.id);
 	}
 	
-	public static void fetchGameList(Context context, int count, String cursor, FetchCallback<GameList> callback) {
+	public static void fetchGameList(Context context, int count, String cursor, 
+			SortType sortType, boolean sortDesc, FetchCallback<GameList> callback) {
 		FetchTask<GameList> task = new FetchTask<GameList>(context, GAME_LIST, callback);
-		String params = "count=" + count;
+		String params = String.format(Locale.US, "count=%d&sort=%s&desc=%s", count, sortType.toString(), "" + sortDesc);
 		if (cursor != null) {
 			params += "&cursor=" + cursor;
 		}
 		task.execute(params);
 	}
+	
+	public static void fetchRating(Context context, long gameId, long userId, FetchCallback<RatingInfo> callback) {
+		FetchTask<RatingInfo> task = new FetchTask<RatingInfo>(context, RATING, callback);
+		String params = String.format(Locale.US, "gameId=%d&userId=%d", gameId, userId);
+		task.execute(params);
+	}
 
+	public static void updateRating(Context context, RatingInfo rating, PostCallback callback) {
+		PostTask<RatingInfo> task = new PostTask<RatingInfo>(context, RATING, callback);
+		task.execute(rating);
+	}
+	
 	public static void updateMyUserInfo(Context context, MyUserInfo info, PostCallback callback) {
 		PostTask<MyUserInfo> task = new PostTask<MyUserInfo>(context, MY_USER_INFO, callback);
 		task.execute(info);
@@ -93,15 +109,18 @@ public class DataUtils {
 		task.execute(game);
 	}
 	
-	private static void printResponseError(HttpResponse response) {
+	private static String getResponseError(HttpResponse response) {
 		StatusLine status = response.getStatusLine(); 
 		if (status != null && status.getStatusCode() != 200) {
 			Debug.write("Error %d: %s", status.getStatusCode(), status.getReasonPhrase());
+			return status.getReasonPhrase();
 		}
+		return null;
 	}
 
 	public static interface CreateCallback<T> {
 		public void createComplete(T result);
+		public void createFailed(String error);
 	}
 	
 	public static class CreateTask<T,S> extends AsyncTask<T, Void, Void> {
@@ -109,6 +128,7 @@ public class DataUtils {
 		private String url;
 		private Context context;
 		private S result;
+		private String failMessage;
 
 		public CreateTask(Context context, String url, CreateCallback<S> callback) {
 			this.context = context;
@@ -136,7 +156,7 @@ public class DataUtils {
 					post.setEntity(bae);
 					
 					HttpResponse response = client.execute(post);
-					printResponseError(response);
+					failMessage = getResponseError(response);
 					ObjectInputStream ois = new ObjectInputStream(
 							response.getEntity().getContent());
 					result = (S) ois.readObject();
@@ -150,12 +170,17 @@ public class DataUtils {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			callback.createComplete(this.result);
+			if (this.result != null) {
+				callback.createComplete(this.result);
+			} else {
+				callback.createFailed(failMessage);
+			}
 		}
 	}
 	
 	public static interface PostCallback {
-		public void postComplete(boolean success);
+		public void postComplete();
+		public void postFailed(String error);
 	}
 
 	public static class PostTask<T> extends AsyncTask<T, Void, Void> {
@@ -163,6 +188,7 @@ public class DataUtils {
 		private String url;
 		private Context context;
 		private boolean success;
+		private String failMessage;
 
 		public PostTask(Context context, String url, PostCallback callback) {
 			this.context = context;
@@ -176,8 +202,11 @@ public class DataUtils {
 			if (client == null) return null;
 
 			for (T param : params) {
-				HttpPost post = new HttpPost(url + "?" + WebSettings.PARAM_ACTION + 
-						"=" + WebSettings.ACTION_POST);
+				String urlAndParams = url;
+				urlAndParams += urlAndParams.contains("?") ? "&" : "?";
+				urlAndParams += WebSettings.PARAM_ACTION + "=" + WebSettings.ACTION_POST;
+				
+				HttpPost post = new HttpPost(urlAndParams);
 				try {
 					ByteArrayOutputStream boas = new ByteArrayOutputStream();
 					ObjectOutputStream oos = new ObjectOutputStream(boas);
@@ -185,7 +214,7 @@ public class DataUtils {
 					ByteArrayEntity bae = new ByteArrayEntity(boas.toByteArray());
 					post.setEntity(bae);
 					HttpResponse response = client.execute(post);
-					printResponseError(response);
+					failMessage = getResponseError(response);
 					success = response.getStatusLine().getStatusCode() == 200; 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -196,13 +225,17 @@ public class DataUtils {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			callback.postComplete(success);
+			if (success) {
+				callback.postComplete();
+			} else {
+				callback.postFailed(failMessage);
+			}
 		}
 	}
 
 	public static interface FetchCallback<T> {
 		public void fetchComplete(T result);
-		public void fetchFailed();
+		public void fetchFailed(String error);
 	}
 
 	private static class FetchTask<T> extends AsyncTask<String, Void, Void> {
@@ -211,6 +244,7 @@ public class DataUtils {
 		private String url;
 		private Context context;
 		private LinkedList<T> results = new LinkedList<T>();
+		private String failMessage;
 
 		public FetchTask(Context context, String url, FetchCallback<T> callback) {
 			this.context = context;
@@ -225,10 +259,13 @@ public class DataUtils {
 			if (client == null) return null;
 
 			for (String param : params) {
-				HttpGet get = new HttpGet(url + "?" + param);
+				String urlAndParams = url + "?" + param + "&" +
+						WebSettings.PARAM_ACTION + "=" + WebSettings.ACTION_FETCH;
+				HttpGet get = new HttpGet(urlAndParams);
+				
 				try {
 					HttpResponse resp = client.execute(get);
-					printResponseError(resp);
+					failMessage = getResponseError(resp);
 					ByteArrayOutputStream boas = new ByteArrayOutputStream();
 					resp.getEntity().writeTo(boas);
 					byte[] ba = boas.toByteArray();
@@ -245,12 +282,12 @@ public class DataUtils {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			if (results.size() == 0) {
-				callback.fetchFailed();
-			} else {
+			if (results.size() > 0) {
 				for (T res : results) {
 					callback.fetchComplete(res);
 				}
+			} else {
+				callback.fetchFailed(failMessage);
 			}
 		}
 	}

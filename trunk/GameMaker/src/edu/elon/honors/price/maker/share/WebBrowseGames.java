@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.eujeux.data.GameInfo;
 import com.eujeux.data.GameList;
+import com.eujeux.data.WebSettings.SortType;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
@@ -14,26 +15,49 @@ import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.share.DataUtils.FetchCallback;
 import edu.elon.honors.price.maker.share.GameAdapter.OnScrolledToBottomListener;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 @AutoAssign
 public class WebBrowseGames extends Activity implements IViewContainer {
-	private static int FETCH_COUNT = 2;
+	private static final int FETCH_COUNT = 4;
+	
+	private static final String[] sortStrings = new String[] {
+		"Upload Date",
+		"Downloads",
+		"Rating"
+	};
 	
 	private ListView listViewGames;
+	private Button buttonSortUpload, buttonSortDownloads, buttonSortRating;
+	private Button[] sortButtons;
+	
+	
 	private LinkedList<GameInfo> games = new LinkedList<GameInfo>();
 	private String cursorString;
 	private GameAdapter adapter;
 	private ProgressBar footerLoadbar;
+	
+	private SortType sortType;
+	private boolean sortDesc;
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.web_browse_games);
 		
 		AutoAssignUtils.autoAssign(this);
+		
+		sortButtons = new Button[] {
+				buttonSortUpload,
+				buttonSortDownloads,
+				buttonSortRating
+		};
 		
 		
 		footerLoadbar = new ProgressBar(this);
@@ -44,6 +68,8 @@ public class WebBrowseGames extends Activity implements IViewContainer {
 		adapter = new GameAdapter(this, games);
 		listViewGames.setAdapter(adapter);
 		
+		setSort(SortType.UploadDate, true);
+		
 		adapter.setOnScrolledToBottomListener(new OnScrolledToBottomListener() {
 			@Override
 			public void onScrolledToBottom() {
@@ -53,15 +79,62 @@ public class WebBrowseGames extends Activity implements IViewContainer {
 			}
 		});
 		
-		fetch();
+		for (int i = 0; i < sortButtons.length; i++) {
+			final SortType newType = SortType.values()[i];
+			sortButtons[i].setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (sortType == newType) {
+						setSort(newType, !sortDesc);
+					} else {
+						setSort(newType, true);
+					}
+				}
+			});
+		}
+
 	}
 	
+	public void setSort(SortType type, boolean desc) {
+		if (sortType == type && sortDesc == desc) return;
+		
+		this.sortType = type;
+		this.sortDesc = desc;
+		
+		games.clear();
+		adapter.resetLoadPosition();
+		cursorString = null;
+		fetch();
+		
+		
+		for (int i = 0; i < sortButtons.length; i++) {
+			String text = sortStrings[i];
+			if (i == type.ordinal()) text += desc ? " \u25BC" : " \u25B2"; 
+			sortButtons[i].setText(text);
+		}
+	}
+	
+	
+	
+	@Override
+	protected Dialog onCreateDialog(int id, Bundle args) {
+		return DialogUtils.handleDialog(this, id, args);
+	}
+
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
+		super.onPrepareDialog(id, dialog, args);
+		DialogUtils.prepareDialog(id, dialog, args);
+	}
+
 	private void fetch() {
-		DataUtils.fetchGameList(this, FETCH_COUNT, cursorString, new FetchCallback<GameList>() {
+		DataUtils.fetchGameList(this, FETCH_COUNT, cursorString,
+				sortType, sortDesc, new FetchCallback<GameList>() {
 			@Override
-			public void fetchFailed() {
-				// TODO Auto-generated method stub
-				
+			public void fetchFailed(String error) {
+				DialogUtils.showErrorDialog(WebBrowseGames.this, 
+						"Browse Failed", "Could not browse games. " +
+						"Check the connection and try again", error);
 			}
 			
 			@Override
@@ -69,7 +142,6 @@ public class WebBrowseGames extends Activity implements IViewContainer {
 				cursorString = result.cursorString;
 				if (result.size() < FETCH_COUNT) {
 					listViewGames.removeFooterView(footerLoadbar);
-					//footerLoadbar.setVisibility(View.GONE);
 					cursorString = null;
 				}
 				games.addAll(result);

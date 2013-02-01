@@ -38,6 +38,18 @@ public class EJGame extends EJData {
 	private Integer downloads = 0;
 	
 	@Persistent
+	private Integer rating = 0;
+	
+	@Persistent
+	private Integer ratingCreative = 0;
+	
+	@Persistent
+	private Integer ratingImpressive = 0;
+	
+	@Persistent
+	private Integer ratingFun = 0;
+	
+	@Persistent
 	private String description = "Game description here...";
 	
 	@Persistent
@@ -76,6 +88,10 @@ public class EJGame extends EJData {
 		if (info != null) game.creatorName = info.userName;
 		game.description = description;
 		game.lastEdited = lastEdited;
+		game.rating = getRating();
+		game.ratingCreative = getRatingCreative();
+		game.ratingFun = getRatingFun();
+		game.ratingImpressive = getRatingImpressive();
 		return game;
 	}
 	
@@ -143,6 +159,34 @@ public class EJGame extends EJData {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public Integer getRating() {
+		return getSafeInt(rating);
+	}
+	public void setRating(Integer rating) {
+		this.rating = rating;
+	}
+	public Integer getRatingCreative() {
+		return getSafeInt(ratingCreative);
+	}
+	public void setRatingCreative(Integer ratingCreative) {
+		this.ratingCreative = ratingCreative;
+	}
+	public Integer getRatingImpressive() {
+		return getSafeInt(ratingImpressive);
+	}
+	public void setRatingImpressive(Integer ratingImpressive) {
+		this.ratingImpressive = ratingImpressive;
+	}
+	public Integer getRatingFun() {
+		return getSafeInt(ratingFun);
+	}
+	public void setRatingFun(Integer ratingFun) {
+		this.ratingFun = ratingFun;
+	}
+	
+	private static int getSafeInt(Integer i) {
+		return i == null ? 0 : i;
 	}
 	
 }

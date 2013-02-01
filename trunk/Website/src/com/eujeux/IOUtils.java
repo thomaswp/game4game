@@ -10,6 +10,9 @@ import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.eujeux.android.BaseServlet;
+import com.eujeux.android.BaseServlet.BadRequest;
+
 public class IOUtils {
 	
 	public static boolean writeObject(HttpServletResponse resp, Serializable object) {
@@ -52,8 +55,8 @@ public class IOUtils {
 		return baos.toByteArray();
 	}
 	
-	public static long getLongParameter(HttpServletRequest req, HttpServletResponse resp,
-			String paramName) throws IOException {
+	public static long getLongParameter(HttpServletRequest req, 
+			String paramName) throws BadRequest {
 		String paramS = req.getParameter(paramName);
 		if (paramS != null) {
 			try {
@@ -63,12 +66,11 @@ public class IOUtils {
 			}
 		}
 		String message = "Could not read long parameter:" + paramName;
-		LoginUtils.sendBadRequestError(resp, message);
-		throw new IOException(message);
+		throw new BadRequest(message);
 	}
 	
-	public static int getIntParameter(HttpServletRequest req, HttpServletResponse resp,
-			String paramName) throws IOException {
+	public static int getIntParameter(HttpServletRequest req, 
+			String paramName) throws BadRequest {
 		String paramS = req.getParameter(paramName);
 		if (paramS != null) {
 			try {
@@ -78,19 +80,17 @@ public class IOUtils {
 			}
 		}
 		String message = "Could not read int parameter:" + paramName;
-		LoginUtils.sendBadRequestError(resp, message);
-		throw new IOException(message);
+		throw new BadRequest(message);
 	}
 
 	public static boolean getBoolParameter(HttpServletRequest req,
-			HttpServletResponse resp, String paramName) throws IOException {
+			String paramName) throws BadRequest {
 		String paramS = req.getParameter(paramName);
 		if (paramS != null) {
 			return Boolean.parseBoolean(paramS);
 		}
 		String message = "Could not read boolean parameter:" + paramName;
-		LoginUtils.sendBadRequestError(resp, message);
-		throw new IOException(message);
+		throw new BadRequest(message);
 	}
 	
 }

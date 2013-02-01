@@ -129,4 +129,13 @@
     <string name="downloads_c">Downloads:</string>
     <string name="getGames">Get Games</string>
     <string name="uploadNew">Upload a New Game</string>
+    <string name="browseGames">Browse Games</string>
+    <string name="sort_c">Sort:</string>
+    <string name="ratings_c">Ratings:</string>
+    <string name="creativity_c">Creativity:</string>
+    <string name="creative_c">Creative:</string>
+    <string name="impressive_c">Impressive:</string>
+    <string name="fun_c">Fun:</string>
+    <string name="plusOne">+1</string>
+    <string name="rating_c">Rating:</string>
 </resources>

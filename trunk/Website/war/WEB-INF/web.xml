@@ -57,6 +57,14 @@
 		<servlet-name>Browse</servlet-name>
 		<url-pattern>/android/browse</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>Rating</servlet-name>
+		<servlet-class>com.eujeux.android.RatingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Rating</servlet-name>
+		<url-pattern>/android/rating</url-pattern>
+	</servlet-mapping>
 	
 	<servlet>
 		<servlet-name>Eujeux</servlet-name>

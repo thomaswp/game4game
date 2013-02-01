@@ -33,6 +33,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,13 +48,11 @@ public class WebLogin extends Activity implements IViewContainer {
 
 	private static final int DIALOG_ACCOUNTS = 0;
 	private static final int DIALOG_CONFIRM_LOGIN = 1;
-	private static final int DIALOG_FAIL_LOGIN = 2;
 	private static final int DIALOG_LOADING = 3;
-	private static final int DIALOG_BAD_NAME = 4;
-	private static final int DIALOG_BAD_UPDATE = 5;
 	private static final int DIALOG_ADD_GAME = 6;
 	private static final int DIALOG_NO_GAMES = 7;
-	private static final int DIALOG_FAIL_UPLOAD_GAME = 8;
+	private static final int DIALOG_NO_ACCOUNT = 9;
+	private static final int DIALOG_ERROR = 10;
 
 	private TextView textViewEmail;
 	private EditText editTextUsername;
@@ -98,7 +97,7 @@ public class WebLogin extends Activity implements IViewContainer {
 				startActivity(intent);
 			}
 		});
-		
+
 		editTextUsername.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -111,7 +110,7 @@ public class WebLogin extends Activity implements IViewContainer {
 			logIn();
 		}
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -136,15 +135,15 @@ public class WebLogin extends Activity implements IViewContainer {
 			}
 		}
 		Bundle bundle = new Bundle();
-		
-		
+
+
 
 		if (files.size() > 0) {
 			String[] filesA = files.toArray(new String[files.size()]);
 			String[] namesA = names.toArray(new String[names.size()]);
 			bundle.putStringArray("files", filesA);
 			bundle.putStringArray("names", namesA);
-			
+
 			showDialog(DIALOG_ADD_GAME, bundle);
 		} else {
 			showDialog(DIALOG_NO_GAMES);
@@ -159,18 +158,19 @@ public class WebLogin extends Activity implements IViewContainer {
 			@Override
 			public void createComplete(GameInfo result) {
 				progressDialog.dismiss();
-				
-				if (result != null) {
-					game.websiteInfo = result;
-					Data.saveGame(filename, WebLogin.this, game);
-					WebGameView gameView = new WebGameView(
-							WebLogin.this, result);
-					linearLayoutGames.addView(gameView);
-					gameView.editGameInfo();
-					
-				} else {
-					showDialog(DIALOG_FAIL_UPLOAD_GAME);
-				}
+				game.websiteInfo = result;
+				Data.saveGame(filename, WebLogin.this, game);
+				WebGameView gameView = new WebGameView(
+						WebLogin.this, result);
+				linearLayoutGames.addView(gameView);
+				gameView.editGameInfo();
+			}
+
+			@Override
+			public void createFailed(String error) {
+				progressDialog.dismiss();
+				DialogUtils.showErrorDialog(WebLogin.this,
+						"Upload Failed", "Could not upload the game.", error);
 			}
 		});
 	}
@@ -183,17 +183,25 @@ public class WebLogin extends Activity implements IViewContainer {
 					final String oldName = userInfo.userName;
 					userInfo.userName = name;
 					DataUtils.updateMyUserInfo(WebLogin.this, userInfo, new DataUtils.PostCallback() {
+
 						@Override
-						public void postComplete(boolean success) {
-							if (!success) {
-								userInfo.userName = oldName;
-								editTextUsername.setText(oldName);
-								showDialog(DIALOG_BAD_UPDATE);
-							}
+						public void postComplete() { }
+
+						@Override
+						public void postFailed(String error) {
+							userInfo.userName = oldName;
+							editTextUsername.setText(oldName);
+							DialogUtils.showErrorDialog(WebLogin.this,
+									"Username Update Failed",
+									"The name you have chosen is already in use. " +
+									"Please choose another.");
 						}
 					});
 				} else {
-					showDialog(DIALOG_BAD_NAME);
+					DialogUtils.showErrorDialog(WebLogin.this, "Invalid Username",
+							"Usernames must be 3-15 lowercase alphanumeric characters, " +
+							"underscores (_) dashes (-), at signs (@) or periods (.). " +
+							"Ex: user_name");
 					editTextUsername.setText(userInfo.userName);
 				}
 			}
@@ -255,27 +263,13 @@ public class WebLogin extends Activity implements IViewContainer {
 						}
 					})
 					.create();
-		} else if (id == DIALOG_FAIL_LOGIN) {
-			return alertDialog("Login Failed",
-					"Login failed! Please ensure your device is connected " +
-					"to the internet and that you have accepted all requested " +
-					"permissions and try again.");
 		} else if (id == DIALOG_LOADING) {
 			return progressDialog;
-		} else if (id == DIALOG_BAD_NAME) {
-			return alertDialog("Invalid Username",
-					"Usernames must be 3-15 lowercase alphanumeric characters, " +
-					"underscores (_) dashes (-), at signs (@) or periods (.). " +
-					"Ex: user_name");
-		} else if (id == DIALOG_BAD_UPDATE) {
-			return alertDialog("Username Update Failed",
-					"The name you have chosen is already in use. " +
-					"Please choose another.");
 		} else if (id == DIALOG_ADD_GAME) {
-			
+
 			String[] names = args.getStringArray("names");
 			final String[] files = args.getStringArray("files");
-			
+
 			return new AlertDialog.Builder(this)
 			.setTitle("Choose game to upload")
 			.setItems(names, new Dialog.OnClickListener() {
@@ -290,10 +284,28 @@ public class WebLogin extends Activity implements IViewContainer {
 		} else if (id == DIALOG_NO_GAMES) {
 			return alertDialog("No Games", "There are no games to upload. " +
 					"All games have already been uploaded.");
-		} else if (id == DIALOG_FAIL_UPLOAD_GAME) {
-			return alertDialog("Upload Failed", "Could not upload the game.");
+		} else if (id == DIALOG_NO_ACCOUNT) {
+			return new AlertDialog.Builder(this)
+			.setTitle("No Accounts")
+			.setMessage("You have no Google accounts on this decive. " +
+					"Would you like to add one?")
+					.setPositiveButton("Ok", new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							startActivity(new Intent(Settings.ACTION_SYNC_SETTINGS));
+						}
+					})
+					.setNegativeButton("Not Now", null)
+					.create();
 		}
-		return null;
+		return DialogUtils.handleDialog(this, id, args);
+	}
+
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
+		super.onPrepareDialog(id, dialog, args);
+		DialogUtils.prepareDialog(id, dialog, args);
+		
 	}
 
 	private AlertDialog alertDialog(String title, String message) {
@@ -308,34 +320,41 @@ public class WebLogin extends Activity implements IViewContainer {
 
 	private void loginCompleted(boolean success) {
 		if (success) {
-			buttonLogin.setEnabled(true);
-			buttonLogin.setText("Log Out");
 
 			DataUtils.fetchMyUserInfo(this, 
 					new FetchCallback<MyUserInfo>() {
 				@Override
 				public void fetchComplete(MyUserInfo result) {
+					progressDialog.dismiss();
+					buttonLogin.setText("Log Out");
+					buttonLogin.setEnabled(true);
 					LoginUtils.registerUser(WebLogin.this, result);
 					userInfo = result;
 					updateUIForLogin();
 				}
 
 				@Override
-				public void fetchFailed() {
+				public void fetchFailed(String error) {
+					progressDialog.dismiss();
 					loginFailed();
+					DialogUtils.showErrorDialog(WebLogin.this, "Login Failed",
+							"Login failed! Please ensure this app is " +
+							"updated and try again.", error);
 				}
 			});
 		} else {
+			progressDialog.dismiss();
 			loginFailed();
+			DialogUtils.showErrorDialog(this, "Login Failed",
+				"Login failed! Please ensure your device is connected " +
+						"to the internet and that you have accepted all requested " +
+						"permissions and try again.");
 		}
-
-		progressDialog.dismiss();
 	}
 
 	private void loginFailed() {
 		cancelLogin();
 		LoginUtils.logOut(this);
-		showDialog(DIALOG_FAIL_LOGIN);
 	}
 
 	private void cancelLogin() {
@@ -350,7 +369,12 @@ public class WebLogin extends Activity implements IViewContainer {
 			showDialog(DIALOG_LOADING);
 			LoginUtils.tryLogIn(this, account, new LoginCallbackHandler());
 		} else {
-			showDialog(DIALOG_ACCOUNTS, null);
+			if (LoginUtils.getAccountNames(this).length > 0) {
+				showDialog(DIALOG_ACCOUNTS);
+			} else {
+				cancelLogin();
+				showDialog(DIALOG_NO_ACCOUNT);
+			}
 		}
 	}
 
@@ -360,10 +384,10 @@ public class WebLogin extends Activity implements IViewContainer {
 		buttonLogin.setText("Log In");
 		updateUIForLogin();
 	}
-	
+
 	private void updateUIForLogin() {
 		boolean loggedIn = userInfo != null;
-		
+
 		editTextUsername.setVisibility(loggedIn ? View.VISIBLE : View.INVISIBLE);
 		editTextUsername.setText(loggedIn ? userInfo.userName : "");
 		textViewEmail.setText(loggedIn ? userInfo.email : "");
