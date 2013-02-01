@@ -167,20 +167,25 @@ public class EJGame extends EJData {
 	}
 	public void setRatingCreative(Integer ratingCreative) {
 		this.ratingCreative = ratingCreative;
+		updateRating();
 	}
 	public Integer getRatingImpressive() {
 		return getSafeInt(ratingImpressive);
 	}
 	public void setRatingImpressive(Integer ratingImpressive) {
 		this.ratingImpressive = ratingImpressive;
+		updateRating();
 	}
 	public Integer getRatingFun() {
 		return getSafeInt(ratingFun);
 	}
 	public void setRatingFun(Integer ratingFun) {
 		this.ratingFun = ratingFun;
+		updateRating();
 	}
-	
+	private void updateRating() {
+		setRating(ratingCreative + ratingImpressive + ratingFun);
+	}
 	private static int getSafeInt(Integer i) {
 		return i == null ? 0 : i;
 	}

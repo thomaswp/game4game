@@ -54,6 +54,7 @@ public class TestActivity extends DatabaseActivity {
 
 	}
 	
+	@SuppressWarnings("unused")
 	public static String getUserToken(Activity activity)
 	{
 	    AccountManager accountManager = AccountManager.get(activity);

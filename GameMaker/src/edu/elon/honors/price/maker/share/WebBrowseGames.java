@@ -14,6 +14,7 @@ import edu.elon.honors.price.maker.share.DataUtils.FetchCallback;
 import edu.elon.honors.price.maker.share.GameAdapter.OnScrolledToBottomListener;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -90,7 +91,23 @@ public class WebBrowseGames extends Activity implements IViewContainer {
 				}
 			});
 		}
-
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			if (data.hasExtra("gameInfo")) {
+				GameInfo info = (GameInfo)data.getSerializableExtra("gameInfo");
+				for (int i = 0; i < games.size(); i++) {
+					GameInfo game = games.get(i);
+					if (game.id == info.id) {
+						games.set(i, info);
+						adapter.notifyDataSetChanged();
+						break;
+					}
+				}
+			}
+		}
 	}
 	
 	public void setSort(SortType type, boolean desc) {
