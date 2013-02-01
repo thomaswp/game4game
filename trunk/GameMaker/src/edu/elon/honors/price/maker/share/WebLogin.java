@@ -44,7 +44,6 @@ public class WebLogin extends Activity implements IViewContainer {
 	private static final int DIALOG_ADD_GAME = 6;
 	private static final int DIALOG_NO_GAMES = 7;
 	private static final int DIALOG_NO_ACCOUNT = 9;
-	private static final int DIALOG_ERROR = 10;
 
 	private TextView textViewEmail;
 	private EditText editTextUsername;

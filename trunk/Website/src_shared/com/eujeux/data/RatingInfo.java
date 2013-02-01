@@ -7,4 +7,13 @@ public class RatingInfo implements Serializable {
 
 	public long userId, gameId;
 	public boolean plusCreative, plusImpressive, plusFun;
+	
+	@Override
+	public String toString() {
+		String s = "Rating: ";
+		if (plusCreative) s += "creative ";
+		if (plusImpressive) s += "impressive";
+		if (plusFun) s += "fun ";
+		return s;
+	}
 }

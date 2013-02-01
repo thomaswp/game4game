@@ -179,7 +179,7 @@
                     <Button
                         android:id="@+id/buttonPlusCreative"
                         android:layout_width="wrap_content"
-                        android:layout_height="35dip"
+                        android:layout_height="40dip"
                         android:layout_marginLeft="5dip"
                         android:text="@string/plusOne"
                         android:visibility="gone" />
@@ -207,7 +207,7 @@
                     <Button
                         android:id="@+id/buttonPlusImpressive"
                         android:layout_width="wrap_content"
-                        android:layout_height="35dip"
+                        android:layout_height="40dip"
                         android:layout_marginLeft="5dip"
                         android:text="@string/plusOne"
                         android:visibility="gone" />
@@ -235,7 +235,7 @@
                     <Button
                         android:id="@+id/buttonPlusFun"
                         android:layout_width="wrap_content"
-                        android:layout_height="35dip"
+                        android:layout_height="40dip"
                         android:layout_marginLeft="5dip"
                         android:text="@string/plusOne"
                         android:visibility="gone" />

@@ -1,7 +1,9 @@
 package com.eujeux.data;
 
+import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+@PersistenceCapable
 public class EJRating extends EJData {
 	@Persistent
 	private Long userId;
@@ -28,7 +30,7 @@ public class EJRating extends EJData {
 		info.gameId = gameId;
 		info.userId = userId;
 		info.plusCreative = plusCreative;
-		info.plusImpressive = plusCreative;
+		info.plusImpressive = plusImpressive;
 		info.plusFun = plusFun;
 		return info;
 	}

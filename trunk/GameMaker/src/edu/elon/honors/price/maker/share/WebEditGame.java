@@ -40,6 +40,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 	
 	private RatingInfo ratings;
 	private boolean ratingsChanged;
+	private boolean downloaded;
 	
 	private GameInfo gameInfo;
 	private boolean owner;
@@ -94,16 +95,20 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 	}
 	
 	private void loadRatings() {
-		if (owner) return;
+		if (owner || !downloaded) return;
 		
 		DataUtils.fetchRating(this, gameInfo.id, LoginUtils.getUserId(this), new FetchCallback<RatingInfo>() {
 
 			@Override
 			public void fetchComplete(RatingInfo result) {
 				ratings = result;
+				
+				Debug.write(result.toString());
+				
 				buttonPlusCreative.setVisibility(View.VISIBLE);
 				buttonPlusImpressive.setVisibility(View.VISIBLE);
 				buttonPlusFun.setVisibility(View.VISIBLE);
+				
 				buttonPlusCreative.setEnabled(!result.plusCreative);
 				buttonPlusImpressive.setEnabled(!result.plusImpressive);
 				buttonPlusFun.setEnabled(!result.plusFun);
@@ -111,7 +116,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 				Button[] plusButtons = new Button[] {
 						buttonPlusCreative, 
 						buttonPlusImpressive, 
-						buttonPlusImpressive
+						buttonPlusFun
 				};
 				
 				for (Button plusButton : plusButtons) {
@@ -300,6 +305,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 			PlatformGame game = (PlatformGame)Data.loadGame(file, this);
 			if (game != null && game.hasWebisiteId(gameInfo.id)) {
 				gamePath = file;
+				downloaded = true;
 				if (game.lastEdited < gameInfo.lastEdited) {
 					buttonDownload.setText("Update Version");
 				} else {

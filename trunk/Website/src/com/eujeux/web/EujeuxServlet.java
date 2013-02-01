@@ -24,8 +24,8 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
 public class EujeuxServlet extends HttpServlet {
+	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		// get a user
