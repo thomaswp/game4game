@@ -4,7 +4,7 @@ public class WebSettings {
 	public final static int VERSION = 1;
 	
 	public final static String IP = "192.168.1.142";
-	public final static boolean LOCAL = true;
+	public final static boolean LOCAL = false;
 	public final static String LOCAL_SITE = "http://" + IP + ":8888";
 	public final static String APP_SITE = "https://eujeux-test.appspot.com";
 	public final static String SITE = LOCAL ? LOCAL_SITE : APP_SITE;
