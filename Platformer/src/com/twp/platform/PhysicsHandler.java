@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.util.SparseArray;
 
@@ -30,6 +31,7 @@ import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
@@ -51,6 +53,9 @@ public class PhysicsHandler {
 	private ArrayList<ActorBody> toRemove = new ArrayList<ActorBody>();
 	private ArrayList<ActorAddable> toAdd = new ArrayList<ActorAddable>();
 	private ArrayList<QueuedContact> contacts = new ArrayList<QueuedContact>();
+	
+	private Fixture rightWallFixture, leftWallFixture, topWallFixture;
+	//private Body rightWallBody, leftWallBody;
 
 	private PlatformGame game;
 	private Map map;
@@ -63,7 +68,7 @@ public class PhysicsHandler {
 	private HashMap<Fixture, PlatformBody> bodyMap = new HashMap<Fixture, PlatformBody>();
 	private HashMap<Fixture, Sprite> levelMap = new HashMap<Fixture, Sprite>();
 
-	private float mapFloor;
+	private float mapFloor, mapRight, mapLeft;
 
 	public World getWorld() {
 		return world;
@@ -79,6 +84,14 @@ public class PhysicsHandler {
 
 	public float getMapFloorPx() {
 		return mapFloor;
+	}
+	
+	public float getMapRightPx() {
+		return mapRight;
+	}
+	
+	public float getMapLeftPx() {
+		return mapLeft;
 	}
 
 	public ActorBody getHero() {
@@ -159,8 +172,12 @@ public class PhysicsHandler {
 
 	private void initPhysics() {
 		mapFloor = map.height(game);
+		mapLeft = 0;
+		mapRight = map.width(game);
 
 		world = new World(new Vector2(0, GRAVITY), true);
+		
+		createWalls();
 
 		ContactFilter filter = new ContactFilter() {
 
@@ -171,6 +188,10 @@ public class PhysicsHandler {
 
 				PlatformBody bodyA = bodyMap.get(fixtureA);
 				PlatformBody bodyB = bodyMap.get(fixtureB);
+				
+				if (isBoundaryFixture(fixtureA) || isBoundaryFixture(fixtureB)) {
+					return true;
+				}
 
 				return PlatformBody.collides(bodyA, bodyB);
 			}
@@ -380,6 +401,7 @@ public class PhysicsHandler {
 							}
 						}
 						tileBody.createFixture(tileShape, 1);
+						tileShape.dispose();
 						for (int l = 0; l < tileBody.getFixtureList().size(); l++) {
 							levelMap.put(tileBody.getFixtureList().get(l), s);
 						}
@@ -417,8 +439,73 @@ public class PhysicsHandler {
 			}
 		}
 	}
+	
+	private boolean isBoundaryFixture(Fixture fixture) {
+		return fixture == rightWallFixture || 
+				fixture == leftWallFixture || 
+				fixture == topWallFixture;
+	}
+	
+	private void createWalls() {
+		float thickness = 60 / SCALE;
+		float width = map.width(game) / SCALE;
+		float height = map.height(game) / SCALE;
+		
+		PolygonShape horizontalWallShape = new PolygonShape();
+		horizontalWallShape.setAsBox(width / 2, thickness / 2);
+		
+		PolygonShape verticalWallShape = new PolygonShape();
+		verticalWallShape.setAsBox(thickness / 2, height / 2);
+		
+		BodyDef wallDef = new BodyDef();
+		wallDef.position.set(-thickness / 2, height / 2);
+		wallDef.type = BodyType.StaticBody;
+		Body leftWallBody = world.createBody(wallDef);
+		leftWallFixture = leftWallBody.createFixture(verticalWallShape, 1);
+	
+		
+		wallDef = new BodyDef();
+		wallDef.position.set(width + thickness / 2, height / 2);
+		wallDef.type = BodyType.StaticBody;
+		Body rightWallBody = world.createBody(wallDef);
+		rightWallFixture = rightWallBody.createFixture(verticalWallShape, 1);
+		
+		wallDef = new BodyDef();
+		wallDef.position.set(width / 2, -thickness / 2);
+		wallDef.type = BodyType.StaticBody;
+		Body topWallBody = world.createBody(wallDef);
+		topWallFixture = topWallBody.createFixture(horizontalWallShape, 1);
+		
+		horizontalWallShape.dispose();
+		verticalWallShape.dispose();
+		
+	}
+	
+//	private void updateWallSprites(Vector offset) {
+//	Sprite rightSprite = new Sprite(Viewport.DebugViewport, 
+//			0, 0, widthPx, heightPx);
+//	rightSprite.setOriginX(widthPx / 2);
+//	rightSprite.setOriginY(heightPx / 2);
+//	leftSprite.getBitmap().eraseColor(Color.RED);
+//	levelMap.put(rightWallFixture, rightSprite);
+	
+//		Sprite leftSprite = levelMap.get(leftWallFixture);
+//		Sprite rightSprite = levelMap.get(rightWallFixture);
+//		
+//		
+//		
+//		float y = Graphics.getHeight() / 2;
+//		leftSprite.setY(y);
+//		rightSprite.setY(y);
+//		leftSprite.setX(offset.getX() - leftSprite.getWidth() / 2);
+//		rightSprite.setX(offset.getX() + map.width(game) + rightSprite.getWidth() / 2);
+//		
+//		sprite.setX(body.getPosition().x * SCALE + offset.getX());
+//		sprite.setY(body.getPosition().y * SCALE + offset.getY());
+//	}
 
 	public void update(long timeElapsed, Vector offset) {
+		
 		for (int i = 0; i < platformBodies.size(); i++) {
 			if (platformBodies.get(i) != null) {
 				platformBodies.get(i).update(timeElapsed, offset);
@@ -568,20 +655,31 @@ public class PhysicsHandler {
 					bodyA.getCollidedBodies().add(bodyB);
 					bodyA.getTouchingBodies().add(bodyB);
 				}
-			} else if (levelMap.containsKey(fixtureB)) {
-				Sprite spriteB = levelMap.get(fixtureB);
-
+			} else if (levelMap.containsKey(fixtureB) || isBoundaryFixture(fixtureB)) {
 				RectF rectA = bodyA.getSprite().getRect();
-				RectF rectB = spriteB.getRect();
-				float nx = rectB.centerX() - rectA.centerX();
-				float ny = rectB.centerY() - rectA.centerY();
+				
+				boolean wall, floor;
+				if (isBoundaryFixture(fixtureB)) {
+					wall = fixtureB == rightWallFixture || fixtureB == leftWallFixture;
+					floor = false;
+				} else {
+					Sprite spriteB = levelMap.get(fixtureB);
+					RectF rectB = spriteB.getRect();
+					
+					float nx = rectB.centerX() - rectA.centerX();
+					float ny = rectB.centerY() - rectA.centerY();
+					
+					wall = Math.abs(nx) > Math.abs(ny);
+					floor = !wall && ny > 0;
+				}
 
-				if (Math.abs(nx) > Math.abs(ny)) {
+
+				if (wall) {
 					if (!bodyA.getTouchingWalls().contains(fixtureB)) {
 						bodyA.setCollidedWall(true);
 						bodyA.getTouchingWalls().add(fixtureB);
 					}
-				} else if (ny > 0) {
+				} else if (floor) {
 					if (!bodyA.getTouchingFloors().contains(fixtureB)) {
 						bodyA.getTouchingFloors().add(fixtureB);
 					}
