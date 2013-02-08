@@ -57,11 +57,11 @@ public class ObjectBody extends PlatformBody {
 		this.sprite.centerOrigin();
 		this.sprite.setZoom(object.zoom);
 
-		BodyDef actorDef = new BodyDef();
-		actorDef.position.set(spriteToVect(sprite, null));
-		actorDef.type = BodyType.DynamicBody;
-		actorDef.fixedRotation = object.fixedRotation;
-		body = physics.getWorld().createBody(actorDef);
+		BodyDef objectDef = new BodyDef();
+		objectDef.position.set(spriteToVect(sprite, null));
+		objectDef.type = object.moves ? BodyType.DynamicBody : BodyType.KinematicBody;
+		objectDef.fixedRotation = object.rotates;
+		body = physics.getWorld().createBody(objectDef);
 
 		float[] xs = new float[8]; float[] ys = new float[8];
 		int pts = sprite.convexHull(xs, ys);
@@ -104,7 +104,7 @@ public class ObjectBody extends PlatformBody {
 		fixture.shape = poly;
 		fixture.density = getDensity(object.density);
 		fixture.friction = 1;
-		fixture.restitution = 0.5f;
+		fixture.restitution = object.restitution;
 		body.createFixture(fixture);
 		//body.setFixedRotation(true);
 
@@ -123,7 +123,7 @@ public class ObjectBody extends PlatformBody {
 	@Override
 	public void updateSprite(Vector offset) {
 		setSpritePosition(sprite, body, offset);
-		if (!object.fixedRotation) {
+		if (object.rotates) {
 			sprite.setRotation(body.getAngle() * 180 / (float)Math.PI);
 		}
 	}
