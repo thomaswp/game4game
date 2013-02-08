@@ -309,9 +309,32 @@ public class PlatformLogic implements Logic {
 		cameraOffset.multiply(snap);
 		offset.add(cameraOffset);
 		
+		//bound camera to map borders
+		int mapHeight = game.getSelectedMap().height(game);
+		//The bottom doesn't show no matter what
 		if (-offset.getY() + Graphics.getHeight() > physics.getMapFloorPx()) {
 			offset.setY(Graphics.getHeight() - physics.getMapFloorPx());
 		}
+		if (mapHeight > Graphics.getHeight()) {
+			//If we have more map height than screen height, bound the roof
+			if (-offset.getY() < 0) {
+				offset.setY(0);
+			}
+		}
+		
+		int mapWidth = game.getSelectedMap().width(game); 
+		if (mapWidth < Graphics.getWidth()) {
+			//If our map is smaller than our screen, center it
+			offset.setX((Graphics.getWidth() - mapWidth) / 2);
+		} else {
+			if (-offset.getX() < physics.getMapLeftPx()) {
+				offset.setX(physics.getMapLeftPx());
+			}
+			if (-offset.getX() + Graphics.getWidth() > physics.getMapRightPx()) {
+				offset.setX(Graphics.getWidth() - physics.getMapRightPx());
+			}
+		}
+		
 		//Debug.write(offset.toString());
 
 

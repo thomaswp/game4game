@@ -171,6 +171,8 @@ public class ActorBody extends PlatformBody {
 			actorFix.restitution = 0;
 			actorFix.density = 1;
 			body.createFixture(actorFix);
+			
+			actorShape.dispose();
 		}
 
 		if (isHero) {

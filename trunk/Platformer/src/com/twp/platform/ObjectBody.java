@@ -108,7 +108,7 @@ public class ObjectBody extends PlatformBody {
 		body.createFixture(fixture);
 		//body.setFixedRotation(true);
 
-
+		poly.dispose();
 	}
 
 	@Override
