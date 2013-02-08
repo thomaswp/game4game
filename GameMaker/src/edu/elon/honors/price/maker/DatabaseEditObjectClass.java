@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -20,8 +23,9 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 	private SelectorObjectImage selectorObjectImage;
 	private SelectorBehaviorInstances selectorBehaviorInstances;
 	private Button buttonScale;
-	private SeekBar seekBarDensity;
+	private SeekBar seekBarDensity, seekBarRestitution;
 	private SelectorCollidesWith selectorCollidesWith;
+	private CheckBox checkBoxMoves, checkBoxRotates;
 	
 	public ObjectClass getObject() {
 		return game.objects[id];
@@ -70,6 +74,40 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 		});
 		
 		selectorCollidesWith.setMapClass(getObject());
+		
+		checkBoxMoves.setChecked(objectClass.moves);
+		checkBoxRotates.setEnabled(objectClass.moves);
+		checkBoxRotates.setChecked(objectClass.rotates);
+		
+		checkBoxMoves.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				getObject().moves = isChecked;
+				checkBoxRotates.setEnabled(isChecked);
+			}
+		});
+		
+		checkBoxRotates.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				getObject().rotates = isChecked;
+			}
+		});
+		
+		seekBarRestitution.setProgress((int)(objectClass.restitution * seekBarRestitution.getMax()));
+		seekBarRestitution.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) { }
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) { }
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				getObject().restitution = (float)progress / seekBar.getMax();
+			}
+		});
 	}
 	
 	protected void setButtonScaleText() {

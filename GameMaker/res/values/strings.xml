@@ -138,4 +138,10 @@
     <string name="fun_c">Fun:</string>
     <string name="plusOne">+1</string>
     <string name="rating_c">Rating:</string>
+    <string name="physics_c">Pysics:</string>
+    <string name="unmoving">Unmoving</string>
+    <string name="rotates">Rotates</string>
+    <string name="moves">Moves</string>
+    <string name="movement_c">Movement:</string>
+    <string name="bounciness_c">Bounciness:</string>
 </resources>
