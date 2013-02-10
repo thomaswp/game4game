@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -188,8 +189,8 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 
 		Bitmap bmp = actors[item.classIndex];
 		float zoom = item.getActorClass(game).zoom;
-		float width = bmp.getWidth() * zoom;
-		float height = bmp.getHeight() * zoom;
+		float width = bmp.getWidth();
+		float height = bmp.getHeight();
 		float x = item.column * tileset.tileWidth;
 		float y = item.row * tileset.tileHeight;
 		float sx = (tileset.tileWidth - width) / 2f;
@@ -210,8 +211,8 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 	protected void shiftItem(ActorInstance item, float offX, float offY) {
 		Tileset tileset = map.getTileset(game);
 		
-		item.column = Math.round(offX / tileset.tileWidth);
-		item.row = Math.round(offY / tileset.tileHeight);
+		item.column = Math.round(item.column + offX / tileset.tileWidth);
+		item.row = Math.round(item.row + offY / tileset.tileHeight);
 	}
 
 	@Override
@@ -222,5 +223,21 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 	@Override
 	protected void add(ActorInstance item) {
 		map.setActor(item.row, item.column, item.classIndex, item.id);
+	}
+
+	@Override
+	protected void snapDrawBounds(ActorInstance item, RectF bounds, 
+			List<ActorInstance> ignore) {
+		float centerX = bounds.centerX();
+		float bottom = bounds.bottom;
+		
+		Tileset tileset = map.getTileset(game);
+		int tileWidth = tileset.tileWidth;
+		int tileHeight = tileset.tileHeight;
+		
+		centerX = (int)(centerX / tileWidth) * tileWidth + tileWidth / 2;
+		bottom = (int)(bottom / tileHeight + 0.5f) * tileHeight;
+		
+		bounds.offsetTo(centerX - bounds.width() / 2, bottom - bounds.height());
 	}
 }

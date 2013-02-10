@@ -8,6 +8,7 @@ public class ObjectClass extends MapClass {
 	public boolean moves = true;
 	public boolean rotates = true;
 	public float restitution = 0.4f;
+	public boolean isPlatform;
 	
 	@Override
 	protected String getDefaultImageName() {

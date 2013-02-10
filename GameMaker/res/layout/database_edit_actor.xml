@@ -131,10 +131,32 @@
                             android:layout_width="150dip"
                             android:layout_height="wrap_content" />
                     </TableRow>
+
+                    <TableRow
+                        android:id="@+id/tableRow8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:id="@+id/textView8"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/doubleJump_c"
+                            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                        <CheckBox
+                            android:id="@+id/checkBoxDoubleJump"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/allow" />
+
+                    </TableRow>
+
                     <TableRow android:id="@+id/tableRow7" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dip">
                         <TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:text="@string/collidesWith"/>
                         <edu.elon.honors.price.maker.SelectorCollidesWith android:id="@+id/selectorCollidesWith" android:layout_width="wrap_content" android:layout_height="wrap_content"></edu.elon.honors.price.maker.SelectorCollidesWith>
                     </TableRow>
+
                 </TableLayout>
 
                 <edu.elon.honors.price.maker.SelectorBehaviorInstances

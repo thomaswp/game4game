@@ -553,30 +553,6 @@ public class PhysicsHandler {
 		}
 	}
 
-	private void doEndContact(Fixture fixtureA, Fixture fixtureB) {
-		doEndContact(fixtureA, fixtureB, false);
-	}
-
-	private void doEndContact(Fixture fixtureA, Fixture fixtureB, boolean anti) {
-		if (bodyMap.containsKey(fixtureA)) {
-			PlatformBody bodyA = bodyMap.get(fixtureA);
-			if (bodyMap.containsKey(fixtureB)) {
-				PlatformBody bodyB = bodyMap.get(fixtureB);
-				bodyA.getTouchingBodies().remove(bodyB);
-			} else if (levelMap.containsKey(fixtureB)) {
-				if (bodyA.getTouchingWalls().contains(fixtureB)) {
-					bodyA.getTouchingWalls().remove(fixtureB);
-				}
-				if (bodyA.getTouchingFloors().contains(fixtureB)) {
-					bodyA.getTouchingFloors().remove(fixtureB);
-				}
-			}
-		}
-		if (!anti) {
-			doEndContact(fixtureB, fixtureA, true);
-		}
-	}
-
 	public ObjectBody addObjectBody(ObjectAddable object) {
 		return addObjectBody(object.object, -1, object.startX, object.startY);
 	}
@@ -637,6 +613,33 @@ public class PhysicsHandler {
 		body.dispose();
 	}
 
+	private void doEndContact(Fixture fixtureA, Fixture fixtureB) {
+		doEndContact(fixtureA, fixtureB, false);
+	}
+
+	private void doEndContact(Fixture fixtureA, Fixture fixtureB, boolean anti) {
+		if (bodyMap.containsKey(fixtureA)) {
+			PlatformBody bodyA = bodyMap.get(fixtureA);
+			if (bodyMap.containsKey(fixtureB)) {
+				PlatformBody bodyB = bodyMap.get(fixtureB);
+				bodyA.getTouchingBodies().remove(bodyB);
+				
+				if (bodyB instanceof ObjectBody && 
+						((ObjectBody) bodyB).getObject().isPlatform) {
+				bodyA.getTouchingFloors().remove(fixtureB);
+				bodyA.getTouchingWalls().remove(fixtureB);
+				Debug.write("remove");
+				}
+			} else if (levelMap.containsKey(fixtureB)) {
+				bodyA.getTouchingWalls().remove(fixtureB);
+				bodyA.getTouchingFloors().remove(fixtureB);
+			}
+		}
+		if (!anti) {
+			doEndContact(fixtureB, fixtureA, true);
+		}
+	}
+	
 	private void doContact(QueuedContact contact) {
 		doContact(contact, false);
 	}
@@ -655,43 +658,40 @@ public class PhysicsHandler {
 					bodyA.getCollidedBodies().add(bodyB);
 					bodyA.getTouchingBodies().add(bodyB);
 				}
+				if (bodyB instanceof ObjectBody && 
+						((ObjectBody) bodyB).getObject().isPlatform) {
+					doPlatformContact(bodyA, fixtureB, bodyB.getSprite());
+				}
 			} else if (levelMap.containsKey(fixtureB) || isBoundaryFixture(fixtureB)) {
-				RectF rectA = bodyA.getSprite().getRect();
-				
-				boolean wall, floor;
+
 				if (isBoundaryFixture(fixtureB)) {
-					wall = fixtureB == rightWallFixture || fixtureB == leftWallFixture;
-					floor = false;
+					if	(fixtureB == rightWallFixture || fixtureB == leftWallFixture) {
+						bodyA.doWallContact(fixtureB);
+					}
 				} else {
 					Sprite spriteB = levelMap.get(fixtureB);
-					RectF rectB = spriteB.getRect();
-					
-					float nx = rectB.centerX() - rectA.centerX();
-					float ny = rectB.centerY() - rectA.centerY();
-					
-					wall = Math.abs(nx) > Math.abs(ny);
-					floor = !wall && ny > 0;
+					doPlatformContact(bodyA, fixtureB, spriteB);
 				}
-
-
-				if (wall) {
-					if (!bodyA.getTouchingWalls().contains(fixtureB)) {
-						bodyA.setCollidedWall(true);
-						bodyA.getTouchingWalls().add(fixtureB);
-					}
-				} else if (floor) {
-					if (!bodyA.getTouchingFloors().contains(fixtureB)) {
-						bodyA.getTouchingFloors().add(fixtureB);
-					}
-				}
-
-				bodyA.onTouchGround();
 			}
 
 		}
 
 		if (!anti) {
 			doContact(contact, true);
+		}
+	}
+	
+	private void doPlatformContact(PlatformBody bodyA, Fixture fixtureB, Sprite spriteB) {
+		RectF rectA = bodyA.getSprite().getRect();
+		RectF rectB = spriteB.getRect();
+		
+		float nx = rectB.centerX() - rectA.centerX();
+		float ny = rectB.centerY() - rectA.centerY();
+		
+		if (Math.abs(nx) > Math.abs(ny)) {
+			bodyA.doWallContact(fixtureB);
+		} else if (ny > 0) {
+			bodyA.doFloorContact(fixtureB);
 		}
 	}
 

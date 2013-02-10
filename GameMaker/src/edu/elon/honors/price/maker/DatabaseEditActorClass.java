@@ -10,16 +10,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 
 public class DatabaseEditActorClass extends DatabaseActivity {
 
-	public final static int SPEEDS = 10;
+	public final static int INCREMENTS = 20;
 
-	final static float SPEED_SCALE = SPEEDS / ActorClass.MAX_SPEED;
-	final static float JUMP_SCALE = SPEEDS / ActorClass.MAX_JUMP;
+	final static float SPEED_SCALE = INCREMENTS / ActorClass.MAX_SPEED;
+	final static float JUMP_SCALE = INCREMENTS / ActorClass.MAX_JUMP;
 
 	private int actorId;
 	private EditText actorName;
@@ -28,6 +31,8 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 	private Button buttonScale;
 	private SelectorBehaviorInstances selectorBehaviors;
 	private SelectorCollidesWith selectorCollidesWith;
+	@AutoAssign
+	private CheckBox checkBoxDoubleJump;
 	
 	private ActorClass getActor() {
 		return game.actors[actorId];
@@ -49,6 +54,8 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 		buttonScale = (Button)findViewById(R.id.buttonScale);
 		selectorCollidesWith = (SelectorCollidesWith)findViewById(R.id.selectorCollidesWith);
 		
+		autoAssign();
+		
 		selectorBehaviors.populate(game);
 		
 		ActorClass actor = getActor();
@@ -69,8 +76,8 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 
 		imageSpinner.setSelectedImageName(actor.imageName);
 
-		speed.setMax(SPEEDS);
-		jump.setMax(SPEEDS);
+		speed.setMax(INCREMENTS);
+		jump.setMax(INCREMENTS);
 		speed.setProgress((int)(actor.speed * SPEED_SCALE + 0.5f));
 		jump.setProgress((int)(actor.jumpVelocity * JUMP_SCALE + 0.5f));
 		
@@ -87,6 +94,14 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 		});
 
 		selectorCollidesWith.setMapClass(actor);
+		
+		checkBoxDoubleJump.setChecked(actor.doubleJump);
+		checkBoxDoubleJump.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				getActor().doubleJump = isChecked;
+			}
+		});
 		
 		setDefaultButtonActions();
 	}

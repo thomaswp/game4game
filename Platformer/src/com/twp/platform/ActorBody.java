@@ -41,6 +41,7 @@ public class ActorBody extends PlatformBody {
 	private Vector2 respawnLocation;
 	private ActorAnimator animator;
 	private Bitmap[][] frames;
+	private boolean airJumped;
 	
 	@Override
 	protected MapClass getMapClass() {
@@ -334,16 +335,25 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	public void jump(boolean checkGrounded) {
-		//if (!checkGrounded || isGrounded() || isOnLadder()) {
+		boolean canJump;
+		if (isGrounded()) {
+			canJump = true;
+		} else {
+			canJump = actor.doubleJump && !airJumped;
+		}
+		
+		if (!checkGrounded || canJump || isOnLadder()) {
 			setVerticalVelocity(actor.jumpVelocity);	
 			onLadder = false;
 			animator.jump();
-		//}
+			if (!isGrounded()) airJumped = true;
+		}
 	}
 
 	@Override
 	public void onTouchGround() {
 		this.onLadder = false;
+		airJumped = false;
 	}
 	
 	public void checkBehavior() {

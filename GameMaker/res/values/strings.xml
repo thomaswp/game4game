@@ -144,4 +144,8 @@
     <string name="moves">Moves</string>
     <string name="movement_c">Movement:</string>
     <string name="bounciness_c">Bounciness:</string>
+    <string name="doubleJump_c">Double Jump:</string>
+    <string name="allow">Allow</string>
+    <string name="isPlatform_c">Is Platform:</string>
+    <string name="platform">Platform</string>
 </resources>
