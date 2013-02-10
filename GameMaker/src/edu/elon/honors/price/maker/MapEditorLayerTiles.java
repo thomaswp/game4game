@@ -1,11 +1,14 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.MapEditorView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,20 +17,31 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
-public class MapEditorLayerTiles extends MapEditorLayer {
+public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 
 	public static final int PAINTING_MODE = 1;
 	
 	private int layer;
 	private Bitmap[] tiles, darkTiles;
+	private ArrayList<Point> solidTiles = new ArrayList<Point>();
 
 	@Override
 	public void setGame(PlatformGame game) {
 		super.setGame(game);
 		tiles = parent.tiles;
 		darkTiles = parent.darkTiles;
+		
+		solidTiles.clear();
+		int[][] layer = map.layers[this.layer].tiles;
+		for (int i = 0; i < layer.length; i++) {
+			for (int j = 0; j < layer[i].length; j++) {
+				if (layer[i][j] != 0) solidTiles.add(new Point(i, j));
+			}
+		}
 	}
 	
 	public MapEditorLayerTiles(MapEditorView parent, int layer) {
@@ -35,10 +49,11 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		this.layer = layer;
 		this.tiles = parent.tiles;
 		this.darkTiles = parent.darkTiles;
+		setGame(game);
 	}
 
 	@Override
-	public void drawContent(Canvas c) {
+	public void drawContentNormal(Canvas c) {
 		if (touchDown && showPreview) {
 			Tileset tileset = game.getMapTileset(map);
 			int tileWidth = tileset.tileWidth;
@@ -62,7 +77,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 	}
 
 	@Override
-	public void drawLayer(Canvas c, DrawMode mode) {
+	public void drawLayerNormal(Canvas c, DrawMode mode) {
 		
 		MapLayer layer = map.layers[this.layer];
 		Tileset tileset = game.tilesets[map.tilesetId];
@@ -125,15 +140,12 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 	}
 
 	@Override
-	public void onTouchUp(float x, float y) {
-		super.onTouchUp(x, y);
+	public void onTouchUpNormal(float x, float y) {
 		placeTiles(x, y);
 	}
 
 	@Override
-	public void onTouchDrag(float x, float y, boolean showPreview) {
-		super.onTouchDrag(x, y, showPreview);
-
+	public void onTouchDragNormal(float x, float y, boolean showPreview) {
 		if (parent.editMode == PAINTING_MODE) {
 			placeTiles(x, y);
 		}
@@ -185,7 +197,7 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		}
 	}
 
-	public static class TileAction extends Action {
+	public class TileAction extends Action {
 		private ArrayList<Placement> placements;
 		private int layer;
 
@@ -202,7 +214,8 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		public void undo(PlatformGame game) {
 			for (int i = 0; i < placements.size(); i++) {
 				Placement p = placements.get(i);
-				game.getSelectedMap().layers[layer].tiles[p.row][p.col] = p.undoId; 
+				game.getSelectedMap().layers[layer].tiles[p.row][p.col] = p.undoId;
+				updateSolid(p, false);
 			}
 		}
 
@@ -210,11 +223,25 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		public void redo(PlatformGame game) {
 			for (int i = 0; i < placements.size(); i++) {
 				Placement p = placements.get(i);
-				game.getSelectedMap().layers[layer].tiles[p.row][p.col] = p.redoId; 
+				game.getSelectedMap().layers[layer].tiles[p.row][p.col] = p.redoId;
+				updateSolid(p, true);
+			}
+		}
+		
+		private void updateSolid(Placement p, boolean redo) {
+			Point loc = new Point(p.row, p.col);
+			int id = redo ? p.redoId : p.undoId;
+			boolean add = id != 0;
+			if (add) {
+				if (!solidTiles.contains(loc)) {
+					solidTiles.add(loc);
+				}
+			} else {
+				solidTiles.remove(loc);
 			}
 		}
 
-		private static class Placement { 
+		private class Placement { 
 			public int row, col, undoId, redoId;
 			public Placement(int row, int col, int redoId, int undoId) {
 				this.row = row; this.col = col; 
@@ -245,8 +272,73 @@ public class MapEditorLayerTiles extends MapEditorLayer {
 		editIcons.add(
 				BitmapFactory.decodeResource(parent.getResources(),
 						R.drawable.paint));
-//		editIcons.add(
-//				BitmapFactory.decodeResource(parent.getResources(),
-//						R.drawable.no));
+		editIcons.add(
+				BitmapFactory.decodeResource(parent.getResources(),
+						R.drawable.select));
+	}
+
+	@Override
+	protected ArrayList<Point> getAllItems() {
+		return solidTiles;
+	}
+
+	@Override
+	protected void getDrawBounds(Point item, RectF bounds) {
+		Tileset tileset = map.getTileset(game);
+		bounds.set(item.y * tileset.tileWidth, item.x * tileset.tileHeight,
+				(item.y + 1) * tileset.tileWidth, (item.x + 1) * tileset.tileHeight);
+		bounds.offset(getOffX(), getOffY());
+	}
+
+	@Override
+	protected void snapDrawBounds(Point item, RectF bounds, List<Point> ignore) {
+		float left = bounds.left;
+		float top = bounds.top;
+		
+		Tileset tileset = map.getTileset(game);
+		int tileWidth = tileset.tileWidth;
+		int tileHeight = tileset.tileHeight;
+		left = (int)(left / tileWidth + 0.5f) * tileWidth;
+		top = (int)(top / tileHeight + 0.5f) * tileHeight;
+				
+		bounds.offsetTo(left, top);
+	}
+
+	@Override
+	protected Bitmap getBitmap(Point item, DrawMode mode) {
+		MapLayer layer = map.layers[this.layer];
+		int tileId = layer.tiles[item.x][item.y];
+		return tiles[tileId];
+					
+	}
+
+	@Override
+	protected void shiftItem(Point item, float offX, float offY) {
+		MapLayer layer = map.layers[this.layer];
+		Tileset tileset = map.getTileset(game);
+		int newRow = item.x + Math.round(offY / tileset.tileHeight);
+		int newCol = item.y + Math.round(offX / tileset.tileWidth);
+		layer.tiles[newRow][newCol] = layer.tiles[item.x][item.y];
+		layer.tiles[item.x][item.y] = 0;
+		while (solidTiles.remove(item));
+		item.set(newRow, newCol);
+		solidTiles.add(item);
+	}
+
+	@Override
+	protected void delete(Point item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void add(Point item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected boolean inSelectingMode() {
+		return parent.editMode == MapEditorView.EDIT_ALT2;
 	}
 }

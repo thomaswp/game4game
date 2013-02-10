@@ -36,6 +36,8 @@ public class MapEditorView extends MapView {
 	public static final int MODE_MOVE = 0;
 	public static final int MODE_EDIT = 1;
 	public static final int EDIT_NORMAL = 0;
+	public static final int EDIT_ALT1 = 1;
+	public static final int EDIT_ALT2 = 2;
 	protected final static int SCROLL_BORDER = 25;
 	protected final static int SCROLL_TICK = 3;
 

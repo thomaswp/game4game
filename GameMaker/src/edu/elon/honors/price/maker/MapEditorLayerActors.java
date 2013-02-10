@@ -240,4 +240,9 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 		
 		bounds.offsetTo(centerX - bounds.width() / 2, bottom - bounds.height());
 	}
+
+	@Override
+	protected boolean inSelectingMode() {
+		return parent.editMode == MapEditorView.EDIT_ALT1;
+	}
 }
