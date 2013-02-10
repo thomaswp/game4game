@@ -44,6 +44,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	protected abstract void drawContentNormal(Canvas c);
 	protected abstract void drawLayerNormal(Canvas c, DrawMode mode);
 	protected abstract void onTouchUpNormal(float x, float y);
+	protected void onTouchDragNormal(float x, float y, boolean showPreview) { };
 	protected abstract ArrayList<T> getAllItems();
 	/**
 	 * Returns the drawing bounds of this item on screen, 
@@ -55,18 +56,15 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	protected abstract void shiftItem(T item, float offX, float offY);
 	protected abstract void delete(T item);
 	protected abstract void add(T item);
+	protected abstract boolean inSelectingMode();
 
 	protected void getWorldBounds(T item, RectF bounds) { 
 		getDrawBounds(item, bounds);
 		bounds.offset(-getOffX(), -getOffY());
 	}
 
-	protected boolean inSelectingMode() {
-		return parent.editMode == SELECTING_MODE;
-	}
-
 	@Override
-	public void drawContent(Canvas c) {
+	public final void drawContent(Canvas c) {
 		if (inSelectingMode()) {
 			if (selecting) {
 				setCSelection();
@@ -83,7 +81,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	}
 
 	@Override
-	public void drawLayer(Canvas c, DrawMode mode) {
+	public final void drawLayer(Canvas c, DrawMode mode) {
 		drawLayerNormal(c, mode);
 		if (inSelectingMode()) {
 			if (mode == DrawMode.Selected) {
@@ -130,7 +128,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	}
 
 	@Override
-	public void onTouchUp(float x, float y) {
+	public final void onTouchUp(float x, float y) {
 		super.onTouchUp(x, y);
 		if (inSelectingMode()) {
 			if (!selecting) {
@@ -163,14 +161,16 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	}
 	
 	@Override
-	public void onTouchCanceled(float x, float y) {
+	public final void onTouchCanceled(float x, float y) {
 		doDelete();
 	}
 
 	@Override 
-	public void onTouchDrag(float x, float y, boolean showPreview) {
+	public final void onTouchDrag(float x, float y, boolean showPreview) {
 		super.onTouchDrag(x, y, showPreview);
-		if (inSelectingMode()) {
+		if (!inSelectingMode()) {
+			onTouchDragNormal(x, y, showPreview);
+		} else {
 			if (selecting) {
 				selection.set(selection.left, selection.top, 
 						x - getOffX(), y - getOffY());
@@ -200,7 +200,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	}
 
 	@Override
-	public void onTouchDown(float x, float y) {
+	public final void onTouchDown(float x, float y) {
 		super.onTouchDown(x, y);
 		if (inSelectingMode()) {
 			T selectedInstance = null;

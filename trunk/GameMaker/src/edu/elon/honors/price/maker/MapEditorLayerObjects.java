@@ -242,4 +242,9 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 			List<ObjectInstance> ignore) {
 		snapRect(item.getObjectClass(game), bounds, ignore);
 	}
+
+	@Override
+	protected boolean inSelectingMode() {
+		return parent.editMode == MapEditorView.EDIT_ALT1;
+	}
 }
