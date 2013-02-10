@@ -228,6 +228,20 @@ public abstract class PlatformBody implements IBehaving {
 		return getMapClass().collidesWith(with);
 	}
 	
+	public void doWallContact(Fixture fixture) {
+		if (!touchingWalls.contains(fixture)) {
+			touchingWalls.add(fixture);
+		}
+		setCollidedWall(true);
+	}
+	
+	public void doFloorContact(Fixture fixture) {
+		if (!touchingFloors.contains(fixture)) {
+			touchingFloors.add(fixture);
+		}
+		onTouchGround();
+	}
+	
 	protected abstract MapClass getMapClass();
 	
 	public abstract void update(long timeElapsed, Vector offset);

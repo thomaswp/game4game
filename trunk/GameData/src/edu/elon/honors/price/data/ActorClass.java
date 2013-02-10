@@ -8,8 +8,8 @@ package edu.elon.honors.price.data;
 public class ActorClass extends MapClass implements Cloneable {
 	private static final long serialVersionUID = 1L;
 	
-	public final static float MAX_SPEED = 5f;
-	public final static float MAX_JUMP = 8f;
+	public final static float MAX_SPEED = 7f;
+	public final static float MAX_JUMP = 14f;
 	
 	public final static int BEHAVIOR_NONE = 0;
 	public final static int BEHAVIOR_STOP = 1;
@@ -51,6 +51,7 @@ public class ActorClass extends MapClass implements Cloneable {
 	public int[] actorContactBehaviors = new int[4];
 	public int[] heroContactBehaviors = new int[4];
 	public boolean animated = true;
+	public boolean doubleJump = false;
 	
 	@Override
 	public ActorClass clone() {

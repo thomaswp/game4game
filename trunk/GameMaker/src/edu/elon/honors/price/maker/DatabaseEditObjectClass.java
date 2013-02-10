@@ -25,7 +25,7 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 	private Button buttonScale;
 	private SeekBar seekBarDensity, seekBarRestitution;
 	private SelectorCollidesWith selectorCollidesWith;
-	private CheckBox checkBoxMoves, checkBoxRotates;
+	private CheckBox checkBoxMoves, checkBoxRotates, checkBoxIsPlatform;
 	
 	public ObjectClass getObject() {
 		return game.objects[id];
@@ -106,6 +106,14 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				getObject().restitution = (float)progress / seekBar.getMax();
+			}
+		});
+		
+		checkBoxIsPlatform.setChecked(objectClass.isPlatform);
+		checkBoxIsPlatform.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				getObject().isPlatform = isChecked;
 			}
 		});
 	}

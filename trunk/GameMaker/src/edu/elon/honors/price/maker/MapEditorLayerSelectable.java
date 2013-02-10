@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
@@ -11,27 +12,31 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Paint.Style;
 
 public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 
-
+	
 	public final static int SELECTING_MODE = 1;
 	
 	protected RectF selection, cSelection;
-	protected RectF drawRect;
+	protected RectF boundsRect;
 	protected boolean selecting;
 	protected float startDragX, startDragY;
 	protected LinkedList<T> selectedObjects;
 	protected int heldFrames;
+	protected T draggingItem;
+	
+	protected PointF dragOffset = new PointF();
 	
 
 	public MapEditorLayerSelectable(MapEditorView parent) {
 		super(parent);
 		selection = new RectF();
 		cSelection = new RectF();
-		drawRect = new RectF();
+		boundsRect = new RectF(); 
 		paint.setStrokeWidth(parent.selectionBorderWidth);
 		selectedObjects = new LinkedList<T>();
 	}
@@ -40,11 +45,21 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	protected abstract void drawLayerNormal(Canvas c, DrawMode mode);
 	protected abstract void onTouchUpNormal(float x, float y);
 	protected abstract ArrayList<T> getAllItems();
+	/**
+	 * Returns the drawing bounds of this item on screen, 
+	 * factoring in the current offset.
+	 */
 	protected abstract void getDrawBounds(T item, RectF bounds);
+	protected abstract void snapDrawBounds(T item, RectF bounds, List<T> ignore);
 	protected abstract Bitmap getBitmap(T item, DrawMode mode);
 	protected abstract void shiftItem(T item, float offX, float offY);
 	protected abstract void delete(T item);
 	protected abstract void add(T item);
+
+	protected void getWorldBounds(T item, RectF bounds) { 
+		getDrawBounds(item, bounds);
+		bounds.offset(-getOffX(), -getOffY());
+	}
 
 	protected boolean inSelectingMode() {
 		return parent.editMode == SELECTING_MODE;
@@ -78,8 +93,8 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 					for (int i = 0; i < getAllItems().size(); i++) {
 						T instance = getAllItems().get(i);
 						if (instance != null) {
-							getDrawBounds(instance, drawRect);
-							if (selecting && RectF.intersects(cSelection, drawRect)) {
+							getDrawBounds(instance, boundsRect);
+							if (selecting && RectF.intersects(cSelection, boundsRect)) {
 								if (cSelection.width() < 5 && cSelection.height() < 5) {
 									selectedObjects.clear();
 								}
@@ -89,23 +104,23 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 					}
 				}
 
-				float offX = getDragOffX();
-				float offY = getDragOffY();
+				final float offX = dragOffset.x;
+				final float offY = dragOffset.y;
  
 				paint.setColor(parent.selectionBorderColor);
 				paint.setStyle(Style.STROKE);
 				for (int i = 0; i < selectedObjects.size(); i++) {
 					T instance = selectedObjects.get(i);
-					getDrawBounds(instance, drawRect);
 					if (selectedObjects.contains(instance)) {
+						getDrawBounds(instance, boundsRect);
 						paint.setAlpha(mode == DrawMode.Above ? MapEditorView.TRANS : 255);
-						c.drawRect(drawRect, paint);
+						c.drawRect(boundsRect, paint);
 						if (!selecting && touchDown && showPreview) {
 							paint.setAlpha(paint.getAlpha() / 2);
-							c.drawBitmap(getBitmap(instance, mode), drawRect.left + offX, 
-									drawRect.top + offY, paint);
-							drawRect.offset(offX, offY);
-							c.drawRect(drawRect, paint);
+							boundsRect.offset(offX, offY);
+							c.drawBitmap(getBitmap(instance, mode), boundsRect.left, 
+									boundsRect.top, paint);
+							c.drawRect(boundsRect, paint);
 						}
 					}
 
@@ -121,8 +136,8 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 			if (!selecting) {
 				final LinkedList<T> objects = new LinkedList<T>();
 				objects.addAll(selectedObjects);
-				final float offX = getDragOffX();
-				final float offY = getDragOffY();
+				final float offX = dragOffset.x;
+				final float offY = dragOffset.y;
 				Action action = new Action() {
 					@Override
 					public void undo(PlatformGame game) {
@@ -159,19 +174,27 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 			if (selecting) {
 				selection.set(selection.left, selection.top, 
 						x - getOffX(), y - getOffY());
-			} else {
-				if (heldFrames > -1 && Math.abs(Input.getDistanceTouchX()) < 5 && 
-						Math.abs(Input.getDistanceTouchY()) < 5) {
-					heldFrames++;
-				} else {
-					heldFrames = -1;
-				}
-				if (heldFrames > 30) {
-					heldFrames = -1;
-//					touchDown = false;
-//					Input.getVibrator().vibrate(100);
-//					showContextMenu();
-				}
+			} else if (draggingItem != null) {
+				//get how much the player has dragged the items
+				float offX = x - getOffX() - startDragX;
+				float offY = y - getOffY() - startDragY;
+				
+				//get the world position of dragging item and record it
+				getWorldBounds(draggingItem, boundsRect);
+				float startLeft = boundsRect.left;
+				float startTop = boundsRect.top;
+				
+				//offset it by the drag and snap it
+				boundsRect.offset(offX, offY);
+				snapDrawBounds(draggingItem, boundsRect, selectedObjects);
+				
+				//the real offset is the snapped position minus the start
+				offX = boundsRect.left - startLeft;
+				offY = boundsRect.top - startTop;
+				
+				//bound the offset so it can't go off the screen.
+				dragOffset.set(offX, offY);
+				boundOffset(dragOffset);
 			}
 		}
 	}
@@ -184,8 +207,8 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 			for (int i = 0; i < getAllItems().size(); i++) {
 				T instance = getAllItems().get(i);
 				if (instance != null) {
-					getDrawBounds(instance, drawRect);
-					if (drawRect.contains(x,y)) {
+					getDrawBounds(instance, boundsRect);
+					if (boundsRect.contains(x,y)) {
 						selectedInstance = instance;
 						break;
 					}
@@ -198,6 +221,8 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 				}
 				startDragX = x - getOffX();
 				startDragY = y - getOffY();
+				dragOffset.set(0, 0);
+				draggingItem = selectedInstance;
 				heldFrames = 0;
 				parent.showCancelButton(x, y, "Delete");
 			} else {
@@ -269,33 +294,26 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 			cSelection.top = bottom;
 		}
 	}
-
-	protected float getDragOffX() {
-		float offX = touchX - getOffX() - startDragX;
+	
+	protected void boundOffset(PointF offset) {
+		float offX = offset.x, offY = offset.y;
+		
 		Tileset tileset = game.getMapTileset(map);
 		int width = tileset.tileWidth * map.columns;
+		int height = tileset.tileHeight * map.rows;
 		for (int i = 0; i < selectedObjects.size(); i++) {
 			T instance = selectedObjects.get(i);
-			getDrawBounds(instance, drawRect);
-			float x = drawRect.centerX() - getOffX();
+			getDrawBounds(instance, boundsRect);
+			
+			float x = boundsRect.centerX() - getOffX();
 			if (offX < -x) {
 				offX = -x;
 			}
 			if (offX > width - x) {
 				offX = width - x;
 			}
-		}
-		return offX;
-	}
-
-	protected float getDragOffY() {
-		float offY = touchY - getOffY() - startDragY;
-		Tileset tileset = game.getMapTileset(map);
-		int height = tileset.tileHeight * map.rows;
-		for (int i = 0; i < selectedObjects.size(); i++) {
-			T instance = selectedObjects.get(i);
-			getDrawBounds(instance, drawRect);
-			float y = drawRect.centerY() - getOffY();
+			
+			float y = boundsRect.centerY() - getOffY();
 			if (offY < -y) {
 				offY = -y;
 			}
@@ -303,7 +321,8 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 				offY = height - y;
 			}
 		}
-		return offY;
+		
+		offset.set(offX, offY);
 	}
 
 }

@@ -46,7 +46,9 @@ public class MapEditorView extends MapView {
 	private boolean selectingLayer, selectingEditMode;
 	private float hsv[] = new float[3];
 	private float layerButtonsExtention, editModeButtonsExtention;
-	private Button layerButton, selectionButton, modeButton; 
+	private Button layerButton, selectionButton, modeButton;
+	//Keeps track of when the player drags out of the selection button
+	private boolean strayedOutOfSelectionButton;
 	private Button undoButton, redoButton;
 	private Button[] cancelButtons, cancelReplacedButtons;
 	private ArrayList<Action> actions = new ArrayList<Action>();
@@ -165,13 +167,16 @@ public class MapEditorView extends MapView {
 			@Override
 			public void run() {
 				selectingEditMode = true;
+				strayedOutOfSelectionButton = false;
 			}
 		};
 		selectionButton.onReleasedHandler = new Runnable() {
 			@Override
 			public void run() {
 				editModeButtonsExtention = 0;
-				layers[selectedLayer].onSelect();
+				if (!strayedOutOfSelectionButton) {
+					layers[selectedLayer].onSelect();
+				}
 			}
 		};
 		buttons.add(selectionButton);
@@ -275,6 +280,9 @@ public class MapEditorView extends MapView {
 				boolean show = !checkCancelDrag(x, y);
 				dimButtons();
 				layer.onTouchDrag(x, y, show);
+			}
+			if (selectionButton.down && !selectionButton.isInButton(x, y)) {
+				strayedOutOfSelectionButton = true;
 			}
 		}
 
