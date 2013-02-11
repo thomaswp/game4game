@@ -1,0 +1,8 @@
+<action id="0" name="Switch Trigger">
+
+	<text text="The event is triggered when" />
+	<switch />
+	<text text="turns" />
+	<boolean />
+
+</action>

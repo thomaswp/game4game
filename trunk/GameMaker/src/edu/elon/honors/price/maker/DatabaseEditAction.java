@@ -23,7 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-public class DatabaseEditAction extends DatabaseActivity {
+public class DatabaseEditAction extends DatabaseActivity implements IEventContextual {
 
 	private int id;
 	private Element rootElement;
@@ -139,8 +139,6 @@ public class DatabaseEditAction extends DatabaseActivity {
 		if (originalParameters == null)
 			return false;
 		
-		Debug.write("%s v %s", rootElement.getParameters().toString(), 
-				originalParameters.toString());
 		return super.hasChanged() || 
 		!rootElement.getParameters().equals(originalParameters);
 	}

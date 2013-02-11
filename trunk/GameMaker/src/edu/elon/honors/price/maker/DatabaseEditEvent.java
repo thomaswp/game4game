@@ -995,7 +995,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			Trigger trigger = getTrigger();
 
 			if (trigger instanceof SwitchTrigger) {
-				return DatabaseEditTriggerSwitch.class;
+				return DatabaseEditTriggerSwitchOld.class;
 			} else if (trigger instanceof VariableTrigger) {
 				return DatabaseEditTriggerVariable.class;
 			} else if (trigger instanceof ActorOrObjectTrigger) {

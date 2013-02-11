@@ -21,6 +21,8 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 public class GraphicsRenderer implements Renderer {
+	private static final boolean DEBUG_STATUS = false;
+	
 	private Bitmap fpsBitmap;
 	private Paint paint = new Paint();
 	private Canvas canvas = new Canvas();
@@ -134,7 +136,7 @@ public class GraphicsRenderer implements Renderer {
 	 * @param gl
 	 */
 	public void onShutdown(GL10 gl) {
-		Debug.write("Rendere Shut Down");
+		Debug.write("Renderer Shut Down");
 		flush(gl);
 	}
 	
@@ -323,7 +325,9 @@ public class GraphicsRenderer implements Renderer {
 		times += System.currentTimeMillis() - time;
 		frame++;
 		if (frame == 60) {
-			Debug.write("" + (times / frame) + "ms, " + (rendered / frame) + "r, " + textures.size() + "t: " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
+			if (DEBUG_STATUS) {
+				Debug.write("" + (times / frame) + "ms, " + (rendered / frame) + "r, " + textures.size() + "t: " + Graphics.getFpsDraw() + "/" + Graphics.getFpsGame());
+			}
 			frame = 0;
 			times = 0;
 			rendered = 0;
@@ -447,9 +451,11 @@ public class GraphicsRenderer implements Renderer {
 		time = System.currentTimeMillis() - time;
 		
 		if (bitmap != fpsBitmap) {
-			Debug.write("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
-					+ time + "ms), " + textures.size() + " in cache (" +
-					textureCacheSize + "b)");
+			if (DEBUG_STATUS) {
+				Debug.write("Texture loaded (" + bitmap.getWidth() + "x" + bitmap.getHeight() + ": "
+						+ time + "ms), " + textures.size() + " in cache (" +
+						textureCacheSize + "b)");
+			}
 		}
 		
 		return textureName;
