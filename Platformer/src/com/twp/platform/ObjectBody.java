@@ -113,6 +113,7 @@ public class ObjectBody extends PlatformBody {
 
 	@Override
 	public void update(long timeElapsed, Vector offset) {
+		super.update(timeElapsed, offset);
 		collidedBodies.clear();
 		collidedWall = false;
 

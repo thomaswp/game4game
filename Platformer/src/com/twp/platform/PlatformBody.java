@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.MapClass.CollidesWith;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
@@ -40,6 +41,7 @@ public abstract class PlatformBody implements IBehaving {
 	protected boolean collidedWall;
 	protected boolean disposed;
 	protected BehaviorRuntime[] behaviorRuntimes;
+	protected BodyAnimation animation;
 	
 	@Override
 	public BehaviorRuntime[] getBehaviorRuntimes() {
@@ -244,7 +246,34 @@ public abstract class PlatformBody implements IBehaving {
 	
 	protected abstract MapClass getMapClass();
 	
-	public abstract void update(long timeElapsed, Vector offset);
+	public void update(long timeElapsed, Vector offset) {
+		if (animation != null) {
+			Vector2 bodyOffset = animation.getFrameOffset(timeElapsed);
+			shiftBody(bodyOffset);
+
+			if (animation.isFinished()) {
+				animation = null;
+			}
+		}
+	}
+	
+	public void animate(BodyAnimation animation, boolean force) {
+		if (force && animation != null) {
+			Vector2 resetVector = this.animation.getResetVector();
+			shiftBody(resetVector);
+			this.animation = null;
+		}
+		if (this.animation == null) {
+			this.animation = animation;
+			
+		}
+	}
+	
+	protected void shiftBody(Vector2 bodyOffset) {
+		Vector2 bodyPos = body.getPosition();
+		bodyOffset.add(bodyPos.x, bodyPos.y);
+		body.setTransform(bodyOffset.x, bodyOffset.y, body.getAngle());
+	}
 	
 	public void onTouchGround() { }
 }

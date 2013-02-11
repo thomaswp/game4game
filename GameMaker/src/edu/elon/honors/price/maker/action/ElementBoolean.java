@@ -31,7 +31,7 @@ public class ElementBoolean extends ElementMulti {
 		if (off != null && off.length() > 0) {
 			offString = off;
 		} else {
-			onString = "Off";
+			offString = "Off";
 		}
 	}
 

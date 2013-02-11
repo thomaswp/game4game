@@ -183,6 +183,8 @@ public class ActorBody extends PlatformBody {
 
 	@Override
 	public void update(long timeElapsed, Vector offset) {
+		super.update(timeElapsed, offset);
+		
 		lastBehaviorTime += timeElapsed;
 		stun -= timeElapsed;
 		collidedBodies.clear();

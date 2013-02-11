@@ -161,14 +161,14 @@ public class DatabaseEditTriggerActorOrObject extends DatabaseActivity {
 
 		populate();
 
-//		if (resultCode == RESULT_OK) {
-//			if (selectorActorInstance.onActivityResult(requestCode, data)) {
-//				trigger.id = selectorActorInstance.getSelectedInstance();
-//			}
-//			if (selectorObjectInstance.onActivityResult(requestCode, data)) {
-//				trigger.id = selectorObjectInstance.getSelectedInstance();
-//			}
-//		}
+		if (resultCode == RESULT_OK) {
+			if (selectorActorInstance.onActivityResult(requestCode, data)) {
+				trigger.id = selectorActorInstance.getSelectedInstanceId();
+			}
+			if (selectorObjectInstance.onActivityResult(requestCode, data)) {
+				trigger.id = selectorObjectInstance.getSelectedInstanceId();
+			}
+		}
 	}
 
 	@Override

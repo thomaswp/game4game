@@ -9,6 +9,7 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.DatabaseEditAction;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
+import edu.elon.honors.price.maker.IEventContextual;
 
 import android.content.Context;
 import android.view.View;
@@ -41,9 +42,9 @@ public abstract class Element {
 	public Element(Attributes atts, Context context) {
 		this.context = context;
 		this.attributes = atts;
-		if (context instanceof DatabaseEditAction) {
+		if (context instanceof IEventContextual) {
 			eventContext = 
-				((DatabaseEditAction) context).getEventContext();
+				((IEventContextual) context).getEventContext();
 		}
 		if (atts != null) {
 			readAttributes(atts);
