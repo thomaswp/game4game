@@ -38,7 +38,7 @@
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorActivityVector" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorActivityScale" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditEvent" android:screenOrientation="landscape"/>
-    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerSwitch" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name="edu.elon.honors.price.maker.DatabaseEditTrigger" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerActorOrObject" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerRegion" android:screenOrientation="landscape"/>

@@ -12,7 +12,7 @@ import android.util.SparseArray;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.game.Debug;
 
-public abstract class ActionInterpreter<T extends ActionInstance> {
+public abstract class ActionInterpreter<T extends ScriptableInstance> {
 
 	Random rand = new Random();
 	public static final float SCALE = PlatformLogic.SCALE;
@@ -20,8 +20,8 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	private static final List<Class<?>> interpreters = 
 			ActionFactory.getInterpreters();
 
-	private static HashMap<Action, ActionInstance> actionMap =
-			new HashMap<Action, ActionInstance>();
+	private static HashMap<Action, ScriptableInstance> actionMap =
+			new HashMap<Action, ScriptableInstance>();
 
 	private static SparseArray<ActionInterpreter<?>> interperaterMap =
 			new SparseArray<ActionInterpreter<?>>();
@@ -46,7 +46,7 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	public static void interperate(Action action, PlatformGameState gameState,
 			ActionControl control) throws ParameterException {
 		
-		ActionInstance instance = actionMap.get(action);
+		ScriptableInstance instance = actionMap.get(action);
 		if (instance == null) {
 			instance = ActionFactory.getInstance(action.id);
 			if (instance == null) throw new RuntimeException(
@@ -80,8 +80,8 @@ public abstract class ActionInterpreter<T extends ActionInstance> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <S extends ActionInstance> void invoke(Class<S> cls, 
-			ActionInterpreter<?> interp, ActionInstance instance,
+	private static <S extends ScriptableInstance> void invoke(Class<S> cls, 
+			ActionInterpreter<?> interp, ScriptableInstance instance,
 			PlatformGameState gameState) throws ParameterException {
 		ActionInterpreter<S> castInterp = (ActionInterpreter<S>)interp;
 		S castAction = (S)instance;

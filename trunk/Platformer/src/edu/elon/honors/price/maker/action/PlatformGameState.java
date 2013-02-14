@@ -10,6 +10,7 @@ import com.twp.platform.Globals;
 import com.twp.platform.IBehaving;
 import com.twp.platform.ObjectBody;
 import com.twp.platform.PhysicsHandler;
+import com.twp.platform.PlatformBody;
 import com.twp.platform.PlatformLogic;
 
 import edu.elon.honors.price.data.ActorClass;
@@ -281,6 +282,23 @@ public class PlatformGameState implements GameState {
 		return readNumber(ps, event);
 	}
 	
+	public boolean isBody(Parameters params, PlatformBody body) throws ParameterException {
+		if (body == null) return false;
+		
+		int mode = params.getInt(0);
+		if (mode == 0) {
+			return body instanceof ActorBody && body.getId() == params.getInt(1);
+		} else if (mode == 1) {
+			return body.getMapClass() == readActorClass(params.getInt(1));
+		} else if (mode == 2) {
+			return body instanceof ObjectBody && body.getId() == params.getInt(1);
+		} else if (mode == 3) {
+			return body.getMapClass() == readObjectClass(params.getInt(1));
+		}
+		
+		return false;
+	}
+	
 	/* -- Static Members -- */
 	
 	private static void assertThat(boolean condition, String message)
@@ -455,4 +473,5 @@ public class PlatformGameState implements GameState {
 		Parameters ps = params.getParameters(index);
 		return readBoolean(ps, event);
 	}
+
 }

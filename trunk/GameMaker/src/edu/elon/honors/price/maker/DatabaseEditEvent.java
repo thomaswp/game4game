@@ -7,18 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.Event.Action;
-import edu.elon.honors.price.data.Event.UITrigger;
-import edu.elon.honors.price.data.ObjectInstance;
-import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
-import edu.elon.honors.price.data.Event.RegionTrigger;
-import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
-import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.maker.action.EventContext;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -462,36 +455,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		.setItems(TRIGGER_TYPES, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				Intent intent = null;
-				switch (which) {
-				case 0:
-					intent = new Intent(DatabaseEditEvent.this, 
-							DatabaseEditTriggerSwitch.class);
-					break;
-				case 1:
-					intent = new Intent(DatabaseEditEvent.this,
-							DatabaseEditTriggerVariable.class);
-					break;
-				case 2:
-					intent = new Intent(DatabaseEditEvent.this,
-							DatabaseEditTriggerActorOrObject.class);
-					break;
-				case 3:
-					intent = new Intent(DatabaseEditEvent.this,
-							DatabaseEditTriggerRegion.class);
-					break;
-				case 4:
-					intent = new Intent(DatabaseEditEvent.this,
-							DatabaseEditTriggerUI.class);
-				}
+				Intent intent = new Intent(DatabaseEditEvent.this, 
+							DatabaseEditTrigger.class);
 
-				if (intent != null) {
-					intent.putExtra("game", game);
-					intent.putExtra("eventContext", 
-							new EventContext(getEvent(), behavior));
-					returnResponse = new NewTriggerReturnResponse();
-					startActivityForResult(intent, REQUEST_RETURN_GAME);
-				}
+				intent.putExtra("game", game);
+				intent.putExtra("eventContext", 
+						new EventContext(getEvent(), behavior));
+				intent.putExtra("id", which);
+				returnResponse = new NewTriggerReturnResponse();
+				startActivityForResult(intent, REQUEST_RETURN_GAME);
 			}
 		})
 		.show();
@@ -851,9 +823,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			button.requestLayout();
 			button.setGravity(Gravity.LEFT);
 
-			button.setOnClickListener(new OnClickListener() {
+			button.setOnLongClickListener(new OnLongClickListener() {
 				@Override
-				public void onClick(View v) {
+				public boolean onLongClick(View v) {
 					String[] baseItems = new String[] {
 							"Edit", "Insert", "Delete",
 							"Copy", "Cut" 
@@ -886,6 +858,15 @@ public class DatabaseEditEvent extends DatabaseActivity {
 								}
 							}
 							).show();
+					return true;
+				}
+				
+			});
+			
+			button.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					edit();
 				}
 			});
 
@@ -978,8 +959,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 		private void edit() {
 			returnResponse = new EditTriggerReturnResponse(index);
-			Intent intent = new Intent(getContext(), getEditorClass());
+			Intent intent = new Intent(getContext(), DatabaseEditTrigger.class);
 			intent.putExtra("game", game);
+			intent.putExtra("id", getTrigger().id);
 			intent.putExtra("trigger", getTrigger());
 			intent.putExtra("eventContext", 
 					new EventContext(getEvent(), behavior));
@@ -989,24 +971,6 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		private void delete() {
 			getEvent().triggers.remove(index);
 			populateViews();
-		}
-
-		private Class<?> getEditorClass() {
-			Trigger trigger = getTrigger();
-
-			if (trigger instanceof SwitchTrigger) {
-				return DatabaseEditTriggerSwitchOld.class;
-			} else if (trigger instanceof VariableTrigger) {
-				return DatabaseEditTriggerVariable.class;
-			} else if (trigger instanceof ActorOrObjectTrigger) {
-				return DatabaseEditTriggerActorOrObject.class;
-			} else if (trigger instanceof RegionTrigger) {
-				return DatabaseEditTriggerRegion.class;
-			} else if (trigger instanceof UITrigger) {
-				return DatabaseEditTriggerUI.class;
-			}
-
-			return null;
 		}
 
 		private Button createTriggerView() {
@@ -1027,9 +991,9 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			button.setGravity(Gravity.LEFT);
 			button.requestLayout();
 
-			button.setOnClickListener(new OnClickListener() {
+			button.setOnLongClickListener(new OnLongClickListener() {
 				@Override
-				public void onClick(View v) {
+				public boolean onLongClick(View v) {
 					new AlertDialog.Builder(getContext()).setItems(
 							new String[] { "Edit", "Delete" },
 							new AlertDialog.OnClickListener() {
@@ -1042,153 +1006,21 @@ public class DatabaseEditEvent extends DatabaseActivity {
 								}
 							}
 							).show();
+					return true;
+				}
+			});
+			button.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					edit();
 				}
 			});
 
 			button.setBackgroundResource(R.drawable.border_action);
 
-			String text = null;
-			if (trigger instanceof SwitchTrigger) {
-				text = getTriggerText((SwitchTrigger)trigger);
-			} else if (trigger instanceof VariableTrigger) {
-				text = getTriggerText((VariableTrigger)trigger);
-			} else if (trigger instanceof ActorOrObjectTrigger) {
-				text = getTriggerText((ActorOrObjectTrigger)trigger);
-			} else if (trigger instanceof RegionTrigger) {
-				text = getTriggerText((RegionTrigger)trigger);
-			} else if (trigger instanceof UITrigger) {
-				text = getTriggerText((UITrigger)trigger);
-			}
-
-			button.setText(Html.fromHtml(text));
+			button.setText(Html.fromHtml(trigger.description));
 
 			return button;
-		}
-
-		private String getTriggerText(SwitchTrigger trigger) {
-			StringBuilder sb = new StringBuilder();
-
-			String switchString = trigger.triggerSwitch.getName(
-					game, behavior);
-
-			TextUtils.addColoredText(sb, switchString, COLOR_VARIABLE);
-			sb.append(" turns ");
-			TextUtils.addColoredText(sb, trigger.value ? "On" : "Off", COLOR_VALUE);
-
-			return sb.toString();
-		}
-
-		private String getTriggerText(VariableTrigger trigger) {
-			StringBuilder sb = new StringBuilder();
-
-			String variableString = trigger.variable.getName(
-					game, behavior);
-
-			TextUtils.addColoredText(sb, variableString, COLOR_VARIABLE);
-			sb.append(" is ");
-			TextUtils.addColoredText(sb, VariableTrigger.OPERATORS[trigger.test], COLOR_MODE);
-			sb.append(" ");
-			if (trigger.with == VariableTrigger.WITH_VALUE) {
-				TextUtils.addColoredText(sb, trigger.withValue, COLOR_VALUE);
-			} else {
-				variableString = trigger.withVariable.getName(
-						game, behavior);
-				TextUtils.addColoredText(sb, variableString, COLOR_VARIABLE);
-			}
-
-			return sb.toString();
-		}
-
-		private String getTriggerText(ActorOrObjectTrigger trigger) {
-			StringBuilder sb = new StringBuilder();
-
-			if (trigger.mode == ActorOrObjectTrigger.MODE_ACTOR_INSTANCE) {
-				ActorInstance instance = game.getSelectedMap().actors.get(trigger.id);
-
-				String actorString;
-				if (instance.classIndex > 0)
-					actorString = String.format("%s %03d", 
-							game.actors[instance.classIndex].name, instance.id);
-				else
-					actorString = game.getHero().name;
-
-				TextUtils.addColoredText(sb, actorString, COLOR_VARIABLE);
-			} else if (trigger.mode == ActorOrObjectTrigger.MODE_ACTOR_CLASS) {
-				sb.append("A ");
-				TextUtils.addColoredText(sb, game.actors[trigger.id].name, COLOR_VARIABLE);
-			} else if (trigger.mode == ActorOrObjectTrigger.MODE_OBJECT_INSTANCE) {
-				if (trigger.id >= 0) {
-					ObjectInstance instance = game.getSelectedMap().objects.get(trigger.id);
-					TextUtils.addColoredText(sb, game.objects[instance.classIndex].name, COLOR_VARIABLE);
-				} else {
-					sb.append("[None]");
-				}
-			} else {
-				sb.append("A ");
-				TextUtils.addColoredText(sb, game.objects[trigger.id].name, COLOR_VARIABLE);
-			}
-			sb.append(" ");
-			TextUtils.addColoredText(sb, ActorOrObjectTrigger.ACTIONS[trigger.action], COLOR_MODE);
-
-			return sb.toString();
-		}
-
-		private String getTriggerText(RegionTrigger trigger) {
-			StringBuilder sb = new StringBuilder();
-
-			if (trigger.who == RegionTrigger.WHO_HERO) {
-				TextUtils.addColoredText(sb, game.getHero().name, COLOR_VARIABLE);
-			} else if (trigger.who == RegionTrigger.WHO_ACTOR) {
-				sb.append("An actor");
-			} else {
-				sb.append("An object");
-			}
-			sb.append(" ");
-			TextUtils.addColoredText(sb, RegionTrigger.MODES[trigger.mode], COLOR_MODE);
-			sb.append(" the region (");
-			TextUtils.addColoredText(sb, trigger.left, COLOR_VALUE);
-			sb.append(", ");
-			TextUtils.addColoredText(sb, trigger.top, COLOR_VALUE);
-			sb.append(", ");
-			TextUtils.addColoredText(sb, trigger.right, COLOR_VALUE);
-			sb.append(", ");
-			TextUtils.addColoredText(sb, trigger.bottom, COLOR_VALUE);
-			sb.append(")");
-
-			return sb.toString();
-		}
-
-		private String getTriggerText(UITrigger trigger) {
-			StringBuilder sb = new StringBuilder();
-
-			switch (trigger.controlType) {
-			case UITrigger.CONTROL_BUTTON: 
-				TextUtils.addColoredText(sb, "The button ", COLOR_MODE);
-				TextUtils.addColoredText(sb, 
-						game.uiLayout.buttons.get(trigger.index).name, 
-						COLOR_VARIABLE);
-				break;
-			case UITrigger.CONTROL_JOY: 
-				TextUtils.addColoredText(sb, "The joystick ", COLOR_MODE);
-				TextUtils.addColoredText(sb, 
-						game.uiLayout.joysticks.get(trigger.index).name, 
-						COLOR_VARIABLE);
-				break;
-			case UITrigger.CONTROL_TOUCH: 
-				TextUtils.addColoredText(sb, "The screen", COLOR_MODE);
-				break;
-			}
-			sb.append(" is ");
-			switch (trigger.condition) {
-			case UITrigger.CONDITION_PRESS:
-				TextUtils.addColoredText(sb, "pressed", COLOR_MODE); break;
-			case UITrigger.CONDITION_RELEASE:
-				TextUtils.addColoredText(sb, "released", COLOR_MODE); break;
-			case UITrigger.CONDITION_MOVE:
-				TextUtils.addColoredText(sb, "moved", COLOR_MODE); break;
-			}
-
-			return sb.toString();
 		}
 	}
 }

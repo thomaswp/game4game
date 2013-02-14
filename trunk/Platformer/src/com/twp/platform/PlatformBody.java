@@ -244,7 +244,7 @@ public abstract class PlatformBody implements IBehaving {
 		onTouchGround();
 	}
 	
-	protected abstract MapClass getMapClass();
+	public abstract MapClass getMapClass();
 	
 	public void update(long timeElapsed, Vector offset) {
 		if (animation != null) {

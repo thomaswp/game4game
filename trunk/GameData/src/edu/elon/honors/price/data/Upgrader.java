@@ -11,13 +11,36 @@ import edu.elon.honors.price.game.Game;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 8;
+	public final static int LATEST_VERSION = 9;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
 		int version = game._VERSION_;
 
-		
+		if (version < 9) {
+			for (Map map : game.maps) {
+				for (Event event : map.events) {
+					event.triggers.clear();
+				}
+			}
+			for (Behavior behavior : game.actorBehaviors) {
+				for (Event event : behavior.events) {
+					event.triggers.clear();
+				}
+			}
+			for (Behavior behavior : game.objectBehaviors) {
+				for (Event event : behavior.events) {
+					event.triggers.clear();
+				}
+			}
+			for (Behavior behavior : game.mapBehaviors) {
+				for (Event event : behavior.events) {
+					event.triggers.clear();
+				}
+			}
+			
+			upgraded(game);
+		}
 		if (version < 8) {
 			for (ObjectClass object : game.objects) {
 				object.moves = true;

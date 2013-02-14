@@ -54,6 +54,7 @@ public class PhysicsHandler {
 	private ArrayList<ActorAddable> toAdd = new ArrayList<ActorAddable>();
 	private ArrayList<QueuedContact> contacts = new ArrayList<QueuedContact>();
 	
+	
 	private Fixture rightWallFixture, leftWallFixture, topWallFixture;
 	//private Body rightWallBody, leftWallBody;
 

@@ -66,19 +66,20 @@ public class EventContext implements Serializable {
 			}
 		}
 		for (Trigger trigger : event.triggers) {
-			if (trigger instanceof Event.ActorOrObjectTrigger) {
-				if (((Event.ActorOrObjectTrigger) trigger).isActorTrigger()) {
+			if (trigger.id == Trigger.ID_ACTOR_OBJECT) {
+				//TODO: FIX this
+				//if (((Event.ActorOrObjectTrigger) trigger).isActorTrigger()) {
 					triggers.add(TriggerType.ActorTrigger);
-				} else {
+				//} else {
 					triggers.add(TriggerType.ObjectTrigger);
-				}
-			} else if (trigger instanceof Event.RegionTrigger) {
+				//}
+			} else if (trigger.id == Trigger.ID_REGION) {
 				triggers.add(TriggerType.RegionTrigger);
-			} else if (trigger instanceof Event.SwitchTrigger) {
+			} else if (trigger.id == Trigger.ID_SWITCH) {
 				triggers.add(TriggerType.SwitchTrigger);
-			} else if (trigger instanceof Event.VariableTrigger) {
+			} else if (trigger.id == Trigger.ID_VARIABLE) {
 				triggers.add(TriggerType.VariableTrigger);
-			} else if (trigger instanceof Event.UITrigger) {
+			} else if (trigger.id == Trigger.ID_UI) {
 				triggers.add(TriggerType.UITrigger);
 			}
 		}

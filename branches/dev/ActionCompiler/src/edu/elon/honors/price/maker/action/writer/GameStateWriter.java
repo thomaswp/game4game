@@ -37,10 +37,10 @@ public class GameStateWriter extends Writer {
 
 	@Override
 	public void writeHeader() {
-		writeLn("package %s;", ActionWriter.PACKAGE);
+		writeLn("package %s;", ScriptableWriter.PACKAGE);
 		writeLn();
 		
-		for (String s : ActionWriter.IMPORTS) {
+		for (String s : ScriptableWriter.IMPORTS) {
 			writeLn("import %s;", s);
 		}
 		

@@ -2,7 +2,7 @@ package edu.elon.honors.price.maker.action;
 
 import edu.elon.honors.price.data.Event.Parameters;
 
-public abstract class ActionFragment {
+public abstract class ScriptableFragment {
 
 	protected Parameters params;
 	
@@ -17,6 +17,6 @@ public abstract class ActionFragment {
 		readParams(params.iterator());
 	}
 	
-	public ActionFragment() {
+	public ScriptableFragment() {
 	}
 }

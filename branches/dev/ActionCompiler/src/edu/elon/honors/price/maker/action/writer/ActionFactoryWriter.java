@@ -8,16 +8,16 @@ import org.xml.sax.Attributes;
 
 public class ActionFactoryWriter extends Writer {
 
-	List<ActionWriter> actions;
+	List<ScriptableWriter> actions;
 	
-	public ActionFactoryWriter(StringWriter writer, List<ActionWriter> actions) {
+	public ActionFactoryWriter(StringWriter writer, List<ScriptableWriter> actions) {
 		super(writer);
 		this.actions = actions;
 	}
 
 	@Override
 	public void writeHeader() {
-		writeLn("package %s;", ActionWriter.PACKAGE);
+		writeLn("package %s;", ScriptableWriter.PACKAGE);
 		writeLn();
 		
 //		for (String s : ActionWriter.IMPORTS) {
@@ -29,7 +29,7 @@ public class ActionFactoryWriter extends Writer {
 		
 		writeLn("public final static int[] ACTION_IDS = new int[] {");
 		tab++;
-		for (ActionWriter action : actions) {
+		for (ScriptableWriter action : actions) {
 			writeLn("%d,", action.id);
 		}
 		tab--;
@@ -37,7 +37,7 @@ public class ActionFactoryWriter extends Writer {
 		
 		LinkedList<String> names = new LinkedList<String>();
 		LinkedList<String> categories = new LinkedList<String>();
-		for (ActionWriter action : actions) {
+		for (ScriptableWriter action : actions) {
 			int id = action.id;
 			while (names.size() <= id) {
 				names.add(null);
@@ -67,9 +67,9 @@ public class ActionFactoryWriter extends Writer {
 		tab--;
 		writeLn("};");
 		
-		writeLn("public static ActionInstance getInstance(int id) {");
+		writeLn("public static ScriptableInstance getInstance(int id) {");
 		tab++;
-		for (ActionWriter action : actions) {
+		for (ScriptableWriter action : actions) {
 			writeLn("if (id == %s.ID) return new %s();", 
 					action.name, action.name);
 		}
@@ -81,10 +81,10 @@ public class ActionFactoryWriter extends Writer {
 		tab++;
 		writeLn("java.util.LinkedList<Class<?>> classes = " +
 				"new java.util.LinkedList<Class<?>>();");
-		for (ActionWriter action : actions) {
+		for (ScriptableWriter action : actions) {
 			writeLn("try {");
 			tab++;
-			writeLn("classes.add(Class.forName(\"%s.%s\"));", ActionWriter.PACKAGE, 
+			writeLn("classes.add(Class.forName(\"%s.%s\"));", ScriptableWriter.PACKAGE, 
 					action.name.replaceFirst("Action", "Interpreter"));
 			tab--;
 			writeLn("} catch (Exception e) { }");

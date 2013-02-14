@@ -4,7 +4,7 @@ import java.io.StringWriter;
 
 import org.xml.sax.Attributes;
 
-public class ActionWriter extends ActionFragmentWriter {
+public class ScriptableWriter extends ActionFragmentWriter {
 	
 	protected final static String[] IMPORTS = new String[] {
 			"edu.elon.honors.price.maker.action.*",
@@ -26,12 +26,13 @@ public class ActionWriter extends ActionFragmentWriter {
 	
 	@Override
 	protected String getSuperclass() {
-		return "ActionInstance";
+		return "ScriptableInstance";
 	}
 	
-	public ActionWriter(StringWriter writer, String qName, Attributes atts) {
+	public ScriptableWriter(StringWriter writer, String qName, Attributes atts, 
+			boolean isAction) {
 		super(writer, qName, atts);
-		name = "Action" + name;
+		name = (isAction ? "Action" : "Trigger") + name;
 		fileName = camel(name, true);
 		readableName = atts.getValue("name");
 		id = Integer.parseInt(atts.getValue("id"));
