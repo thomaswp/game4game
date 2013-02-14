@@ -22,9 +22,6 @@ public class Event extends GameData {
 	public String name = "";
 	public ArrayList<Action> actions = new ArrayList<Event.Action>();
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
-	
-	public transient Object tActor, tObject, tVector, tUI, tPoint, behaving;
-	public transient int behaviorIndex = -1;
 
 	/**
 	 * Creates a new event with the given list of Actions.
@@ -50,19 +47,6 @@ public class Event extends GameData {
 
 	public Event() {
 		this("New Event");
-	}
-
-	public void clearTriggerInfo() {
-		tActor = null;
-		tObject = null;
-		tVector = null;
-		tUI = null;
-		tPoint = null;
-	}
-	
-	public void clearBehavingInfo() {
-		behaving = null;
-		behaviorIndex = -1;
 	}
 	
 	/**

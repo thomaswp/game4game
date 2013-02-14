@@ -12,6 +12,7 @@ import com.twp.platform.ObjectBody;
 import com.twp.platform.PhysicsHandler;
 import com.twp.platform.PlatformBody;
 import com.twp.platform.PlatformLogic;
+import com.twp.platform.TriggeringInfo;
 
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Behavior;
@@ -35,6 +36,7 @@ public class PlatformGameState implements GameState {
 	private PhysicsHandler physics;
 	private PlatformGame game;
 	private Event event;
+	private TriggeringInfo triggeringInfo;
 
 	private Point point = new Point();
 	private Vector vector = new Vector();
@@ -44,8 +46,9 @@ public class PlatformGameState implements GameState {
 		return event;
 	}
 
-	public void setEvent(Event event) {
+	public void setTriggeringContext(Event event, TriggeringInfo info) {
 		this.event = event;
+		this.triggeringInfo = info;
 	}
 
 	public PlatformLogic getLogic() {
@@ -60,12 +63,16 @@ public class PlatformGameState implements GameState {
 		return game;
 	}
 	
+	public long getGameTime() {
+		return logic.getGameTime();
+	}
+	
 	public BehaviorInstance getBehaviorInstance() throws ParameterException {
-		return getBehavingInstance(event);
+		return getBehavingInstance(triggeringInfo);
 	}
 	
 	public IBehaving getBehaving() throws ParameterException {
-		return getBehaving(event);
+		return getBehaving(triggeringInfo);
 	}
 	
 	public Behavior getBehavior() throws ParameterException {
@@ -114,8 +121,8 @@ public class PlatformGameState implements GameState {
 		} else if (type == 1) {
 			return logic.getJoystick(params.getInt(1));
 		} else {
-			assertThat(event.tUI != null, "No triggering control");
-			return (UIControl)event.tUI;
+			assertThat(triggeringInfo.triggeringControl != null, "No triggering control");
+			return triggeringInfo.triggeringControl;
 		}
 	}
 	
@@ -128,15 +135,15 @@ public class PlatformGameState implements GameState {
 			Parameters ps = params.getParameters(1);
 			point = readVariablePoint(ps);
 		} else {
-			assertThat(event.tPoint != null, "No triggering point");
-			point = (Point)event.tPoint;
+			assertThat(triggeringInfo.triggeringPoint!= null, "No triggering point");
+			point.set(triggeringInfo.triggeringPoint);
 		}
 		return point;
 	}
 	
 	public Point readVariablePoint(Parameters ps) throws ParameterException {
-		point.set(readVariable(ps.getVariable(0), event), 
-				readVariable(ps.getVariable(1), event));
+		point.set(readVariable(ps.getVariable(0), event, triggeringInfo), 
+				readVariable(ps.getVariable(1), event, triggeringInfo));
 		return point;
 	}
 	
@@ -147,10 +154,10 @@ public class PlatformGameState implements GameState {
 			vector.set(ps.getFloat(1), ps.getFloat(2));
 		} else if (type == 1 || type == 2){ 
 			if (type == 1) {
-				if (event.tVector == null) {
+				if (triggeringInfo.triggeringVector == null) {
 					throw new ParameterException("No triggering vector");
 				}
-				vector.set((Vector)event.tVector);
+				vector.set(triggeringInfo.triggeringVector);
 			} else {
 				JoyStick joy = readJoystick(ps.getInt(1));
 				vector.set(joy.getLastPull());
@@ -192,19 +199,19 @@ public class PlatformGameState implements GameState {
 			}
 			return body;
 		} else if (mode == 1) {
-			if (event.tActor == null) {
+			if (triggeringInfo.triggeringActor == null) {
 				throw new ParameterException("No triggering actor");
 			}
-			return (ActorBody)event.tActor;
+			return triggeringInfo.triggeringActor;
 		} else if (mode == 2) {
 			ActorBody actor = physics.getLastCreatedActor();
 			assertThat(actor != null, "No last created actor");
 			return actor;
 		} else {
-			assertThat(event.behaving != null && 
-					event.behaving instanceof ActorBody,
+			assertThat(triggeringInfo.behaving != null && 
+					triggeringInfo.behaving instanceof ActorBody,
 					"Behaving object is not an Actor");
-			return (ActorBody)event.behaving;
+			return (ActorBody)triggeringInfo.behaving;
 		}
 	}
 	
@@ -228,10 +235,10 @@ public class PlatformGameState implements GameState {
 			}
 			return body;
 		} else if (mode == 1) {
-			if (event.tObject == null) {
+			if (triggeringInfo.triggeringObject == null) {
 				throw new ParameterException("No triggering object");
 			}
-			return (ObjectBody)event.tObject;
+			return triggeringInfo.triggeringObject;
 		} else if (mode == 2) {
 			ObjectBody last = physics.getLastCreatedObject();
 			if (last == null || last.isDisposed()) {
@@ -239,20 +246,20 @@ public class PlatformGameState implements GameState {
 			}
 			return last;
 		} else {
-			assertThat(event.behaving != null && 
-					event.behaving instanceof ObjectBody,
+			assertThat(triggeringInfo.behaving != null && 
+					triggeringInfo.behaving instanceof ObjectBody,
 					"Behaving object is not an Object");
-			return (ObjectBody)event.behaving;
+			return (ObjectBody)triggeringInfo.behaving;
 		}
 	}
 
 	@Override
 	public boolean readSwitch(Switch params) throws ParameterException {
-		return readSwitch(params, event);
+		return readSwitch(params, event, triggeringInfo);
 	}
 	
 	public void setSwitch(Switch s, boolean value) throws ParameterException {
-		setSwitch(s, event, value);
+		setSwitch(s, event, triggeringInfo, value);
 	}
 	
 	public String getSwitchName(Switch s) throws ParameterException {
@@ -261,11 +268,11 @@ public class PlatformGameState implements GameState {
 
 	@Override
 	public int readVariable(Variable params) throws ParameterException {
-		return readVariable(params, event);
+		return readVariable(params, event, triggeringInfo);
 	}
 
 	public void setVariable(Variable variable, int value) throws ParameterException {
-		setVariable(variable, event, value);
+		setVariable(variable, event, triggeringInfo, value);
 	}
 	
 	public String getVariableName(Variable v) throws ParameterException {
@@ -274,12 +281,12 @@ public class PlatformGameState implements GameState {
 	
 	@Override
 	public boolean readBoolean(Parameters ps) throws ParameterException {
-		return readBoolean(ps, event);
+		return readBoolean(ps, event, triggeringInfo);
 	}
 
 	@Override
 	public int readNumber(Parameters ps) throws ParameterException {
-		return readNumber(ps, event);
+		return readNumber(ps, event, triggeringInfo);
 	}
 	
 	public boolean isBody(Parameters params, PlatformBody body) throws ParameterException {
@@ -294,6 +301,10 @@ public class PlatformGameState implements GameState {
 			return body instanceof ObjectBody && body.getId() == params.getInt(1);
 		} else if (mode == 3) {
 			return body.getMapClass() == readObjectClass(params.getInt(1));
+		} else if (mode == 4) {
+			return body == triggeringInfo.behaving;
+		} else if (mode == 5) {
+			return body == triggeringInfo.behaving;
 		}
 		
 		return false;
@@ -325,47 +336,47 @@ public class PlatformGameState implements GameState {
 		return inArray(index, array.length);
 	}
 
-	public static IBehaving getBehaving(Event event) throws ParameterException {
-		assertThat(event.behaving != null && 
-				event.behaving instanceof IBehaving,
+	public static IBehaving getBehaving(TriggeringInfo triggeringInfo) throws ParameterException {
+		assertThat(triggeringInfo.behaving != null && 
+				triggeringInfo.behaving instanceof IBehaving,
 				"No behaving object!");
-		return (IBehaving)event.behaving;
+		return (IBehaving)triggeringInfo.behaving;
 	}
 
-	public static BehaviorInstance getBehavingInstance(Event event) 
+	public static BehaviorInstance getBehavingInstance(TriggeringInfo triggeringInfo) 
 			throws ParameterException {
 		List<BehaviorInstance> instances = 
-				getBehaving(event).getBehaviorInstances();
-		assertThat(inArray(event.behaviorIndex, instances),
+				getBehaving(triggeringInfo).getBehaviorInstances();
+		assertThat(inArray(triggeringInfo.behaviorIndex, instances),
 				"Behavior out of range!");
-		return instances.get(event.behaviorIndex);		
+		return instances.get(triggeringInfo.behaviorIndex);		
 	}
 
-	public static BehaviorRuntime getBehavingRuntime(Event event) 
+	public static BehaviorRuntime getBehavingRuntime(TriggeringInfo triggeringInfo) 
 			throws ParameterException {
 		BehaviorRuntime[] runtimes = 
-				getBehaving(event).getBehaviorRuntimes();
-		assertThat(inArray(event.behaviorIndex, runtimes),
+				getBehaving(triggeringInfo).getBehaviorRuntimes();
+		assertThat(inArray(triggeringInfo.behaviorIndex, runtimes),
 				"Behavior out of range!");
-		return runtimes[event.behaviorIndex];		
+		return runtimes[triggeringInfo.behaviorIndex];		
 	}
 
-	public static boolean readSwitch(Switch s, Event event) 
+	public static boolean readSwitch(Switch s, Event event, TriggeringInfo triggeringInfo) 
 			throws ParameterException {
 		if (s.scope == DataScope.Global) {
 			return readGlobalSwitch(s.id);
 		} else if (s.scope == DataScope.Local) {
-			BehaviorRuntime runtime = getBehavingRuntime(event);
+			BehaviorRuntime runtime = getBehavingRuntime(triggeringInfo);
 			assertThat(inArray(s.id, runtime.switches.length),
 					"Switch index out of bounds: %d", s.id);
 			return runtime.switches[s.id];
 		} else {
-			BehaviorInstance instance = getBehavingInstance(event);
+			BehaviorInstance instance = getBehavingInstance(triggeringInfo);
 			assertThat(inArray(s.id, instance.parameters),
 					"Switch index is out of bounds: %d", s.id);
 			Object o = instance.parameters.get(s.id);
 			assertThat(o instanceof Parameters, "Invalid parameter");
-			return readBoolean((Parameters)o, event);
+			return readBoolean((Parameters)o, event, triggeringInfo);
 		}
 	}
 	
@@ -375,12 +386,12 @@ public class PlatformGameState implements GameState {
 		return Globals.getSwitches()[id];
 	}
 
-	public static void setSwitch(Switch s, Event event, boolean value) 
-			throws ParameterException {
+	public static void setSwitch(Switch s, Event event, TriggeringInfo triggeringInfo, 
+			boolean value) throws ParameterException {
 		if (s.scope == DataScope.Global) {
 			setGlobalSwitch(s.id, value);
 		} else if (s.scope == DataScope.Local) {
-			BehaviorRuntime runtime = getBehavingRuntime(event);
+			BehaviorRuntime runtime = getBehavingRuntime(triggeringInfo);
 			assertThat(inArray(s.id, runtime.switches.length),
 					"Switch index out of bounds: %d", s.id);
 			runtime.switches[s.id] = value;
@@ -395,22 +406,22 @@ public class PlatformGameState implements GameState {
 		Globals.getSwitches()[id] = value;
 	}
 
-	public static int readVariable(Variable v, Event event) 
+	public static int readVariable(Variable v, Event event, TriggeringInfo triggeringInfo) 
 			throws ParameterException {
 		if (v.scope == DataScope.Global) {
 			return readGlobalVariable(v.id);
 		}  else if (v.scope == DataScope.Local) {
-			BehaviorRuntime runtime = getBehavingRuntime(event);
+			BehaviorRuntime runtime = getBehavingRuntime(triggeringInfo);
 			assertThat(inArray(v.id, runtime.variables.length),
 					"Variable index out of bounds: %d", v.id);
 			return runtime.variables[v.id];
 		} else {
-			BehaviorInstance instance = getBehavingInstance(event);
+			BehaviorInstance instance = getBehavingInstance(triggeringInfo);
 			assertThat(inArray(v.id, instance.parameters.size()),
 					"Variable index out of bounds: %d", v.id);
 			Object o = instance.parameters.get(v.id);
 			assertThat(o instanceof Parameters, "Invalid parameter");
-			return readNumber((Parameters)o, 0, event);
+			return readNumber((Parameters)o, 0, event, triggeringInfo);
 		}
 	}
 	
@@ -420,12 +431,12 @@ public class PlatformGameState implements GameState {
 		return Globals.getVariables()[id];
 	}
 
-	public static void setVariable(Variable v, Event event, int value) 
-			throws ParameterException {
+	public static void setVariable(Variable v, Event event, TriggeringInfo triggeringInfo,
+			int value) throws ParameterException {
 		if (v.scope == DataScope.Global) {
 			setGlobalVariable(v.id, value);
 		}  else if (v.scope == DataScope.Local) {
-			BehaviorRuntime runtime = getBehavingRuntime(event);
+			BehaviorRuntime runtime = getBehavingRuntime(triggeringInfo);
 			assertThat(inArray(v.id, runtime.variables.length),
 					"Variable index out of bounds: %d", v.id);
 			runtime.variables[v.id] = value;
@@ -440,38 +451,37 @@ public class PlatformGameState implements GameState {
 		Globals.getVariables()[id] = value;
 	}
 	
-	private static int readNumber(Parameters ps, Event event) 
+	private static int readNumber(Parameters ps, Event event, TriggeringInfo triggeringInfo) 
 			throws ParameterException {
 		int mode = ps.getInt();
 		if (mode == 0) {
 			return ps.getInt(1);
 		} else {
-			return readVariable(ps.getVariable(1), event);
+			return readVariable(ps.getVariable(1), event, triggeringInfo);
 		}
 	}
 
-	private static int readNumber(Parameters params, int index, Event event) 
-			throws ParameterException {
+	private static int readNumber(Parameters params, int index, Event event, 
+			TriggeringInfo triggeringInfo) throws ParameterException {
 		Parameters ps = params.getParameters(index);
-		return readNumber(ps, event);
+		return readNumber(ps, event, triggeringInfo);
 	}
 	
-	public static boolean readBoolean(Parameters ps, Event event)
-			throws ParameterException {
+	public static boolean readBoolean(Parameters ps, Event event,
+			TriggeringInfo triggeringInfo) throws ParameterException {
 		int mode = ps.getInt();
 		if (mode == 0) {
 			return true;
 		} else if (mode == 1) {
 			return false;
 		} else {
-			return readSwitch(ps.getSwitch(1), event);
+			return readSwitch(ps.getSwitch(1), event, triggeringInfo);
 		}
 	}
 
-	public static boolean readBoolean(Parameters params, int index, Event event)
-			throws ParameterException {
+	public static boolean readBoolean(Parameters params, int index, Event event,
+			TriggeringInfo triggeringInfo) throws ParameterException {
 		Parameters ps = params.getParameters(index);
-		return readBoolean(ps, event);
+		return readBoolean(ps, event, triggeringInfo);
 	}
-
 }

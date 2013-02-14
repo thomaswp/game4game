@@ -4,6 +4,10 @@ import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.PlatformGame;
 
+/**
+ * Owned by a actor/object/map to keep track of one behavior's 
+ * variables, switches, etc. during execution
+ */
 public class BehaviorRuntime {
 	public int[] variables;
 	public boolean[] switches;
