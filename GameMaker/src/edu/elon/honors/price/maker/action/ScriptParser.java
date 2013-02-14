@@ -9,12 +9,12 @@ import org.xml.sax.SAXException;
 
 import android.content.Context;
 
-public class ActionParser implements ContentHandler {
+public class ScriptParser implements ContentHandler {
 	
 	private Stack<Element> parents = new Stack<Element>();
 	private Context context;
 	
-	public ActionParser(Context context) {
+	public ScriptParser(Context context) {
 		this.context = context;
 	}
 	

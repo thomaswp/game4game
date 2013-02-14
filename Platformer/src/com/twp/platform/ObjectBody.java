@@ -26,7 +26,7 @@ public class ObjectBody extends PlatformBody {
 	private ObjectClass object;
 
 	@Override
-	protected MapClass getMapClass() {
+	public MapClass getMapClass() {
 		return object;
 	}
 	

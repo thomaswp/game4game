@@ -44,7 +44,7 @@ public class ActorBody extends PlatformBody {
 	private boolean airJumped;
 	
 	@Override
-	protected MapClass getMapClass() {
+	public MapClass getMapClass() {
 		return actor;
 	}
 	

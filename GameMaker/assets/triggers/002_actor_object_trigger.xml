@@ -1,27 +1,14 @@
 <action id="2" name="Actor or Object Trigger">
 
 	<text text="The event is triggered when" />
-	<radio>
-	    <choice text="the specific actor">
-	        <actorInstance />
-	    </choice>
-	    <choice text="the any actor with the class">
-	        <actorClass />
-	    </choice>
-	    <choice text="the specific object">
-	        <objectInstance />
-	    </choice>
-	    <choice text="the any object with the class">
-	        <objectClass />
-	    </choice>
-	</radio>
+	<body />
 	
-	<radio>
-	    <choice text="collides with an actor" />
-	    <choice text="collides with the hero" />
-	    <choice text="collides with an object" />
-	    <choice text="collides with a wall" />
-	    <choice text="is destroyed" />
+	<radio name="collidesWith" >
+	    <choice text="collides with the hero" name="hero"  />
+	    <choice text="collides with an actor" name="actor" />
+	    <choice text="collides with an object" name="object"  />
+	    <choice text="collides with a wall" name="wall"  />
+	    <choice text="is destroyed" name="death"  />
 	</radio>
 
 </action>

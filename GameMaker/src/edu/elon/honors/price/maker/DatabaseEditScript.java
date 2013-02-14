@@ -1,52 +1,49 @@
 package edu.elon.honors.price.maker;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.maker.action.ActionParser;
-import edu.elon.honors.price.maker.action.Element;
 import edu.elon.honors.price.maker.action.EventContext;
+import edu.elon.honors.price.maker.action.ScriptParser;
+import edu.elon.honors.price.maker.action.Element;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.MessageQueue.IdleHandler;
 import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.RadioButton;
 
-public class DatabaseEditTriggerSwitch extends DatabaseActivity implements IEventContextual {
+public abstract class DatabaseEditScript extends DatabaseActivity implements IEventContextual {
 
-	private SwitchTrigger trigger;
-	private EventContext eventContext;
-	private int id;
-	private Element rootElement;
+	protected int id;
+	protected Element rootElement;
+	protected EventContext eventContext;
+	
 	private Parameters originalParameters;
 	private LinearLayout linearLayoutHost;
 	
 	public EventContext getEventContext() {
 		return eventContext;
 	}
-	
-	public SwitchTrigger getOriginalTrigger() {
-		Bundle extras = getIntent().getExtras();
-		if (extras.containsKey("trigger")) {
-			return (SwitchTrigger)extras.getSerializable("trigger");
-		}
-		return new SwitchTrigger();
-	}
+
+	protected abstract InputStream getXmlStream(int id)
+		throws IOException;
+	protected abstract void putExtras(Intent intent, Parameters params);
+	/**
+	 * Returns the parameters to edit, or null if there are none
+	 */
+	protected abstract Parameters getOriginalParameters();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +51,7 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity implements IEven
 		setContentView(R.layout.database_edit_action);
 		setDefaultButtonActions();
 
-		id = 0;
+		id = getIntent().getExtras().getInt("id");
 		eventContext = (EventContext)getIntent().getExtras()
 		.getSerializable("eventContext");
 
@@ -68,10 +65,10 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity implements IEven
 			}
 		});
 
-		ActionParser parser = new ActionParser(this);
+		ScriptParser parser = new ScriptParser(this);
 
 		try {
-			InputStream is = Data.loadTrigger(id, this);
+			InputStream is = getXmlStream(id);
 			Xml.parse(is, Xml.Encoding.UTF_8, parser);
 		} catch (Exception e) {
 			Debug.write(e);
@@ -81,15 +78,14 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity implements IEven
 
 		linearLayoutHost.addView(rootElement.getView());
 		
+		
 		if (savedInstanceState != null) {
 			Parameters params =
 				(Parameters)savedInstanceState.getSerializable("params");
 			rootElement.setParameters(params);
 			originalParameters = 
 				(Parameters)getIntent().getExtras().getSerializable("params");
-		} else if (getIntent().getExtras().containsKey("params")) {
-			originalParameters = 
-				(Parameters)getIntent().getExtras().getSerializable("params");
+		} else if ((originalParameters = getOriginalParameters()) != null) {
 			rootElement.setParameters(originalParameters);
 		} else {
 			rootElement.getView().post(new Runnable() {
@@ -136,20 +132,10 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity implements IEven
 	}
 
 	@Override
-	protected void putExtras(Intent intent) {
-		super.putExtras(intent);
-		Parameters params = rootElement.getParameters();
-		Action action = new Action(id, params);
-		action.description = rootElement.getDescription(game);
-		intent.putExtra("action", action);
-		Debug.write(params);
-	}
-
-	@Override
 	protected boolean hasChanged() {
 		if (originalParameters == null)
 			return false;
-	
+		
 		return super.hasChanged() || 
 		!rootElement.getParameters().equals(originalParameters);
 	}
@@ -169,6 +155,13 @@ public class DatabaseEditTriggerSwitch extends DatabaseActivity implements IEven
 				((IPopulatable)v).onActivityResult(requestCode, data);
 			}
 		}
+	}
+	
+	@Override
+	protected void putExtras(Intent intent) {
+		super.putExtras(intent);
+		Parameters params = rootElement.getParameters();
+		putExtras(intent, params);
 	}
 
 	private void removeFocus() {

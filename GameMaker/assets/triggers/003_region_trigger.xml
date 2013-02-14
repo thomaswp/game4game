@@ -1,0 +1,16 @@
+<action id="3" name="Region Trigger">
+
+	<text text="The event is triggered when" />
+	<body />
+	
+	<radio name="action" >
+	    <choice text="begins to enter" />
+	    <choice text="fully enters" />
+	    <choice text="begins to leave" />
+	    <choice text="fully leaves" />
+	</radio>
+	
+	<text text="the region" />
+	<region />
+
+</action>

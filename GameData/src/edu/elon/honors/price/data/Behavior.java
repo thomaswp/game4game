@@ -6,9 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.elon.honors.price.data.Event.Action;
-import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
-import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.ScopedData;
 import edu.elon.honors.price.data.types.Switch;
@@ -102,10 +100,7 @@ public class Behavior extends GameData {
 				switches.addAll(action.params.getAllByClass(Switch.class));
 			}
 			for (Trigger trigger : event.triggers) {
-				if (trigger instanceof SwitchTrigger) {
-					switches.add(
-							((SwitchTrigger) trigger).triggerSwitch);
-				}
+				switches.addAll(trigger.params.getAllByClass(Switch.class));
 			}
 		}
 		return switches;
@@ -119,13 +114,8 @@ public class Behavior extends GameData {
 						action.params.getAllByClass(Variable.class));
 			}
 			for (Trigger trigger : event.triggers) {
-				if (trigger instanceof VariableTrigger) {
-					VariableTrigger vt = (VariableTrigger)trigger;
-					variables.add(vt.variable);
-					if (vt.withVariable != null) {
-						variables.add(vt.withVariable);
-					}
-				}
+				variables.addAll(
+						trigger.params.getAllByClass(Variable.class));
 			}
 		}
 		return variables;

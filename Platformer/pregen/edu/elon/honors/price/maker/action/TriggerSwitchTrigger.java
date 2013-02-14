@@ -10,29 +10,32 @@ import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
 import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
 																	// ScriptableWriter.writeHeader()
 @SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionTriggerActorBehavior extends ScriptableInstance {// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Trigger Actor Behavior";		// ScriptableWriter.writeHeader()
-	public static final int ID = 5;									// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Actor";					// ScriptableWriter.writeHeader()
+public class TriggerSwitchTrigger extends ScriptableInstance {		// ActionFragmentWriter.writeHeader()
+	public static final String NAME = "Switch Trigger";				// ScriptableWriter.writeHeader()
+	public static final int ID = 0;									// ScriptableWriter.writeHeader()
+	public static final String CATEGORY = null;						// ScriptableWriter.writeHeader()
 																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;actorInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
-	public Parameters actorInstance;								// ActionFragmentWriter.writeElement()
-	public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readActorInstance(actorInstance);			// ActionFragmentWriter.writeElement()
+	/** Type: <b>&lt;switch&gt;</b> */								// ActionFragmentWriter.writeElement()
+	public Switch aSwitch;											// ActionFragmentWriter.writeElement()
+	public boolean readASwitch(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+		return gameState.readSwitch(aSwitch);						// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
-	/** Type: <b>&lt;actorBehavior&gt;</b> */						// ActionFragmentWriter.writeElement()
-	public int actorBehavior;										// ActionFragmentWriter.writeElement()
+	/** Type: <b>&lt;boolean&gt;</b> */								// ActionFragmentWriter.writeElement()
+	public Parameters value;										// ActionFragmentWriter.writeElement()
+	public boolean readValue(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+		return gameState.readBoolean(value);						// ActionFragmentWriter.writeElement()
+	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		actorInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
-		actorBehavior = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
+		aSwitch = iterator.getSwitch();								// ActionFragmentWriter.writeReadParams()
+		value = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
-	 * 005 <b><i>Trigger Actor Behavior</i></b> (Actor)<br />
+	 * 000 <b><i>Switch Trigger</i></b> (null)<br />
 	 * <ul>
-	 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
-	 * <li><b>&lt;actorBehavior&gt;</b> actorBehavior</li>
+	 * <li><b>&lt;switch&gt;</b> aSwitch</li>
+	 * <li><b>&lt;boolean&gt;</b> value</li>
 	 * </ul>
 	 */																// ActionFragmentWriter.writeJavadoc()
 	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()

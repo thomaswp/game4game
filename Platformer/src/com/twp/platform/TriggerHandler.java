@@ -3,6 +3,7 @@ package com.twp.platform;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.badlogic.gdx.math.Vector2;
@@ -11,13 +12,9 @@ import com.twp.platform.PhysicsHandler.BodyCallback;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
+import edu.elon.honors.price.data.Event.Trigger.Contact;
 import edu.elon.honors.price.data.Map;
-import edu.elon.honors.price.data.Event.ActorOrObjectTrigger;
-import edu.elon.honors.price.data.Event.RegionTrigger;
-import edu.elon.honors.price.data.Event.SwitchTrigger;
 import edu.elon.honors.price.data.Event.Trigger;
-import edu.elon.honors.price.data.Event.UITrigger;
-import edu.elon.honors.price.data.Event.VariableTrigger;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
@@ -25,9 +22,16 @@ import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.input.JoyStick;
+import edu.elon.honors.price.maker.action.GameState;
 import edu.elon.honors.price.maker.action.ParameterException;
 import edu.elon.honors.price.maker.action.PlatformGameState;
 import edu.elon.honors.price.maker.action.Point;
+import edu.elon.honors.price.maker.action.ScriptableInstance;
+import edu.elon.honors.price.maker.action.TriggerActorOrObjectTrigger;
+import edu.elon.honors.price.maker.action.TriggerRegionTrigger;
+import edu.elon.honors.price.maker.action.TriggerSwitchTrigger;
+import edu.elon.honors.price.maker.action.TriggerUserInputTrigger;
+import edu.elon.honors.price.maker.action.TriggerVariableTrigger;
 import edu.elon.honors.price.physics.Vector;
 
 public class TriggerHandler {
@@ -94,57 +98,60 @@ public class TriggerHandler {
 		for (int j = 0; j < event.triggers.size(); j++) {
 			Trigger generic = event.triggers.get(j);
 
+			PlatformGameState gameState = new PlatformGameState(logic);
+			gameState.setEvent(event);
+			
 			try {
-				if (generic instanceof SwitchTrigger) {
-					checkTrigger((SwitchTrigger)generic, event);
-				} else if (generic instanceof VariableTrigger) {
-					checkTrigger((VariableTrigger)generic, event);
-				} else if (generic instanceof ActorOrObjectTrigger) {
-					checkTrigger((ActorOrObjectTrigger)generic, event);
-				} else if (generic instanceof RegionTrigger) {
-					checkTrigger((RegionTrigger)generic, event);
-				} else if (generic instanceof UITrigger) {
-					checkTrigger((UITrigger)generic, event);
-				}	
+				if (generic.id == Trigger.ID_SWITCH) { 
+					TriggerSwitchTrigger instance = new TriggerSwitchTrigger(); 
+					instance.setParameters(generic.params);
+					checkTrigger(instance, event, gameState);
+				} else if (generic.id == Trigger.ID_VARIABLE) { 
+					TriggerVariableTrigger instance = new TriggerVariableTrigger(); 
+					instance.setParameters(generic.params);
+					checkTrigger(instance, event, gameState);
+				} else if (generic.id == Trigger.ID_ACTOR_OBJECT) {
+					TriggerActorOrObjectTrigger instance = new TriggerActorOrObjectTrigger();
+					instance.setParameters(generic.params);
+					checkTrigger(instance, event, gameState);
+				} else if (generic.id == Trigger.ID_REGION) {
+					TriggerRegionTrigger instance = new TriggerRegionTrigger(); 
+					instance.setParameters(generic.params);
+					checkTrigger(instance, event, gameState, generic);
+				} else if (generic.id == Trigger.ID_UI) {
+					TriggerUserInputTrigger instance = new TriggerUserInputTrigger(); 
+					instance.setParameters(generic.params);
+					checkTrigger(instance, event, gameState);
+				}
+			
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private void checkTrigger(SwitchTrigger trigger, Event event)
+	private void checkTrigger(TriggerSwitchTrigger trigger, Event event, GameState gameState)
 			throws ParameterException {
-		Switch tSwitch = trigger.triggerSwitch;
-		if (PlatformGameState.readSwitch(tSwitch, event) == trigger.value) {
-			if (Globals.getSwitches()[tSwitch.id] == trigger.value) {
-				trigger(event);
-			}			
+		if (trigger.readASwitch(gameState) == trigger.readValue(gameState)) {
+			trigger(event);
 		}
 	}
 
-	private void checkTrigger(VariableTrigger trigger, Event event)
-			throws ParameterException {
+	private void checkTrigger(TriggerVariableTrigger trigger, Event event,
+			GameState gameState) throws ParameterException {
 		Variable variable = trigger.variable;
-
+		
 		int value1 = PlatformGameState.readVariable(variable, event);
 		
-		int value2;
-		if (trigger.with == VariableTrigger.WITH_VALUE) {
-			value2 = trigger.withValue;
-		} else {
-			variable = trigger.withVariable;
-			value2 = PlatformGameState.readVariable(variable, event);
-		}
+		int value2 = trigger.readValue(gameState);
 
 		boolean result = false;
-		switch (trigger.test) {
-		case VariableTrigger.TEST_EQUALS: result = value1 == value2; break;
-		case VariableTrigger.TEST_NOT_EQUALS: result = value1 != value2; break;
-		case VariableTrigger.TEST_GT: result = value1 > value2; break;
-		case VariableTrigger.TEST_LT: result = value1 < value2; break;
-		case VariableTrigger.TEST_GEQ: result = value1 >= value2; break;
-		case VariableTrigger.TEST_LEQ: result = value1 <= value2; break;
-		}
+		if (trigger.operatorEquals) result = value1 == value2;
+		if (trigger.operatorNotEquals) result = value1 != value2;
+		if (trigger.operatorGreater) result = value1 > value2;
+		if (trigger.operatorLess) result = value1 < value2;
+		if (trigger.operatorGreaterOrEqual) result = value1 >= value2;
+		if (trigger.operatorLessOrEqual) result = value1 <= value2;
 		
 		if (result) {
 			trigger(event);
@@ -152,98 +159,104 @@ public class TriggerHandler {
 	}
 
 
-	private void checkTrigger(ActorOrObjectTrigger trigger, Event event) {
+	private void checkTrigger(TriggerActorOrObjectTrigger trigger, Event event,
+			PlatformGameState gameState) throws ParameterException {
 		//TODO: support for "this actor/object"
 		List<PlatformBody> platformBodies = physics.getPlatformBodies();
 		for (int k = 0; k < platformBodies.size(); k++) {
 			PlatformBody body = platformBodies.get(k);
 
-			if (body == null) continue;
-			if (trigger.mode == ActorOrObjectTrigger.MODE_ACTOR_INSTANCE) {
-				if (!(body instanceof ActorBody)) continue;
-				if (body.getId() != trigger.id) continue;
-			}
-			if (trigger.mode == ActorOrObjectTrigger.MODE_ACTOR_CLASS) {
-				if (!(body instanceof ActorBody)) continue;
-				if (((ActorBody)body).getActor() != game.actors[trigger.id])
-					continue;
-			}
-			if (trigger.mode == ActorOrObjectTrigger.MODE_OBJECT_INSTANCE) {
-				if (!(body instanceof ObjectBody)) continue;
-				if (body.getId() != trigger.id) continue;
-			}
-			if (trigger.mode == ActorOrObjectTrigger.MODE_OBJECT_CLASS) {
-				if (!(body instanceof ObjectBody)) continue;
-				if (((ObjectBody)body).getObject() != game.objects[trigger.id])
-					continue;
-			}
+			if (!gameState.isBody(trigger.body, body)) continue;
 			
-			if (trigger.action == ActorOrObjectTrigger.ACTION_COLLIDES_HERO) {
-				for (int l = 0; l < body.getCollidedBodies().size(); l++) {
-					PlatformBody collided = body.getCollidedBodies().get(l);
+			for (int l = 0; l < body.getCollidedBodies().size(); l++) {
+				PlatformBody collided = body.getCollidedBodies().get(l);
+				if (trigger.collidesWithHero) {
 					if (collided instanceof ActorBody && 
 							((ActorBody)collided).isHero()) {
 						trigger(event, body, collided);
 					}
-				}
-			} else if (trigger.action == ActorOrObjectTrigger.ACTION_COLLIDES_ACTOR) {
-				for (int l = 0; l < body.getCollidedBodies().size(); l++) {
-					PlatformBody collided = body.getCollidedBodies().get(l);
+				} else if (trigger.collidesWithActor) {
 					if (collided instanceof ActorBody) {
 						trigger(event, body, collided);
 					}
+				} else if (trigger.collidesWithObject) {
+					if (collided instanceof ObjectBody) {
+						trigger(event, body, collided);
+					}
 				}
-			} else if (trigger.action == ActorOrObjectTrigger.ACTION_COLLIDES_WALL) {
+			}
+			
+				
+			if (trigger.collidesWithWall) {
 				if (body.isCollidedWall()) {
 					trigger(event, body);
 				}
 			}
 		}
+		//TODO: Add death
 	}
 
-	private void checkTrigger(final RegionTrigger trigger, Event event) {
-		float left = trigger.left / SCALE;
-		float top = trigger.top / SCALE;
-		float right = trigger.right / SCALE;
-		float bottom = trigger.bottom / SCALE;
+	private void checkTrigger(final TriggerRegionTrigger trigger, Event event,
+			PlatformGameState gameState, Trigger eventTrigger) throws ParameterException {
+		
+		Rect rect = trigger.readRegion(gameState);
+		final float left = rect.left / SCALE;
+		final float top = rect.top / SCALE;
+		final float right = rect.right / SCALE;
+		final float bottom = rect.bottom / SCALE;
 
-		if (trigger.contacts == null) {
-			trigger.contacts = new ArrayList<Event.RegionTrigger.Contact>();
+		if (eventTrigger.gameData == null) {
+			eventTrigger.gameData = new ArrayList<Event.Trigger.Contact>();
 		}
-		for (int k = 0; k < trigger.contacts.size(); k++) {
-			trigger.contacts.get(k).event = -1;
-			trigger.contacts.get(k).checked = false;
+		@SuppressWarnings("unchecked")
+		final ArrayList<Event.Trigger.Contact> contacts = 
+			(ArrayList<Event.Trigger.Contact>)eventTrigger.gameData;
+		
+		for (int k = 0; k < contacts.size(); k++) {
+			contacts.get(k).event = -1;
+			contacts.get(k).checked = false;
 		}
+		
+		final boolean[] events = new boolean[] { 
+			trigger.actionBeginsToEnter,
+			trigger.actionFullyEnters,
+			trigger.actionBeginsToLeave,
+			trigger.actionFullyLeaves
+		};
+		
+		
+		final int BEGIN_ENTER = 0,
+				FULLY_ENTER = 1,
+				BEGIN_LEAVE = 2,
+				FULLY_LEAVE = 3;
 
 		physics.regionCallback(new BodyCallback() {
 			@Override
 			public boolean doCallback(PlatformBody body) {
 				int index = -1;
-				boolean inRegion = inRegion(body, trigger);
-				for (int k = 0; k < trigger.contacts.size(); k++) {
-					if (trigger.contacts.get(k).object == body) index = k;
+				boolean inRegion = inRegion(body, left, top, right, bottom);
+				for (int k = 0; k < contacts.size(); k++) {
+					if (contacts.get(k).object == body) index = k;
 				}
 				if (index < 0) {
-					int state = inRegion ? RegionTrigger.Contact.STATE_CONTAINED :
-						RegionTrigger.Contact.STATE_TOUCHING;
-					int event = inRegion ? RegionTrigger.MODE_CONTAIN :
-						RegionTrigger.MODE_TOUCH;
-					trigger.contacts.add(new RegionTrigger.Contact(body, state, event));
+					int state = inRegion ? Contact.STATE_CONTAINED :
+						Contact.STATE_TOUCHING;
+					int event = inRegion ? FULLY_ENTER : BEGIN_ENTER;
+					contacts.add(new Contact(body, state, event));
 				} else {
-					RegionTrigger.Contact contact = trigger.contacts.get(index);
+					Contact contact = contacts.get(index);
 					if (inRegion) {
-						int newState = RegionTrigger.Contact.STATE_CONTAINED;
+						int newState = Contact.STATE_CONTAINED;
 						if (contact.state != newState) {
-							contact.event = RegionTrigger.MODE_CONTAIN;
+							contact.event = FULLY_ENTER;
 							contact.state = newState;
 						}
 					} else {
-						int newState = RegionTrigger.Contact.STATE_TOUCHING;
+						int newState = Contact.STATE_TOUCHING;
 						if (contact.state != newState) {
 							contact.event = 
-								contact.state == RegionTrigger.Contact.STATE_CONTAINED ?
-										RegionTrigger.MODE_LOSE_CONTAIN :
-											RegionTrigger.MODE_TOUCH;
+								contact.state == Contact.STATE_CONTAINED ?
+										BEGIN_LEAVE : BEGIN_ENTER;
 							contact.state = newState;
 						}
 					}
@@ -253,71 +266,56 @@ public class TriggerHandler {
 			}
 		}, left, top, right, bottom);
 
-		for (int k = 0; k < trigger.contacts.size(); k++) {
-			RegionTrigger.Contact contact = trigger.contacts.get(k);
+		for (int k = 0; k < contacts.size(); k++) {
+			Contact contact = contacts.get(k);
 
 			int contactEvent = contact.event;
 
 			if (!contact.checked) {
-				contactEvent = RegionTrigger.MODE_LOSE_TOUCH;
-				trigger.contacts.remove(k);
+				contactEvent = FULLY_LEAVE;
+				contacts.remove(k);
 				k--;
 			}
 
-			if (trigger.mode == contactEvent) {
-				if (contact.object instanceof ActorBody) {
-					ActorBody body = (ActorBody)contact.object;
-					if (trigger.who == RegionTrigger.WHO_ACTOR) {
-						trigger(event, body);
-					} else if (trigger.who == RegionTrigger.WHO_HERO &&
-							body.isHero()) {
-						trigger(event, body);
-					}
-				} else {
-					if (trigger.who == RegionTrigger.WHO_OBJECT) {
-						ObjectBody body = (ObjectBody)contact.object;
-						trigger(event, body);
-					}
+			if (contactEvent >= 0 && events[contactEvent]) {
+				PlatformBody body = (PlatformBody)contact.object;
+				if (gameState.isBody(trigger.body, body)) {
+					trigger(event, body);
 				}
 			}
 		}
 	}
 
-	private void checkTrigger(UITrigger trigger, Event event) {
-		List<Button> buttons = logic.getButtons();
-		List<JoyStick> joysticks = logic.getJoysticks();
+	private void checkTrigger(TriggerUserInputTrigger trigger, Event event,
+			PlatformGameState gameState) throws ParameterException {
 		
 		boolean triggered = false;
-		if (trigger.controlType == UITrigger.CONTROL_BUTTON) {
-			Button button = buttons.get(trigger.index);
-			if (button.isTapped() && trigger.condition == 
-				UITrigger.CONDITION_PRESS) {
+		if (trigger.inputTheButton) {
+			Button button = trigger.inputTheButtonData.readButton(gameState);
+			if (button.isTapped() && trigger.actionIsPressed) {
 				triggered = true;
-			} else if (button.isReleased() && trigger.condition == 
-				UITrigger.CONDITION_RELEASE) {
+			} else if (button.isReleased() && trigger.actionIsReleased) {
 				triggered = true;
 			}
-		} else if (trigger.controlType == UITrigger.CONTROL_JOY) {
-			JoyStick joy = joysticks.get(trigger.index);
-			if (joy.isTapped() && trigger.condition == 
-				UITrigger.CONDITION_PRESS) {
+		} else if (trigger.inputTheJoystick) {
+			JoyStick joy = trigger.inputTheJoystickData.readJoystick(gameState);
+			if (joy.isTapped() && trigger.actionIsPressed) {
 				triggered = true;
-			} else if (joy.isReleased() && trigger.condition == 
-				UITrigger.CONDITION_RELEASE) {
+			} else if (joy.isReleased() && trigger.actionIsReleased) {
 				triggered = true;
-			} else if (joy.isPressed() && trigger.condition == 
-				UITrigger.CONDITION_MOVE) {
+			} else if (joy.isPressed() && trigger.actionIsDragged) {
 				triggered = true;
 			}
 			
 			if (triggered) {
 				vector.set(joy.getLastPull());
 				event.tVector = vector;
-				Debug.write(event.tVector);
 			}
 		} else {
 			if (Input.isTapped()) {
 				int pid = Input.getTappedPointer();
+				List<Button> buttons = logic.getButtons();
+				List<JoyStick> joysticks = logic.getJoysticks();
 				boolean inUse = false;
 				for (int k = 0; k < buttons.size(); k++) {
 					if (buttons.get(k).getPID() == pid) {
@@ -331,7 +329,7 @@ public class TriggerHandler {
 				}
 				if (!inUse) {
 					touchPID = pid;
-					if (trigger.condition == UITrigger.CONDITION_PRESS) {
+					if (trigger.actionIsPressed) {
 						point.setF(Input.getLastTouchX() - logic.getOffset().getX(), 
 								Input.getLastTouchY() - logic.getOffset().getY());
 						event.tPoint = point;
@@ -341,11 +339,11 @@ public class TriggerHandler {
 			}
 			if (touchPID >= 0) {
 				if (Input.isTouchDown(touchPID)) {
-					if (trigger.condition == UITrigger.CONDITION_MOVE) {
+					if (trigger.actionIsDragged) {
 						triggered = true;
 					}
 				} else {
-					if (trigger.condition == UITrigger.CONDITION_RELEASE) {
+					if (trigger.actionIsReleased) {
 						triggered = true;	
 					}
 					touchPID = -1;
@@ -385,9 +383,10 @@ public class TriggerHandler {
 		trigger(event, body);
 	}
 
-	private boolean inRegion(PlatformBody body, RegionTrigger trigger) {
+	private boolean inRegion(PlatformBody body, float left, 
+			float top, float right, float bottom) {
 		Vector offset = logic.getOffset();
-		regionRect.set(trigger.left, trigger.top, trigger.right, trigger.bottom);
+		regionRect.set(left, top, right, bottom);
 		regionRect.offset(offset.getX(), offset.getY());
 		return regionRect.contains(body.getSprite().getRect());
 	}

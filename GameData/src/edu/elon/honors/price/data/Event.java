@@ -353,9 +353,44 @@ public class Event extends GameData {
 		}
 	}
 
-	public abstract static class Trigger extends GameData 
+	public static class Trigger extends GameData 
 	implements Serializable {
 		private static final long serialVersionUID = 1L;
+		
+		public final static int ID_SWITCH = 0,
+				ID_VARIABLE = 1,
+				ID_ACTOR_OBJECT = 2,
+				ID_REGION = 3,
+				ID_UI = 4;
+		
+		public int id;
+		public Parameters params;
+		public String description;
+		public transient Object gameData;
+		
+		public Trigger(int id, Parameters params) {
+			this.id = id;
+			this.params = params;
+		}
+		
+		public Trigger() { };
+		
+		public static class Contact {
+
+			public final static int STATE_TOUCHING = 0;
+			public final static int STATE_CONTAINED = 1;
+
+			public int state;
+			public Object object;
+			public int event;
+			public boolean checked = true;
+
+			public Contact(Object object, int state, int event) {
+				this.object = object;
+				this.state = state;
+				this.event = event;
+			}
+		}
 	}
 
 	/**
@@ -363,6 +398,7 @@ public class Event extends GameData {
 	 * taking on a certain value.
 	 *
 	 */
+	@Deprecated
 	public static class SwitchTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 
@@ -397,6 +433,7 @@ public class Event extends GameData {
 	 * or exceeding it.
 	 *
 	 */
+	@Deprecated
 	public static class VariableTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 
@@ -476,6 +513,7 @@ public class Event extends GameData {
 //		}
 	}
 
+	@Deprecated
 	public static class ActorOrObjectTrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 
@@ -528,6 +566,7 @@ public class Event extends GameData {
 		}
 	}
 
+	@Deprecated
 	public static class RegionTrigger extends Trigger {
 		private static final long serialVersionUID = 2L;
 
@@ -596,7 +635,8 @@ public class Event extends GameData {
 			}
 		}
 	}
-	
+
+	@Deprecated
 	public static class UITrigger extends Trigger {
 		private static final long serialVersionUID = 1L;
 		
