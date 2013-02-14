@@ -629,7 +629,6 @@ public class PhysicsHandler {
 						((ObjectBody) bodyB).getObject().isPlatform) {
 				bodyA.getTouchingFloors().remove(fixtureB);
 				bodyA.getTouchingWalls().remove(fixtureB);
-				Debug.write("remove");
 				}
 			} else if (levelMap.containsKey(fixtureB)) {
 				bodyA.getTouchingWalls().remove(fixtureB);

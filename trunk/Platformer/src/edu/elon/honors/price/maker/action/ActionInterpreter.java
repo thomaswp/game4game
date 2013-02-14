@@ -42,9 +42,17 @@ public abstract class ActionInterpreter<T extends ScriptableInstance> {
 	protected void updateControl(ActionControl control) {
 		control.actionIndex++;
 	}
+	
+	public interface WaitChecker {
+		public boolean isWaiting(PlatformGameState gameState);
+	}
+	
+	protected static WaitChecker waitChecker;
 		
-	public static void interperate(Action action, PlatformGameState gameState,
+	public static WaitChecker interperate(Action action, PlatformGameState gameState,
 			ActionControl control) throws ParameterException {
+		
+		waitChecker = null;
 		
 		ScriptableInstance instance = actionMap.get(action);
 		if (instance == null) {
@@ -77,6 +85,8 @@ public abstract class ActionInterpreter<T extends ScriptableInstance> {
 
 		invoke(instance.getClass(), interp, instance, gameState);
 		interp.updateControl(control);
+		
+		return waitChecker;
 	}
 
 	@SuppressWarnings("unchecked")

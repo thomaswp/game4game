@@ -55,13 +55,18 @@ public class PlatformLogic implements Logic {
 	private Vector2 antiGravity = new Vector2(0, -PhysicsHandler.GRAVITY),
 	zeroVector = new Vector2();
 
-
+	private long gameTime = 0;
+	
 	private boolean paused;
 
 	private String mapName;
 
 	public PlatformGame getGame() {
 		return game;
+	}
+	
+	public long getGameTime() {
+		return gameTime;
 	}
 
 	public Map getMap() {
@@ -167,6 +172,8 @@ public class PlatformLogic implements Logic {
 			updateScroll(1);
 			return;
 		}
+		
+		gameTime += timeElapsed;
 
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).update();

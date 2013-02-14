@@ -1,0 +1,28 @@
+package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
+import com.twp.platform.*;											// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
+public class ActionStop extends ScriptableInstance {				// ActionFragmentWriter.writeHeader()
+	public static final String NAME = "Stop";						// ScriptableWriter.writeHeader()
+	public static final int ID = 21;								// ScriptableWriter.writeHeader()
+	public static final String CATEGORY = "Control";				// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
+	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
+	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 021 <b><i>Stop</i></b> (Control)<br />
+	 * <ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
+}																	// ActionFragmentWriter.writeFooter()

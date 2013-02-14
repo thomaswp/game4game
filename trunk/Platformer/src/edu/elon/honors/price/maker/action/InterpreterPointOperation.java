@@ -33,12 +33,10 @@ ActionInterpreter<ActionPointOperation> {
 			Vector pos = body.getScaledPosition();
 			operand.set(Math.round(pos.getX()), Math.round(pos.getY()));
 		}
-		Debug.write("operand: %s)", operand.toString());
 
 		int x = gameState.readVariable(vx);
 		int y = gameState.readVariable(vy);
 		
-		Debug.write("var point: (%d, %d)", x, y);
 		
 		if (action.operatorSetItTo) {
 			x = operand.x;

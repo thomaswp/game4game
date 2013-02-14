@@ -48,6 +48,8 @@ public class TriggerHandler {
 
 	private int touchPID;
 	private RectF regionRect = new RectF();
+	
+	private TriggeringInfo triggeringInfo = new TriggeringInfo();
 
 	public TriggerHandler(PlatformLogic logic) {
 		this.logic = logic;
@@ -87,10 +89,10 @@ public class TriggerHandler {
 		Behavior behavior = instance.getBehavior(game);
 		for (int i = 0; i < behavior.events.size(); i++) {
 			Event event = behavior.events.get(i);
-			event.behaving = behaving;
-			event.behaviorIndex = behavingIndex;
-			checkEvent(behavior.events.get(i));
-			event.clearBehavingInfo();
+			triggeringInfo.behaving = behaving;
+			triggeringInfo.behaviorIndex = behavingIndex;
+			checkEvent(event);
+			triggeringInfo.clearBehavingInfo();
 		}
 	}
 	
@@ -99,7 +101,7 @@ public class TriggerHandler {
 			Trigger generic = event.triggers.get(j);
 
 			PlatformGameState gameState = new PlatformGameState(logic);
-			gameState.setEvent(event);
+			gameState.setTriggeringContext(event, triggeringInfo);
 			
 			try {
 				if (generic.id == Trigger.ID_SWITCH) { 
@@ -139,10 +141,8 @@ public class TriggerHandler {
 
 	private void checkTrigger(TriggerVariableTrigger trigger, Event event,
 			GameState gameState) throws ParameterException {
-		Variable variable = trigger.variable;
 		
-		int value1 = PlatformGameState.readVariable(variable, event);
-		
+		int value1 = trigger.readVariable(gameState);
 		int value2 = trigger.readValue(gameState);
 
 		boolean result = false;
@@ -161,7 +161,6 @@ public class TriggerHandler {
 
 	private void checkTrigger(TriggerActorOrObjectTrigger trigger, Event event,
 			PlatformGameState gameState) throws ParameterException {
-		//TODO: support for "this actor/object"
 		List<PlatformBody> platformBodies = physics.getPlatformBodies();
 		for (int k = 0; k < platformBodies.size(); k++) {
 			PlatformBody body = platformBodies.get(k);
@@ -309,7 +308,7 @@ public class TriggerHandler {
 			
 			if (triggered) {
 				vector.set(joy.getLastPull());
-				event.tVector = vector;
+				triggeringInfo.triggeringVector = vector;
 			}
 		} else {
 			if (Input.isTapped()) {
@@ -332,7 +331,7 @@ public class TriggerHandler {
 					if (trigger.actionIsPressed) {
 						point.setF(Input.getLastTouchX() - logic.getOffset().getX(), 
 								Input.getLastTouchY() - logic.getOffset().getY());
-						event.tPoint = point;
+						triggeringInfo.triggeringPoint = point;
 						triggered = true;	
 					}
 				}
@@ -357,15 +356,15 @@ public class TriggerHandler {
 	}
 
 	private void trigger(Event event) {
-		interpreter.doEvent(event);
-		event.clearTriggerInfo();
+		interpreter.doEvent(event, triggeringInfo);
+		triggeringInfo.clearTriggerInfo();
 	}
 	
 	private void trigger(Event event, PlatformBody body) {
 		if (body instanceof ActorBody) {
-			event.tActor = body;
+			triggeringInfo.triggeringActor = (ActorBody)body;
 		} else {
-			event.tObject = body;
+			triggeringInfo.triggeringObject = (ObjectBody)body;
 		}
 		trigger(event);
 	}
@@ -374,12 +373,12 @@ public class TriggerHandler {
 		Vector2 point = body.getPosition().add(
 				collided.getPosition()).mul(0.5f);
 		if (collided instanceof ActorBody) {
-			event.tActor = collided;
+			triggeringInfo.triggeringActor = (ActorBody)collided;
 		} else {
-			event.tObject = collided;
+			triggeringInfo.triggeringObject = (ObjectBody)collided;
 		}
 		this.point.setF(point.x * SCALE, point.y * SCALE);
-		event.tPoint = point;
+		triggeringInfo.triggeringPoint = this.point;
 		trigger(event, body);
 	}
 

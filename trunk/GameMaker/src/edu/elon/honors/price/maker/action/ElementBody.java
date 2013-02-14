@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import org.xml.sax.Attributes;
 
+import edu.elon.honors.price.maker.action.EventContext.Scope;
+
 import android.content.Context;
 
 public class ElementBody extends ElementMulti {
@@ -27,8 +29,14 @@ public class ElementBody extends ElementMulti {
 				new OptionElement("The specific object", 
 						new ElementExactObjectInstance(attributes, context)),
 				new OptionElement("Any object of the class", 
-						new ElementObjectClass(attributes, context))
+						new ElementObjectClass(attributes, context)),
+				new OptionEmpty(context, "this actor", "this actor"),
+				new OptionEmpty(context, "this object", "this object")
 		};
+		
+		options[4].visible = eventContext.getScope() == Scope.ActorBehavior;
+		options[5].visible = eventContext.getScope() == Scope.ObjectBehavior;
+		
 		return options;
 	}
 

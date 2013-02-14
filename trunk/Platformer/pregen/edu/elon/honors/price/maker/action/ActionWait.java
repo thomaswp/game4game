@@ -1,0 +1,32 @@
+package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
+import com.twp.platform.*;											// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
+public class ActionWait extends ScriptableInstance {				// ActionFragmentWriter.writeHeader()
+	public static final String NAME = "Wait";						// ScriptableWriter.writeHeader()
+	public static final int ID = 20;								// ScriptableWriter.writeHeader()
+	public static final String CATEGORY = "Control";				// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+	/** Type: <b>&lt;exactNumber&gt;</b> */							// ActionFragmentWriter.writeElement()
+	public int exactNumber;											// ActionFragmentWriter.writeElement()
+																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
+	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
+		exactNumber = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
+	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 020 <b><i>Wait</i></b> (Control)<br />
+	 * <ul>
+	 * <li><b>&lt;exactNumber&gt;</b> exactNumber</li>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
+}																	// ActionFragmentWriter.writeFooter()
