@@ -10,31 +10,36 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-public class ActionHandler implements ContentHandler {
+public class ScriptableHandler implements ContentHandler {
 
 	public void writeFile(File path) throws FileNotFoundException {
 		String text = writer.toString();
 		PrintWriter writer = new PrintWriter(path.getAbsolutePath() + 
-				"\\" + actionWriter.fileName + ".java");
+				"\\" + scriptableWriter.fileName + ".java");
 		writer.append(text);
 		writer.close();
 	}
 	
-	public ActionWriter getActionWriter() {
-		return actionWriter;
+	public ScriptableWriter getActionWriter() {
+		return scriptableWriter;
 	}
 	
 	private StringWriter writer = new StringWriter(3000);
-	private ActionWriter actionWriter;
+	private ScriptableWriter scriptableWriter;
+	private boolean isAction;
+	
+	public ScriptableHandler(boolean isAction) {
+		this.isAction = isAction;
+	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes atts) throws SAXException {
 		if (qName.equalsIgnoreCase("action")) {
-			actionWriter = new ActionWriter(writer, qName, atts);
-			actionWriter.writeHeader();
+			scriptableWriter = new ScriptableWriter(writer, qName, atts, isAction);
+			scriptableWriter.writeHeader();
 		} else {
-			actionWriter.writeElement(qName, atts);
+			scriptableWriter.writeElement(qName, atts);
 		}
 	}
 
@@ -42,9 +47,9 @@ public class ActionHandler implements ContentHandler {
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		if (qName.equalsIgnoreCase("action")) {
-			actionWriter.writeFooter();
+			scriptableWriter.writeFooter();
 		} else {
-			actionWriter.endElement(qName);
+			scriptableWriter.endElement(qName);
 		}
 	}
 	

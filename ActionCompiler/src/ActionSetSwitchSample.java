@@ -1,14 +1,14 @@
 import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.types.Switch;
-import edu.elon.honors.price.maker.action.ActionInstance;
-import edu.elon.honors.price.maker.action.ActionFragment;
+import edu.elon.honors.price.maker.action.ScriptableInstance;
+import edu.elon.honors.price.maker.action.ScriptableFragment;
 
 
-public class ActionSetSwitchSample extends ActionInstance {
+public class ActionSetSwitchSample extends ScriptableInstance {
 	public static final String name = "Set Switch";
 	public static final int id = 1;
 	
-	public static class OneSwitchData extends ActionFragment {
+	public static class OneSwitchData extends ScriptableFragment {
 		public Switch switch1;
 		
 		@Override
@@ -21,7 +21,7 @@ public class ActionSetSwitchSample extends ActionInstance {
 	public OneSwitchData setOneSwitchData;
 
 	
-	public static class AllSwitchesFromData extends ActionFragment {
+	public static class AllSwitchesFromData extends ScriptableFragment {
 		
 		public Switch from;
 		public Switch to;
@@ -40,14 +40,14 @@ public class ActionSetSwitchSample extends ActionInstance {
 	public boolean actionSetItTo;
 	public SetItToData actionSetItToData;
 	
-	public static class SetItToData extends ActionFragment {
+	public static class SetItToData extends ScriptableFragment {
 		
 		public boolean setToOn;
 		public boolean setToOff;
 		public boolean setToASwitchsValue;
 		public SetToASwitchsValueData setToASwitchsValueData;
 		
-		public static class SetToASwitchsValueData extends ActionFragment {
+		public static class SetToASwitchsValueData extends ScriptableFragment {
 			
 			public Switch switch1;
 			

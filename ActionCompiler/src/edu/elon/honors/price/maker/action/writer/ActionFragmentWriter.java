@@ -117,7 +117,7 @@ public class ActionFragmentWriter extends Writer {
 	}
 	
 	protected String getSuperclass() {
-		return "ActionFragment";
+		return "ScriptableFragment";
 	}
 	
 	@Override
