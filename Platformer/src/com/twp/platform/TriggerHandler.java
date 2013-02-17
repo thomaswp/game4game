@@ -47,7 +47,6 @@ public class TriggerHandler {
 	private Point point = new Point();
 
 	private int touchPID;
-	private RectF regionRect = new RectF();
 	
 	private TriggeringInfo triggeringInfo = new TriggeringInfo();
 
@@ -96,34 +95,38 @@ public class TriggerHandler {
 		}
 	}
 	
+	protected TriggerSwitchTrigger triggerSwitch = new TriggerSwitchTrigger();
+	protected TriggerVariableTrigger triggerVariable = new TriggerVariableTrigger();
+	protected TriggerActorOrObjectTrigger triggerActorObject = new TriggerActorOrObjectTrigger();
+	protected TriggerRegionTrigger triggerRegion = new TriggerRegionTrigger();
+	protected TriggerUserInputTrigger triggerUI = new TriggerUserInputTrigger();
+	protected PlatformGameState gameState;
+	
 	private void checkEvent(Event event) {
 		for (int j = 0; j < event.triggers.size(); j++) {
 			Trigger generic = event.triggers.get(j);
 
-			PlatformGameState gameState = new PlatformGameState(logic);
+			if (gameState == null) {
+				gameState = new PlatformGameState(logic);
+			}
 			gameState.setTriggeringContext(event, triggeringInfo);
 			
 			try {
 				if (generic.id == Trigger.ID_SWITCH) { 
-					TriggerSwitchTrigger instance = new TriggerSwitchTrigger(); 
-					instance.setParameters(generic.params);
-					checkTrigger(instance, event, gameState);
-				} else if (generic.id == Trigger.ID_VARIABLE) { 
-					TriggerVariableTrigger instance = new TriggerVariableTrigger(); 
-					instance.setParameters(generic.params);
-					checkTrigger(instance, event, gameState);
+					triggerSwitch.setParameters(generic.params);
+					checkTrigger(triggerSwitch, event, gameState);
+				} else if (generic.id == Trigger.ID_VARIABLE) {  
+					triggerVariable.setParameters(generic.params);
+					checkTrigger(triggerVariable, event, gameState);
 				} else if (generic.id == Trigger.ID_ACTOR_OBJECT) {
-					TriggerActorOrObjectTrigger instance = new TriggerActorOrObjectTrigger();
-					instance.setParameters(generic.params);
-					checkTrigger(instance, event, gameState);
-				} else if (generic.id == Trigger.ID_REGION) {
-					TriggerRegionTrigger instance = new TriggerRegionTrigger(); 
-					instance.setParameters(generic.params);
-					checkTrigger(instance, event, gameState, generic);
-				} else if (generic.id == Trigger.ID_UI) {
-					TriggerUserInputTrigger instance = new TriggerUserInputTrigger(); 
-					instance.setParameters(generic.params);
-					checkTrigger(instance, event, gameState);
+					triggerActorObject.setParameters(generic.params);
+					checkTrigger(triggerActorObject, event, gameState);
+				} else if (generic.id == Trigger.ID_REGION) { 
+					triggerRegion.setParameters(generic.params);
+					checkTrigger(triggerRegion, event, gameState, generic);
+				} else if (generic.id == Trigger.ID_UI) { 
+					triggerUI.setParameters(generic.params);
+					checkTrigger(triggerUI, event, gameState);
 				}
 			
 			} catch (Exception e) {
@@ -195,6 +198,8 @@ public class TriggerHandler {
 		//TODO: Add death
 	}
 
+	private boolean[] triggerEvents = new boolean[4];
+	private RegionCallback regionCallback = new RegionCallback();
 	private void checkTrigger(final TriggerRegionTrigger trigger, Event event,
 			PlatformGameState gameState, Trigger eventTrigger) throws ParameterException {
 		
@@ -216,54 +221,15 @@ public class TriggerHandler {
 			contacts.get(k).checked = false;
 		}
 		
-		final boolean[] events = new boolean[] { 
-			trigger.actionBeginsToEnter,
-			trigger.actionFullyEnters,
-			trigger.actionBeginsToLeave,
-			trigger.actionFullyLeaves
-		};
+		final boolean[] events = triggerEvents; 
 		
+		events[0] =	trigger.actionBeginsToEnter;
+		events[1] =	trigger.actionFullyEnters;
+		events[2] =	trigger.actionBeginsToLeave;
+		events[3] =	trigger.actionFullyLeaves;
 		
-		final int BEGIN_ENTER = 0,
-				FULLY_ENTER = 1,
-				BEGIN_LEAVE = 2,
-				FULLY_LEAVE = 3;
-
-		physics.regionCallback(new BodyCallback() {
-			@Override
-			public boolean doCallback(PlatformBody body) {
-				int index = -1;
-				boolean inRegion = inRegion(body, left, top, right, bottom);
-				for (int k = 0; k < contacts.size(); k++) {
-					if (contacts.get(k).object == body) index = k;
-				}
-				if (index < 0) {
-					int state = inRegion ? Contact.STATE_CONTAINED :
-						Contact.STATE_TOUCHING;
-					int event = inRegion ? FULLY_ENTER : BEGIN_ENTER;
-					contacts.add(new Contact(body, state, event));
-				} else {
-					Contact contact = contacts.get(index);
-					if (inRegion) {
-						int newState = Contact.STATE_CONTAINED;
-						if (contact.state != newState) {
-							contact.event = FULLY_ENTER;
-							contact.state = newState;
-						}
-					} else {
-						int newState = Contact.STATE_TOUCHING;
-						if (contact.state != newState) {
-							contact.event = 
-								contact.state == Contact.STATE_CONTAINED ?
-										BEGIN_LEAVE : BEGIN_ENTER;
-							contact.state = newState;
-						}
-					}
-					contact.checked = true;
-				}
-				return true;
-			}
-		}, left, top, right, bottom);
+		regionCallback.set(logic, contacts, left,  top, right, bottom);
+		physics.regionCallback(regionCallback, left, top, right, bottom);
 
 		for (int k = 0; k < contacts.size(); k++) {
 			Contact contact = contacts.get(k);
@@ -271,8 +237,9 @@ public class TriggerHandler {
 			int contactEvent = contact.event;
 
 			if (!contact.checked) {
-				contactEvent = FULLY_LEAVE;
+				contactEvent = RegionCallback.FULLY_LEAVE;
 				contacts.remove(k);
+				contact.dispose();
 				k--;
 			}
 
@@ -282,6 +249,71 @@ public class TriggerHandler {
 					trigger(event, body);
 				}
 			}
+		}
+	}
+	
+	private static class RegionCallback extends BodyCallback {
+
+		private RectF regionRect = new RectF();
+		public final static int BEGIN_ENTER = 0,
+				FULLY_ENTER = 1,
+				BEGIN_LEAVE = 2,
+				FULLY_LEAVE = 3;
+		
+		public PlatformLogic logic;
+		public float left, top, right, bottom;
+		public List<Contact> contacts;
+		
+		public void set(PlatformLogic logic, List<Contact> contacts, 
+				float left, float top, float right, float bottom) {
+			this.logic = logic;
+			this.contacts = contacts;
+			this.left = left;
+			this.top = top;
+			this.right = right;
+			this.bottom = bottom;
+		}
+		
+		@Override
+		public boolean doCallback(PlatformBody body) {
+			int index = -1;
+			boolean inRegion = inRegion(body, left, top, right, bottom);
+			for (int k = 0; k < contacts.size(); k++) {
+				if (contacts.get(k).object == body) index = k;
+			}
+			if (index < 0) {
+				int state = inRegion ? Contact.STATE_CONTAINED :
+					Contact.STATE_TOUCHING;
+				int event = inRegion ? FULLY_ENTER : BEGIN_ENTER;
+				contacts.add(Contact.create(body, state, event));
+			} else {
+				Contact contact = contacts.get(index);
+				if (inRegion) {
+					int newState = Contact.STATE_CONTAINED;
+					if (contact.state != newState) {
+						contact.event = FULLY_ENTER;
+						contact.state = newState;
+					}
+				} else {
+					int newState = Contact.STATE_TOUCHING;
+					if (contact.state != newState) {
+						contact.event = 
+							contact.state == Contact.STATE_CONTAINED ?
+									BEGIN_LEAVE : BEGIN_ENTER;
+						contact.state = newState;
+					}
+				}
+				contact.checked = true;
+			}
+			return true;
+		}
+
+		private boolean inRegion(PlatformBody body, float left, 
+				float top, float right, float bottom) {
+			Vector offset = logic.getOffset();
+			regionRect.set(left, top, right, bottom);
+			regionRect.offset(offset.getX(), offset.getY());
+			return regionRect.contains(body.getSprite().getRect());
 		}
 	}
 
@@ -380,13 +412,5 @@ public class TriggerHandler {
 		this.point.setF(point.x * SCALE, point.y * SCALE);
 		triggeringInfo.triggeringPoint = this.point;
 		trigger(event, body);
-	}
-
-	private boolean inRegion(PlatformBody body, float left, 
-			float top, float right, float bottom) {
-		Vector offset = logic.getOffset();
-		regionRect.set(left, top, right, bottom);
-		regionRect.offset(offset.getX(), offset.getY());
-		return regionRect.contains(body.getSprite().getRect());
 	}
 }

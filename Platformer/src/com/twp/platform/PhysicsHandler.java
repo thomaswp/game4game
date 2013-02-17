@@ -31,6 +31,7 @@ import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.MapClass.CollidesWith;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
@@ -184,6 +185,8 @@ public class PhysicsHandler {
 
 			@Override
 			public boolean shouldCollide(Fixture fixtureA, Fixture fixtureB) {
+				//Debug.write("Should Collide");
+				
 				if (!bodyMap.containsKey(fixtureA) && !bodyMap.containsKey(fixtureB))
 					return false;
 
@@ -193,8 +196,11 @@ public class PhysicsHandler {
 				if (isBoundaryFixture(fixtureA) || isBoundaryFixture(fixtureB)) {
 					return true;
 				}
+				
 
-				return PlatformBody.collides(bodyA, bodyB);
+				boolean collides = PlatformBody.collides(bodyA, bodyB);
+				Debug.write("%s collides %s: %s", bodyA, bodyB, collides);
+				return collides;
 			}
 		};
 		world.setContactFilter(filter);
@@ -404,7 +410,10 @@ public class PhysicsHandler {
 						tileBody.createFixture(tileShape, 1);
 						tileShape.dispose();
 						for (int l = 0; l < tileBody.getFixtureList().size(); l++) {
-							levelMap.put(tileBody.getFixtureList().get(l), s);
+							Fixture fixture = tileBody.getFixtureList().get(l);
+							fixture.getFilterData().categoryBits = 
+									PlatformBody.getCategoryBits(CollidesWith.Terrain);
+							levelMap.put(fixture, s);
 						}
 					}
 				}

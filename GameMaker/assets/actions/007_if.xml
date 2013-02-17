@@ -28,8 +28,15 @@
 			</radio>
 			<number />
 		</choice>
-		<choice text="the actor" mute="true">
-			<actorInstance />
+		<choice text="the Actor/Object" mute="true">
+		    <radio name="body">
+				<choice text="the actor" mute="true">
+		            <actorInstance />
+		        </choice>
+		        <choice text="the object" mute="true">
+		            <objectInstance />
+		        </choice>
+	        </radio>
 			<radio name="check">
 				<choice text="property" mute="true">
 					<radio name="property" >
@@ -44,6 +51,22 @@
 						<choice text="is outside" />
 					</radio>
 					<region />
+				</choice>
+				<choice text="position" mute="true">
+				    <radio name="direction">
+				        <choice text="is above" />
+				        <choice text="is below" />
+				        <choice text="is left of" />
+				        <choice text="is right of" />
+				    </radio>
+				    <radio name="of">
+				        <choice text="the actor" mute="true">
+				            <actorInstance />
+				        </choice>
+				        <choice text="the object" mute="true">
+				            <objectInstance />
+				        </choice>
+				    </radio>
 				</choice>
 			</radio>
 		</choice>

@@ -4,10 +4,13 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.twp.platform.ActorBody;
+import com.twp.platform.PlatformBody;
 
-import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheActorData;
+import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheActorObjectData;
 import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheSwitchData;
 import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheVariableData;
+import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheActorObjectData.CheckPositionData;
 import edu.elon.honors.price.physics.Vector;
 
 public class InterpreterIf extends ActionInterpreter<ActionIf> {
@@ -24,8 +27,8 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 			result = checkIfTheSwitch(action.checkIfTheSwitchData, gameState);
 		} else if (action.checkIfTheVariable) {
 			result = checkIfTheVariable(action.checkIfTheVariableData, gameState);
-		} else if (action.checkIfTheActor) {
-			result = checkIfTheActor(action.checkIfTheActorData, gameState);
+		} else if (action.checkIfTheActorObject) {
+			result = checkIfTheActor(action.checkIfTheActorObjectData, gameState);
 		} else {
 			throw new UnsupportedException();
 		}
@@ -69,12 +72,16 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 		}
 	}
 	
-	private boolean checkIfTheActor(CheckIfTheActorData data,
+	private boolean checkIfTheActor(CheckIfTheActorObjectData data,
 			PlatformGameState gameState) throws ParameterException {
 		
-		ActorBody body = null;
+		PlatformBody body = null;
 		try {
-			body = data.readActorInstance(gameState);
+			if (data.bodyTheActor) {
+				body = data.bodyTheActorData.readActorInstance(gameState);
+			} else if (data.bodyTheObject) {
+				body = data.bodyTheObjectData.readObjectInstance(gameState);
+			}
 		} catch (ParameterException e) { }
 		
 		if (data.checkRegion) {
@@ -102,6 +109,35 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 				return data.checkPropertyData.propertyIsDead;
 			}
 			return data.checkPropertyData.propertyIsAlive;
+		} else if (data.checkPosition) {
+			CheckPositionData cpData = data.checkPositionData;
+			if (body == null) return false;
+			PlatformBody body2 = null;
+			if (cpData.ofTheActor) {
+				body2 = cpData.ofTheActorData.readActorInstance(gameState);
+			} else if (cpData.ofTheObject) {
+				body2 = cpData.ofTheObjectData.readObjectInstance(gameState);
+			}
+			if (body2 == null) return false;
+
+			final float THRESH = 3;
+			
+			//TODO: Figure out better system w/ bodies b/c transparency might screw it up
+			RectF rectA = body.getSprite().getRect();
+			RectF rectB = body2.getSprite().getRect();
+			
+			if (cpData.directionIsAbove) {
+				Debug.write("%f <= %f", rectA.bottom, rectB.top);
+				return rectA.bottom - rectB.top <= THRESH;
+			} else if (cpData.directionIsBelow) {
+				return rectA.top - rectB.bottom >= -THRESH;
+			} else if (cpData.directionIsLeftOf) {
+				return rectA.right - rectB.left <= THRESH;
+			} else if (cpData.directionIsRightOf) {
+				return rectA.left - rectB.right >= -THRESH;
+			} else {
+				throw new UnsupportedException();
+			}
 		} else {
 			throw new UnsupportedException();
 		}

@@ -23,7 +23,9 @@ public class ElementGroup extends Element {
 	@Override
 	protected void readParameters(Iterator params) {
 		Parameters childPs = params.getParameters();
-		super.readParameters(childPs.iterator());
+		Iterator iterator = childPs.iterator(true);
+		super.readParameters(iterator);
+		iterator.dispose();
 	}
 
 	@Override

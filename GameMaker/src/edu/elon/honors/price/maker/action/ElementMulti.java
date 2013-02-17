@@ -69,12 +69,13 @@ public abstract class ElementMulti extends Element {
 	@Override
 	protected void readParameters(Iterator params) {
 		Parameters ps = params.getParameters();
-		Iterator iterator = ps.iterator();
+		Iterator iterator = ps.iterator(true);
 		int mode = iterator.getInt();
 		if (options[mode].visible) {
 			((RadioButton)radioGroup.getChildAt(mode)).setChecked(true);
 			options[mode].readParams(iterator);
 		}
+		iterator.dispose();
 	}
 
 	@Override

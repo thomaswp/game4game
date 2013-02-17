@@ -1,6 +1,7 @@
 package com.twp.platform;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.graphics.RectF;
 
@@ -217,7 +218,11 @@ public abstract class PlatformBody implements IBehaving {
 		if (body == null) {
 			with = CollidesWith.Terrain;
 		} else if (body instanceof ObjectBody) {
-			with = CollidesWith.Objects;
+			if (((ObjectBody) body).isPlatform()) {
+				with = CollidesWith.Terrain;
+			} else {
+				with = CollidesWith.Objects;
+			}
 		} else if (body instanceof ActorBody) {
 			if (((ActorBody) body).isHero()) {
 				with = CollidesWith.Hero;
@@ -227,7 +232,25 @@ public abstract class PlatformBody implements IBehaving {
 		} else {
 			return true;
 		}
+		//Debug.write("%s with %s = %s %s", this, with, getMapClass().collidesWith(with), Arrays.toString(getMapClass().collidesWith));
 		return getMapClass().collidesWith(with);
+	}
+	
+	protected short getMaskBits() {
+		short bits = 0;
+		boolean[] collidesWith = getMapClass().collidesWith;
+		for (int i = 0; i < collidesWith.length; i++) {
+			if (collidesWith[i]) bits += (1 << i);
+		}
+		return bits;
+	}
+	
+	public static short getCategoryBits(CollidesWith... collidesWith) {
+		short bits = 0;
+		for (int i = 0; i < collidesWith.length; i++) {
+			bits += (1 << collidesWith[i].ordinal());
+		}
+		return bits;
 	}
 	
 	public void doWallContact(Fixture fixture) {
