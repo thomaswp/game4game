@@ -140,7 +140,9 @@ public class ActionSetVariable extends ScriptableInstance {			// ActionFragmentW
 																	// ActionFragmentWriter.writeReadParams()
 		@Override													// ActionFragmentWriter.writeReadParams()
 		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			group.readParams(iterator.getParameters().iterator());	// ActionFragmentWriter.writeReadParams()
+			Iterator it2 = iterator.getParameters().iterator(true);	// ActionFragmentWriter.writeReadParams()
+			group.readParams(it2);									// ActionFragmentWriter.writeReadParams()
+			it2.dispose();											// ActionFragmentWriter.writeReadParams()
 		}															// ActionFragmentWriter.writeReadParams()
 		/**
 		 * <ul>

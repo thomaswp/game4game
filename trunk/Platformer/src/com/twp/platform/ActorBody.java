@@ -19,6 +19,7 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.ActorAnimator.Action;
+import edu.elon.honors.price.data.MapClass.CollidesWith;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
@@ -171,6 +172,12 @@ public class ActorBody extends PlatformBody {
 			actorFix.friction = 0;
 			actorFix.restitution = 0;
 			actorFix.density = 1;
+			if (isHero) {
+				actorFix.filter.categoryBits = getCategoryBits(CollidesWith.Hero);
+			} else {
+				actorFix.filter.categoryBits = getCategoryBits(CollidesWith.Actors);
+			}
+			actorFix.filter.maskBits = getMaskBits();
 			body.createFixture(actorFix);
 			
 			actorShape.dispose();
@@ -358,6 +365,8 @@ public class ActorBody extends PlatformBody {
 		airJumped = false;
 	}
 	
+	private FixtureCallback fixtureCallback = new FixtureCallback(physics);
+	
 	public void checkBehavior() {
 		for (int j = 0; j < collidedBodies.size(); j++) {
 			if (collidedBodies.get(j) instanceof ActorBody)
@@ -377,9 +386,10 @@ public class ActorBody extends PlatformBody {
 		if (getDirectionX() != 0) {
 			float y = getPosition().y + (sprite.getHeight() / 2 + 5) / SCALE;
 			float x = getPosition().x + (sprite.getWidth() / 2 + 5) * getDirectionX() / SCALE;
-			FixtureCallback callback = new FixtureCallback(physics);
-			world.QueryAABB(callback, x, y, x + 3 / SCALE, y + 3 / SCALE);
-			if (!callback.contact && isGrounded()) {
+			fixtureCallback.reset();
+			world.QueryAABB(fixtureCallback, x, y, x + 3 / SCALE, y + 3 / SCALE);
+			boolean contact = fixtureCallback.contact;
+			if (!contact && isGrounded()) {
 				doBehaviorEdge();
 			}
 		}
@@ -392,12 +402,23 @@ public class ActorBody extends PlatformBody {
 		private FixtureCallback(PhysicsHandler physics) {
 			this.physics = physics;
 		}
+		
+		public void reset() {
+			contact = false;
+		}
 
 		@Override
 		public boolean reportFixture(Fixture fixture) {
 			if (physics.getFixtureTile(fixture) != null) {
 				contact = true;
 				return false;
+			}
+			PlatformBody body = physics.getFixtureBody(fixture); 
+			if (body != null && body instanceof ObjectBody) {
+				if (((ObjectBody)body).isPlatform()) {
+					contact = true;
+					return false;
+				}
 			}
 			return true;
 		}

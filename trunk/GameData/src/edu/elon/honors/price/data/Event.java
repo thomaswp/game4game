@@ -3,11 +3,13 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
+import edu.elon.honors.price.game.Debug;
 import android.graphics.Rect;
 
 /**
@@ -99,7 +101,7 @@ public class Event extends GameData {
 	 * Represents a set of parameters for an action.
 	 *
 	 */
-	public static class Parameters implements Serializable, Iterable<Object> {
+	public static class Parameters implements Serializable {//, Iterable<Object> {
 		private static final long serialVersionUID = 1L;
 
 		private ArrayList<Object> params = new ArrayList<Object>();
@@ -297,14 +299,48 @@ public class Event extends GameData {
 			return o;
 		}
 		
-		@Override
-		public Iterator iterator() {
-			return new Iterator();
+		private transient ArrayList<Iterator> toReuse;
+		private final static int MAX_REUSE = 10;
+		
+		/**
+		 * Returns an iterator for these parameters. To call in an allocation-
+		 * minimised environment, indicate your intention to dispose after use.
+		 * 
+		 * Note that the iterator assumes the Paramteters will remain unchanged
+		 * for the duration of the iteration.
+		 */
+		public Iterator iterator(boolean IWillDisposeThis) {
+			if (toReuse == null) {
+				toReuse = new ArrayList<Event.Parameters.Iterator>();
+			}
+			if (!IWillDisposeThis || toReuse.size() == 0) {
+				return new Iterator();
+			} else {
+				Iterator iterator = toReuse.remove(toReuse.size() - 1);
+				iterator.reset();
+				return iterator;
+			}
 		}
 		
 		public class Iterator implements java.util.Iterator<Object>{
 			private int index = 0;
-			private Parameters params = copy();
+			private Parameters params = Parameters.this; //= copy();
+			
+			public void reset() {
+				index = 0;
+			}
+			
+			public void dispose() {
+				if (toReuse.contains(this)) {
+					//If dispose it called twice
+					Debug.write("Double disposed iterator!!");
+				} else if (toReuse.size() >= MAX_REUSE) {
+					//Likely if dispose is not called
+					Debug.write("Max iterator reuse occurred");
+				} else {
+					toReuse.add(this);
+				}
+			}
 
 			public int getSize() {
 				return params.getSize();
@@ -322,7 +358,8 @@ public class Event extends GameData {
 
 			@Override
 			public boolean hasNext() {
-				return index < getSize();
+				boolean hasNext = index < getSize();
+				return hasNext;
 			}
 
 			@Override
@@ -368,11 +405,31 @@ public class Event extends GameData {
 			public Object object;
 			public int event;
 			public boolean checked = true;
+			
+			private static ArrayList<Contact> toReuse = 
+					new ArrayList<Event.Trigger.Contact>();
 
-			public Contact(Object object, int state, int event) {
+			private Contact() {	}
+			
+			public void set(Object object, int state, int event) {
 				this.object = object;
 				this.state = state;
 				this.event = event;
+			}
+			
+			public static Contact create(Object object, int state, int event) {
+				Contact contact;
+				if (toReuse.size() == 0) {
+					contact = new Contact();
+				} else {
+					contact = toReuse.remove(toReuse.size() - 1);
+				}
+				contact.set(object, state, event);
+				return contact;
+			}
+			
+			public void dispose() {
+				toReuse.add(this);
 			}
 		}
 	}

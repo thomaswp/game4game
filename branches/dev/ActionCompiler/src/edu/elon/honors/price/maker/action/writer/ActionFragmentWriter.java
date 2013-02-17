@@ -176,7 +176,9 @@ public class ActionFragmentWriter extends Writer {
 			childWriter.writeHeader();
 			
 			toInstantiate.add(varName);
-			writeDeferred("%s.readParams(iterator.getParameters().iterator());", varName);
+			writeDeferred("Iterator it2 = iterator.getParameters().iterator(true);");
+			writeDeferred("%s.readParams(it2);", varName);
+			writeDeferred("it2.dispose();");
 			
 			javadoc.add(String.format("<li><b>&lt;group&gt;</b> %s:</li>", varName));
 			

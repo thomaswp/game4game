@@ -72,7 +72,9 @@ public abstract class Element {
 	}
 	
 	public void setParameters(Parameters params) {
-		readParameters(params.iterator());
+		Iterator iterator = params.iterator(true);
+		readParameters(iterator);
+		iterator.dispose();
 	}
 	
 	protected void addParameters(Parameters params) {

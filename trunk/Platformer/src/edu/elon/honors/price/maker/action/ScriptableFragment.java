@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker.action;
 
 import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 
 public abstract class ScriptableFragment {
 
@@ -14,7 +15,9 @@ public abstract class ScriptableFragment {
 	
 	public void setParameters(Parameters params) {
 		this.params = params;
-		readParams(params.iterator());
+		Iterator iterator = params.iterator(true);
+		readParams(iterator);
+		iterator.dispose();
 	}
 	
 	public ScriptableFragment() {

@@ -187,11 +187,12 @@ public class Tilemap {
 	private void updateScroll(boolean updateVisible) {
 		for (int i = 0; i < sprites.length; i++) {
 			for (int j = 0; j < sprites[i].length; j++) {
-				if (sprites[i][j] != null) {
-					sprites[i][j].setOriginX(scrollX);
-					sprites[i][j].setOriginY(scrollY);
+				Sprite sprite = sprites[i][j];
+				if (sprite != null) {
+					sprite.setOriginX(scrollX);
+					sprite.setOriginY(scrollY);
 					if (updateVisible)
-						sprites[i][j].setVisible(viewport.isSpriteInBounds(sprites[i][j]));
+						sprite.setVisible(viewport.isSpriteInBounds(sprite));
 				}
 			}
 		}

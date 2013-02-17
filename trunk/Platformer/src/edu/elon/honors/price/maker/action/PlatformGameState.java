@@ -319,9 +319,28 @@ public class PlatformGameState implements GameState {
 		}
 	}
 
+	//Implement without Object... to avoid unnecessary array allocation
 	private static void assertThat(boolean condition, String message, 
-			Object... args) throws ParameterException {
-		assertThat(condition, String.format(message, args));
+			Object arg0) throws ParameterException {
+		if (!condition) {
+			throw new ParameterException(String.format(message, arg0));
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private static void assertThat(boolean condition, String message, 
+			Object arg0, Object arg1) throws ParameterException {
+		if (!condition) {
+			throw new ParameterException(String.format(message, arg0, arg1));
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private static void assertThat(boolean condition, String message, 
+			Object arg0, Object arg1, Object arg2) throws ParameterException {
+		if (!condition) {
+			throw new ParameterException(String.format(message, arg0, arg1, arg2));
+		}
 	}
 
 	private static boolean inArray(int index, int length) {

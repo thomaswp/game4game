@@ -15,6 +15,7 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.ObjectClass;
+import edu.elon.honors.price.data.MapClass.CollidesWith;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Viewport;
 import edu.elon.honors.price.physics.Vector;
@@ -25,6 +26,10 @@ public class ObjectBody extends PlatformBody {
 
 	private ObjectClass object;
 
+	public boolean isPlatform() {
+		return object.isPlatform;
+	}
+	
 	@Override
 	public MapClass getMapClass() {
 		return object;
@@ -101,6 +106,12 @@ public class ObjectBody extends PlatformBody {
 		PolygonShape poly = new PolygonShape();
 		poly.set(points);
 		FixtureDef fixture = new FixtureDef();
+		if (isPlatform()) {
+			fixture.filter.categoryBits = getCategoryBits(CollidesWith.Terrain);
+		} else {
+			fixture.filter.categoryBits = getCategoryBits(CollidesWith.Objects);
+		}
+		fixture.filter.maskBits = getMaskBits();
 		fixture.shape = poly;
 		fixture.density = getDensity(object.density);
 		fixture.friction = 1;
