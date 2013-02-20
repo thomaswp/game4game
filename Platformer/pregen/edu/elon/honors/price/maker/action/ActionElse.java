@@ -1,0 +1,28 @@
+package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
+import com.twp.platform.*;											// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
+import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
+public class ActionElse extends ScriptableInstance {				// ActionFragmentWriter.writeHeader()
+	public static final String NAME = "Else";						// ScriptableWriter.writeHeader()
+	public static final int ID = 22;								// ScriptableWriter.writeHeader()
+	public static final String CATEGORY = "Hidden";					// ScriptableWriter.writeHeader()
+																	// ScriptableWriter.writeHeader()
+																	// ActionFragmentWriter.writeReadParams()
+	@Override														// ActionFragmentWriter.writeReadParams()
+	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
+	}																// ActionFragmentWriter.writeReadParams()
+	/**
+	 * 022 <b><i>Else</i></b> (Hidden)<br />
+	 * <ul>
+	 * </ul>
+	 */																// ActionFragmentWriter.writeJavadoc()
+	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
+}																	// ActionFragmentWriter.writeFooter()

@@ -34,6 +34,10 @@ public class TextUtils {
 		return getColoredText(text, getColorString(color));
 	}
 	
+	public static String getItalicizedText(String text) {
+		return "<i>" + text + "</i>";
+	}
+	
 	public static String getColoredText(String text, String color) {
 		StringBuilder sb = new StringBuilder();
 		addColoredText(sb, text, color);

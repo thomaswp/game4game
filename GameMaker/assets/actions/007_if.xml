@@ -1,4 +1,4 @@
-<action id="7" name="If..." category="Control">
+<action id="7" name="If..." category="Control" parent="true">
 
 	<text text="If" />
 	<radio name="checkIf">

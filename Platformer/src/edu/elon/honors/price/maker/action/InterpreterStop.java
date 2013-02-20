@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker.action;
 
+import edu.elon.honors.price.data.Event.Action;
+
 public class InterpreterStop extends ActionInterpreter<ActionStop> {
 
 	@Override
@@ -9,7 +11,7 @@ public class InterpreterStop extends ActionInterpreter<ActionStop> {
 	}
 
 	@Override
-	protected void updateControl(ActionControl control) {
+	protected void updateControl(ActionControl control, Action action) {
 		control.actionIndex = control.getActions().size();
 	}
 
