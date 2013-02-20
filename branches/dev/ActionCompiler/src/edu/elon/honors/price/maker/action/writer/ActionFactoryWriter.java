@@ -77,6 +77,18 @@ public class ActionFactoryWriter extends Writer {
 		tab--;
 		writeLn("}");
 		
+		writeLn("public static boolean isParent(int id) {");
+		tab++;
+		for (ScriptableWriter action : actions) {
+			if (action.parent) {
+				writeLn("if (id == %s.ID) return true;", 
+						action.name, action.name);
+			}
+		}
+		writeLn("return false;");
+		tab--;
+		writeLn("}");
+		
 		writeLn("public static java.util.LinkedList<Class<?>> getInterpreters() {");
 		tab++;
 		writeLn("java.util.LinkedList<Class<?>> classes = " +

@@ -59,13 +59,14 @@ public class Event extends GameData {
 	 * explaining how to set the parameters for a given id.
 	 *
 	 */
-	public static class Action extends ActionIds implements Serializable {
+	public static class Action implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		public Parameters params;
 		public int id;
 		public int indent;
 		public String description;
+		public Action dependsOn;
 
 		/**
 		 * Creates a new Action with the given id and parameters. See the
@@ -77,11 +78,6 @@ public class Event extends GameData {
 		public Action(int id, Parameters params) {
 			this.id = id;
 			this.params = params;
-		}
-		
-		public boolean canHaveChildren() {
-			return id == ID_IF ||
-				id == ID_LOOP;
 		}
 		
 		public Action copy() {

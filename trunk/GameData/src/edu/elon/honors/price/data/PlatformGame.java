@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.eujeux.data.GameInfo;
 
@@ -66,6 +67,25 @@ public class PlatformGame extends GameData {
 		case Object: return objectBehaviors;
 		}
 		return null;
+	}
+	
+	public List<Event> getAllEvents() {
+		ArrayList<Event> events = new ArrayList<Event>();
+		for (Map map : maps) {
+			for (Event event : map.events) {
+				events.add(event);
+			}
+		}
+		for (Behavior behavior : actorBehaviors) {
+			events.addAll(behavior.events);
+		}
+		for (Behavior behavior : objectBehaviors) {
+			events.addAll(behavior.events);
+		}
+		for (Behavior behavior : mapBehaviors) {
+			events.addAll(behavior.events);
+		}
+		return events;
 	}
 	
 	public PlatformGame(String id, String name) {

@@ -6,6 +6,7 @@ import android.graphics.RectF;
 import com.twp.platform.ActorBody;
 import com.twp.platform.PlatformBody;
 
+import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheActorObjectData;
 import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheSwitchData;
@@ -144,9 +145,10 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 	}
 
 	@Override
-	protected void updateControl(ActionControl control) {
-		int indent = control.getNextAction().indent;
-		super.updateControl(control);
+	protected void updateControl(ActionControl control, Action action) {
+		super.updateControl(control, action);
+		int indent = action.indent;
+		control.setExecutionData(action, result);
 		if (!result) {
 			while (control.hasNextAction() && 
 					control.getNextAction().indent > indent) {

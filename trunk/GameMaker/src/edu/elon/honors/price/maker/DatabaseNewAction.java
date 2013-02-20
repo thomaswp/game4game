@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import edu.elon.honors.price.data.ActionIds;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.maker.action.ActionFactory;
 
@@ -120,7 +119,7 @@ public class DatabaseNewAction extends DatabaseActivity {
 		return layout;
 	}
 
-	public static class Category extends ActionIds implements Comparable<Category> {
+	public static class Category implements Comparable<Category> {
 		public final String name;
 		public List<Integer> actions;
 
@@ -148,56 +147,16 @@ public class DatabaseNewAction extends DatabaseActivity {
 						break;
 					}
 				}
-				if (category == null) {
+				if (category == null && !name.equalsIgnoreCase("hidden")) {
 					 category = new Category(name);
 					 categories.add(category);
 				}
-				category.actions.add(i);
+				if (category != null) {
+					category.actions.add(i);
+				}
 			}
 			
 			Collections.sort(categories);
-			
-//			categories.add(new Category("Switch/Variable", new int[] {
-//					ID_SET_SWITCH,
-//					ID_SET_VARIABLE,
-//					ID_POINT_OPERATION
-//			}));
-//
-//			categories.add(new Category("Actor", new int[] {
-//					ID_CREATE_ACTOR,
-//					ID_MOVE_ACTOR,
-//					ID_ACTOR_BEHAVIOR
-//			}));
-//
-//			//			categories.add(new Category("Hero Actions", new int[] {
-//			//					ID_HERO_SET_LADDER
-//			//			}));
-//
-//			categories.add(new Category("Object", new int[] {
-//					ID_CREATE_OBJECT,
-//					ID_MOVE_OBJECT,
-//					ID_DESTROY_OBJECT
-//			}));
-//
-//			categories.add(new Category("Control", new int[] {
-//					ID_IF,
-//					ID_LOOP
-//			}));
-//
-//			categories.add(new Category("Physics", new int[] {
-//					ID_SET_VELOCITY	,
-//					ID_CHANGE_GRAVITY
-//			}));
-//
-//			categories.add(new Category("UI", new int[] {
-//					ID_UI_ACTION,
-//					ID_DRAW_TO_SCREEN
-//			}));
-//			
-//			categories.add(new Category("Debug", new int[] {
-//					ID_DEBUG_BOX,
-//					ID_DEBUG_MESSAGE
-//			}));
 
 			ArrayList<Integer> all = new ArrayList<Integer>();
 			for (Category cat : categories) {

@@ -5,40 +5,42 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import edu.elon.honors.price.data.Event.Action;
+import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
 
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 9;
+	public final static int LATEST_VERSION = 10;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
 		int version = game._VERSION_;
 
+		if (version < 10) {
+			for (Event event : game.getAllEvents()) {
+				for (int i = 0; i < event.actions.size(); i++) {
+					Action action = event.actions.get(i); 
+					if (action.id == 7) { //If
+						Action actionElse = new Action(22, new Parameters()); //Else
+						actionElse.description = "<i><font color='#8800FF'>Else</font></i>";
+						actionElse.dependsOn = action;
+						actionElse.indent = action.indent;
+						int j = i + 1;
+						while (j < event.actions.size() && 
+								event.actions.get(j).indent > action.indent) j++;
+						event.actions.add(j, actionElse);
+					}
+				}
+			}
+			upgraded(game);
+		}
 		if (version < 9) {
-			for (Map map : game.maps) {
-				for (Event event : map.events) {
-					event.triggers.clear();
-				}
+			for (Event event : game.getAllEvents()) {
+				event.triggers.clear();
 			}
-			for (Behavior behavior : game.actorBehaviors) {
-				for (Event event : behavior.events) {
-					event.triggers.clear();
-				}
-			}
-			for (Behavior behavior : game.objectBehaviors) {
-				for (Event event : behavior.events) {
-					event.triggers.clear();
-				}
-			}
-			for (Behavior behavior : game.mapBehaviors) {
-				for (Event event : behavior.events) {
-					event.triggers.clear();
-				}
-			}
-			
 			upgraded(game);
 		}
 		if (version < 8) {

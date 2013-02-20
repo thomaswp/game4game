@@ -39,7 +39,7 @@ public abstract class ActionInterpreter<T extends ScriptableInstance> {
 	protected abstract void interperate(T action, PlatformGameState gameState) 
 			throws ParameterException;
 
-	protected void updateControl(ActionControl control) {
+	protected void updateControl(ActionControl control, Action action) {
 		control.actionIndex++;
 	}
 	
@@ -84,7 +84,7 @@ public abstract class ActionInterpreter<T extends ScriptableInstance> {
 
 
 		invoke(instance.getClass(), interp, instance, gameState);
-		interp.updateControl(control);
+		interp.updateControl(control, action);
 		
 		return waitChecker;
 	}

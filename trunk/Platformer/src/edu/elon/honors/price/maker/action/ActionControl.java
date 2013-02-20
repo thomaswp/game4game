@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker.action;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.twp.platform.TriggeringInfo;
@@ -13,6 +15,7 @@ public class ActionControl {
 	private Event event;
 	private WaitChecker waitChecker;
 	private TriggeringInfo triggeringInfo;
+	private ArrayList<Object> executionData = new ArrayList<Object>();
 	
 	public List<Action> getActions() {
 		return event.actions;
@@ -23,6 +26,22 @@ public class ActionControl {
 		this.event = event;
 	}
 
+	/**
+	 * Will not be cleared between actions!
+	 * Only read if it has been set FOR SURE.
+	 */
+	public Object getExecutionData(Action action) {
+		int index = event.actions.indexOf(action);
+		while (executionData.size() <= index) executionData.add(null);
+		return executionData.get(index);
+	}
+	
+	public void setExecutionData(Action action, Object data) {
+		int index = event.actions.indexOf(action);
+		while (executionData.size() <= index) executionData.add(null);
+		executionData.set(index, data);
+	}
+	
 	public void setTriggeringInfo(TriggeringInfo info) {
 		this.triggeringInfo = info;
 	}
