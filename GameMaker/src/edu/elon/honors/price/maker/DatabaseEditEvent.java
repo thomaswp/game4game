@@ -349,7 +349,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 				for (ActionView av : actionViews) {
 					if (av.getAction() == view.getAction().dependsOn) {
 						view.setHighlight(av.getHighlight());
-						if (av.getHighlight()) {
+						if (!av.getHighlight()) {
+							stopHighlight = true;
 						}
 						break;
 					}
@@ -776,22 +777,33 @@ public class DatabaseEditEvent extends DatabaseActivity {
 
 		private void cut() {
 			copy();
-			delete();
+			delete(false);
 		}
-
-		private void copy() {
+		
+		private List<Action> copyActionAndChildren() {
 			LinkedList<Action> actions = new LinkedList<Event.Action>();
+			
+			actions.add(getAction());
+			
 			int indent = getAction().indent;
-			for (int i = index; i < getEvent().actions.size(); i++) {
+			for (int i = index + 1; i < getEvent().actions.size(); i++) {
 				Action action = getEvent().actions.get(i);
-				if (i > index && action.indent <= indent) {
+				if (action.id != ActionElse.ID && 
+						action.indent <= indent) {
 					break;
 				}
 				Action copy = action.copy();
 				copy.indent -= indent;
 				actions.add(copy);
 			}
-			game.copyData = actions;
+			
+			Debug.write(actions);
+			
+			return actions;
+		}
+
+		private void copy() {
+			game.copyData = copyActionAndChildren();
 		}
 
 		private void paste(boolean below, boolean insert) {
@@ -807,7 +819,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 					offset++;
 					if (!insert) {
 						while (offset < getEvent().actions.size() &&
-								getEvent().actions.get(offset).indent > indent) {	
+								(getEvent().actions.get(offset).indent > indent ||
+										getEvent().actions.get(offset).id == ActionElse.ID)) {	
 							offset++;
 						}
 					}
@@ -860,52 +873,32 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			startActivityForResult(intent, REQUEST_RETURN_GAME);
 		}
 
-		private void delete() {
-			int toRemove = 1;
-			final ArrayList<Action> actions = getEvent().actions;
-			for (int i = index + 1; i < actions.size(); i++) {
-				if (actions.get(i).indent > actions.get(index).indent) {
-					toRemove++;
-				} else {
-					break;
-				}
-			}
+		private void delete(boolean warn) {
+			int toRemove = copyActionAndChildren().size();
 			final int toRemoveF = toRemove;
-			if (toRemove == 1) {
-				removeAction(index);
-				populateViews();
-			} else {
+			if (toRemove == 1 || !warn) {
+				delete(toRemove);
+			} else if (warn) {
 				new AlertDialog.Builder(getContext())
 				.setTitle("Delete?")
 				.setMessage("This will delete all the actions inside this statement. Are you sure you want to delete?")
 				.setPositiveButton("Delete", new AlertDialog.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						for (int i = 0; i < toRemoveF; i++) {
-							removeAction(index);
-						}
-						populateViews();
+						delete(toRemoveF);
 					}
 				})
 				.setNegativeButton("Cancel", null)
 				.show();
 			}
 		}
-
-		//		private TextView createTextView() {
-		//			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-		//			lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
-		//					10, getResources().getDisplayMetrics());
-		//			TextView tv = new TextView(getContext());
-		//			//tv.setWidth(200);
-		//			tv.setSingleLine(false);
-		//			tv.setTextSize(16);
-		//			tv.setLayoutParams(lp);
-		//			tv.requestLayout();
-		//
-		//			tv.setText(Html.fromHtml(getAction().description));
-		//			return tv;
-		//		}
+		
+		private void delete(int number) {
+			for (int i = 0; i < number; i++) {
+				removeAction(index);
+			}
+			populateViews();
+		}
 
 		private Button createTextViewButton() {
 			LayoutParams lp = new LinearLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -919,47 +912,57 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			button.requestLayout();
 			button.setGravity(Gravity.LEFT);
 
-			if (getAction().id != ActionElse.ID) {
-				button.setOnLongClickListener(new OnLongClickListener() {
-					@Override
-					public boolean onLongClick(View v) {
-						String[] baseItems = new String[] {
-								"Edit", "Insert", "Delete",
-								"Copy", "Cut" 
-						};
-						LinkedList<String> items = new LinkedList<String>( 
-								Arrays.asList(baseItems));
-						if (game.copyData != null && game.copyData instanceof List<?>) {
-							items.add("Paste (Below)");
+			button.setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					String[] baseItems = new String[] {
+							"Edit", "Insert Above", "Delete",
+							"Copy", "Cut" 
+					};
+					boolean isElse = getAction().id == ActionElse.ID;
+					final int indexOffset = isElse ? 6 : 0;
+					LinkedList<String> items = new LinkedList<String>();
+					if (!isElse) {
+							items.addAll(Arrays.asList(baseItems));
+					}
+					if (game.copyData != null && game.copyData instanceof List<?>) {
+						if (!isElse) {
 							items.add("Paste (Above)");
-							if (ActionFactory.isParent(getAction().id)){
-								items.add("Paste (Nested)");
-							}
 						}
+						items.add("Paste (Below)");
+						if (ActionFactory.isParent(getAction().id)){
+							items.add("Paste (Nested)");
+						}
+					}
+					if (items.size() > 0) {
 						String[] itemsArray = new String[items.size()]; 
 						new AlertDialog.Builder(getContext()).setItems(
 								items.toArray(itemsArray),
 								new AlertDialog.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
-										switch (which) {
+										int offsetWhich = which + indexOffset;
+										switch (offsetWhich) {
 										case 0: edit();	break;
 										case 1: insert(); break;
-										case 2: delete(); break;
+										case 2: delete(true); break;
 										case 3: copy(); break;
 										case 4: cut(); break;
-										case 5: paste(true, false); break;
-										case 6: paste(false, false); break;
-										case 7: paste(true, true); break;
+										case 5: paste(false, false); break; //Above
+										case 6: paste(true, false); break; //Below
+										case 7: paste(true, true); break; //Nested
 										}
 									}
 								}
 								).show();
-						return true;
 					}
+					return true;
+				}
 
-				});
+			});
 
+
+			if (getAction().id != ActionElse.ID) {
 				button.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {

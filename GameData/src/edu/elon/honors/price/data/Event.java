@@ -87,10 +87,10 @@ public class Event extends GameData {
 			return a;
 		}
 		
-//		@Override
-//		public String toString() {
-//			return String.format("[%d] %s", indent, ActionFactory.ACTION_NAMES[id]);
-//		}
+		@Override
+		public String toString() {
+			return "Action #" + id + ":  " + params.toString();  
+		}
 	}
 	
 	/**
