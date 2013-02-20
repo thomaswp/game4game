@@ -23,6 +23,7 @@ public class ScriptableWriter extends ActionFragmentWriter {
 	protected String readableName;
 	protected int id;
 	protected String category;
+	protected boolean parent;
 	
 	@Override
 	protected String getSuperclass() {
@@ -36,6 +37,8 @@ public class ScriptableWriter extends ActionFragmentWriter {
 		fileName = camel(name, true);
 		readableName = atts.getValue("name");
 		id = Integer.parseInt(atts.getValue("id"));
+		String parentS = atts.getValue("parent");
+		if (parentS != null) parent = Boolean.parseBoolean(parentS);
 		category = atts.getValue("category");
 	}
 
