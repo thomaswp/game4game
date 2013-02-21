@@ -1,0 +1,5 @@
+<action id="23" name="Trigger Event" category="Control">
+    <text text="Cause" />
+    <event />
+    <text text="to trigger" />
+</action>

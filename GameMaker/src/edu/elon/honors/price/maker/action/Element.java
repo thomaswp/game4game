@@ -175,6 +175,8 @@ public abstract class Element {
 			return new ElementColor(atts, context);
 		} else if (qName.equals("body")) {
 			return new ElementBody(atts, context);
+		} else if (qName.equals("event")) {
+			return new ElementEvent(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

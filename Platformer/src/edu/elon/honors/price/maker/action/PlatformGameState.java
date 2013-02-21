@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.graphics.Rect;
 
+import com.eujeux.data.GameList;
 import com.twp.platform.ActorBody;
 import com.twp.platform.BehaviorRuntime;
 import com.twp.platform.Globals;
@@ -22,6 +23,7 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.EventPointer;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.game.Debug;
@@ -309,9 +311,28 @@ public class PlatformGameState implements GameState {
 		
 		return false;
 	}
+
+	@Override
+	public Event readEvent(Object params) throws ParameterException {
+		assertThat(params instanceof EventPointer, "Not an EventPointer!");
+		EventPointer pointer = (EventPointer) params;
+		Behavior behavior = pointer.getBehavior(game);
+		int index = pointer.getEventIndex();
+		if (behavior != null) {
+			assertThat(behavior == getBehavior(), 
+					"Cannot trigger another behavior's event");
+			List<Event> events = behavior.events;
+			assertThat(inArray(index, events), "No event at that index");
+			return events.get(index);
+		} else {
+			Event[] events = game.getSelectedMap().events;
+			assertThat(inArray(index, events), "No event at that index");
+			return events[index];
+		}
+	}
 	
 	/* -- Static Members -- */
-	
+
 	private static void assertThat(boolean condition, String message)
 			throws ParameterException {
 		if (!condition) {
