@@ -3,7 +3,7 @@ package edu.elon.honors.price.data.types;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.PlatformGame;
 
-public class Switch extends ScopedData {
+public class Switch extends ScopedData<Switch> {
 	private static final long serialVersionUID = 1L;
 
 	public Switch(int id, DataScope scope) {

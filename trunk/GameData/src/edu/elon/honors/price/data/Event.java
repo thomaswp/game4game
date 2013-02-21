@@ -52,6 +52,14 @@ public class Event extends GameData {
 	}
 	
 	/**
+	 * Important for SelectorEvent to work
+	 */
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	/**
 	 * Represents an action carried out by this event. Actions have an
 	 * id, chosen from the constants in the EventIds class, as well as a
 	 * set of Parameters. The parameters are interpreted in the context of
