@@ -147,10 +147,10 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 	@Override
 	protected void updateControl(ActionControl control, Action action) {
 		super.updateControl(control, action);
-		int indent = action.indent;
 		control.setExecutionData(action, result);
+		int indent = action.indent;
 		if (!result) {
-			while (control.hasNextAction() && 
+			while (control.hasNextActionInEvent() && 
 					control.getNextAction().indent > indent) {
 				control.actionIndex++;
 			}

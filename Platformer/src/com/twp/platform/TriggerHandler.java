@@ -1,6 +1,7 @@
 package com.twp.platform;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.graphics.Rect;
@@ -14,6 +15,7 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.Event.Trigger.Contact;
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.types.Switch;
@@ -28,6 +30,8 @@ import edu.elon.honors.price.maker.action.PlatformGameState;
 import edu.elon.honors.price.maker.action.Point;
 import edu.elon.honors.price.maker.action.ScriptableInstance;
 import edu.elon.honors.price.maker.action.TriggerActorOrObjectTrigger;
+import edu.elon.honors.price.maker.action.TriggerTimeTrigger;
+import edu.elon.honors.price.maker.action.TriggerActorOrObjectTrigger.WhenCollidesWithData;
 import edu.elon.honors.price.maker.action.TriggerRegionTrigger;
 import edu.elon.honors.price.maker.action.TriggerSwitchTrigger;
 import edu.elon.honors.price.maker.action.TriggerUserInputTrigger;
@@ -45,6 +49,8 @@ public class TriggerHandler {
 	private Interpreter interpreter;
 	private Vector vector = new Vector();
 	private Point point = new Point();
+	private ArrayList<PlatformBody> destroyedBodiesFrame =
+			new ArrayList<PlatformBody>();
 
 	private int touchPID;
 	
@@ -56,11 +62,11 @@ public class TriggerHandler {
 		this.map = game.getSelectedMap();
 		this.physics = logic.getPhysics();
 		this.interpreter = logic.getInterpreter();
-		
-		
 	}
 
 	public void checkTriggers() {
+		destroyedBodiesFrame.addAll(physics.getDestroyedBodies());
+		
 		for (int i = 0; i < map.events.length; i++) {
 			checkEvent(map.events[i]);
 		}
@@ -72,6 +78,9 @@ public class TriggerHandler {
 			PlatformBody body = physics.getPlatformBodies().get(i);
 			checkBehaving(body);
 		}
+		
+		physics.getDestroyedBodies().removeAll(destroyedBodiesFrame);
+		destroyedBodiesFrame.clear();
 	}
 	
 	private void checkBehaving(IBehaving behaving) {
@@ -100,6 +109,8 @@ public class TriggerHandler {
 	protected TriggerActorOrObjectTrigger triggerActorObject = new TriggerActorOrObjectTrigger();
 	protected TriggerRegionTrigger triggerRegion = new TriggerRegionTrigger();
 	protected TriggerUserInputTrigger triggerUI = new TriggerUserInputTrigger();
+	protected TriggerTimeTrigger triggerTime = new TriggerTimeTrigger();
+	
 	protected PlatformGameState gameState;
 	
 	private void checkEvent(Event event) {
@@ -127,10 +138,36 @@ public class TriggerHandler {
 				} else if (generic.id == Trigger.ID_UI) { 
 					triggerUI.setParameters(generic.params);
 					checkTrigger(triggerUI, event, gameState);
+				} else if (generic.id == Trigger.ID_TIME) {
+					triggerTime.setParameters(generic.params);
+					checkTrigger(triggerTime, event, gameState);
 				}
 			
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		}
+	}
+
+	private void checkTrigger(TriggerTimeTrigger trigger, Event event,
+			PlatformGameState gameState) {
+		int time = trigger.exactNumber;
+		if (trigger.inTenthsOfASecond) {
+			time *= 100;
+		} else if (trigger.inSeconds) {
+			time *= 1000;
+		} else if (trigger.inMinutes) {
+			time *= 60000;
+		}
+		long timeNow = logic.getGameTime();
+		long timeBefore = logic.getLastGameTime();
+		if (trigger.triggerAfter) {
+			if (timeNow >= time && timeBefore < time) {
+				trigger(event);
+			}
+		} else if (trigger.triggerEvery) {
+			if (timeNow / time > timeBefore / time) {
+				trigger(event);
 			}
 		}
 	}
@@ -172,30 +209,47 @@ public class TriggerHandler {
 			
 			for (int l = 0; l < body.getCollidedBodies().size(); l++) {
 				PlatformBody collided = body.getCollidedBodies().get(l);
-				if (trigger.collidesWithHero) {
-					if (collided instanceof ActorBody && 
-							((ActorBody)collided).isHero()) {
-						trigger(event, body, collided);
-					}
-				} else if (trigger.collidesWithActor) {
-					if (collided instanceof ActorBody) {
-						trigger(event, body, collided);
-					}
-				} else if (trigger.collidesWithObject) {
-					if (collided instanceof ObjectBody) {
-						trigger(event, body, collided);
+				if (trigger.whenCollidesWith) {
+					WhenCollidesWithData data = trigger.whenCollidesWithData;
+					if (data.collidesWithHero) {
+						if (collided instanceof ActorBody && 
+								((ActorBody)collided).isHero()) {
+							trigger(event, body, collided);
+						}
+					} else if (data.collidesWithActor) {
+						if (collided instanceof ActorBody) {
+							trigger(event, body, collided);
+						}
+					} else if (data.collidesWithObject) {
+						if (collided instanceof ObjectBody) {
+							trigger(event, body, collided);
+						}
 					}
 				}
 			}
 			
-				
-			if (trigger.collidesWithWall) {
-				if (body.isCollidedWall()) {
+			if (trigger.whenCollidesWith) {
+				WhenCollidesWithData data = trigger.whenCollidesWithData;
+				if (data.collidesWithWall) {
+					if (body.isCollidedWall()) {
+						trigger(event, body);
+					}
+				} else if (data.collidesWithLedge) {
+					if (body instanceof ActorBody &&
+							((ActorBody)body).isCollidedEdge()) {
+						trigger(event, body);
+					}
+				} 
+			}
+		}
+		if (trigger.whenIsDestroyed) {
+			for (int i = 0; i < physics.getDestroyedBodies().size(); i++) {
+				PlatformBody body = physics.getDestroyedBodies().get(i);
+				if (gameState.isBody(trigger.body, body)) {
 					trigger(event, body);
 				}
 			}
 		}
-		//TODO: Add death
 	}
 
 	private boolean[] triggerEvents = new boolean[4];

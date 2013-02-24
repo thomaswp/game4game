@@ -65,6 +65,7 @@ public class PageBehaviors extends PageList<Behavior> {
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) { }
 		});
+		
 		int index = getIntPreference(PREF_SPINNER_INDEX, 0);
 		if (index < 0 || index >= types.size()) index = 0; 
 		spinnerType.setSelection(index);
@@ -76,6 +77,7 @@ public class PageBehaviors extends PageList<Behavior> {
 	
 	@Override
 	protected void onPause() {
+		super.onPause();
 		putPreference(PREF_SPINNER_INDEX, 
 				spinnerType.getSelectedItemPosition());
 	}

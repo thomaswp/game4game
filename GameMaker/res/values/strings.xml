@@ -148,4 +148,7 @@
     <string name="allow">Allow</string>
     <string name="isPlatform_c">Is Platform:</string>
     <string name="platform">Platform</string>
+    <string name="gravityDirection_c">Gravity Direction:</string>
+    <string name="gravityMagnitude_c">Gravity Magnitude:</string>
+    <string name="physics">Physics</string>
 </resources>

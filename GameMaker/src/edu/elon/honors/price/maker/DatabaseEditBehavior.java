@@ -518,14 +518,26 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					param.name = editTextName.getText().toString();
+					
+					ParameterType type;
 					if (((RadioButton)radioGroupType.getChildAt(0)).isChecked()) {
-						param.type = ParameterType.Switch;
+						type = ParameterType.Switch;
 					} else {
-						param.type = ParameterType.Variable;
+						type = ParameterType.Variable;
 					}
-
+					boolean success = true;
+					if (type != param.type) {
+						success = behavior.setParameterType(index, type);
+					}
 					((RadioButton)radioGroup.getChildAt(index)).setText(
 							describeParameter(param));
+					
+					if (!success) {
+						showAlert("Cannot Change Type",
+							"This parameter is currently in use " +
+							"by one or more Events in this behavior " +
+							"and its type cannot be changed.");
+					}
 				}
 			})
 			.setNegativeButton("Cancel", null)

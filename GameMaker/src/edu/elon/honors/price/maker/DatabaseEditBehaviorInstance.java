@@ -98,7 +98,9 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 	protected void onFinishing() {
 		instance.parameters.clear();
 		for (Element element : elements) {
-			instance.parameters.add(element.getParameters());
+			Parameters params = element.getParameters();
+			instance.parameters.add(params);
+			Debug.write(params);
 		}
 	}
 

@@ -3,12 +3,18 @@
 	<text text="The event is triggered when" />
 	<body />
 	
-	<radio name="collidesWith" >
-	    <choice text="collides with the hero" name="hero"  />
-	    <choice text="collides with an actor" name="actor" />
-	    <choice text="collides with an object" name="object"  />
-	    <choice text="collides with a wall" name="wall"  />
-	    <choice text="is destroyed" name="death"  />
+	<radio name="when">
+	    <choice text="collides with">
+	        <radio name="collidesWith">
+			    <choice text="the hero" name="hero"  />
+			    <choice text="an actor" name="actor" />
+			    <choice text="an object" name="object"  />
+	    		<choice text="a wall" name="wall"  />
+	    		<choice text="a ledge" name="ledge"  />
+	        </radio>
+	    </choice>
+	    <choice text="is created" />
+	    <choice text="is destroyed" />
 	</radio>
 
 </action>

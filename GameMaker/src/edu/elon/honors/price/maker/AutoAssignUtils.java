@@ -53,7 +53,8 @@ public class AutoAssignUtils {
 				continue;
 			}
 			AutoAssign aa = field.getAnnotation(AutoAssign.class);
-			if (aa != null || typeAnnotation) {
+			AutoAssignIgnore aai = field.getAnnotation(AutoAssignIgnore.class);
+			if (aa != null || (typeAnnotation && aai == null)) {
 				String name;
 				if (aa != null && aa.name().length() > 0) {
 					name = aa.name();

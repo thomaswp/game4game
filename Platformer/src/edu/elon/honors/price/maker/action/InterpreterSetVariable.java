@@ -55,12 +55,12 @@ public class InterpreterSetVariable extends ActionInterpreter<ActionSetVariable>
 		} else if (action.operationMultiply) {
 			result = operandA * operandB;
 		} else if (action.operationModBy) {
+			if (operandB == 0) throw new ParameterException("Mod by 0!");
 			result = operandA % operandB;
 		} else if (action.operationDivideBy) {
 			if (operandB == 0) throw new ParameterException("Divide by 0!");
 			result = operandA / operandB;
 		} else if (action.operationSetItTo) {
-			if (operandB == 0) throw new ParameterException("Divide by 0!");
 			result = operandB;
 		}
 		

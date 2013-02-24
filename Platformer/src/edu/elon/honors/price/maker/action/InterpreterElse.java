@@ -16,7 +16,7 @@ public class InterpreterElse extends ActionInterpreter<ActionElse> {
 		int indent = action.indent;
 		boolean result = (Boolean)control.getExecutionData(action.dependsOn);
 		if (result) {
-			while (control.hasNextAction() && 
+			while (control.hasNextActionInEvent() && 
 					control.getNextAction().indent > indent) {
 				control.actionIndex++;
 			}

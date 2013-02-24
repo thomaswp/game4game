@@ -10,10 +10,10 @@ import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
 import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
 																	// ScriptableWriter.writeHeader()
 @SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionTriggerActorAction extends ScriptableInstance {	// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Trigger Actor Action";		// ScriptableWriter.writeHeader()
+public class ActionTriggerActorAnimation extends ScriptableInstance {// ActionFragmentWriter.writeHeader()
+	public static final String NAME = "Trigger Actor Animation";	// ScriptableWriter.writeHeader()
 	public static final int ID = 18;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Actor";					// ScriptableWriter.writeHeader()
+	public static final String CATEGORY = "Animate";				// ScriptableWriter.writeHeader()
 																	// ScriptableWriter.writeHeader()
 	/** Type: <b>&lt;actorInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
 	public Parameters actorInstance;								// ActionFragmentWriter.writeElement()
@@ -26,7 +26,7 @@ public class ActionTriggerActorAction extends ScriptableInstance {	// ActionFrag
 		actorInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
-	 * 018 <b><i>Trigger Actor Action</i></b> (Actor)<br />
+	 * 018 <b><i>Trigger Actor Animation</i></b> (Animate)<br />
 	 * <ul>
 	 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
 	 * </ul>

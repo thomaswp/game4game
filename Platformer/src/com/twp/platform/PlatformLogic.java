@@ -55,7 +55,7 @@ public class PlatformLogic implements Logic {
 	private Vector2 antiGravity = new Vector2(0, -PhysicsHandler.GRAVITY),
 	zeroVector = new Vector2();
 
-	private long gameTime = 0;
+	private long gameTime = 0, lastGameTime = -1;
 	
 	private boolean paused;
 
@@ -67,6 +67,10 @@ public class PlatformLogic implements Logic {
 	
 	public long getGameTime() {
 		return gameTime;
+	}
+	
+	public long getLastGameTime() {
+		return lastGameTime;
 	}
 
 	public Map getMap() {
@@ -173,8 +177,6 @@ public class PlatformLogic implements Logic {
 			return;
 		}
 		
-		gameTime += timeElapsed;
-
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).update();
 		}
@@ -225,6 +227,9 @@ public class PlatformLogic implements Logic {
 		interpreter.update();
 
 		updateScroll(0.2f);
+	
+		lastGameTime = gameTime;
+		gameTime += timeElapsed;
 	}
 
 	private void updateWorldSprites() {
