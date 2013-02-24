@@ -53,7 +53,8 @@ public class DatabaseEditEvent extends DatabaseActivity {
 		"Variable Trigger",
 		"Actor/Object Trigger",
 		"Region Trigger",
-		"UI Trigger"
+		"UI Trigger",
+		"Time Trigger"
 	};
 
 	public static final String COLOR_VARIABLE = 

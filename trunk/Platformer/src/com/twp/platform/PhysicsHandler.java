@@ -48,6 +48,7 @@ public class PhysicsHandler {
 	private ArrayList<ActorBody> actorBodies = new ArrayList<ActorBody>();
 	private ArrayList<ObjectBody> objectBodies = new ArrayList<ObjectBody>();
 	private ArrayList<PlatformBody> platformBodies = new ArrayList<PlatformBody>();
+	private ArrayList<PlatformBody> destroyedBodies = new ArrayList<PlatformBody>();
 	private World world;
 	private ActorBody heroBody;
 
@@ -151,7 +152,11 @@ public class PhysicsHandler {
 		}
 		return null;
 	}
-
+	
+	public List<PlatformBody> getDestroyedBodies() {
+		return destroyedBodies;
+	}
+	
 	public PhysicsHandler(PlatformLogic logic) {
 		this.game = logic.getGame();
 		this.map = game.getSelectedMap();
@@ -170,6 +175,7 @@ public class PhysicsHandler {
 			actorBodies.remove(getActorBodyFromId(body.id));
 		}
 		platformBodies.remove(body);
+		destroyedBodies.add(body);
 	}
 
 	private void initPhysics() {
@@ -177,7 +183,7 @@ public class PhysicsHandler {
 		mapLeft = 0;
 		mapRight = map.width(game);
 
-		world = new World(new Vector2(0, GRAVITY), true);
+		world = new World(new Vector2(map.gravity.getX(), map.gravity.getY()), true);
 		
 		createWalls();
 
@@ -199,7 +205,7 @@ public class PhysicsHandler {
 				
 
 				boolean collides = PlatformBody.collides(bodyA, bodyB);
-				Debug.write("%s collides %s: %s", bodyA, bodyB, collides);
+//				Debug.write("%s collides %s: %s", bodyA, bodyB, collides);
 				return collides;
 			}
 		};

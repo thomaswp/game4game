@@ -6,18 +6,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import edu.elon.honors.price.physics.Vector;
+
 public class Map extends GameData {
 	private static final long serialVersionUID = 9L;
 	
 	public static final int HERO_ID = 1;
-
-	public String name;
 	
+	public static int MAX_GRAVITY = 30;
+
+	@Deprecated
+	public MapLayer actorLayer;
+	
+	public String name;
 	public Event[] events;
 	public int tilesetId;
 	public MapLayer[] layers;
-	@Deprecated
-	public MapLayer actorLayer;
 	public ArrayList<ActorInstance> actors;
 	public ArrayList<ObjectInstance> objects;
 	public LinkedList<BehaviorInstance> behaviors;
@@ -27,6 +31,8 @@ public class Map extends GameData {
 	public String groundImageName;
 	public String skyImageName;
 	public LinkedList<String> midGrounds = new LinkedList<String>();
+	
+	public Vector gravity = new Vector(0, 10);
 	
 	private int getNextActorId() {
 		return actors.size() == 0 ? HERO_ID : 

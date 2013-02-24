@@ -9,16 +9,23 @@ import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.physics.Vector;
 
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 10;
+	public final static int LATEST_VERSION = 11;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
 		int version = game._VERSION_;
 
+		if (version < 11) {
+			for (Map map : game.maps) {
+				map.gravity = new Vector(0, 10);
+			}
+			upgraded(game);
+		}
 		if (version < 10) {
 			for (Event event : game.getAllEvents()) {
 				for (int i = 0; i < event.actions.size(); i++) {

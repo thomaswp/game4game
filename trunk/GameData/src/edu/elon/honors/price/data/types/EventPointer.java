@@ -38,6 +38,11 @@ public class EventPointer extends GameData implements ICopyable<EventPointer>, C
 		return null;
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("Event[%d,%s:%d]", eventIndex, behaviorType, behaviorIndex);
+	}
+	
 //	private List<Event> getEvents(PlatformGame game) {
 //		if (behaviorType == null) {
 //			

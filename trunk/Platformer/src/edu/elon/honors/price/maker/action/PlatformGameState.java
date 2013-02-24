@@ -416,7 +416,7 @@ public class PlatformGameState implements GameState {
 					"Switch index is out of bounds: %d", s.id);
 			Object o = instance.parameters.get(s.id);
 			assertThat(o instanceof Parameters, "Invalid parameter");
-			return readBoolean((Parameters)o, event, triggeringInfo);
+			return readBoolean((Parameters)o, 0, event, triggeringInfo);
 		}
 	}
 	

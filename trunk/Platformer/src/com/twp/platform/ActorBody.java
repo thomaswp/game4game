@@ -43,6 +43,11 @@ public class ActorBody extends PlatformBody {
 	private ActorAnimator animator;
 	private Bitmap[][] frames;
 	private boolean airJumped;
+	private boolean collidedEdge;
+	
+	public boolean isCollidedEdge() {
+		return collidedEdge;
+	}
 	
 	@Override
 	public MapClass getMapClass() {
@@ -111,6 +116,8 @@ public class ActorBody extends PlatformBody {
 		this.actor = actor;
 		this.directionX = startDir;
 		this.animator = ActorAnimator.create(actor.imageName);
+		
+		stopped = true;
 		
 		Bitmap bitmap = Data.loadActor(actor.imageName);
 		Action[] actions = Action.values();
@@ -248,19 +255,19 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	public void doBehaviorWall() {
-		doBehavior(actor.wallBehavior, null);
+		//doBehavior(actor.wallBehavior, null);
 	}
 	
 	public void doBehaviorEdge() {
-		doBehavior(actor.edgeBehavior, null);
+		//doBehavior(actor.edgeBehavior, null);
 	}
 	
 	public void doBehavoirCollideActor(int dir, ActorBody cause) {
-		doBehavior(actor.actorContactBehaviors[dir], cause);
+		//doBehavior(actor.actorContactBehaviors[dir], cause);
 	}
 	
 	public void doBehaviorCollideHero(int dir, ActorBody cause) {
-		doBehavior(actor.heroContactBehaviors[dir], cause);
+		//doBehavior(actor.heroContactBehaviors[dir], cause);
 	}
 	
 	public void doBehavior(int behavior, ActorBody cause) {
@@ -383,6 +390,7 @@ public class ActorBody extends PlatformBody {
 		if (collidedWall) {
 			doBehaviorWall();
 		}
+		collidedEdge = false;
 		if (getDirectionX() != 0) {
 			float y = getPosition().y + (sprite.getHeight() / 2 + 5) / SCALE;
 			float x = getPosition().x + (sprite.getWidth() / 2 + 5) * getDirectionX() / SCALE;
@@ -390,7 +398,7 @@ public class ActorBody extends PlatformBody {
 			world.QueryAABB(fixtureCallback, x, y, x + 3 / SCALE, y + 3 / SCALE);
 			boolean contact = fixtureCallback.contact;
 			if (!contact && isGrounded()) {
-				doBehaviorEdge();
+				collidedEdge = true;
 			}
 		}
 	}

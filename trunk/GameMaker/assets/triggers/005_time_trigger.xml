@@ -1,0 +1,16 @@
+<action id="5" name="Time Trigger">
+
+	<text text="The event is triggered" />
+	<radio name="trigger" >
+	    <choice text="after" />
+	    <choice text="every" />
+	</radio>
+	
+	<exactNumber />
+	<radio name="in">
+		<choice text="tenths of a second" />
+		<choice text="seconds" />
+		<choice text="minutes" />
+	</radio>
+
+</action>

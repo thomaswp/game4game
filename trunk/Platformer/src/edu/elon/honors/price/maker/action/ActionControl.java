@@ -39,7 +39,7 @@ public class ActionControl {
 	}
 
 	/**
-	 * Will not be cleared between actions!
+	 * Will not be cleared between events!
 	 * Only read if it has been set FOR SURE.
 	 */
 	public Object getExecutionData(Action action) {
@@ -69,6 +69,10 @@ public class ActionControl {
 		while (actionIndex >= event.actions.size() && eventStack.size() > 0) {
 			popEvent();
 		}
+		return hasNextActionInEvent();
+	}
+	
+	public boolean hasNextActionInEvent() {
 		return actionIndex < event.actions.size();
 	}
 	

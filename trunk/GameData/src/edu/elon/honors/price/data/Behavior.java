@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.elon.honors.price.data.Behavior.Parameter;
+import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Trigger;
 import edu.elon.honors.price.data.types.DataScope;
@@ -121,15 +123,24 @@ public class Behavior extends GameData {
 		return variables;
 	}
 	
-	private boolean tryRemoveScoped(List<? extends ScopedData> data,
+	private boolean inUse(List<? extends ScopedData<?>> data,
 			DataScope scope, int index) {
-		
-		for (ScopedData d : data) {
+		for (ScopedData<?> d : data) {
 			if (d.scope == scope && d.id == index) {
-				return false;
+				return true;
 			}
 		}
-		for (ScopedData d : data) {
+		return false;
+	}
+	
+	private boolean tryRemoveScoped(List<? extends ScopedData<?>> data,
+			DataScope scope, int index) {
+		
+		if (inUse(data, scope, index)) {
+			return false;
+		}
+		
+		for (ScopedData<?> d : data) {
 			if (d.scope == scope && d.id > index) {
 				d.id--;
 			}
@@ -179,6 +190,17 @@ public class Behavior extends GameData {
 			tryRemoveSwitch(DataScope.Param, index);
 		}
 		parameters.remove(index);
+		return true;
+	}
+
+	public boolean setParameterType(int index, ParameterType type) {
+		if (inUse(getSwitches(), DataScope.Param, index)) {
+			return false;
+		}
+		if (inUse(getVariables(), DataScope.Param, index)) {
+			return false;
+		}
+		parameters.get(index).type = type;
 		return true;
 	}
 		

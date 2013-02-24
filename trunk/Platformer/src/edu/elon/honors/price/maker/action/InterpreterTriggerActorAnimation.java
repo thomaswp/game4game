@@ -1,9 +1,9 @@
 package edu.elon.honors.price.maker.action;
 
-public class InterpreterTriggerActorAction extends ActionInterpreter<ActionTriggerActorAction> {
+public class InterpreterTriggerActorAnimation extends ActionInterpreter<ActionTriggerActorAnimation> {
 
 	@Override
-	protected void interperate(ActionTriggerActorAction action,
+	protected void interperate(ActionTriggerActorAnimation action,
 			PlatformGameState gameState) throws ParameterException {
 		action.readActorInstance(gameState).triggerAction();
 	}

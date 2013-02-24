@@ -386,7 +386,9 @@ public class Event extends GameData {
 				ID_VARIABLE = 1,
 				ID_ACTOR_OBJECT = 2,
 				ID_REGION = 3,
-				ID_UI = 4;
+				ID_UI = 4,
+				ID_TIME = 5;
+
 		
 		public int id;
 		public Parameters params;

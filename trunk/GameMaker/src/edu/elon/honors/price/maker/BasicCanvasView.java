@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Vibrator;
@@ -49,7 +50,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 			int height) {
 		this.width = width;
 		this.height = height;
-		Debug.write("Change: %d, %d", width, height);
+		//Debug.write("Change: %d, %d", width, height);
 	}
 
 	@Override
@@ -90,6 +91,7 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 		
 	}
 	
+	@SuppressLint("WrongCall")
 	private void updateThread() {
 		long timeElapsed = System.currentTimeMillis() - lastUpdate;
 		lastUpdate += timeElapsed;

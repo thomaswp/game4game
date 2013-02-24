@@ -20,6 +20,7 @@ public class DatabaseEditMap extends DatabaseActivity {
 	private RadioGroup radioGroupEdit;
 	private RelativeLayout relativeLayoutHost;
 	private Button buttonEdit;
+	@AutoAssignIgnore
 	private SelectorMapPreview selectorMapPreview;
 	private ScrollView scrollView;
 	
@@ -58,7 +59,8 @@ public class DatabaseEditMap extends DatabaseActivity {
 			DatabaseEditMapSize.class,
 			DatabaseEditMapTileset.class,
 			DatabaseEditMapHorizon.class,
-			DatabaseEditMapBehaviors.class
+			DatabaseEditMapBehaviors.class,
+			DatabaseEditMapPhysics.class
 		};
 		buttonEdit.setOnClickListener(new OnClickListener() {
 			@Override

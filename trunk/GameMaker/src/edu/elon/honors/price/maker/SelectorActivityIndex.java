@@ -239,6 +239,7 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 			textViewParamName =
 				(TextView)findViewById(R.id.textViewParamName);
 
+			boolean set = false;
 			int size = getParamSize();
 			for (int i = 0; i < size; i++) {
 				final int fi = i;
@@ -256,7 +257,10 @@ public abstract class SelectorActivityIndex extends DatabaseTabActivity {
 				button.setVisibility(getParamVisible(i) ?
 						View.VISIBLE : View.GONE);
 				radioGroupParam.addView(button);
-				if (i == 0) button.setChecked(true);
+				if (getParamVisible(i) && !set) {
+					button.setChecked(true);
+					set = true;
+				}
 			}
 		}
 	}
