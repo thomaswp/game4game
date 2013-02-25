@@ -789,9 +789,12 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			int indent = getAction().indent;
 			for (int i = index + 1; i < getEvent().actions.size(); i++) {
 				Action action = getEvent().actions.get(i);
-				if (action.id != ActionElse.ID && 
-						action.indent <= indent) {
-					break;
+				if (action.indent <= indent) {
+					if (action.id != ActionElse.ID) {
+						break;
+					} else if (action.indent < indent) {
+						break;
+					}
 				}
 				Action copy = action.copy();
 				copy.indent -= indent;

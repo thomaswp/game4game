@@ -1,0 +1,13 @@
+<action id="24" name="Change Color" category="Actor|Object">
+    <text text="For" />
+    <radio name="color">
+        <choice text="the actor" mute="true" >
+            <actorInstance />
+        </choice>
+        <choice text="the object" mute="true">
+            <objectInstance />
+        </choice>
+    </radio>
+    <text text="change the color to" />
+    <color name="newColor" />
+</action>
