@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import android.graphics.Color;
+
 public class TextUtils {
 
 	public static final String COLOR_VARIABLE = "#00CC00";
@@ -10,7 +12,7 @@ public class TextUtils {
 	public static void addColoredText(StringBuilder sb, int text, String color) {
 		addColoredText(sb, "" + text, color);
 	}
-
+	
 	public static void  addColoredText(StringBuilder sb, String text, String color) {
 		text = android.text.TextUtils.htmlEncode(text);
 		if (color == null) {
@@ -45,7 +47,8 @@ public class TextUtils {
 	}
 	
 	public static String getColorString(int color) {
-		return "#" + Integer.toHexString(color).substring(2);
+		return String.format("#%02X%02X%02X", Color.red(color), Color.green(color),
+				Color.blue(color));
 	}
 	
 	public static String HTMLEscape(String text) {

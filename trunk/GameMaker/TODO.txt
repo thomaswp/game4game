@@ -1,3 +1,5 @@
+Dev Branch!
+
 General:
 -saveInstanceState not fully implemented
 --returnResponse is problematic because it's not serializable. It only works if it's a static class, not anonymous
@@ -11,6 +13,7 @@ General:
 Behaviors:
 -export
 -map
+-sometimes behaviorinstanceeditor doesn't save (long click?)
 
 Events:
 -rework placement of map event editor to go along with behaviors theme
@@ -23,8 +26,9 @@ Actors:
 -zoom change: keep actor in box
 
 Map Editor:
--actors like objects
+-redo texture selector
 -actors second edit brush
+-work with out of bounds
 
 Hero:
 -decide how to handle non-hero games...
@@ -45,12 +49,3 @@ UI:
 Game:
 -implement behaviors
 -saving/pausing
-
-Main Menu:
--redo everything
--games database (rather than loading the serializables all the time)
-
-Website:
--user profile
--browse by different ratings
--behaviors? :)

@@ -5,10 +5,14 @@ import org.xml.sax.Attributes;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.maker.Screen;
 import edu.elon.honors.price.maker.SelectorColor;
+import edu.elon.honors.price.maker.TextUtils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 public class ElementColor extends Element {
 
@@ -32,13 +36,17 @@ public class ElementColor extends Element {
 	@Override
 	public void genView() {
 		selectorColor = new SelectorColor(context);
-		main = selectorColor;
+		LinearLayout layout = new LinearLayout(context);
+		LayoutParams lps = new LayoutParams(Screen.dipToPx(200, context), 
+				LayoutParams.WRAP_CONTENT);
+		layout.addView(selectorColor, lps);
+		main = layout;
 	}
 
 	@Override
 	public String getDescription(PlatformGame game) {
 		int color = selectorColor.getColor();
-		return String.format("#%02X%02X%02X", Color.red(color), Color.green(color),
-				Color.blue(color));
+		String colorString = TextUtils.getColorString(color);
+		return "[" + TextUtils.getColoredText("color", colorString) + "]";
 	}
 }
