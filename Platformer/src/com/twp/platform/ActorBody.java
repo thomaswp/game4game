@@ -150,6 +150,7 @@ public class ActorBody extends PlatformBody {
 		this.sprite.centerOrigin();
 		Debug.write(actor.imageName + ", " + actor.zoom);
 		this.sprite.setZoom(actor.zoom);
+		this.sprite.setColor(actor.color);
 		super.sprite = sprite;
 		this.isHero = isHero;
 		world = physics.getWorld();
