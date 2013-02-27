@@ -1,63 +1,31 @@
 package edu.elon.honors.price.maker;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import edu.elon.honors.price.data.ActorClass;
-import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.PlatformGame;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Spinner;
+import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.Behavior.ParameterType;
+import edu.elon.honors.price.data.types.ObjectClassPointer;
 
-public class SelectorObjectClass  extends Spinner implements IPopulatable {
+public class SelectorObjectClass extends SelectorMapClass<ObjectClassPointer> {
 
-	protected final static int MAX_IMAGE_SIZE = 100;
-	
-	private PlatformGame game;
-	private OnObjectClassChangedListener onObjectClassChangedListener;
-	private int id;
-	
 	public SelectorObjectClass(Context context) {
 		super(context);
 	}
-	
-	public SelectorObjectClass(Context context, AttributeSet attrs) {
-		super(context, attrs);
+
+	@Override
+	protected ObjectClassPointer getNewPointer() {
+		return new ObjectClassPointer();
 	}
 
-	public int getSelectedObjectId() {
-		return id;
-	}
-	
-	public void setSelectedObjectId(int id) {
-		this.id = id;
-		setSelection(id);
-	}
-	
-	public ActorClass getSelectedActor() {
-		if (game == null) return null;
-		return game.actors[getSelectedObjectId()];
-	}
-	
-	public void setOnActorClassChangedListenter(OnObjectClassChangedListener onObjectClassChangedListener) {
-		this.onObjectClassChangedListener = onObjectClassChangedListener;
-	}
-	
 	@Override
-	public void populate(PlatformGame game) {
-		Context context = getContext();
-		
-		//figure out how to maintain this, but
-		//change as necessary if the game changes...
-		
-		this.game = game;
-		
-		ArrayList<String> labels = new ArrayList<String>();
-		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+	protected ParameterType getParameterType() {
+		return ParameterType.ObjectClass;
+	}
+
+	@Override
+	protected void addLabelsAndImages(List<String> labels, List<Bitmap> images) {
 		for (int i = 0; i < game.objects.length; i++) {
 			labels.add(game.objects[i].name);
 			String name = game.objects[i].imageName;
@@ -76,36 +44,6 @@ public class SelectorObjectClass  extends Spinner implements IPopulatable {
 			bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
 			images.add(bitmap);
 		}
-		
-		ImageAdapter imageAdapter = new ImageAdapter(
-				context, 
-				android.R.layout.simple_spinner_dropdown_item, 
-				labels,
-				images);
-		setAdapter(imageAdapter);
-		
-		setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
-				if (onObjectClassChangedListener != null) {
-					onObjectClassChangedListener.onObjectClassChanged(position);
-				}
-				SelectorObjectClass.this.id = position;
-			}
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) { }
-		});
-		
-		setSelectedObjectId(id);
-	}
-	
-	public static abstract class OnObjectClassChangedListener {
-		public abstract void onObjectClassChanged(int newId);
 	}
 
-	@Override
-	public boolean onActivityResult(int requestCode, Intent data) {
-		return false;
-	}
 }

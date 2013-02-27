@@ -151,4 +151,6 @@
     <string name="gravityDirection_c">Gravity Direction:</string>
     <string name="gravityMagnitude_c">Gravity Magnitude:</string>
     <string name="physics">Physics</string>
+    <string name="actor">Actor</string>
+    <string name="object">Object</string>
 </resources>
