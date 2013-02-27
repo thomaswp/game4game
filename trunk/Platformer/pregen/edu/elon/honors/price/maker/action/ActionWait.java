@@ -15,17 +15,20 @@ public class ActionWait extends ScriptableInstance {				// ActionFragmentWriter.
 	public static final int ID = 20;								// ScriptableWriter.writeHeader()
 	public static final String CATEGORY = "Control";				// ScriptableWriter.writeHeader()
 																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;exactNumber&gt;</b> */							// ActionFragmentWriter.writeElement()
-	public int exactNumber;											// ActionFragmentWriter.writeElement()
+	/** Type: <b>&lt;number&gt;</b> */								// ActionFragmentWriter.writeElement()
+	public Parameters number;										// ActionFragmentWriter.writeElement()
+	public int readNumber(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+		return gameState.readNumber(number);						// ActionFragmentWriter.writeElement()
+	}																// ActionFragmentWriter.writeElement()
 																	// ActionFragmentWriter.writeReadParams()
 	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		exactNumber = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
+		number = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
 	 * 020 <b><i>Wait</i></b> (Control)<br />
 	 * <ul>
-	 * <li><b>&lt;exactNumber&gt;</b> exactNumber</li>
+	 * <li><b>&lt;number&gt;</b> number</li>
 	 * </ul>
 	 */																// ActionFragmentWriter.writeJavadoc()
 	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()

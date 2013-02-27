@@ -51,6 +51,8 @@ public class TriggerHandler {
 	private Point point = new Point();
 	private ArrayList<PlatformBody> destroyedBodiesFrame =
 			new ArrayList<PlatformBody>();
+	private ArrayList<PlatformBody> createdBodiesFrame =
+			new ArrayList<PlatformBody>();
 
 	private int touchPID;
 	
@@ -66,6 +68,7 @@ public class TriggerHandler {
 
 	public void checkTriggers() {
 		destroyedBodiesFrame.addAll(physics.getDestroyedBodies());
+		createdBodiesFrame.addAll(physics.getCreatedBodies());
 		
 		for (int i = 0; i < map.events.length; i++) {
 			checkEvent(map.events[i]);
@@ -81,6 +84,9 @@ public class TriggerHandler {
 		
 		physics.getDestroyedBodies().removeAll(destroyedBodiesFrame);
 		destroyedBodiesFrame.clear();
+		
+		physics.getCreatedBodies().removeAll(createdBodiesFrame);
+		createdBodiesFrame.clear();
 	}
 	
 	private void checkBehaving(IBehaving behaving) {
@@ -245,6 +251,13 @@ public class TriggerHandler {
 		if (trigger.whenIsDestroyed) {
 			for (int i = 0; i < physics.getDestroyedBodies().size(); i++) {
 				PlatformBody body = physics.getDestroyedBodies().get(i);
+				if (gameState.isBody(trigger.body, body)) {
+					trigger(event, body);
+				}
+			}
+		} else if (trigger.whenIsCreated) {
+			for (int i = 0; i < physics.getCreatedBodies().size(); i++) {
+				PlatformBody body = physics.getCreatedBodies().get(i);
 				if (gameState.isBody(trigger.body, body)) {
 					trigger(event, body);
 				}

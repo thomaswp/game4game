@@ -10,8 +10,10 @@ import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.action.Element;
+import edu.elon.honors.price.maker.action.ElementActorClass;
 import edu.elon.honors.price.maker.action.ElementBoolean;
 import edu.elon.honors.price.maker.action.ElementNumber;
+import edu.elon.honors.price.maker.action.ElementObjectClass;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -68,7 +70,11 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 				((ElementBoolean )element).genView();
 			} else if (param.type == ParameterType.Variable) {
 				element = new ElementNumber(null, this);
-			} 
+			} else if (param.type == ParameterType.ActorClass) {
+				element = new ElementActorClass(null, this);
+			} else if (param.type == ParameterType.ObjectClass) {
+				element = new ElementObjectClass(null, this);
+			}
 			
 			if (element != null) {
 				row.addView(element.getView());

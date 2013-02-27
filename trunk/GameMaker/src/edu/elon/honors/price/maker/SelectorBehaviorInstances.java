@@ -10,8 +10,10 @@ import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.maker.action.Element;
+import edu.elon.honors.price.maker.action.ElementActorClass;
 import edu.elon.honors.price.maker.action.ElementBoolean;
 import edu.elon.honors.price.maker.action.ElementNumber;
+import edu.elon.honors.price.maker.action.ElementObjectClass;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -192,6 +194,10 @@ implements IPopulatable{
 						((ElementBoolean )element).genView();
 					} else if (baseParam.type == ParameterType.Variable) {
 						element = new ElementNumber(null, getContext());
+					} else if (baseParam.type == ParameterType.ActorClass) {
+						element = new ElementActorClass(null, getContext());
+					} else if (baseParam.type == ParameterType.ObjectClass) {
+						element = new ElementObjectClass(null, getContext());
 					}
 					if (element != null) {
 						DatabaseActivity.populateViews(element.getView(), game);

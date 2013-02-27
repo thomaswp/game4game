@@ -49,6 +49,7 @@ public class PhysicsHandler {
 	private ArrayList<ObjectBody> objectBodies = new ArrayList<ObjectBody>();
 	private ArrayList<PlatformBody> platformBodies = new ArrayList<PlatformBody>();
 	private ArrayList<PlatformBody> destroyedBodies = new ArrayList<PlatformBody>();
+	private ArrayList<PlatformBody> createdBodies = new ArrayList<PlatformBody>();
 	private World world;
 	private ActorBody heroBody;
 
@@ -157,6 +158,10 @@ public class PhysicsHandler {
 		return destroyedBodies;
 	}
 	
+	public List<PlatformBody> getCreatedBodies() {
+		return createdBodies;
+	}
+	
 	public PhysicsHandler(PlatformLogic logic) {
 		this.game = logic.getGame();
 		this.map = game.getSelectedMap();
@@ -167,12 +172,15 @@ public class PhysicsHandler {
 		toAdd.add(actor);
 	}
 
-	public void destroyBody(PlatformBody body) {
+	public void postDisposeBody(PlatformBody body) {
 		world.destroyBody(body.getBody());
 		if (body instanceof ObjectBody) {
 			objectBodies.remove(getObjectBodyFromId(body.id));
 		} else if (body instanceof ActorBody) {
 			actorBodies.remove(getActorBodyFromId(body.id));
+		}
+		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
+			bodyMap.remove(body.getBody().getFixtureList().get(i));
 		}
 		platformBodies.remove(body);
 		destroyedBodies.add(body);
@@ -539,7 +547,7 @@ public class PhysicsHandler {
 
 	public void addAndRemove() {
 		for (int i = 0; i < toRemove.size(); i++) {
-			removePlatformBody(toRemove.get(i));
+			toRemove.get(i).dispose();
 		}
 		toRemove.clear();
 		for (int i = 0; i < toAdd.size(); i++) {
@@ -587,6 +595,7 @@ public class PhysicsHandler {
 			bodyMap.put(body.getBody().getFixtureList().get(i), body);
 		}
 
+		createdBodies.add(body);
 		return body;
 	}
 
@@ -619,14 +628,8 @@ public class PhysicsHandler {
 		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
 			bodyMap.put(body.getBody().getFixtureList().get(i), body);
 		}
+		createdBodies.add(body);
 		return body;
-	}
-
-	private void removePlatformBody(PlatformBody body) {
-		for (int i = 0; i < body.getBody().getFixtureList().size(); i++) {
-			bodyMap.remove(body.getBody().getFixtureList().get(i));
-		}
-		body.dispose();
 	}
 
 	private void doEndContact(Fixture fixtureA, Fixture fixtureB) {

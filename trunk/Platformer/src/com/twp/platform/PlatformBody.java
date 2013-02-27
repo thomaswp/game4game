@@ -149,7 +149,7 @@ public abstract class PlatformBody implements IBehaving {
 	
 	public void dispose() {
 		this.sprite.dispose();
-		physics.destroyBody(this);
+		physics.postDisposeBody(this);
 		disposed = true;
 	}
 	

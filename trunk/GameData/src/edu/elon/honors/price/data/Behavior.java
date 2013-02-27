@@ -35,7 +35,9 @@ public class Behavior extends GameData {
 	
 	public enum ParameterType {
 		Switch("Switch"), 
-		Variable("Variable");
+		Variable("Variable"),
+		ActorClass("Actor"),
+		ObjectClass("Object");
 		
 		private String name;
 		

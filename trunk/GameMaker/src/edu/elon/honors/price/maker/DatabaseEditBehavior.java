@@ -257,7 +257,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 
 	private Spanned describeParameter(Parameter parameter) {
 		return valueString(parameter.name, 
-				parameter.type.toString(), TextUtils.COLOR_MODE);
+				parameter.type.getName(), TextUtils.COLOR_MODE);
 	}
 
 	private Spanned valueString(String name, String value, String color) {
@@ -519,12 +519,11 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 				public void onClick(DialogInterface dialog, int which) {
 					param.name = editTextName.getText().toString();
 					
-					ParameterType type;
-					if (((RadioButton)radioGroupType.getChildAt(0)).isChecked()) {
-						type = ParameterType.Switch;
-					} else {
-						type = ParameterType.Variable;
-					}
+					int radioButtonID = radioGroupType.getCheckedRadioButtonId();
+					View radioButton = radioGroupType.findViewById(radioButtonID);
+					int typeIndex = radioGroupType.indexOfChild(radioButton);
+					
+					ParameterType type = ParameterType.values()[typeIndex];
 					boolean success = true;
 					if (type != param.type) {
 						success = behavior.setParameterType(index, type);

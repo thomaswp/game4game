@@ -16,7 +16,7 @@ import edu.elon.honors.price.physics.Vector;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 12;
+	public final static int LATEST_VERSION = 13;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -105,6 +105,21 @@ public class Upgrader {
 			}
 			for (ObjectClass object : game.objects) {
 				object.color = Color.WHITE;
+			}
+			upgraded(game);
+		}
+		if (version < 13) {
+			for (Event e : game.getAllEvents()) {
+				for (Action action : e.actions) {
+					if (action.id == 20) { // Wait
+						int time = action.params.getInt();
+						Parameters params = new Parameters();
+						params.addParam(0); params.addParam(time);
+						action.params = new Parameters();
+						action.params.addParam(params);
+						
+					}
+				}
 			}
 			upgraded(game);
 		}
