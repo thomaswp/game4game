@@ -39,17 +39,23 @@ public abstract class Element {
 		return null;
 	}
 	
-	public Element(Attributes atts, Context context) {
+	/**
+	 * Does NOT call genView()!!
+	 */
+	public Element(Context context) {
 		this.context = context;
-		this.attributes = atts;
 		if (context instanceof IEventContextual) {
 			eventContext = 
 				((IEventContextual) context).getEventContext();
 		}
+		this.color = getDefaultColor();
+	}
+	
+	public Element(Attributes atts, Context context) {
+		this(context);
+		this.attributes = atts;
 		if (atts != null) {
 			readAttributes(atts);
-		} else {
-			this.color = getDefaultColor();
 		}
 		genView();
 	}
@@ -177,6 +183,8 @@ public abstract class Element {
 			return new ElementBody(atts, context);
 		} else if (qName.equals("event")) {
 			return new ElementEvent(atts, context);
+		} else if (qName.equals("behavior")) {
+			return new ElementBehavior(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

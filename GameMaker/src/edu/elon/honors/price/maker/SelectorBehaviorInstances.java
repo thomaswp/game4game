@@ -167,7 +167,7 @@ implements IPopulatable{
 		TextUtils.addColoredText(sb, base.name, TextUtils.COLOR_ACTION);
 		sb.append(" (");
 		
-		List<Object> params = behavior.parameters;
+		List<Parameters> params = behavior.parameters;
 		
 		if (params.size() != base.parameters.size()) {
 			params.clear();
@@ -182,10 +182,10 @@ implements IPopulatable{
 			TextUtils.addColoredText(sb, baseParam.name, 
 					TextUtils.COLOR_MODE);
 			sb.append(" = ");
-			Object param = params.get(i);
+			Parameters param = params.get(i);
 			String name = "<None>";
 			name = TextUtils.getColoredText(name, Color.LTGRAY);
-			if (param != null && param instanceof Parameters) {
+			if (param != null) {
 				Element element = null;
 				try {
 					if (baseParam.type == ParameterType.Switch) {

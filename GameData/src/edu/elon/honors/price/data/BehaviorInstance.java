@@ -5,13 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.data.Event.Parameters;
 
 public class BehaviorInstance extends GameData {
 	private static final long serialVersionUID = 1L;
 	
 	public int behaviorId;
 	public BehaviorType type;
-	public List<Object> parameters = new LinkedList<Object>();
+	public List<Parameters> parameters = new LinkedList<Parameters>();
 	
 	public BehaviorInstance(int behaviorId, BehaviorType type) {
 		this.behaviorId = behaviorId;

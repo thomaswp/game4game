@@ -2,6 +2,7 @@ package com.twp.platform;
 
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.BehaviorInstance;
+import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.PlatformGame;
 
 /**
@@ -11,9 +12,10 @@ import edu.elon.honors.price.data.PlatformGame;
 public class BehaviorRuntime {
 	public int[] variables;
 	public boolean[] switches;
+	public Parameters[] parameters;
 	public BehaviorInstance instance;
 	
-	public Object getParameter(int index) {
+	public Parameters getParameter(int index) {
 		return instance.parameters.get(index);
 	}
 	
@@ -27,6 +29,10 @@ public class BehaviorRuntime {
 		variables = new int[behavior.variables.size()];
 		for (int i = 0; i < variables.length; i++) {
 			variables[i] = behavior.variables.get(i);
+		}
+		parameters = new Parameters[behavior.parameters.size()];
+		for (int i = 0; i < parameters.length; i++) {
+			parameters[i] = instance.parameters.get(i);
 		}
 	}
 }
