@@ -16,7 +16,7 @@ public class ActionCreateObject extends ScriptableInstance {		// ActionFragmentW
 	public static final String CATEGORY = "Object";					// ScriptableWriter.writeHeader()
 																	// ScriptableWriter.writeHeader()
 	/** Type: <b>&lt;objectClass&gt;</b> */							// ActionFragmentWriter.writeElement()
-	public int objectClass;											// ActionFragmentWriter.writeElement()
+	public ObjectClassPointer objectClass;							// ActionFragmentWriter.writeElement()
 	public ObjectClass readObjectClass(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
 		return gameState.readObjectClass(objectClass);				// ActionFragmentWriter.writeElement()
 	}																// ActionFragmentWriter.writeElement()
@@ -28,7 +28,7 @@ public class ActionCreateObject extends ScriptableInstance {		// ActionFragmentW
 																	// ActionFragmentWriter.writeReadParams()
 	@Override														// ActionFragmentWriter.writeReadParams()
 	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		objectClass = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
+		objectClass = iterator.getObjectClassPointer();				// ActionFragmentWriter.writeReadParams()
 		point = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**

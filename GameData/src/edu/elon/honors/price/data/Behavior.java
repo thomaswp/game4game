@@ -2,6 +2,7 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Trigger;
+import edu.elon.honors.price.data.types.ActorClassPointer;
 import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.ObjectClassPointer;
 import edu.elon.honors.price.data.types.ScopedData;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
@@ -34,19 +37,25 @@ public class Behavior extends GameData {
 	}
 	
 	public enum ParameterType {
-		Switch("Switch"), 
-		Variable("Variable"),
-		ActorClass("Actor"),
-		ObjectClass("Object");
+		Switch("Switch", Switch.class), 
+		Variable("Variable", Variable.class),
+		ActorClass("Actor", ActorClassPointer.class),
+		ObjectClass("Object", ObjectClassPointer.class);
 		
 		private String name;
+		private Class<? extends ScopedData<?>> paramClass;
 		
-		ParameterType(String name) {
+		ParameterType(String name, Class<? extends ScopedData<?>> paramClass) {
 			this.name = name;
+			this.paramClass = paramClass;
 		}
 		
 		public String getName() {
 			return name;
+		}
+		
+		public Class<? extends ScopedData<?>> getParamClass() {
+			return paramClass;
 		}
 	}
 	
@@ -97,32 +106,18 @@ public class Behavior extends GameData {
 		variables.add(value);
 	}
 	
-	private List<Switch> getSwitches() {
-		ArrayList<Switch> switches = new ArrayList<Switch>();
-		for (Event event : events) {
-			for (Action action : event.actions) {
-				switches.addAll(action.params.getAllByClass(Switch.class));
-			}
-			for (Trigger trigger : event.triggers) {
-				switches.addAll(trigger.params.getAllByClass(Switch.class));
-			}
-		}
-		return switches;
-	}
 	
-	private List<Variable> getVariables() {
-		ArrayList<Variable> variables = new ArrayList<Variable>();
+	private <T extends ScopedData<?>> List<T> getScoped(Class<T> c) {
+		ArrayList<T> data = new ArrayList<T>();
 		for (Event event : events) {
 			for (Action action : event.actions) {
-				variables.addAll(
-						action.params.getAllByClass(Variable.class));
+				data.addAll(action.params.getAllByClass(c));
 			}
 			for (Trigger trigger : event.triggers) {
-				variables.addAll(
-						trigger.params.getAllByClass(Variable.class));
+				data.addAll(trigger.params.getAllByClass(c));
 			}
 		}
-		return variables;
+		return data;
 	}
 	
 	private boolean inUse(List<? extends ScopedData<?>> data,
@@ -135,6 +130,11 @@ public class Behavior extends GameData {
 		return false;
 	}
 	
+	/**
+	 * Adjust for the removal of the Local or Param variable by shifting
+	 * any references to variables after it down by one. Does nothing
+	 * if the variable is in use.
+	 */
 	private boolean tryRemoveScoped(List<? extends ScopedData<?>> data,
 			DataScope scope, int index) {
 		
@@ -142,24 +142,22 @@ public class Behavior extends GameData {
 			return false;
 		}
 		
+		removeScoped(data, scope, index);
+		
+		return true;
+	}
+	
+	private void removeScoped(List<? extends ScopedData<?>> data,
+			DataScope scope, int index) {
 		for (ScopedData<?> d : data) {
 			if (d.scope == scope && d.id > index) {
 				d.id--;
 			}
 		}
-		return true;
-	}
-	
-	private boolean tryRemoveSwitch(DataScope scope, int index) {
-		return tryRemoveScoped(getSwitches(), scope, index);
-	}
-	
-	private boolean tryRemoveVariable(DataScope scope, int index) {
-		return tryRemoveScoped(getVariables(), scope, index);
 	}
 	
 	public boolean removeSwitch(int index) {
-		if (!tryRemoveSwitch(DataScope.Local, index)) {
+		if (!tryRemoveScoped(getScoped(Switch.class), DataScope.Local, index)) {
 			return false;
 		}
 		
@@ -169,7 +167,7 @@ public class Behavior extends GameData {
 	}
 	
 	public boolean removeVariable(int index) {
-		if (!tryRemoveVariable(DataScope.Local, index)) {
+		if (!tryRemoveScoped(getScoped(Variable.class), DataScope.Local, index)) {
 			return false;
 		}
 		
@@ -180,29 +178,23 @@ public class Behavior extends GameData {
 	
 	public boolean removeParameter(int index) {
 		Parameter param = parameters.get(index);
-		if (param.type == ParameterType.Switch) {
-			if (!tryRemoveSwitch(DataScope.Param, index)) {
-				return false;
-			}
-			tryRemoveVariable(DataScope.Param, index);
-		} else if (param.type == ParameterType.Variable) {
-			if (!tryRemoveVariable(DataScope.Param, index)) {
-				return false;
-			}
-			tryRemoveSwitch(DataScope.Param, index);
+		Class<? extends ScopedData<?>> c = param.type.getParamClass();
+		if (inUse(getScoped(c), DataScope.Param, index)) return false;
+		
+		for (ParameterType type : ParameterType.values()) {
+			removeScoped(getScoped(type.getParamClass()), DataScope.Param, index);
 		}
+		
 		parameters.remove(index);
 		return true;
 	}
 
 	public boolean setParameterType(int index, ParameterType type) {
-		if (inUse(getSwitches(), DataScope.Param, index)) {
+		Parameter param = parameters.get(index);
+		if (inUse(getScoped(param.type.paramClass), DataScope.Param, index)) {
 			return false;
 		}
-		if (inUse(getVariables(), DataScope.Param, index)) {
-			return false;
-		}
-		parameters.get(index).type = type;
+		param.type = type;
 		return true;
 	}
 		

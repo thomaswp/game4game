@@ -17,13 +17,18 @@ import com.twp.platform.TriggeringInfo;
 
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Behavior;
+import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event;
+import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.ObjectClass;
+import edu.elon.honors.price.data.types.ActorClassPointer;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.EventPointer;
+import edu.elon.honors.price.data.types.ObjectClassPointer;
+import edu.elon.honors.price.data.types.ScopedData;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.game.Debug;
@@ -175,19 +180,31 @@ public class PlatformGameState implements GameState {
 	}
 
 	@Override
-	public ActorClass readActorClass(int i) throws ParameterException {
-		if (i < 0 || i >= game.actors.length) {
-			throw new ParameterException("Actor Class index out of bounds: " + i);
-		}
-		return game.actors[i];
+	public ActorClass readActorClass(ActorClassPointer pointer) throws ParameterException {
+		return readMapClass(pointer, game.actors);
 	}
 
 	@Override
-	public ObjectClass readObjectClass(int i) throws ParameterException {
-		if (i < 0 || i >= game.objects.length) {
-			throw new ParameterException("Object Class index out of bounds: " + i);
+	public ObjectClass readObjectClass(ObjectClassPointer pointer) throws ParameterException {
+		return readMapClass(pointer, game.objects);
+	}
+	
+	private <T extends MapClass> T readMapClass(ScopedData<?> pointer, T[] list) throws ParameterException {
+		if (pointer.scope == DataScope.Global) {
+			int i = pointer.id;
+			assertThat(inArray(i, list), "MapClass index out of bounds: " + i);
+			return list[i];
+		} else if (pointer.scope == DataScope.Param) {
+			BehaviorInstance instance = getBehaviorInstance();
+			assertThat(inArray(pointer.id, instance.parameters), 
+					"Parameter out of bounds");
+			Object o = instance.parameters.get(pointer.id);
+			assertThat(o instanceof Parameters, "Param not a param!");
+			Object mapClass = ((Parameters)o).getObject();
+			return readMapClass((ScopedData<?>) mapClass, list);
+		} else {
+			throw new ParameterException("Wrong scope for ActorClass");
 		}
-		return game.objects[i];
 	}
 
 	@Override
@@ -298,11 +315,11 @@ public class PlatformGameState implements GameState {
 		if (mode == 0) {
 			return body instanceof ActorBody && body.getId() == params.getInt(1);
 		} else if (mode == 1) {
-			return body.getMapClass() == readActorClass(params.getInt(1));
+			return body.getMapClass() == readActorClass(params.getActorClassPointer(1));
 		} else if (mode == 2) {
 			return body instanceof ObjectBody && body.getId() == params.getInt(1);
 		} else if (mode == 3) {
-			return body.getMapClass() == readObjectClass(params.getInt(1));
+			return body.getMapClass() == readObjectClass(params.getObjectClassPointer(1));
 		} else if (mode == 4) {
 			return body == triggeringInfo.behaving;
 		} else if (mode == 5) {
