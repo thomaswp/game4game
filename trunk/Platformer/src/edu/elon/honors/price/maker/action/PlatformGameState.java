@@ -195,12 +195,11 @@ public class PlatformGameState implements GameState {
 			assertThat(inArray(i, list), "MapClass index out of bounds: " + i);
 			return list[i];
 		} else if (pointer.scope == DataScope.Param) {
-			BehaviorInstance instance = getBehaviorInstance();
-			assertThat(inArray(pointer.id, instance.parameters), 
+			BehaviorRuntime runtime = getBehavingRuntime(triggeringInfo);
+			assertThat(inArray(pointer.id, runtime.parameters), 
 					"Parameter out of bounds");
-			Object o = instance.parameters.get(pointer.id);
-			assertThat(o instanceof Parameters, "Param not a param!");
-			Object mapClass = ((Parameters)o).getObject();
+			Object mapClass = (runtime.getParameter(pointer.id)).getObject();
+			assertThat(mapClass instanceof ScopedData<?>, "Not an actor/object class");
 			return readMapClass((ScopedData<?>) mapClass, list);
 		} else {
 			throw new ParameterException("Wrong scope for ActorClass");
@@ -428,12 +427,10 @@ public class PlatformGameState implements GameState {
 					"Switch index out of bounds: %d", s.id);
 			return runtime.switches[s.id];
 		} else {
-			BehaviorInstance instance = getBehavingInstance(triggeringInfo);
-			assertThat(inArray(s.id, instance.parameters),
+			BehaviorRuntime runtime = getBehavingRuntime(triggeringInfo);
+			assertThat(inArray(s.id, runtime.parameters),
 					"Switch index is out of bounds: %d", s.id);
-			Object o = instance.parameters.get(s.id);
-			assertThat(o instanceof Parameters, "Invalid parameter");
-			return readBoolean((Parameters)o, 0, event, triggeringInfo);
+			return readBoolean(runtime.getParameter(s.id), 0, event, triggeringInfo);
 		}
 	}
 	
@@ -473,12 +470,10 @@ public class PlatformGameState implements GameState {
 					"Variable index out of bounds: %d", v.id);
 			return runtime.variables[v.id];
 		} else {
-			BehaviorInstance instance = getBehavingInstance(triggeringInfo);
-			assertThat(inArray(v.id, instance.parameters.size()),
+			BehaviorRuntime runtime = getBehavingRuntime(triggeringInfo);
+			assertThat(inArray(v.id, runtime.parameters),
 					"Variable index out of bounds: %d", v.id);
-			Object o = instance.parameters.get(v.id);
-			assertThat(o instanceof Parameters, "Invalid parameter");
-			return readNumber((Parameters)o, 0, event, triggeringInfo);
+			return readNumber(runtime.getParameter(v.id), 0, event, triggeringInfo);
 		}
 	}
 	

@@ -14,6 +14,8 @@ import edu.elon.honors.price.maker.action.ElementActorClass;
 import edu.elon.honors.price.maker.action.ElementBoolean;
 import edu.elon.honors.price.maker.action.ElementNumber;
 import edu.elon.honors.price.maker.action.ElementObjectClass;
+import edu.elon.honors.price.maker.action.EventContext;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -25,12 +27,25 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-public class DatabaseEditBehaviorInstance extends DatabaseActivity {
+public class DatabaseEditBehaviorInstance extends DatabaseActivity implements IEventContextual {
 
 	private BehaviorInstance instance;
 	private List<Element> elements;
 	private View root;
+	private EventContext eventContext;
 
+	public static void startForResult(Activity activity, int requestCode,
+			BehaviorInstance instance, EventContext eventContext) {
+		Intent intent = new Intent(activity, DatabaseEditBehaviorInstance.class);
+		intent.putExtra("instance", instance);
+		intent.putExtra("eventContext", eventContext);
+		activity.startActivityForResult(intent, requestCode);
+	}
+	
+	public static BehaviorInstance getBehaviorInstance(Intent data) {
+		return (BehaviorInstance) data.getExtras().getSerializable("instance");
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,6 +53,7 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 		setDefaultButtonActions();
 
 		instance = (BehaviorInstance)getExtra("instance");
+		eventContext = (EventContext)getExtra("eventContext");
 		Behavior behavior = instance.getBehavior(game);
 		
 		String name = TextUtils.getColoredText(behavior.name, 
@@ -135,5 +151,10 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity {
 				((IPopulatable)v).onActivityResult(requestCode, data);
 			}
 		}
+	}
+
+	@Override
+	public EventContext getEventContext() {
+		return eventContext;
 	}
 }

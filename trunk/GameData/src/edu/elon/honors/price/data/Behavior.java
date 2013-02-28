@@ -212,4 +212,9 @@ public class Behavior extends GameData {
 			this.type = type;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 }

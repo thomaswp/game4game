@@ -26,6 +26,13 @@ public class ElementChoice extends Element {
 		super(atts, context);
 	}
 	
+	public ElementChoice(Context context, String text, boolean mute) {
+		super(context);
+		this.text = text;
+		this.mute = mute;
+		genView();
+	}
+	
 	@Override
 	protected void readAttributes(Attributes atts) {
 		super.readAttributes(atts);
