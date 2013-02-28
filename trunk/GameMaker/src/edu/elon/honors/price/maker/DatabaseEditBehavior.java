@@ -508,7 +508,7 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 			final Parameter param = behavior.parameters.get(index);
 
 			editTextName.setText(param.name);
-			int radio = param.type == ParameterType.Switch ? 0 : 1;
+			int radio = param.type.ordinal();
 			((RadioButton)radioGroupType.getChildAt(radio)).setChecked(true);
 
 			new AlertDialog.Builder(DatabaseEditBehavior.this)

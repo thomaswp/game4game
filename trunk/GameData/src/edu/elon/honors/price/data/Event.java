@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.elon.honors.price.data.types.ActorClassPointer;
 import edu.elon.honors.price.data.types.DataScope;
+import edu.elon.honors.price.data.types.ObjectClassPointer;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
 import edu.elon.honors.price.game.Debug;
@@ -237,6 +239,14 @@ public class Event extends GameData {
 			return (Variable)params.get(index);
 		}
 		
+		public ActorClassPointer getActorClassPointer(int index) {
+			return (ActorClassPointer)params.get(index);
+		}
+		
+		public ObjectClassPointer getObjectClassPointer(int index) {
+			return (ObjectClassPointer)params.get(index);
+		}
+		
 		/**
 		 * Gets the first parameter, cast as another set of Parameters.
 		 * This is used when a list or complex data is passed as a parameter.
@@ -359,6 +369,8 @@ public class Event extends GameData {
 			public Parameters getParameters() { return params.getParameters(index++); }
 			public Switch getSwitch() { return params.getSwitch(index++); }
 			public Variable getVariable() { return params.getVariable(index++); }
+			public ActorClassPointer getActorClassPointer() { return params.getActorClassPointer(index++); }
+			public ObjectClassPointer getObjectClassPointer() { return params.getObjectClassPointer(index++); }
 
 			@Override
 			public boolean hasNext() {

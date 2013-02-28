@@ -5,6 +5,8 @@ import java.util.List;
 
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior;
+import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.MapClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.types.DataScope;
@@ -29,7 +31,7 @@ public abstract class SelectorMapClass<T extends ScopedData<?>> extends Spinner 
 	
 	protected abstract T getNewPointer();
 	protected abstract ParameterType getParameterType();
-	protected abstract void addLabelsAndImages(List<String> labels, List<Bitmap> images);
+	protected abstract MapClass[] getMapClasses();
 	
 	public SelectorMapClass(Context context) {
 		super(context);
@@ -137,8 +139,33 @@ public abstract class SelectorMapClass<T extends ScopedData<?>> extends Spinner 
 		setSelectedClass(object);
 	}
 
+	private void addLabelsAndImages(ArrayList<String> labels,
+			ArrayList<Bitmap> images) {
+		for (MapClass mc : getMapClasses()) {
+			labels.add(mc.name);
+			images.add(getResizedBitmap(mc));
+		}
+	}
+	
 	@Override
 	public boolean onActivityResult(int requestCode, Intent data) {
 		return false;
+	}
+	
+	protected Bitmap getResizedBitmap(MapClass mapClass) {
+		Bitmap bitmap = Data.loadObject(mapClass.imageName); 
+		float zoom = mapClass.zoom;
+		int width = (int)(bitmap.getWidth() * zoom);
+		if (width > MAX_IMAGE_SIZE) {
+			zoom *= (float)MAX_IMAGE_SIZE / width;
+		}
+		int height = (int)(bitmap.getHeight() * zoom);
+		if (height > MAX_IMAGE_SIZE) {
+			zoom *= (float)MAX_IMAGE_SIZE / width;
+		}
+		width = (int)(bitmap.getWidth() * zoom);
+		height = (int)(bitmap.getHeight() * zoom);
+		bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+		return bitmap;
 	}
 }
