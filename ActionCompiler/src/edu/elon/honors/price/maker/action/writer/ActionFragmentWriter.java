@@ -44,8 +44,8 @@ public class ActionFragmentWriter extends Writer {
 	static {
 		ELEMENT_TYPES.put("switch", "Switch");
 		ELEMENT_TYPES.put("variable", "Variable");
-		ELEMENT_TYPES.put("actorClass", "int");
-		ELEMENT_TYPES.put("objectClass", "int");
+		ELEMENT_TYPES.put("actorClass", "ActorClassPointer");
+		ELEMENT_TYPES.put("objectClass", "ObjectClassPointer");
 		ELEMENT_TYPES.put("button", "int");
 		ELEMENT_TYPES.put("joystick", "int");
 		ELEMENT_TYPES.put("string", "String");
