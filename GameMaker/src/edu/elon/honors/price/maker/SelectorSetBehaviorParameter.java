@@ -8,10 +8,13 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.action.EventContext;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,18 +38,50 @@ implements IViewContainer, IPopulatable {
 	private Button buttonEdit;
 	private ArrayAdapter<Behavior> adapter;
 	
-	private Behavior behavior;
+	private int behaviorIndex;
 	private List<Parameters> parameters = new ArrayList<Parameters>();
+	private String description;
 	
-	public void setBehavior(Behavior behavior) {
-		this.behavior = behavior;
-		if (game != null && behavior != null) {
-			int index = game.getBehaviors(type).indexOf(behavior);
-			if (index >= 0 && index < adapter.getCount()) {
+	public Behavior getBehavior() {
+		int index = behaviorIndex;
+		if (adapter != null && index >= 0 && index < adapter.getCount()) {
+			return adapter.getItem(index);
+		}
+		return null;
+	}
+	
+	public void setBehaviorIndex(int index) {
+		Debug.write("set: %d", index);
+		if (index != behaviorIndex) {
+			behaviorIndex = index;
+			resetParameters();
+			if (adapter != null) {
 				spinnerBehaviors.setSelection(index);
 			}
 		}
-		resetParameters();
+	}
+	
+	public int getBehaviorIndex() {
+		Debug.write("get: %d", behaviorIndex);
+		return behaviorIndex;
+	}
+	
+	public List<Parameters> getParameters() {
+		return parameters;
+	}
+	
+	public void setParameters(List<Parameters> parameters) {
+		this.parameters = parameters;
+		
+		Behavior behavior = getBehavior();
+		if (behavior != null) {
+			BehaviorInstance instance = new BehaviorInstance(behaviorIndex, type);
+			instance.parameters.addAll(parameters);
+			description = SelectorBehaviorInstances.getBehaviorNameHtml(getContext(), game, instance); 
+		} else {
+			description = "[None]";
+		}
+		textViewDescription.setText(Html.fromHtml(description));
 	}
 	
 	public SelectorSetBehaviorParameter(Activity context, 
@@ -66,24 +101,19 @@ implements IViewContainer, IPopulatable {
 	}
 	
 	private void edit() {
-		if (game != null) {
-			int index = game.getBehaviors(type).indexOf(behavior);
-			if (index != -1) {
-				BehaviorInstance instance = new BehaviorInstance(index, type);
-				instance.parameters.addAll(parameters);
-				DatabaseEditBehaviorInstance.startForResult((Activity)getContext(), 
-						getId(), instance, eventContext);
-			}
+		if (getBehavior() != null) {
+			BehaviorInstance instance = new BehaviorInstance(behaviorIndex, type);
+			instance.parameters.addAll(parameters);
+			Debug.write(instance.parameters);
+			Debug.write(parameters);
+			DatabaseEditBehaviorInstance.startForResult((Activity)getContext(), 
+					getId(), game, instance, eventContext);
 		}
 	}
 	
 	private void resetParameters() {
 		parameters.clear();
-		if (behavior != null) {
-			for (int i = 0; i < behavior.parameters.size(); i++) {
-				parameters.add(null);
-			}
-		}
+		setParameters(parameters);
 	}
 
 	@Override
@@ -97,9 +127,9 @@ implements IViewContainer, IPopulatable {
 		spinnerBehaviors.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> spinner, View view,
-					int index, long id) { 
-				Behavior newBehavior = behaviors.get(index); 
-				if (behavior != newBehavior) { 
+					int index, long id) {
+				if (behaviorIndex != index) {
+					behaviorIndex = index;
 					resetParameters();
 				}
 			}
@@ -107,6 +137,12 @@ implements IViewContainer, IPopulatable {
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) { }
 		});
+
+		if (getBehavior() != null) {
+			spinnerBehaviors.setSelection(behaviorIndex);
+		}
+		
+		setParameters(parameters);
 	}
 
 	@Override
@@ -114,9 +150,18 @@ implements IViewContainer, IPopulatable {
 		BehaviorInstance instance = 
 				DatabaseEditBehaviorInstance.getBehaviorInstance(data);
 		if (instance != null) {
-			parameters = instance.parameters;
+			setParameters(instance.parameters);
 		}
 		return true;
+	}
+	
+	public String getDescription() {
+		Behavior behavior = getBehavior();
+		if (behavior == null) {
+			return "[Nothing]";
+		} else {
+			return description;
+		}
 	}
 
 }

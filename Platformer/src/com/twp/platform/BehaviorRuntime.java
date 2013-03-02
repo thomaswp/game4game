@@ -16,7 +16,7 @@ public class BehaviorRuntime {
 	public BehaviorInstance instance;
 	
 	public Parameters getParameter(int index) {
-		return instance.parameters.get(index);
+		return parameters[index];
 	}
 	
 	public BehaviorRuntime(BehaviorInstance instance, PlatformGame game) {

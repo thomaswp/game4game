@@ -32,4 +32,9 @@ public class ActorClassPointer extends ScopedData<ActorClassPointer> {
 	public ActorClassPointer copy() {
 		return new ActorClassPointer(id, scope);
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("AC[%d,%d]", id, scope.toInt());
+	}
 }

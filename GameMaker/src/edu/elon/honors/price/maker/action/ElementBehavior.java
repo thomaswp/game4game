@@ -1,8 +1,12 @@
 package edu.elon.honors.price.maker.action;
 
+import java.util.List;
+
 import org.xml.sax.Attributes;
 
 import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.data.Event.Parameters;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
@@ -26,7 +30,7 @@ public class ElementBehavior extends ElementGroup {
 	public ElementBehavior(Attributes atts, Context context) {
 		super(atts, context);
 	}
-	
+
 	@Override
 	protected void readAttributes(Attributes atts) {
 		String t = atts.getValue("type");
@@ -42,14 +46,36 @@ public class ElementBehavior extends ElementGroup {
 		}
 	}
 	
+	@Override
+	protected void addParameters(Parameters params) {
+		Parameters ps = new Parameters();
+		ps.addParam(selectorSetBehaviorParameter.getBehaviorIndex());
+		ps.addParam(selectorSetBehaviorParameter.getParameters());
+		params.addParam(ps);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void readParameters(Iterator params) {
+		Parameters ps = params.getParameters();
+		selectorSetBehaviorParameter.setBehaviorIndex(ps.getInt(0));
+		selectorSetBehaviorParameter.setParameters((List<Parameters>)ps.getObject(1));
+	}
+	
 	@Override 
 	protected void genView() {
 		selectorSetBehaviorParameter = new SelectorSetBehaviorParameter(
 				(Activity)context, type, eventContext);
-		LinearLayout layout = new LinearLayout(context);
-		LayoutParams lps = new LayoutParams(Screen.dipToPx(200, context), 
-				LayoutParams.WRAP_CONTENT);
-		layout.addView(selectorSetBehaviorParameter, lps);
-		main = layout;
+		//LinearLayout layout = new LinearLayout(context);
+//		LayoutParams lps = new LayoutParams(Screen.dipToPx(200, context), 
+//				LayoutParams.WRAP_CONTENT);
+		//layout.addView(selectorSetBehaviorParameter);
+		main = selectorSetBehaviorParameter;
+	}
+	
+
+	@Override
+	public String getDescription(PlatformGame game) {
+		return selectorSetBehaviorParameter.getDescription();
 	}
 }

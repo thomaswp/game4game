@@ -137,31 +137,32 @@ public class DatabaseNewAction extends DatabaseActivity {
 			ArrayList<Category> categories = new ArrayList<Category>();
 
 			int[] ids = ActionFactory.ACTION_IDS;
+			ArrayList<Integer> all = new ArrayList<Integer>();
 			
 			for (int i : ids) {
-				String name = ActionFactory.ACTION_CATEGORIES[i];
-				Category category = null;
-				for (Category cat : categories) {
-					if (cat.name.equals(name)) {
-						category = cat;
-						break;
+				String text = ActionFactory.ACTION_CATEGORIES[i];
+				String[] parts = text.split("\\|");
+				for (String name : parts) {
+					Category category = null;
+					for (Category cat : categories) {
+						if (cat.name.equals(name)) {
+							category = cat;
+							break;
+						}
+					}
+					if (category == null && !name.equalsIgnoreCase("hidden")) {
+						 category = new Category(name);
+						 categories.add(category);
+					}
+					if (category != null) {
+						category.actions.add(i);
 					}
 				}
-				if (category == null && !name.equalsIgnoreCase("hidden")) {
-					 category = new Category(name);
-					 categories.add(category);
-				}
-				if (category != null) {
-					category.actions.add(i);
-				}
+				all.add(i);
 			}
 			
 			Collections.sort(categories);
-
-			ArrayList<Integer> all = new ArrayList<Integer>();
-			for (Category cat : categories) {
-				all.addAll(cat.actions);
-			}
+			
 			Collections.sort(all, new Comparator<Integer>() {
 				@Override
 				public int compare(Integer lhs, Integer rhs) {

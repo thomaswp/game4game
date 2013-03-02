@@ -32,4 +32,9 @@ public class ObjectClassPointer extends ScopedData<ObjectClassPointer> {
 	public ObjectClassPointer copy() {
 		return new ObjectClassPointer(id, scope);
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("OC[%d,%d]", id, scope.toInt());
+	}
 }
