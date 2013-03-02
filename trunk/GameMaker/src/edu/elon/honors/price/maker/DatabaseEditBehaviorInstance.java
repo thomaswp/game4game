@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Behavior.Parameter;
 import edu.elon.honors.price.data.Behavior.ParameterType;
+import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.action.Element;
 import edu.elon.honors.price.maker.action.ElementActorClass;
@@ -35,8 +36,9 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity implements IE
 	private EventContext eventContext;
 
 	public static void startForResult(Activity activity, int requestCode,
-			BehaviorInstance instance, EventContext eventContext) {
+			PlatformGame game, BehaviorInstance instance, EventContext eventContext) {
 		Intent intent = new Intent(activity, DatabaseEditBehaviorInstance.class);
+		intent.putExtra("game", game);
 		intent.putExtra("instance", instance);
 		intent.putExtra("eventContext", eventContext);
 		activity.startActivityForResult(intent, requestCode);
@@ -58,11 +60,19 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity implements IE
 		
 		String name = TextUtils.getColoredText(behavior.name, 
 				TextUtils.COLOR_ACTION);
+		String title = "Edit " + name + "'s Parameters";
+		if (behavior.parameters.size() == 0) {
+			title += " (No parameters to edit!)";
+		}
 		((TextView)findViewById(R.id.textViewTitle)).setText(
-				Html.fromHtml("Edit " + name + "'s Parameters"));
+				Html.fromHtml(title));
 
 		int id = 100;
 
+		while (instance.parameters.size() < behavior.parameters.size()) {
+			instance.parameters.add(null);
+		}
+		
 		elements = new LinkedList<Element>();
 		TableLayout layout = new TableLayout(this);
 		for (int i = 0; i < instance.parameters.size(); i++) {
@@ -122,14 +132,14 @@ public class DatabaseEditBehaviorInstance extends DatabaseActivity implements IE
 		for (Element element : elements) {
 			Parameters params = element.getParameters();
 			instance.parameters.add(params);
-			Debug.write(params);
+			//Debug.write(params);
 		}
 	}
 
 	@Override
 	protected boolean hasChanged() {
 		BehaviorInstance old = (BehaviorInstance)getExtra("instance");
-		Debug.write("%s vs %s", instance.toString(), old.toString());
+		//Debug.write("%s vs %s", instance.toString(), old.toString());
 		return !instance.equals(old) || super.hasChanged(); 
 	}
 	

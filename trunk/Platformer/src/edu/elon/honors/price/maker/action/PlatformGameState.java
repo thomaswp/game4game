@@ -35,6 +35,7 @@ import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Button;
 import edu.elon.honors.price.input.JoyStick;
 import edu.elon.honors.price.input.UIControl;
+import edu.elon.honors.price.physics.Body;
 import edu.elon.honors.price.physics.Vector;
 
 public class PlatformGameState implements GameState {
@@ -326,6 +327,24 @@ public class PlatformGameState implements GameState {
 		}
 		
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setBehaviorParameters(PlatformBody body, Parameters behavior) 
+			throws ParameterException {
+		int index = behavior.getInt(0);
+		Object ps = behavior.getObject(1);
+		assertThat(ps instanceof List<?>, "No parameter list");
+		List<Parameters> params = (List<Parameters>)ps; 
+		assertThat(inArray(index, body.getBehaviorRuntimes()), 
+				"Body doesn't have this behavior");
+		//Debug.write("set %s", body.getBehaviorRuntimes()[index]);
+		Parameters[] runtimeParams = body.getBehaviorRuntimes()[index].parameters;
+		assertThat(runtimeParams.length == params.size(), "Parameter size missmatch");
+		for (int i = 0; i < runtimeParams.length; i++) {
+			//Debug.write("%s -> %s", runtimeParams[i], params.get(i));
+			runtimeParams[i] = params.get(i);
+		}
 	}
 
 	@Override

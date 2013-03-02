@@ -156,12 +156,18 @@ implements IPopulatable{
 	
 	private void addButton(BehaviorInstance behavior) {
 		RadioButton button = new RadioButton(getContext());
-		Spanned name = getBehaviorName(behavior);
+		Spanned name = getBehaviorNameSpanned(getContext(), game, behavior);
 		button.setText(name);
 		radioGroupBehaviors.addView(button);
 	}
 	
-	private Spanned getBehaviorName(BehaviorInstance behavior) {
+	public static Spanned getBehaviorNameSpanned(Context context, 
+			PlatformGame game, BehaviorInstance behavior) {
+		return Html.fromHtml(getBehaviorNameHtml(context, game, behavior));
+	}
+	
+	public static String getBehaviorNameHtml(Context context, 
+			PlatformGame game, BehaviorInstance behavior) {
 		StringBuilder sb = new StringBuilder();
 		Behavior base = behavior.getBehavior(game);
 		TextUtils.addColoredText(sb, base.name, TextUtils.COLOR_ACTION);
@@ -189,15 +195,15 @@ implements IPopulatable{
 				Element element = null;
 				try {
 					if (baseParam.type == ParameterType.Switch) {
-						element = new ElementBoolean(null, getContext());
+						element = new ElementBoolean(null, context);
 						//dumb work around for "on"/"off" not being inited
 						((ElementBoolean )element).genView();
 					} else if (baseParam.type == ParameterType.Variable) {
-						element = new ElementNumber(null, getContext());
+						element = new ElementNumber(null, context);
 					} else if (baseParam.type == ParameterType.ActorClass) {
-						element = new ElementActorClass(null, getContext());
+						element = new ElementActorClass(null, context);
 					} else if (baseParam.type == ParameterType.ObjectClass) {
-						element = new ElementObjectClass(null, getContext());
+						element = new ElementObjectClass(null, context);
 					}
 					if (element != null) {
 						DatabaseActivity.populateViews(element.getView(), game);
@@ -213,7 +219,7 @@ implements IPopulatable{
 		
 		sb.append(")");
 		
-		return Html.fromHtml(sb.toString());
+		return sb.toString();
 	}
 
 	@Override
@@ -230,7 +236,7 @@ implements IPopulatable{
 				data.getSerializableExtra("instance");
 			behaviors.set(index, instance);
 			((RadioButton)radioGroupBehaviors.getChildAt(index))
-			.setText(getBehaviorName(instance));
+			.setText(getBehaviorNameSpanned(getContext(), game, instance));
 		}
 		return false;
 	}

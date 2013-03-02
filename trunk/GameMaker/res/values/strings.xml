@@ -153,4 +153,5 @@
     <string name="physics">Physics</string>
     <string name="actor">Actor</string>
     <string name="object">Object</string>
+    <string name="to_c">"to: "</string>
 </resources>
