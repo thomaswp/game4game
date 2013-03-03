@@ -23,7 +23,7 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 	private SelectorObjectImage selectorObjectImage;
 	private SelectorBehaviorInstances selectorBehaviorInstances;
 	private Button buttonScale;
-	private SeekBar seekBarDensity, seekBarRestitution;
+	private SeekBar seekBarDensity, seekBarRestitution, seekBarFriction;
 	private SelectorCollidesWith selectorCollidesWith;
 	private CheckBox checkBoxMoves, checkBoxRotates, checkBoxIsPlatform;
 	
@@ -72,6 +72,8 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 				getObject().density = (float)progress / seekBar.getMax();
 			}
 		});
+		
+		seekBarFriction.setProgress((int)(objectClass.friction * seekBarFriction.getMax() / ObjectClass.MAX_FRICTION));		
 		
 		selectorCollidesWith.setMapClass(getObject());
 		
@@ -128,6 +130,8 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 		objectClass.name = editTextObjectName.getText().toString();
 		objectClass.imageName = selectorObjectImage.getSelectedImageName();
 		objectClass.behaviors = selectorBehaviorInstances.getBehaviors();
+		objectClass.friction = (float)seekBarFriction.getProgress() * 
+				ObjectClass.MAX_FRICTION / seekBarFriction.getMax();
 	}
 	
 	@Override

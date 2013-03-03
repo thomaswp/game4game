@@ -227,9 +227,10 @@ public class PhysicsHandler {
 			}
 
 			@Override
-			public void beginContact(Contact contact) {		
+			public void beginContact(Contact contact) {
 				if (contact.isTouching()) {
-					contacts.add(new QueuedContact(contact.getFixtureA(), contact.getFixtureB()));
+					contacts.add(QueuedContact.create(contact.getFixtureA(), 
+							contact.getFixtureB(), contact.getWorldManifold().getNormal()));
 				}
 			}
 		};
@@ -678,7 +679,7 @@ public class PhysicsHandler {
 				}
 				if (bodyB instanceof ObjectBody && 
 						((ObjectBody) bodyB).getObject().isPlatform) {
-					doPlatformContact(bodyA, fixtureB, bodyB.getSprite());
+					doPlatformContact(bodyA, fixtureB, bodyB.getSprite(), contact.normal);
 				}
 			} else if (levelMap.containsKey(fixtureB) || isBoundaryFixture(fixtureB)) {
 
@@ -688,7 +689,7 @@ public class PhysicsHandler {
 					}
 				} else {
 					Sprite spriteB = levelMap.get(fixtureB);
-					doPlatformContact(bodyA, fixtureB, spriteB);
+					doPlatformContact(bodyA, fixtureB, spriteB, contact.normal);
 				}
 			}
 
@@ -696,21 +697,28 @@ public class PhysicsHandler {
 
 		if (!anti) {
 			doContact(contact, true);
+		} else {
+			contact.recycle();
 		}
 	}
 	
-	private void doPlatformContact(PlatformBody bodyA, Fixture fixtureB, Sprite spriteB) {
-		RectF rectA = bodyA.getSprite().getRect();
-		RectF rectB = spriteB.getRect();
-		
-		float nx = rectB.centerX() - rectA.centerX();
-		float ny = rectB.centerY() - rectA.centerY();
+	private void doPlatformContact(PlatformBody bodyA, Fixture fixtureB, Sprite spriteB,
+			Vector2 normal) {
+//		RectF rectA = bodyA.getSprite().getRect();
+//		RectF rectB = spriteB.getRect();
+//		
+//		float nx = rectB.centerX() - rectA.centerX();
+//		float ny = rectB.centerY() - rectA.centerY();
+//		
+		float nx = normal.x;
+		float ny = -normal.y;
 		
 		if (Math.abs(nx) > Math.abs(ny)) {
 			bodyA.doWallContact(fixtureB);
 		} else if (ny > 0) {
 			bodyA.doFloorContact(fixtureB);
 		}
+		
 	}
 
 	public void regionCallback(final BodyCallback callback, float left, 
@@ -732,10 +740,31 @@ public class PhysicsHandler {
 
 	private static class QueuedContact {
 		public Fixture fixtureA, fixtureB;
+		public Vector2 normal = new Vector2();
+		
+		private static ArrayList<QueuedContact> toReuse =
+				new ArrayList<QueuedContact>();
 
-		public QueuedContact(Fixture fixtureA, Fixture fixtureB) {
+		public static QueuedContact create(Fixture fixtureA, Fixture fixtureB,
+				Vector2 normal) {
+			if (toReuse.size() == 0) return new QueuedContact(fixtureA, fixtureB, normal);
+			QueuedContact qc = toReuse.remove(toReuse.size() - 1);
+			qc.set(fixtureA, fixtureB, normal);
+			return qc;
+		}
+		
+		public void recycle() {
+			toReuse.add(this);
+		}
+		
+		private QueuedContact(Fixture fixtureA, Fixture fixtureB, Vector2 normal) {
+			set(fixtureA, fixtureB, normal);
+		}
+		
+		public void set(Fixture fixtureA, Fixture fixtureB, Vector2 normal) {
 			this.fixtureA = fixtureA;
 			this.fixtureB = fixtureB;
+			this.normal.set(normal);
 		}
 	}
 }

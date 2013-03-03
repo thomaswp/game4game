@@ -158,6 +158,25 @@
                     </TableRow>
 
                     <TableRow
+                        android:id="@+id/TableRow01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible" >
+
+                        <TextView
+                            android:id="@+id/TextView05"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/friction_c" />
+
+                        <SeekBar
+                            android:id="@+id/seekBarFriction"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+
+                    <TableRow
                         android:id="@+id/tableRow7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

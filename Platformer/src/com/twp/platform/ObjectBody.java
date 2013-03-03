@@ -4,6 +4,10 @@ package com.twp.platform;
 import java.util.List;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -66,32 +70,15 @@ public class ObjectBody extends PlatformBody {
 		BodyDef objectDef = new BodyDef();
 		objectDef.position.set(spriteToVect(sprite, null));
 		objectDef.type = object.moves ? BodyType.DynamicBody : BodyType.KinematicBody;
-		objectDef.fixedRotation = object.rotates;
+		objectDef.fixedRotation = !object.rotates;
 		body = physics.getWorld().createBody(objectDef);
 
 		float[] xs = new float[8]; float[] ys = new float[8];
 		int pts = sprite.convexHull(xs, ys);
 		sprite.centerOrigin();
 
-//		Path path = new Path();
-//		boolean first = true;
-//		for (int i = 0; i < xs.length; i++) {
-//			if (xs[i] >= 0) {
-//				if (first)
-//					path.moveTo(xs[i], ys[i]);
-//				else
-//					path.lineTo(xs[i], ys[i]);
-//				first = false;
-//			}
-//			//Debug.write("(%f,%f)", xs[i], ys[i]);
-//		}
-//		path.close();
-//		Paint paint = new Paint();
-//		paint.setColor(Color.argb(150, 255, 255, 255));
-//		paint.setStyle(Style.FILL);
-//		sprite.setMutable(true);
-//		sprite.getBitmapCanvas().drawPath(path, paint);
-
+		//drawDebugOutline(xs, ys);
+		
 		Vector2[] points = new Vector2[pts];
 		int pi = points.length - 1;
 		for (int i = 0; i < 8; i++) {
@@ -115,12 +102,33 @@ public class ObjectBody extends PlatformBody {
 		fixture.filter.maskBits = getMaskBits();
 		fixture.shape = poly;
 		fixture.density = getDensity(object.density);
-		fixture.friction = 1;
+		fixture.friction = object.friction;
 		fixture.restitution = object.restitution;
 		body.createFixture(fixture);
-		//body.setFixedRotation(true);
 
 		poly.dispose();
+	}
+	
+	@SuppressWarnings("unused")
+	private void drawDebugOutline(float[] xs, float[] ys) {
+		Path path = new Path();
+		boolean first = true;
+		for (int i = 0; i < xs.length; i++) {
+			if (xs[i] >= 0) {
+				if (first)
+					path.moveTo(xs[i], ys[i]);
+				else
+					path.lineTo(xs[i], ys[i]);
+				first = false;
+			}
+			//Debug.write("(%f,%f)", xs[i], ys[i]);
+		}
+		path.close();
+		Paint paint = new Paint();
+		paint.setColor(Color.argb(150, 255, 255, 255));
+		paint.setStyle(Style.FILL);
+		sprite.setMutable(true);
+		sprite.getBitmapCanvas().drawPath(path, paint);
 	}
 
 	@Override
