@@ -19,7 +19,7 @@ import edu.elon.honors.price.physics.Vector;
 
 public abstract class PlatformBody implements IBehaving {
 	protected static final float SCALE = PlatformLogic.SCALE;
-	
+
 
 	public final static float MAX_DENSITY = 10; 
 	public final static float DENSITY_SCALE = 2 * (float)Math.log(MAX_DENSITY);
@@ -28,7 +28,7 @@ public abstract class PlatformBody implements IBehaving {
 		float mult = (perc - 0.5f) * DENSITY_SCALE;
 		return (float)Math.exp(mult);
 	}
-	
+
 	protected Body body;
 	protected Sprite sprite;
 	protected int id;
@@ -43,18 +43,18 @@ public abstract class PlatformBody implements IBehaving {
 	protected boolean disposed;
 	protected BehaviorRuntime[] behaviorRuntimes;
 	protected BodyAnimation animation;
-	
+
 	@Override
 	public BehaviorRuntime[] getBehaviorRuntimes() {
 		return behaviorRuntimes;
 	}
-	
+
 	@Override
 	public int getBehaviorCount() {
 		if (behaviorRuntimes == null) return 0;
 		return behaviorRuntimes.length;
 	}
-	
+
 	public ArrayList<PlatformBody> getCollidedBodies() {
 		return collidedBodies;
 	}
@@ -62,11 +62,11 @@ public abstract class PlatformBody implements IBehaving {
 	public boolean isCollidedWall() {
 		return collidedWall;
 	}
-	
+
 	public boolean isDisposed() {
 		return disposed;
 	}
-	
+
 	public void setCollidedWall(boolean collidedWall) {
 		this.collidedWall = collidedWall;
 	}
@@ -74,11 +74,11 @@ public abstract class PlatformBody implements IBehaving {
 	public boolean isTouchingWall() {
 		return touchingWalls.size() > 0;
 	}
-	
+
 	public ArrayList<Fixture> getTouchingWalls() {
 		return touchingWalls;
 	}
-	
+
 	public ArrayList<Fixture> getTouchingFloors() {
 		return touchingFloors;
 	}
@@ -90,7 +90,7 @@ public abstract class PlatformBody implements IBehaving {
 	public boolean isGrounded() {
 		return touchingFloors.size() > 0;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -98,7 +98,7 @@ public abstract class PlatformBody implements IBehaving {
 	public Body getBody() {
 		return body;
 	}
-	
+
 	public Vector2 getVelocity() {
 		return body.getLinearVelocity();
 	}
@@ -106,7 +106,7 @@ public abstract class PlatformBody implements IBehaving {
 	public void setVelocity(float vx, float vy) {
 		body.setLinearVelocity(vx, vy);
 	}
-	
+
 	public void setVelocity(Vector2 velocity) {
 		body.setLinearVelocity(velocity);
 	}
@@ -122,17 +122,17 @@ public abstract class PlatformBody implements IBehaving {
 	public Vector2 getPosition() {
 		return body.getPosition();
 	}
-	
+
 	public Vector getScaledPosition() {
 		scaledPosition.set(body.getPosition().x * SCALE, 
 				body.getPosition().y * SCALE);
 		return scaledPosition;
 	}
-	
+
 	public void setPosition(float x, float y) {
 		body.setTransform(x, y, body.getAngle());
 	}
-	
+
 	public void setScaledPosition(int x, int y) {
 		setPosition(x / SCALE, y / SCALE);
 	}
@@ -140,39 +140,39 @@ public abstract class PlatformBody implements IBehaving {
 	public Sprite getSprite() {
 		return sprite;
 	}
-	
+
 	public PlatformBody(Viewport viewport, PhysicsHandler physics, int id, 
 			float startX, float startY) {
 		this.physics = physics;
 		this.id = id;
 	}
-	
+
 	public void dispose() {
 		this.sprite.dispose();
 		physics.postDisposeBody(this);
 		disposed = true;
 	}
-	
+
 	public void updateSprite(Vector offset) {
 		setSpritePosition(sprite, body, offset);
 		sprite.setRotation(body.getAngle() * 180 / (float)Math.PI);
 	}
-	
+
 	public static Vector2 spriteToVect(Sprite sprite, Vector offset) {
 		if (offset == null)
 			return new Vector2(sprite.getX() / SCALE, sprite.getY() / SCALE);
 
 		return new Vector2((sprite.getX() - offset.getX()) / SCALE, (sprite.getY() - offset.getY()) / SCALE);
 	}
-	
+
 	public static void setSpritePosition(Sprite sprite, Body body, Vector offset) {
 		sprite.setX(body.getPosition().x * SCALE + offset.getX());
 		sprite.setY(body.getPosition().y * SCALE + offset.getY());
 	}
-	
+
 	public static boolean contactBetween(Contact contact, PlatformBody body1, PlatformBody body2) {
 		ArrayList<Fixture> fixtures1 = body1.getBody().getFixtureList(), 
-		fixtures2 = body2.getBody().getFixtureList();
+				fixtures2 = body2.getBody().getFixtureList();
 		Fixture fixtureA = contact.getFixtureA(), fixtureB = contact.getFixtureB();
 		return ((fixtures1.contains(fixtureA) && fixtures2.contains(fixtureB)) ||
 				(fixtures2.contains(fixtureA) && fixtures1.contains(fixtureB)));
@@ -191,7 +191,9 @@ public abstract class PlatformBody implements IBehaving {
 		float nx = rectB.centerX() - rectA.centerX();
 		float ny = rectB.centerY() - rectA.centerY();
 
+		
 		int dir;
+		
 		if (Math.abs(nx) > Math.abs(ny)) {
 			if (nx > 0) {
 				//Debug.write(bodyA.getActor().name + ": Right");
@@ -209,10 +211,10 @@ public abstract class PlatformBody implements IBehaving {
 				dir = ActorClass.ABOVE;
 			}
 		}
-		
+
 		return dir;
 	}
-	
+
 	protected boolean collidesWith(PlatformBody body) {
 		CollidesWith with;
 		if (body == null) {
@@ -235,7 +237,7 @@ public abstract class PlatformBody implements IBehaving {
 		//Debug.write("%s with %s = %s %s", this, with, getMapClass().collidesWith(with), Arrays.toString(getMapClass().collidesWith));
 		return getMapClass().collidesWith(with);
 	}
-	
+
 	protected short getMaskBits() {
 		short bits = 0;
 		boolean[] collidesWith = getMapClass().collidesWith;
@@ -244,7 +246,7 @@ public abstract class PlatformBody implements IBehaving {
 		}
 		return bits;
 	}
-	
+
 	public static short getCategoryBits(CollidesWith... collidesWith) {
 		short bits = 0;
 		for (int i = 0; i < collidesWith.length; i++) {
@@ -252,23 +254,23 @@ public abstract class PlatformBody implements IBehaving {
 		}
 		return bits;
 	}
-	
+
 	public void doWallContact(Fixture fixture) {
 		if (!touchingWalls.contains(fixture)) {
 			touchingWalls.add(fixture);
 		}
 		setCollidedWall(true);
 	}
-	
+
 	public void doFloorContact(Fixture fixture) {
 		if (!touchingFloors.contains(fixture)) {
 			touchingFloors.add(fixture);
 		}
 		onTouchGround();
 	}
-	
+
 	public abstract MapClass getMapClass();
-	
+
 	public void update(long timeElapsed, Vector offset) {
 		if (animation != null) {
 			Vector2 bodyOffset = animation.getFrameOffset(timeElapsed);
@@ -279,7 +281,7 @@ public abstract class PlatformBody implements IBehaving {
 			}
 		}
 	}
-	
+
 	public void animate(BodyAnimation animation, boolean force) {
 		if (force && animation != null) {
 			Vector2 resetVector = this.animation.getResetVector();
@@ -288,15 +290,15 @@ public abstract class PlatformBody implements IBehaving {
 		}
 		if (this.animation == null) {
 			this.animation = animation;
-			
+
 		}
 	}
-	
+
 	protected void shiftBody(Vector2 bodyOffset) {
 		Vector2 bodyPos = body.getPosition();
 		bodyOffset.add(bodyPos.x, bodyPos.y);
 		body.setTransform(bodyOffset.x, bodyOffset.y, body.getAngle());
 	}
-	
+
 	public void onTouchGround() { }
 }

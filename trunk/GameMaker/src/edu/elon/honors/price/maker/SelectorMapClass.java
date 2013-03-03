@@ -152,8 +152,10 @@ public abstract class SelectorMapClass<T extends ScopedData<?>> extends Spinner 
 		return false;
 	}
 	
+	protected abstract Bitmap getBitmap(String imageName);
+	
 	protected Bitmap getResizedBitmap(MapClass mapClass) {
-		Bitmap bitmap = Data.loadObject(mapClass.imageName); 
+		Bitmap bitmap = getBitmap(mapClass.imageName); 
 		float zoom = mapClass.zoom;
 		int width = (int)(bitmap.getWidth() * zoom);
 		if (width > MAX_IMAGE_SIZE) {

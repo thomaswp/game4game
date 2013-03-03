@@ -39,4 +39,9 @@ public class SelectorActorClass extends SelectorMapClass<ActorClassPointer> {
 		return game.actors;
 	}
 
+	@Override
+	protected Bitmap getBitmap(String imageName) {
+		return Data.loadActorIcon(imageName);
+	}
+
 }

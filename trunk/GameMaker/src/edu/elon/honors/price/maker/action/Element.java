@@ -185,6 +185,8 @@ public abstract class Element {
 			return new ElementEvent(atts, context);
 		} else if (qName.equals("behavior")) {
 			return new ElementBehavior(atts, context);
+		} else if (qName.equals("seekBar")) {
+			return new ElementSeekBar(atts, context);
 		}
 
 		throw new RuntimeException("Unrecognized attribute: " + qName);

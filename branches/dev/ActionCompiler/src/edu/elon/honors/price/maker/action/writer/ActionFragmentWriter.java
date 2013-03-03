@@ -53,6 +53,7 @@ public class ActionFragmentWriter extends Writer {
 		ELEMENT_TYPES.put("actorBehavior", "int");
 		ELEMENT_TYPES.put("color", "int");
 		ELEMENT_TYPES.put("event", "Object");
+		ELEMENT_TYPES.put("seekBar", "float");
 	}
 	
 	protected final static String[] IGNORE_ELEMENTS = new String[] {

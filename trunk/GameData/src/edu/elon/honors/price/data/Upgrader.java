@@ -16,7 +16,7 @@ import edu.elon.honors.price.physics.Vector;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 13;
+	public final static int LATEST_VERSION = 14;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -120,6 +120,12 @@ public class Upgrader {
 						
 					}
 				}
+			}
+			upgraded(game);
+		}
+		if (version < 14) {
+			for (ObjectClass o : game.objects) {
+				o.friction = 1;
 			}
 			upgraded(game);
 		}

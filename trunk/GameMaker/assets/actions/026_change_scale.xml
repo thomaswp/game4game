@@ -1,0 +1,13 @@
+<action id="26" name="Change Scale" category="Actor|Object">
+    <text text="For" />
+    <radio name="of">
+        <choice text="the actor" mute="true">
+            <actorInstance />
+        </choice>
+        <choice text="the object" mute="true">
+            <objectInstance />
+        </choice>
+    </radio>
+    <text text="set the scale to" />
+    <seekBar name="scale" min="0.05" max="5" />
+</action>
