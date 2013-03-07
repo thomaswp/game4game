@@ -155,4 +155,5 @@
     <string name="object">Object</string>
     <string name="to_c">"to: "</string>
     <string name="friction_c">Friction:</string>
+    <string name="changeColor">Change Color</string>
 </resources>

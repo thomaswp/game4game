@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import yuku.ambilwarna.AmbilWarnaDialog;
+import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import edu.elon.honors.price.data.UILayout;
@@ -86,20 +89,20 @@ public class DatabaseEditUI extends DatabaseActivity {
 
 		public void addButton() {
 			game.uiLayout.buttons.add(
-					new UILayout.Button(width / 2, height / 2, 50, 
+					new UILayout.Button(width / 2, height / 2, UILayout.DEFAULT_RAD, 
 							getRandomColor(), false)
 			);
 		}
 
 		public void addJoystick() {
 			game.uiLayout.joysticks.add(
-					new UILayout.JoyStick(width / 2, height / 2, 50, 
+					new UILayout.JoyStick(width / 2, height / 2, UILayout.DEFAULT_RAD, 
 							getRandomColor(), false)
 			);
 		}
 
 		private int getRandomColor() {
-			return Color.argb(150, (int)(255 * Math.random()), 
+			return Color.argb(UILayout.DEFAULT_ALPHA, (int)(255 * Math.random()), 
 					(int)(255 * Math.random()), (int)(255 * Math.random()));
 		}
 
@@ -196,12 +199,27 @@ public class DatabaseEditUI extends DatabaseActivity {
 					}
 				})
 				.create();
-				
 
 				contextDialog.show();
-				
+
+				Button buttonColor = (Button)contextDialog.findViewById(R.id.buttonColor);
 				EditText editText = (EditText)contextDialog.findViewById(R.id.editTextName);
 				CheckBox checkBox = (CheckBox)contextDialog.findViewById(R.id.checkBoxDefault);
+				buttonColor.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						new AmbilWarnaDialog(getContext(), selectedControl.color, new OnAmbilWarnaListener() {
+							@Override
+							public void onOk(AmbilWarnaDialog dialog, int color) {
+								selectedControl.color = Color.argb(UILayout.DEFAULT_ALPHA, Color.red(color), 
+										Color.green(color), Color.blue(color));
+							}
+							
+							@Override
+							public void onCancel(AmbilWarnaDialog dialog) { }
+						}).show();
+					}
+				});
 				editText.setText(selectedControl.name == null ? "" : selectedControl.name);
 				checkBox.setChecked(selectedControl.defaultAction);
 				

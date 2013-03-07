@@ -45,7 +45,8 @@ public final class Data {
 	public final static String ACTOR_7 = "a7/";
 	public final static String ACTOR_5 = "a5/";
 	public final static String ACTOR_2 = "a2/";
-	public final static String[] ACTOR_TYPES = new String[] {ACTOR_7, ACTOR_5, ACTOR_2};
+	//public final static String[] ACTOR_TYPES = new String[] {ACTOR_7, ACTOR_5, ACTOR_2};
+	public final static String[] ACTOR_TYPES = new String[] {ACTOR_5, ACTOR_2};
 	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
 	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
 	public final static String BACKGROUNDS_DIR = GRAPHICS + "/backgrounds/";

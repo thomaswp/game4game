@@ -8,12 +8,15 @@ import android.graphics.Color;
 public class UILayout extends GameData {
 	private static final long serialVersionUID = 1L;
 	
+	public final static int DEFAULT_RAD = 65; 
+	public final static int DEFAULT_ALPHA = 150;
+	
 	public LinkedList<Button> buttons = new LinkedList<Button>();
 	public LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
 	
 	public UILayout() {
-		buttons.add(new Button(-80, -80, 65, Color.argb(150, 255, 0, 0), true));
-		joysticks.add(new JoyStick(80, -80, 65, Color.argb(150, 0, 0, 255), true));
+		buttons.add(new Button(-80, -80, DEFAULT_RAD, Color.argb(DEFAULT_ALPHA, 255, 0, 0), true));
+		joysticks.add(new JoyStick(80, -80, DEFAULT_RAD, Color.argb(DEFAULT_ALPHA, 0, 0, 255), true));
 	}
 	
 	public static abstract class CircleControl implements Serializable {
