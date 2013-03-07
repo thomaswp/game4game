@@ -22,7 +22,8 @@ public class PageBehaviors extends PageList<Behavior> {
 	private Spinner spinnerType;
 	
 	private BehaviorType getBehaviorType() {
-		return BehaviorType.values()[spinnerType.getSelectedItemPosition()];
+		//No map behaviors for the moment (+1)
+		return BehaviorType.values()[spinnerType.getSelectedItemPosition()+1];
 	}
 	
 	private List<Behavior> getBehaviors() {
@@ -39,6 +40,8 @@ public class PageBehaviors extends PageList<Behavior> {
 		for (BehaviorType t : BehaviorType.values()) {
 			types.add(t.getName());
 		}
+		//No map behaviors for the moment
+		types.remove(0);
 		
 		spinnerType = new Spinner(parent);
 

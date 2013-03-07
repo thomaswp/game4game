@@ -113,7 +113,7 @@ public class PlatformGame extends GameData {
 		actors = new ActorClass[3];
 		actors[1] = new ActorClass();
 		ActorClass ghost = actors[1];
-		ghost.imageName = "a7/ghost.png";
+		ghost.imageName = "a2/ghost.png";
 		ghost.speed = 1.5f;
 		ghost.jumpVelocity = 4f;
 		ghost.edgeBehavior = ActorClass.BEHAVIOR_TURN;
@@ -124,21 +124,21 @@ public class PlatformGame extends GameData {
 		ghost.name = "Ghost";
 
 		ActorClass vlad = new ActorClass();
-		vlad.imageName = "a5/StickMan.png";
+		vlad.imageName = "a2/skeleton.png";
 		vlad.speed = 1f;
 		vlad.edgeBehavior = ActorClass.BEHAVIOR_TURN;
 		vlad.wallBehavior = ActorClass.BEHAVIOR_TURN;
 		vlad.actorContactBehaviors = new int[] {ActorClass.BEHAVIOR_NONE, 
 				ActorClass.BEHAVIOR_NONE, ActorClass.BEHAVIOR_TURN, ActorClass.BEHAVIOR_TURN};
 		vlad.heroContactBehaviors[ActorClass.ABOVE] = ActorClass.BEHAVIOR_DIE;
-		vlad.name = "Stick Man";
+		vlad.name = "Skeleton";
 		actors[2] = vlad;
 
 		Hero hero = new Hero();
 		hero.speed = 3.5f;
 		hero.jumpVelocity = 6f;
 		hero.stunDuration = 600;
-		hero.imageName = "a5/hero.png";
+		hero.imageName = "a5/robot.png";
 		hero.name = "Hero";
 		hero.actorContactBehaviors[ActorClass.BELOW] = ActorClass.BEHAVIOR_JUMP;
 		hero.actorContactBehaviors[ActorClass.LEFT] = ActorClass.BEHAVIOR_STUN;

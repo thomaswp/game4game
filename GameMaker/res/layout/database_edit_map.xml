@@ -12,56 +12,59 @@
         android:layout_weight="1"
         android:orientation="horizontal" >
 
-        <ScrollView
-            android:id="@+id/scrollView"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:focusableInTouchMode="true" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingRight="10dip" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/map"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingRight="10dip" >
+                android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/map"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:layout_marginRight="10dip"
+                    android:text="@string/name" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dip"
-                        android:text="@string/name" />
-
-                    <EditText
-                        android:id="@+id/editTextName"
-                        android:layout_width="150dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:inputType="text"
-                        android:maxLength="15"
-                        android:singleLine="true" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/buttonEdit"
-                    android:layout_width="100dip"
+                <EditText
+                    android:id="@+id/editTextName"
+                    android:layout_width="150dip"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dip"
-                    android:text="@string/edit_c" />
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:maxLength="15"
+                    android:singleLine="true" >
+
+                    <requestFocus />
+                </EditText>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonEdit"
+                android:layout_width="100dip"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:text="@string/edit_c" />
+
+            <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="true" >
 
                 <RadioGroup
                     android:id="@+id/radioGroupEdit"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
                     <RadioButton
@@ -99,16 +102,18 @@
                         android:id="@+id/radioEditBehaviors"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/behaviors" />
-                    
+                        android:text="@string/behaviors"
+                        android:visibility="gone" />
+
                     <RadioButton
                         android:id="@+id/radioEditPhysics"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/physics" />
                 </RadioGroup>
-            </LinearLayout>
-        </ScrollView>
+
+            </ScrollView>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

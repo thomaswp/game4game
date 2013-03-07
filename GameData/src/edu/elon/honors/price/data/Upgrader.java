@@ -16,7 +16,7 @@ import edu.elon.honors.price.physics.Vector;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 14;
+	public final static int LATEST_VERSION = 15;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -126,6 +126,24 @@ public class Upgrader {
 		if (version < 14) {
 			for (ObjectClass o : game.objects) {
 				o.friction = 1;
+			}
+			upgraded(game);
+		}
+		if (version < 15) {
+			for (ActorClass actor : game.actors) {
+				if (actor.imageName.contains("hero")) {
+					actor.imageName = "a5/ninja.png";
+				}
+				if (actor.imageName.contains("StickMan") ||
+						actor.imageName.contains("Skull")) {
+					actor.imageName = "a2/skeleton.png";
+				}
+				if (actor.imageName.contains("Gloop")) {
+					actor.imageName = "a2/gloop.png";
+				}
+				if (actor.imageName.contains("ghost")) {
+					actor.imageName = "a2/ghost.png";
+				}
 			}
 			upgraded(game);
 		}

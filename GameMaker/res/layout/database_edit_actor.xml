@@ -71,6 +71,7 @@
                             android:id="@+id/textView2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
                             android:text="@string/actorImage" />
 
                         <edu.elon.honors.price.maker.SelectorActorImage
@@ -107,6 +108,7 @@
                             android:id="@+id/textView3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
                             android:text="@string/speed" />
 
                         <SeekBar
@@ -124,6 +126,7 @@
                             android:id="@+id/textView4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
                             android:text="Jump Height:" />
 
                         <SeekBar
