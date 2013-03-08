@@ -70,6 +70,19 @@
 				</choice>
 			</radio>
 		</choice>
+		<choice text="the Actor" mute="true">
+		    <actorInstance />
+		    <radio name="check">
+				<choice text="type" mute="true">
+				    <radio name="compare">
+				        <choice text="is" />
+				        <choice text="is not" />
+				    </radio>
+				    <text text="of the type" />
+				    <actorClass />
+				</choice>
+			</radio>
+		</choice>
 	</radio>
 
 </action>

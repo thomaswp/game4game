@@ -6,8 +6,11 @@ import android.graphics.RectF;
 import com.twp.platform.ActorBody;
 import com.twp.platform.PlatformBody;
 
+import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheActorData;
+import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheActorData.CheckTypeData;
 import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheActorObjectData;
 import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheSwitchData;
 import edu.elon.honors.price.maker.action.ActionIf.CheckIfTheVariableData;
@@ -30,6 +33,8 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 			result = checkIfTheVariable(action.checkIfTheVariableData, gameState);
 		} else if (action.checkIfTheActorObject) {
 			result = checkIfTheActor(action.checkIfTheActorObjectData, gameState);
+		} else if (action.checkIfTheActor) {
+			result = checkIfTheActor(action.checkIfTheActorData, gameState);
 		} else {
 			throw new UnsupportedException();
 		}
@@ -121,7 +126,7 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 			}
 			if (body2 == null) return false;
 
-			final float THRESH = 3;
+			final float THRESH = 20; //TODO: definitely fix this...
 			
 			//TODO: Figure out better system w/ bodies b/c transparency might screw it up
 			RectF rectA = body.getSprite().getRect();
@@ -136,6 +141,25 @@ public class InterpreterIf extends ActionInterpreter<ActionIf> {
 				return rectA.right - rectB.left <= THRESH;
 			} else if (cpData.directionIsRightOf) {
 				return rectA.left - rectB.right >= -THRESH;
+			} else {
+				throw new UnsupportedException();
+			}
+		} else {
+			throw new UnsupportedException();
+		}
+	}
+	
+	private boolean checkIfTheActor(CheckIfTheActorData data, 
+			PlatformGameState gameState) throws ParameterException {
+		ActorBody actor = data.readActorInstance(gameState);
+		if (data.checkType) {
+			CheckTypeData ctData = data.checkTypeData;
+			ActorClass actorClass = ctData.readActorClass(gameState);
+			boolean match = actor.getActor() == actorClass;
+			if (ctData.compareIs) {
+				return match;
+			} else if (ctData.compareIsNot) {
+				return !match;
 			} else {
 				throw new UnsupportedException();
 			}

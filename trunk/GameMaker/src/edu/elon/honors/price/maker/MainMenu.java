@@ -95,7 +95,7 @@ public class MainMenu extends Activity {
 		String[] files = context.fileList();
 		for (String file : files) {
 			if (file.indexOf(PREFIX) == 0) {
-				games.add(file);
+				games.addFirst(file);
 			}
 		}
 		return games;

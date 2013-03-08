@@ -50,6 +50,10 @@ public class PlatformGameState implements GameState {
 	private Vector vector = new Vector();
 	private Rect rect = new Rect();
 	
+	public TriggeringInfo getTriggeringInfo() {
+		return triggeringInfo;
+	}
+	
 	public Event getEvent() {
 		return event;
 	}
