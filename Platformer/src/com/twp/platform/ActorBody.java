@@ -272,8 +272,8 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	public void doBehavior(int behavior, ActorBody cause) {
-		if (lastBehaviorTime < BEHAVIOR_REST)
-			return;
+//		if (lastBehaviorTime < BEHAVIOR_REST)
+//			return;
 		lastBehaviorTime = 0;
 
 		switch (behavior) {

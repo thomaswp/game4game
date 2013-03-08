@@ -413,11 +413,82 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
 	}																// ActionFragmentWriter.writeFooter()
 																	// ActionFragmentWriter.endElement()
+	public boolean checkIfTheActor;									// ActionFragmentWriter.writeElement()
+	public CheckIfTheActorData checkIfTheActorData;					// ActionFragmentWriter.writeElement()
+	public class CheckIfTheActorData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
+		/** Type: <b>&lt;actorInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
+		public Parameters actorInstance;							// ActionFragmentWriter.writeElement()
+		public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+			return gameState.readActorInstance(actorInstance);		// ActionFragmentWriter.writeElement()
+		}															// ActionFragmentWriter.writeElement()
+		public boolean checkType;									// ActionFragmentWriter.writeElement()
+		public CheckTypeData checkTypeData;							// ActionFragmentWriter.writeElement()
+		public class CheckTypeData extends ScriptableFragment {		// ActionFragmentWriter.writeHeader()
+			public boolean compareIs;								// ActionFragmentWriter.writeElement()
+			public boolean compareIsNot;							// ActionFragmentWriter.writeElement()
+			/** Type: <b>&lt;actorClass&gt;</b> */					// ActionFragmentWriter.writeElement()
+			public ActorClassPointer actorClass;					// ActionFragmentWriter.writeElement()
+			public ActorClass readActorClass(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
+				return gameState.readActorClass(actorClass);		// ActionFragmentWriter.writeElement()
+			}														// ActionFragmentWriter.writeElement()
+																	// ActionFragmentWriter.writeReadParams()
+			@Override												// ActionFragmentWriter.writeReadParams()
+			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
+				int compare = iterator.getInt();					// ActionFragmentWriter.writeReadParams()
+				compareIs = compare == 0;							// ActionFragmentWriter.writeReadParams()
+				compareIsNot = compare == 1;						// ActionFragmentWriter.writeReadParams()
+																	// ActionFragmentWriter.writeReadParams()
+				actorClass = iterator.getActorClassPointer();		// ActionFragmentWriter.writeReadParams()
+			}														// ActionFragmentWriter.writeReadParams()
+			/**
+			 * <ul>
+			 * <li><b>&lt;radio&gt;</b> compare</i>:</li><ul>
+			 * <li>compareIs:</li>
+			 * <li>compareIsNot:</li>
+			 * </ul>
+			 * <li><b>&lt;actorClass&gt;</b> actorClass</li>
+			 * </ul>
+			 */														// ActionFragmentWriter.writeJavadoc()
+			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
+		}															// ActionFragmentWriter.writeFooter()
+																	// ActionFragmentWriter.endElement()
+																	// ActionFragmentWriter.writeConstructor()
+		public CheckIfTheActorData() {								// ActionFragmentWriter.writeConstructor()
+			checkTypeData = new CheckTypeData();					// ActionFragmentWriter.writeConstructor()
+		}															// ActionFragmentWriter.writeConstructor()
+																	// ActionFragmentWriter.writeReadParams()
+		@Override													// ActionFragmentWriter.writeReadParams()
+		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
+			actorInstance = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
+			int check = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
+			checkType = check == 0;									// ActionFragmentWriter.writeReadParams()
+			if (checkType) checkTypeData.readParams(iterator);		// ActionFragmentWriter.writeReadParams()
+																	// ActionFragmentWriter.writeReadParams()
+		}															// ActionFragmentWriter.writeReadParams()
+		/**
+		 * <ul>
+		 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
+		 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
+		 * <li>checkType:</li>
+		 * <ul>
+		 * <li><b>&lt;radio&gt;</b> compare</i>:</li><ul>
+		 * <li>compareIs:</li>
+		 * <li>compareIsNot:</li>
+		 * </ul>
+		 * <li><b>&lt;actorClass&gt;</b> actorClass</li>
+		 * </ul>
+		 * </ul>
+		 * </ul>
+		 */															// ActionFragmentWriter.writeJavadoc()
+		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
+	}																// ActionFragmentWriter.writeFooter()
+																	// ActionFragmentWriter.endElement()
 																	// ActionFragmentWriter.writeConstructor()
 	public ActionIf() {												// ActionFragmentWriter.writeConstructor()
 		checkIfTheSwitchData = new CheckIfTheSwitchData();			// ActionFragmentWriter.writeConstructor()
 		checkIfTheVariableData = new CheckIfTheVariableData();		// ActionFragmentWriter.writeConstructor()
 		checkIfTheActorObjectData = new CheckIfTheActorObjectData();// ActionFragmentWriter.writeConstructor()
+		checkIfTheActorData = new CheckIfTheActorData();			// ActionFragmentWriter.writeConstructor()
 	}																// ActionFragmentWriter.writeConstructor()
 																	// ActionFragmentWriter.writeReadParams()
 	@Override														// ActionFragmentWriter.writeReadParams()
@@ -429,6 +500,8 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 		if (checkIfTheVariable) checkIfTheVariableData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
 		checkIfTheActorObject = checkIf == 2;						// ActionFragmentWriter.writeReadParams()
 		if (checkIfTheActorObject) checkIfTheActorObjectData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
+		checkIfTheActor = checkIf == 3;								// ActionFragmentWriter.writeReadParams()
+		if (checkIfTheActor) checkIfTheActorData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
 																	// ActionFragmentWriter.writeReadParams()
 	}																// ActionFragmentWriter.writeReadParams()
 	/**
@@ -511,6 +584,20 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 	 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
 	 * </ul>
 	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * </ul>
+	 * <li>checkIfTheActor:</li>
+	 * <ul>
+	 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
+	 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
+	 * <li>checkType:</li>
+	 * <ul>
+	 * <li><b>&lt;radio&gt;</b> compare</i>:</li><ul>
+	 * <li>compareIs:</li>
+	 * <li>compareIsNot:</li>
+	 * </ul>
+	 * <li><b>&lt;actorClass&gt;</b> actorClass</li>
 	 * </ul>
 	 * </ul>
 	 * </ul>

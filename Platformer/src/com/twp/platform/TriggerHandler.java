@@ -476,8 +476,16 @@ public class TriggerHandler {
 		} else {
 			triggeringInfo.triggeringObject = (ObjectBody)collided;
 		}
+		
+		PlatformBody primaryTrigger = body;
+		//Debug.write("body: %s, collided: %s", body.getMapClass().name, collided.getMapClass().name);
+//		//TODO: Fix this dumb workaround
+		if (body == triggeringInfo.behaving && body.getClass() == collided.getClass()) {
+			primaryTrigger = collided;
+		}
+		
 		this.point.setF(point.x * SCALE, point.y * SCALE);
 		triggeringInfo.triggeringPoint = this.point;
-		trigger(event, body);
+		trigger(event, primaryTrigger);
 	}
 }
