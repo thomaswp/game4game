@@ -1071,7 +1071,7 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			Intent intent = new Intent(getContext(), DatabaseEditTrigger.class);
 			intent.putExtra("game", game);
 			intent.putExtra("id", getTrigger().id);
-			intent.putExtra("trigger", getTrigger());
+			intent.putExtra("params", getTrigger().params);
 			intent.putExtra("eventContext", 
 					new EventContext(getEvent(), behavior));
 			startActivityForResult(intent, REQUEST_RETURN_GAME);

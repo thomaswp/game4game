@@ -12,7 +12,7 @@ extends ActionInterpreter<ActionTriggerActorBehavior> {
 	protected void interperate(ActionTriggerActorBehavior action,
 			PlatformGameState gameState) throws ParameterException {
 		//TODO: Make a better way for "cause" to be passed
-		IBehaving behaving = gameState.getBehaving();
+		IBehaving behaving = null;
 		ActorBody cause = null;
 		if (behaving instanceof ActorBody) {
 			cause = (ActorBody)behaving;
