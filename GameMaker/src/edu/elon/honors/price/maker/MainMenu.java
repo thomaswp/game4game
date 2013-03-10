@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +26,7 @@ import android.os.Environment;
 import android.provider.Settings.Secure;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -115,7 +117,7 @@ public class MainMenu extends Activity {
 			PlatformGame game = (PlatformGame)Data.loadGame(file, this);
 			if (game != null) {
 				final String fileName = file;
-				String name = game.getName(file.substring(PREFIX.length()));
+				final String name = game.getName(file.substring(PREFIX.length()));
 				RadioButton b = new RadioButton(this);
 				b.setText(name);
 				b.setOnClickListener(new OnClickListener() {
@@ -125,6 +127,16 @@ public class MainMenu extends Activity {
 							edit();
 						else
 							selectedMap = fileName;
+					}
+				});
+				b.setOnLongClickListener(new OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View arg0) {
+						Serializable data = (Serializable)Data.loadGame(fileName, MainMenu.this);
+						String newName = getNewMapName(MainMenu.this, name + "_copy");
+						Data.saveGame(newName, MainMenu.this, data);
+						loadMaps();
+						return true;
 					}
 				});
 				group.addView(b);

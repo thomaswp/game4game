@@ -53,6 +53,8 @@ public class TriggerHandler {
 			new ArrayList<PlatformBody>();
 	private ArrayList<PlatformBody> createdBodiesFrame =
 			new ArrayList<PlatformBody>();
+	private ArrayList<PlatformBody> bodiesFrame = 
+			new ArrayList<PlatformBody>();
 
 	private int touchPID;
 	
@@ -77,10 +79,14 @@ public class TriggerHandler {
 //		for (int i = 0; i < map.behaviors.size(); i++) {
 //			checkBehavior(map.behaviors.get(i));
 //		}
-		for (int i = 0; i < physics.getPlatformBodies().size(); i++) {
-			PlatformBody body = physics.getPlatformBodies().get(i);
-			checkBehaving(body);
+		bodiesFrame.addAll(physics.getPlatformBodies());
+		for (int i = 0; i < bodiesFrame.size(); i++) {
+			PlatformBody body = bodiesFrame.get(i);
+			if (physics.getPlatformBodies().contains(body)) {
+				checkBehaving(body);
+			}
 		}
+		bodiesFrame.clear();
 		
 		physics.getDestroyedBodies().removeAll(destroyedBodiesFrame);
 		destroyedBodiesFrame.clear();
@@ -249,15 +255,15 @@ public class TriggerHandler {
 			}
 		}
 		if (trigger.whenIsDestroyed) {
-			for (int i = 0; i < physics.getDestroyedBodies().size(); i++) {
-				PlatformBody body = physics.getDestroyedBodies().get(i);
+			for (int i = 0; i < destroyedBodiesFrame.size(); i++) {
+				PlatformBody body = destroyedBodiesFrame.get(i);
 				if (gameState.isBody(trigger.body, body)) {
 					trigger(event, body);
 				}
 			}
 		} else if (trigger.whenIsCreated) {
-			for (int i = 0; i < physics.getCreatedBodies().size(); i++) {
-				PlatformBody body = physics.getCreatedBodies().get(i);
+			for (int i = 0; i < createdBodiesFrame.size(); i++) {
+				PlatformBody body = createdBodiesFrame.get(i);
 				if (gameState.isBody(trigger.body, body)) {
 					trigger(event, body);
 				}

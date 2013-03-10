@@ -605,7 +605,7 @@ public class PhysicsHandler {
 	}
 
 	private ActorBody addActorBody(ActorClass actor, int id, float startX, float startY) {
-		return addActorBody(actor, id, startX, startY, 1, false);
+		return addActorBody(actor, id, startX, startY, -1, false);
 	}
 
 	private ActorBody addActorBody(ActorClass actor, int id, float startX, float startY, int startDir) {

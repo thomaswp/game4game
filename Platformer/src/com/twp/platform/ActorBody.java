@@ -33,7 +33,7 @@ public class ActorBody extends PlatformBody {
 	private Sprite sprite;
 	private ActorClass actor;
 	private boolean isHero;
-	private int directionX = 1;
+	private int directionX;
 	private boolean stopped;
 	private int lastBehaviorTime;
 	private int stun;

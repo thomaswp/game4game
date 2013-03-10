@@ -28,10 +28,11 @@ import edu.elon.honors.price.physics.Vector;
 
 public class PlatformLogic implements Logic {
 
-	private static final int BORDER = 130;
+	private static final int BORDER_Y = 130;
+	private static final int BORDER_X = 350;
 	public static final float GRAVITY = PhysicsHandler.GRAVITY;
 	public static final float SCALE = PhysicsHandler.SCALE;
-	public static final int MAX_WIDTH = 1000;
+	public static final int MAX_WIDTH = 1024;
 
 	private Map map;
 	private PlatformGame game;
@@ -305,17 +306,17 @@ public class PlatformLogic implements Logic {
 		cameraOffset.clear();
 
 		RectF heroRect = hero.getRect();
-		if (heroRect.left < BORDER) {
-			cameraOffset.setX(BORDER - heroRect.left);
+		if (heroRect.left < BORDER_X) {
+			cameraOffset.setX(BORDER_X - heroRect.left);
 		}
-		if (heroRect.right > Graphics.getWidth() - BORDER) {
-			cameraOffset.setX((Graphics.getWidth() - BORDER) - heroRect.right);
+		if (heroRect.right > Graphics.getWidth() - BORDER_X) {
+			cameraOffset.setX((Graphics.getWidth() - BORDER_X) - heroRect.right);
 		}
-		if (heroRect.top < BORDER) {
-			cameraOffset.setY(BORDER - heroRect.top);
+		if (heroRect.top < BORDER_Y) {
+			cameraOffset.setY(BORDER_Y - heroRect.top);
 		}
-		if (heroRect.bottom > Graphics.getHeight() - BORDER) {
-			cameraOffset.setY((Graphics.getHeight() - BORDER) - heroRect.bottom);
+		if (heroRect.bottom > Graphics.getHeight() - BORDER_Y) {
+			cameraOffset.setY((Graphics.getHeight() - BORDER_Y) - heroRect.bottom);
 		}
 		
 		cameraOffset.multiply(snap);

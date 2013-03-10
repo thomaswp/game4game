@@ -68,6 +68,6 @@ public class ActorClass extends MapClass implements Cloneable {
 
 	@Override
 	protected String getDefaultImageName() {
-		return "ghost.png";
+		return "a2/zombie.png";
 	}
 }

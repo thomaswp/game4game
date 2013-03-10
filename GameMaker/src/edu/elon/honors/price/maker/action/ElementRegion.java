@@ -41,10 +41,10 @@ public class ElementRegion extends Element {
 	protected void readParameters(Iterator params) {
 		Rect rect = new Rect();
 		Parameters ps = params.getParameters();
-		rect.left = ps.getInt();
-		rect.top = ps.getInt();
-		rect.right = ps.getInt();
-		rect.bottom = ps.getInt();
+		rect.left = ps.getInt(0);
+		rect.top = ps.getInt(1);
+		rect.right = ps.getInt(2);
+		rect.bottom = ps.getInt(3);
 		selectorRegion.setRect(rect);
 	}
 	
