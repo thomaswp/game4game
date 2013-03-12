@@ -99,6 +99,7 @@ public class JoyStick extends UIControl {
 		} else {
 			if (pid >= 0) {
 				released = true;
+				Input.getVibrator().vibrate(40);
 			}
 			inner.setX(center.getX());
 			inner.setY(center.getY());

@@ -117,7 +117,8 @@ public class MainMenu extends Activity {
 			PlatformGame game = (PlatformGame)Data.loadGame(file, this);
 			if (game != null) {
 				final String fileName = file;
-				final String name = game.getName(file.substring(PREFIX.length()));
+				final String defaultName = file.substring(PREFIX.length());
+				final String name = game.getName(defaultName);
 				RadioButton b = new RadioButton(this);
 				b.setText(name);
 				b.setOnClickListener(new OnClickListener() {
@@ -132,8 +133,9 @@ public class MainMenu extends Activity {
 				b.setOnLongClickListener(new OnLongClickListener() {
 					@Override
 					public boolean onLongClick(View arg0) {
-						Serializable data = (Serializable)Data.loadGame(fileName, MainMenu.this);
-						String newName = getNewMapName(MainMenu.this, name + "_copy");
+						PlatformGame data = (PlatformGame)Data.loadGame(fileName, MainMenu.this);
+						String newName = getNewMapName(MainMenu.this, defaultName + "_copy");
+						data.websiteInfo = null;
 						Data.saveGame(newName, MainMenu.this, data);
 						loadMaps();
 						return true;
@@ -276,6 +278,7 @@ public class MainMenu extends Activity {
 	}
 
 	public static String getNewMapName(Context context, String base) {
+		base.replace(" ", "_");
 		String[] files = context.fileList();
 		int n = 0;
 		String name;
