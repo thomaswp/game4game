@@ -305,18 +305,20 @@ public class PlatformLogic implements Logic {
 	private void updateScroll(float snap) {
 		cameraOffset.clear();
 
-		RectF heroRect = hero.getRect();
-		if (heroRect.left < BORDER_X) {
-			cameraOffset.setX(BORDER_X - heroRect.left);
-		}
-		if (heroRect.right > Graphics.getWidth() - BORDER_X) {
-			cameraOffset.setX((Graphics.getWidth() - BORDER_X) - heroRect.right);
-		}
-		if (heroRect.top < BORDER_Y) {
-			cameraOffset.setY(BORDER_Y - heroRect.top);
-		}
-		if (heroRect.bottom > Graphics.getHeight() - BORDER_Y) {
-			cameraOffset.setY((Graphics.getHeight() - BORDER_Y) - heroRect.bottom);
+		if (!hero.isDisposed()) {
+			RectF heroRect = hero.getRect();
+			if (heroRect.left < BORDER_X) {
+				cameraOffset.setX(BORDER_X - heroRect.left);
+			}
+			if (heroRect.right > Graphics.getWidth() - BORDER_X) {
+				cameraOffset.setX((Graphics.getWidth() - BORDER_X) - heroRect.right);
+			}
+			if (heroRect.top < BORDER_Y) {
+				cameraOffset.setY(BORDER_Y - heroRect.top);
+			}
+			if (heroRect.bottom > Graphics.getHeight() - BORDER_Y) {
+				cameraOffset.setY((Graphics.getHeight() - BORDER_Y) - heroRect.bottom);
+			}
 		}
 		
 		cameraOffset.multiply(snap);
