@@ -272,8 +272,8 @@ public class GraphicsRenderer implements Renderer {
 								ty = (int)(-bY - sprite.getOriginY());
 								if (tx != 0 || ty != 0)
 									gl.glTranslatef(tx, ty, 0);
-
-								int sColor = sprite.getColor();
+								
+								int sColor = sprite.getCompositeColor();
 								float r = Color.red(sColor) / 255f * Color.red(vColor) / 255f;
 								float g = Color.green(sColor) / 255f * Color.green(vColor) / 255f;
 								float b = Color.blue(sColor) / 255f * Color.blue(vColor) / 255f;

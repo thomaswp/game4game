@@ -45,20 +45,21 @@ public abstract class PageList<T> extends Page {
 		((TextView)findViewById(R.id.textViewPage)).setText(getName());
 		createButtonEvents();
 		
-		listView.setAdapter(getAdapter());
-		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 		linearLayoutButtons = (LinearLayout)findViewById(
 				R.id.linearLayoutButtons);
+	}
+	
+	@Override
+	public void onResume() {
+		listView.setAdapter(getAdapter());
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 		int selected = getIntPreference(LAST_SELECTED, 0);
 		if (selected >= 0 && selected < getAdapter().getCount()) {
 			listView.setItemChecked(selected, true);
 		}
 	}
-	
-	@Override
-	public void onResume() { }
 
 	@Override
 	protected void onPause() { 

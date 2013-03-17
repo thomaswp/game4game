@@ -190,6 +190,14 @@ public class DatabaseEditEvent extends DatabaseActivity {
 			});
 		}
 	}
+	
+	
+
+	@Override
+	protected void onFinishing() {
+		super.onFinishing();
+		getEvent().name = editTextName.getText().toString();
+	}
 
 	@Override
 	protected void putExtras(Intent intent) {

@@ -1,5 +1,6 @@
 package edu.elon.honors.price.graphics;
 
+import edu.elon.honors.price.game.Debug;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -38,7 +39,7 @@ public class Sprite implements Comparable<Sprite> {
 	private Grid grid;
 	private boolean bitmapModified;
 	
-	private int color = Color.WHITE;
+	private int baseColor = Color.WHITE;
 	private float opacity = 1;
 	
 	private Canvas bitmapCanvas;
@@ -55,7 +56,8 @@ public class Sprite implements Comparable<Sprite> {
 	//A path created for the bitmap of the opaque regions
 	private Path bitmapPath = new Path();
 	
-	private int flashStartColor, flashColor, flashDuration, flashFrame;
+	private int compositeColor = baseColor, 
+			flashColor, flashDuration, flashFrame;
 
 	/**
 	 * Gets the default Bitmap configuration for Bitmaps created by a Sprite.
@@ -113,12 +115,16 @@ public class Sprite implements Comparable<Sprite> {
 		return bitmapCanvas;
 	}
 
-	public int getColor() {
-		return color;
+	public int getBaseColor() {
+		return baseColor;
+	}
+	
+	public int getCompositeColor() {
+		return compositeColor;
 	}
 
-	public void setColor(int color) {
-		this.color = color;
+	public void setBaseColor(int color) {
+		this.baseColor = color;
 	}
 
 	public float getOpacity() {
@@ -549,7 +555,7 @@ public class Sprite implements Comparable<Sprite> {
 		if (flashFrame < flashDuration) {
 			float perc = flashFrame * 1.0f / flashDuration;
 			
-			int c1 = flashStartColor;
+			int c1 = baseColor;
 			int c2 = flashColor;
 			if (perc < 0.5f) {
 				perc *= 2;
@@ -558,7 +564,7 @@ public class Sprite implements Comparable<Sprite> {
 			}
 		
 			
-			this.color = Color.argb(
+			this.compositeColor = Color.argb(
 					(int)(Color.alpha(c1) * (1 - perc) + Color.alpha(c2) * perc), 
 					(int)(Color.red(c1) * (1 - perc) + Color.red(c2) * perc), 
 					(int)(Color.green(c1) * (1 - perc) + Color.green(c2) * perc), 
@@ -567,13 +573,13 @@ public class Sprite implements Comparable<Sprite> {
 			flashFrame += timeElapsed;
 			
 			if (flashFrame >= flashDuration) {
-				this.color = flashStartColor;
+				this.compositeColor = baseColor;
 			}
 		}
 	}
 	
 	public void flash(int color, int duration) {
-		this.flashStartColor = this.color;
+		this.compositeColor = baseColor;
 		this.flashColor = color;
 		this.flashDuration = duration;
 		this.flashFrame = 0;

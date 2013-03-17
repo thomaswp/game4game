@@ -65,7 +65,7 @@ public class ObjectBody extends PlatformBody {
 		this.sprite.setX(startX); this.sprite.setY(startY);
 		this.sprite.centerOrigin();
 		this.sprite.setZoom(object.zoom);
-		this.sprite.setColor(object.color);
+		this.sprite.setBaseColor(object.color);
 
 		BodyDef objectDef = new BodyDef();
 		objectDef.position.set(spriteToVect(sprite, null));

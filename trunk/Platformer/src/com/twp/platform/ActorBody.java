@@ -150,7 +150,7 @@ public class ActorBody extends PlatformBody {
 		this.sprite.centerOrigin();
 		Debug.write(actor.imageName + ", " + actor.zoom);
 		this.sprite.setZoom(actor.zoom);
-		this.sprite.setColor(actor.color);
+		this.sprite.setBaseColor(actor.color);
 		super.sprite = sprite;
 		this.isHero = isHero;
 		world = physics.getWorld();
@@ -302,7 +302,6 @@ public class ActorBody extends PlatformBody {
 	
 	public void stun(ActorBody cause) {
 		stun = actor.stunDuration;
-		sprite.setColor(Color.WHITE);
 		sprite.flash(Color.RED, actor.stunDuration);
 		if (cause != null) {
 			setVelocityY(-actor.jumpVelocity / 1.5f);
