@@ -16,6 +16,6 @@ public class InterpreterChangeColor extends ActionInterpreter<ActionChangeColor>
 			throw new UnsupportedException();
 		}
 		
-		body.getSprite().setColor(action.newColor);
+		body.getSprite().setBaseColor(action.newColor);
 	}
 }
