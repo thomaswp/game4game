@@ -7,7 +7,7 @@ import org.xml.sax.Attributes;
 
 public abstract class Writer {
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	protected StringWriter writer;
 	protected LinkedList<String> defferedLines = 
