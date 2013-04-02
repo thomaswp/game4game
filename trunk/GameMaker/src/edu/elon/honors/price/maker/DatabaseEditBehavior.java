@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spannable;
 import android.text.Spanned;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,7 +36,8 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 	private TextView textViewType;
 	private RadioGroup radioGroupEvents, radioGroupSwitches, 
 	radioGroupVariables, radioGroupParameters;
-	private Button buttonNewEvent, buttonEditEvent, buttonDeleteEvent,
+	private Button buttonNewEvent, buttonEditEvent, buttonDeleteEvent, 
+	buttonToggleEventEnabled,
 	buttonNewSwitch, buttonEditSwitch, buttonDeleteSwitch,
 	buttonNewVariable, buttonEditVariable, buttonDeleteVariable,
 	buttonNewParameter, buttonEditParameter, buttonDeleteParameter;
@@ -192,6 +194,13 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 				}
 			});
 		}
+		
+		buttonToggleEventEnabled.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				((EventEditor)editors[0]).onToggleEnabled();
+			}
+		});
 	}
 
 	@Override
@@ -236,8 +245,16 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 		}
 	}
 
-	private String describeEvent(Event event) {
-		return event.name;
+	private CharSequence describeEvent(Event event) {
+		if (event.disabled) {
+			CharSequence text = Html.fromHtml(
+					TextUtils.getColoredText(event.name, TextUtils.COLOR_DISABLED));
+			Spannable span = Spannable.Factory.getInstance().newSpannable(text);
+			TextUtils.strikeText(span);
+			return span;
+		} else {
+			return event.name;
+		}
 	}
 
 	private Spanned describeVariable(int index) {
@@ -325,6 +342,14 @@ public class DatabaseEditBehavior extends DatabaseActivity {
 
 		public EventEditor() {
 			super(radioGroupEvents);
+		}
+		
+		public void onToggleEnabled() {
+			int index = getIndex();
+			Event event = behavior.events.get(index);
+			event.disabled = !event.disabled;
+			RadioButton button = ((RadioButton)radioGroup.getChildAt(index));
+			button.setText(describeEvent(event));
 		}
 
 		@Override

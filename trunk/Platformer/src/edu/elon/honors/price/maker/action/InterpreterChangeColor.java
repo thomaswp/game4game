@@ -16,6 +16,16 @@ public class InterpreterChangeColor extends ActionInterpreter<ActionChangeColor>
 			throw new UnsupportedException();
 		}
 		
-		body.getSprite().setBaseColor(action.newColor);
+		if (action.turnPermanently) {
+			body.getSprite().setBaseColor(action.newColor);
+		} else if (action.turnFlashingFor) {
+			int ms = 100 * action.turnFlashingForData.readNumber(gameState);
+			if (ms < 0) {
+				throw new ParameterException("Time must be non-negative");
+			}
+			body.getSprite().flash(action.newColor, ms);
+		} else {
+			throw new UnsupportedException();
+		}
 	}
 }

@@ -1,72 +1,72 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "If...";						// ScriptableWriter.writeHeader()
-	public static final int ID = 7;									// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Control";				// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	public boolean checkIfTheSwitch;								// ActionFragmentWriter.writeElement()
-	public CheckIfTheSwitchData checkIfTheSwitchData;				// ActionFragmentWriter.writeElement()
-	public class CheckIfTheSwitchData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;switch&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public Switch aSwitch;										// ActionFragmentWriter.writeElement()
-		public boolean readASwitch(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readSwitch(aSwitch);					// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-		public boolean operatorEquals;								// ActionFragmentWriter.writeElement()
-		public boolean operatorDoesNotEqual;						// ActionFragmentWriter.writeElement()
-		public boolean withOn;										// ActionFragmentWriter.writeElement()
-		public boolean withOff;										// ActionFragmentWriter.writeElement()
-		public boolean withTheSwitch;								// ActionFragmentWriter.writeElement()
-		public WithTheSwitchData withTheSwitchData;					// ActionFragmentWriter.writeElement()
-		public class WithTheSwitchData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-			/** Type: <b>&lt;switch&gt;</b> */						// ActionFragmentWriter.writeElement()
-			public Switch aSwitch;									// ActionFragmentWriter.writeElement()
-			public boolean readASwitch(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-				return gameState.readSwitch(aSwitch);				// ActionFragmentWriter.writeElement()
-			}														// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-			@Override												// ActionFragmentWriter.writeReadParams()
-			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				aSwitch = iterator.getSwitch();						// ActionFragmentWriter.writeReadParams()
-			}														// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionIf extends ScriptableInstance {
+	public static final String NAME = "If...";
+	public static final int ID = 7;
+	public static final String CATEGORY = "Control";
+	
+	public boolean checkIfTheSwitch;
+	public CheckIfTheSwitchData checkIfTheSwitchData;
+	public class CheckIfTheSwitchData extends ScriptableFragment {
+		/** Type: <b>&lt;switch&gt;</b> */
+		public Switch aSwitch;
+		public boolean readASwitch(GameState gameState) throws ParameterException {
+			return gameState.readSwitch(aSwitch);
+		}
+		public boolean operatorEquals;
+		public boolean operatorDoesNotEqual;
+		public boolean withOn;
+		public boolean withOff;
+		public boolean withTheSwitch;
+		public WithTheSwitchData withTheSwitchData;
+		public class WithTheSwitchData extends ScriptableFragment {
+			/** Type: <b>&lt;switch&gt;</b> */
+			public Switch aSwitch;
+			public boolean readASwitch(GameState gameState) throws ParameterException {
+				return gameState.readSwitch(aSwitch);
+			}
+			
+			@Override
+			public void readParams(Iterator iterator) {
+				aSwitch = iterator.getSwitch();
+			}
 			/**
 			 * <ul>
 			 * <li><b>&lt;switch&gt;</b> aSwitch</li>
 			 * </ul>
-			 */														// ActionFragmentWriter.writeJavadoc()
-			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
-		}															// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-																	// ActionFragmentWriter.writeConstructor()
-		public CheckIfTheSwitchData() {								// ActionFragmentWriter.writeConstructor()
-			withTheSwitchData = new WithTheSwitchData();			// ActionFragmentWriter.writeConstructor()
-		}															// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			aSwitch = iterator.getSwitch();							// ActionFragmentWriter.writeReadParams()
-			int operator = iterator.getInt();						// ActionFragmentWriter.writeReadParams()
-			operatorEquals = operator == 0;							// ActionFragmentWriter.writeReadParams()
-			operatorDoesNotEqual = operator == 1;					// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-			int with = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-			withOn = with == 0;										// ActionFragmentWriter.writeReadParams()
-			withOff = with == 1;									// ActionFragmentWriter.writeReadParams()
-			withTheSwitch = with == 2;								// ActionFragmentWriter.writeReadParams()
-			if (withTheSwitch) withTheSwitchData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+			 */
+			public static final String JAVADOC = "";
+		}
+		
+		
+		public CheckIfTheSwitchData() {
+			withTheSwitchData = new WithTheSwitchData();
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			aSwitch = iterator.getSwitch();
+			int operator = iterator.getInt();
+			operatorEquals = operator == 0;
+			operatorDoesNotEqual = operator == 1;
+			
+			int with = iterator.getInt();
+			withOn = with == 0;
+			withOff = with == 1;
+			withTheSwitch = with == 2;
+			if (withTheSwitch) withTheSwitchData.readParams(iterator);
+			
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;switch&gt;</b> aSwitch</li>
@@ -83,43 +83,43 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 		 * </ul>
 		 * </ul>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean checkIfTheVariable;								// ActionFragmentWriter.writeElement()
-	public CheckIfTheVariableData checkIfTheVariableData;			// ActionFragmentWriter.writeElement()
-	public class CheckIfTheVariableData extends ScriptableFragment {// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;variable&gt;</b> */						// ActionFragmentWriter.writeElement()
-		public Variable variable;									// ActionFragmentWriter.writeElement()
-		public int readVariable(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readVariable(variable);				// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-		public boolean operatorEquals;								// ActionFragmentWriter.writeElement()
-		public boolean operatorNotEquals;							// ActionFragmentWriter.writeElement()
-		public boolean operatorGreater;								// ActionFragmentWriter.writeElement()
-		public boolean operatorGreaterOrEqual;						// ActionFragmentWriter.writeElement()
-		public boolean operatorLess;								// ActionFragmentWriter.writeElement()
-		public boolean operatorLessOrEqual;							// ActionFragmentWriter.writeElement()
-		/** Type: <b>&lt;number&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public Parameters number;									// ActionFragmentWriter.writeElement()
-		public int readNumber(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readNumber(number);					// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			variable = iterator.getVariable();						// ActionFragmentWriter.writeReadParams()
-			int operator = iterator.getInt();						// ActionFragmentWriter.writeReadParams()
-			operatorEquals = operator == 0;							// ActionFragmentWriter.writeReadParams()
-			operatorNotEquals = operator == 1;						// ActionFragmentWriter.writeReadParams()
-			operatorGreater = operator == 2;						// ActionFragmentWriter.writeReadParams()
-			operatorGreaterOrEqual = operator == 3;					// ActionFragmentWriter.writeReadParams()
-			operatorLess = operator == 4;							// ActionFragmentWriter.writeReadParams()
-			operatorLessOrEqual = operator == 5;					// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-			number = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean checkIfTheVariable;
+	public CheckIfTheVariableData checkIfTheVariableData;
+	public class CheckIfTheVariableData extends ScriptableFragment {
+		/** Type: <b>&lt;variable&gt;</b> */
+		public Variable variable;
+		public int readVariable(GameState gameState) throws ParameterException {
+			return gameState.readVariable(variable);
+		}
+		public boolean operatorEquals;
+		public boolean operatorNotEquals;
+		public boolean operatorGreater;
+		public boolean operatorGreaterOrEqual;
+		public boolean operatorLess;
+		public boolean operatorLessOrEqual;
+		/** Type: <b>&lt;number&gt;</b> */
+		public Parameters number;
+		public int readNumber(GameState gameState) throws ParameterException {
+			return gameState.readNumber(number);
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			variable = iterator.getVariable();
+			int operator = iterator.getInt();
+			operatorEquals = operator == 0;
+			operatorNotEquals = operator == 1;
+			operatorGreater = operator == 2;
+			operatorGreaterOrEqual = operator == 3;
+			operatorLess = operator == 4;
+			operatorLessOrEqual = operator == 5;
+			
+			number = iterator.getParameters();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;variable&gt;</b> variable</li>
@@ -133,68 +133,68 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 		 * </ul>
 		 * <li><b>&lt;number&gt;</b> number</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean checkIfTheActorObject;							// ActionFragmentWriter.writeElement()
-	public CheckIfTheActorObjectData checkIfTheActorObjectData;		// ActionFragmentWriter.writeElement()
-	public class CheckIfTheActorObjectData extends ScriptableFragment {// ActionFragmentWriter.writeHeader()
-		public boolean bodyTheActor;								// ActionFragmentWriter.writeElement()
-		public BodyTheActorData bodyTheActorData;					// ActionFragmentWriter.writeElement()
-		public class BodyTheActorData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-			/** Type: <b>&lt;actorInstance&gt;</b> */				// ActionFragmentWriter.writeElement()
-			public Parameters actorInstance;						// ActionFragmentWriter.writeElement()
-			public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-				return gameState.readActorInstance(actorInstance);	// ActionFragmentWriter.writeElement()
-			}														// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-			@Override												// ActionFragmentWriter.writeReadParams()
-			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				actorInstance = iterator.getParameters();			// ActionFragmentWriter.writeReadParams()
-			}														// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean checkIfTheActorObject;
+	public CheckIfTheActorObjectData checkIfTheActorObjectData;
+	public class CheckIfTheActorObjectData extends ScriptableFragment {
+		public boolean bodyTheActor;
+		public BodyTheActorData bodyTheActorData;
+		public class BodyTheActorData extends ScriptableFragment {
+			/** Type: <b>&lt;actorInstance&gt;</b> */
+			public Parameters actorInstance;
+			public ActorBody readActorInstance(GameState gameState) throws ParameterException {
+				return gameState.readActorInstance(actorInstance);
+			}
+			
+			@Override
+			public void readParams(Iterator iterator) {
+				actorInstance = iterator.getParameters();
+			}
 			/**
 			 * <ul>
 			 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
 			 * </ul>
-			 */														// ActionFragmentWriter.writeJavadoc()
-			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
-		}															// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-		public boolean bodyTheObject;								// ActionFragmentWriter.writeElement()
-		public BodyTheObjectData bodyTheObjectData;					// ActionFragmentWriter.writeElement()
-		public class BodyTheObjectData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-			/** Type: <b>&lt;objectInstance&gt;</b> */				// ActionFragmentWriter.writeElement()
-			public Parameters objectInstance;						// ActionFragmentWriter.writeElement()
-			public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-				return gameState.readObjectInstance(objectInstance);// ActionFragmentWriter.writeElement()
-			}														// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-			@Override												// ActionFragmentWriter.writeReadParams()
-			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				objectInstance = iterator.getParameters();			// ActionFragmentWriter.writeReadParams()
-			}														// ActionFragmentWriter.writeReadParams()
+			 */
+			public static final String JAVADOC = "";
+		}
+		
+		public boolean bodyTheObject;
+		public BodyTheObjectData bodyTheObjectData;
+		public class BodyTheObjectData extends ScriptableFragment {
+			/** Type: <b>&lt;objectInstance&gt;</b> */
+			public Parameters objectInstance;
+			public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {
+				return gameState.readObjectInstance(objectInstance);
+			}
+			
+			@Override
+			public void readParams(Iterator iterator) {
+				objectInstance = iterator.getParameters();
+			}
 			/**
 			 * <ul>
 			 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
 			 * </ul>
-			 */														// ActionFragmentWriter.writeJavadoc()
-			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
-		}															// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-		public boolean checkProperty;								// ActionFragmentWriter.writeElement()
-		public CheckPropertyData checkPropertyData;					// ActionFragmentWriter.writeElement()
-		public class CheckPropertyData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-			public boolean propertyIsAlive;							// ActionFragmentWriter.writeElement()
-			public boolean propertyIsDead;							// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-			@Override												// ActionFragmentWriter.writeReadParams()
-			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				int property = iterator.getInt();					// ActionFragmentWriter.writeReadParams()
-				propertyIsAlive = property == 0;					// ActionFragmentWriter.writeReadParams()
-				propertyIsDead = property == 1;						// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-			}														// ActionFragmentWriter.writeReadParams()
+			 */
+			public static final String JAVADOC = "";
+		}
+		
+		public boolean checkProperty;
+		public CheckPropertyData checkPropertyData;
+		public class CheckPropertyData extends ScriptableFragment {
+			public boolean propertyIsAlive;
+			public boolean propertyIsDead;
+			
+			@Override
+			public void readParams(Iterator iterator) {
+				int property = iterator.getInt();
+				propertyIsAlive = property == 0;
+				propertyIsDead = property == 1;
+				
+			}
 			/**
 			 * <ul>
 			 * <li><b>&lt;radio&gt;</b> property</i>:</li><ul>
@@ -202,31 +202,31 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 			 * <li>propertyIsDead:</li>
 			 * </ul>
 			 * </ul>
-			 */														// ActionFragmentWriter.writeJavadoc()
-			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
-		}															// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-		public boolean checkRegion;									// ActionFragmentWriter.writeElement()
-		public CheckRegionData checkRegionData;						// ActionFragmentWriter.writeElement()
-		public class CheckRegionData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-			public boolean checkIsInside;							// ActionFragmentWriter.writeElement()
-			public boolean checkIsTouching;							// ActionFragmentWriter.writeElement()
-			public boolean checkIsOutside;							// ActionFragmentWriter.writeElement()
-			/** Type: <b>&lt;region&gt;</b> */						// ActionFragmentWriter.writeElement()
-			public Parameters region;								// ActionFragmentWriter.writeElement()
-			public android.graphics.Rect readRegion(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-				return gameState.readRegion(region);				// ActionFragmentWriter.writeElement()
-			}														// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-			@Override												// ActionFragmentWriter.writeReadParams()
-			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				int check = iterator.getInt();						// ActionFragmentWriter.writeReadParams()
-				checkIsInside = check == 0;							// ActionFragmentWriter.writeReadParams()
-				checkIsTouching = check == 1;						// ActionFragmentWriter.writeReadParams()
-				checkIsOutside = check == 2;						// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-				region = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
-			}														// ActionFragmentWriter.writeReadParams()
+			 */
+			public static final String JAVADOC = "";
+		}
+		
+		public boolean checkRegion;
+		public CheckRegionData checkRegionData;
+		public class CheckRegionData extends ScriptableFragment {
+			public boolean checkIsInside;
+			public boolean checkIsTouching;
+			public boolean checkIsOutside;
+			/** Type: <b>&lt;region&gt;</b> */
+			public Parameters region;
+			public android.graphics.Rect readRegion(GameState gameState) throws ParameterException {
+				return gameState.readRegion(region);
+			}
+			
+			@Override
+			public void readParams(Iterator iterator) {
+				int check = iterator.getInt();
+				checkIsInside = check == 0;
+				checkIsTouching = check == 1;
+				checkIsOutside = check == 2;
+				
+				region = iterator.getParameters();
+			}
 			/**
 			 * <ul>
 			 * <li><b>&lt;radio&gt;</b> check</i>:</li><ul>
@@ -236,80 +236,80 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 			 * </ul>
 			 * <li><b>&lt;region&gt;</b> region</li>
 			 * </ul>
-			 */														// ActionFragmentWriter.writeJavadoc()
-			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
-		}															// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-		public boolean checkPosition;								// ActionFragmentWriter.writeElement()
-		public CheckPositionData checkPositionData;					// ActionFragmentWriter.writeElement()
-		public class CheckPositionData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-			public boolean directionIsAbove;						// ActionFragmentWriter.writeElement()
-			public boolean directionIsBelow;						// ActionFragmentWriter.writeElement()
-			public boolean directionIsLeftOf;						// ActionFragmentWriter.writeElement()
-			public boolean directionIsRightOf;						// ActionFragmentWriter.writeElement()
-			public boolean ofTheActor;								// ActionFragmentWriter.writeElement()
-			public OfTheActorData ofTheActorData;					// ActionFragmentWriter.writeElement()
-			public class OfTheActorData extends ScriptableFragment {// ActionFragmentWriter.writeHeader()
-				/** Type: <b>&lt;actorInstance&gt;</b> */			// ActionFragmentWriter.writeElement()
-				public Parameters actorInstance;					// ActionFragmentWriter.writeElement()
-				public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-					return gameState.readActorInstance(actorInstance);// ActionFragmentWriter.writeElement()
-				}													// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-				@Override											// ActionFragmentWriter.writeReadParams()
-				public void readParams(Iterator iterator) {			// ActionFragmentWriter.writeReadParams()
-					actorInstance = iterator.getParameters();		// ActionFragmentWriter.writeReadParams()
-				}													// ActionFragmentWriter.writeReadParams()
+			 */
+			public static final String JAVADOC = "";
+		}
+		
+		public boolean checkPosition;
+		public CheckPositionData checkPositionData;
+		public class CheckPositionData extends ScriptableFragment {
+			public boolean directionIsAbove;
+			public boolean directionIsBelow;
+			public boolean directionIsLeftOf;
+			public boolean directionIsRightOf;
+			public boolean ofTheActor;
+			public OfTheActorData ofTheActorData;
+			public class OfTheActorData extends ScriptableFragment {
+				/** Type: <b>&lt;actorInstance&gt;</b> */
+				public Parameters actorInstance;
+				public ActorBody readActorInstance(GameState gameState) throws ParameterException {
+					return gameState.readActorInstance(actorInstance);
+				}
+				
+				@Override
+				public void readParams(Iterator iterator) {
+					actorInstance = iterator.getParameters();
+				}
 				/**
 				 * <ul>
 				 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
 				 * </ul>
-				 */													// ActionFragmentWriter.writeJavadoc()
-				public static final String JAVADOC = "";			// ActionFragmentWriter.writeJavadoc()
-			}														// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-			public boolean ofTheObject;								// ActionFragmentWriter.writeElement()
-			public OfTheObjectData ofTheObjectData;					// ActionFragmentWriter.writeElement()
-			public class OfTheObjectData extends ScriptableFragment {// ActionFragmentWriter.writeHeader()
-				/** Type: <b>&lt;objectInstance&gt;</b> */			// ActionFragmentWriter.writeElement()
-				public Parameters objectInstance;					// ActionFragmentWriter.writeElement()
-				public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-					return gameState.readObjectInstance(objectInstance);// ActionFragmentWriter.writeElement()
-				}													// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-				@Override											// ActionFragmentWriter.writeReadParams()
-				public void readParams(Iterator iterator) {			// ActionFragmentWriter.writeReadParams()
-					objectInstance = iterator.getParameters();		// ActionFragmentWriter.writeReadParams()
-				}													// ActionFragmentWriter.writeReadParams()
+				 */
+				public static final String JAVADOC = "";
+			}
+			
+			public boolean ofTheObject;
+			public OfTheObjectData ofTheObjectData;
+			public class OfTheObjectData extends ScriptableFragment {
+				/** Type: <b>&lt;objectInstance&gt;</b> */
+				public Parameters objectInstance;
+				public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {
+					return gameState.readObjectInstance(objectInstance);
+				}
+				
+				@Override
+				public void readParams(Iterator iterator) {
+					objectInstance = iterator.getParameters();
+				}
 				/**
 				 * <ul>
 				 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
 				 * </ul>
-				 */													// ActionFragmentWriter.writeJavadoc()
-				public static final String JAVADOC = "";			// ActionFragmentWriter.writeJavadoc()
-			}														// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-																	// ActionFragmentWriter.writeConstructor()
-			public CheckPositionData() {							// ActionFragmentWriter.writeConstructor()
-				ofTheActorData = new OfTheActorData();				// ActionFragmentWriter.writeConstructor()
-				ofTheObjectData = new OfTheObjectData();			// ActionFragmentWriter.writeConstructor()
-			}														// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-			@Override												// ActionFragmentWriter.writeReadParams()
-			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				int direction = iterator.getInt();					// ActionFragmentWriter.writeReadParams()
-				directionIsAbove = direction == 0;					// ActionFragmentWriter.writeReadParams()
-				directionIsBelow = direction == 1;					// ActionFragmentWriter.writeReadParams()
-				directionIsLeftOf = direction == 2;					// ActionFragmentWriter.writeReadParams()
-				directionIsRightOf = direction == 3;				// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-				int of = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-				ofTheActor = of == 0;								// ActionFragmentWriter.writeReadParams()
-				if (ofTheActor) ofTheActorData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-				ofTheObject = of == 1;								// ActionFragmentWriter.writeReadParams()
-				if (ofTheObject) ofTheObjectData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-			}														// ActionFragmentWriter.writeReadParams()
+				 */
+				public static final String JAVADOC = "";
+			}
+			
+			
+			public CheckPositionData() {
+				ofTheActorData = new OfTheActorData();
+				ofTheObjectData = new OfTheObjectData();
+			}
+			
+			@Override
+			public void readParams(Iterator iterator) {
+				int direction = iterator.getInt();
+				directionIsAbove = direction == 0;
+				directionIsBelow = direction == 1;
+				directionIsLeftOf = direction == 2;
+				directionIsRightOf = direction == 3;
+				
+				int of = iterator.getInt();
+				ofTheActor = of == 0;
+				if (ofTheActor) ofTheActorData.readParams(iterator);
+				ofTheObject = of == 1;
+				if (ofTheObject) ofTheObjectData.readParams(iterator);
+				
+			}
 			/**
 			 * <ul>
 			 * <li><b>&lt;radio&gt;</b> direction</i>:</li><ul>
@@ -329,36 +329,36 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 			 * </ul>
 			 * </ul>
 			 * </ul>
-			 */														// ActionFragmentWriter.writeJavadoc()
-			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
-		}															// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-																	// ActionFragmentWriter.writeConstructor()
-		public CheckIfTheActorObjectData() {						// ActionFragmentWriter.writeConstructor()
-			bodyTheActorData = new BodyTheActorData();				// ActionFragmentWriter.writeConstructor()
-			bodyTheObjectData = new BodyTheObjectData();			// ActionFragmentWriter.writeConstructor()
-			checkPropertyData = new CheckPropertyData();			// ActionFragmentWriter.writeConstructor()
-			checkRegionData = new CheckRegionData();				// ActionFragmentWriter.writeConstructor()
-			checkPositionData = new CheckPositionData();			// ActionFragmentWriter.writeConstructor()
-		}															// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			int body = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-			bodyTheActor = body == 0;								// ActionFragmentWriter.writeReadParams()
-			if (bodyTheActor) bodyTheActorData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-			bodyTheObject = body == 1;								// ActionFragmentWriter.writeReadParams()
-			if (bodyTheObject) bodyTheObjectData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-			int check = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-			checkProperty = check == 0;								// ActionFragmentWriter.writeReadParams()
-			if (checkProperty) checkPropertyData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-			checkRegion = check == 1;								// ActionFragmentWriter.writeReadParams()
-			if (checkRegion) checkRegionData.readParams(iterator);	// ActionFragmentWriter.writeReadParams()
-			checkPosition = check == 2;								// ActionFragmentWriter.writeReadParams()
-			if (checkPosition) checkPositionData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+			 */
+			public static final String JAVADOC = "";
+		}
+		
+		
+		public CheckIfTheActorObjectData() {
+			bodyTheActorData = new BodyTheActorData();
+			bodyTheObjectData = new BodyTheObjectData();
+			checkPropertyData = new CheckPropertyData();
+			checkRegionData = new CheckRegionData();
+			checkPositionData = new CheckPositionData();
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			int body = iterator.getInt();
+			bodyTheActor = body == 0;
+			if (bodyTheActor) bodyTheActorData.readParams(iterator);
+			bodyTheObject = body == 1;
+			if (bodyTheObject) bodyTheObjectData.readParams(iterator);
+			
+			int check = iterator.getInt();
+			checkProperty = check == 0;
+			if (checkProperty) checkPropertyData.readParams(iterator);
+			checkRegion = check == 1;
+			if (checkRegion) checkRegionData.readParams(iterator);
+			checkPosition = check == 2;
+			if (checkPosition) checkPositionData.readParams(iterator);
+			
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;radio&gt;</b> body</i>:</li><ul>
@@ -409,37 +409,37 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 		 * </ul>
 		 * </ul>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean checkIfTheActor;									// ActionFragmentWriter.writeElement()
-	public CheckIfTheActorData checkIfTheActorData;					// ActionFragmentWriter.writeElement()
-	public class CheckIfTheActorData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;actorInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
-		public Parameters actorInstance;							// ActionFragmentWriter.writeElement()
-		public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readActorInstance(actorInstance);		// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-		public boolean checkType;									// ActionFragmentWriter.writeElement()
-		public CheckTypeData checkTypeData;							// ActionFragmentWriter.writeElement()
-		public class CheckTypeData extends ScriptableFragment {		// ActionFragmentWriter.writeHeader()
-			public boolean compareIs;								// ActionFragmentWriter.writeElement()
-			public boolean compareIsNot;							// ActionFragmentWriter.writeElement()
-			/** Type: <b>&lt;actorClass&gt;</b> */					// ActionFragmentWriter.writeElement()
-			public ActorClassPointer actorClass;					// ActionFragmentWriter.writeElement()
-			public ActorClass readActorClass(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-				return gameState.readActorClass(actorClass);		// ActionFragmentWriter.writeElement()
-			}														// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-			@Override												// ActionFragmentWriter.writeReadParams()
-			public void readParams(Iterator iterator) {				// ActionFragmentWriter.writeReadParams()
-				int compare = iterator.getInt();					// ActionFragmentWriter.writeReadParams()
-				compareIs = compare == 0;							// ActionFragmentWriter.writeReadParams()
-				compareIsNot = compare == 1;						// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-				actorClass = iterator.getActorClassPointer();		// ActionFragmentWriter.writeReadParams()
-			}														// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean checkIfTheActor;
+	public CheckIfTheActorData checkIfTheActorData;
+	public class CheckIfTheActorData extends ScriptableFragment {
+		/** Type: <b>&lt;actorInstance&gt;</b> */
+		public Parameters actorInstance;
+		public ActorBody readActorInstance(GameState gameState) throws ParameterException {
+			return gameState.readActorInstance(actorInstance);
+		}
+		public boolean checkType;
+		public CheckTypeData checkTypeData;
+		public class CheckTypeData extends ScriptableFragment {
+			public boolean compareIs;
+			public boolean compareIsNot;
+			/** Type: <b>&lt;actorClass&gt;</b> */
+			public ActorClassPointer actorClass;
+			public ActorClass readActorClass(GameState gameState) throws ParameterException {
+				return gameState.readActorClass(actorClass);
+			}
+			
+			@Override
+			public void readParams(Iterator iterator) {
+				int compare = iterator.getInt();
+				compareIs = compare == 0;
+				compareIsNot = compare == 1;
+				
+				actorClass = iterator.getActorClassPointer();
+			}
 			/**
 			 * <ul>
 			 * <li><b>&lt;radio&gt;</b> compare</i>:</li><ul>
@@ -448,23 +448,23 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 			 * </ul>
 			 * <li><b>&lt;actorClass&gt;</b> actorClass</li>
 			 * </ul>
-			 */														// ActionFragmentWriter.writeJavadoc()
-			public static final String JAVADOC = "";				// ActionFragmentWriter.writeJavadoc()
-		}															// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-																	// ActionFragmentWriter.writeConstructor()
-		public CheckIfTheActorData() {								// ActionFragmentWriter.writeConstructor()
-			checkTypeData = new CheckTypeData();					// ActionFragmentWriter.writeConstructor()
-		}															// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			actorInstance = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
-			int check = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-			checkType = check == 0;									// ActionFragmentWriter.writeReadParams()
-			if (checkType) checkTypeData.readParams(iterator);		// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+			 */
+			public static final String JAVADOC = "";
+		}
+		
+		
+		public CheckIfTheActorData() {
+			checkTypeData = new CheckTypeData();
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			actorInstance = iterator.getParameters();
+			int check = iterator.getInt();
+			checkType = check == 0;
+			if (checkType) checkTypeData.readParams(iterator);
+			
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
@@ -479,31 +479,31 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 		 * </ul>
 		 * </ul>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-																	// ActionFragmentWriter.writeConstructor()
-	public ActionIf() {												// ActionFragmentWriter.writeConstructor()
-		checkIfTheSwitchData = new CheckIfTheSwitchData();			// ActionFragmentWriter.writeConstructor()
-		checkIfTheVariableData = new CheckIfTheVariableData();		// ActionFragmentWriter.writeConstructor()
-		checkIfTheActorObjectData = new CheckIfTheActorObjectData();// ActionFragmentWriter.writeConstructor()
-		checkIfTheActorData = new CheckIfTheActorData();			// ActionFragmentWriter.writeConstructor()
-	}																// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		int checkIf = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-		checkIfTheSwitch = checkIf == 0;							// ActionFragmentWriter.writeReadParams()
-		if (checkIfTheSwitch) checkIfTheSwitchData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-		checkIfTheVariable = checkIf == 1;							// ActionFragmentWriter.writeReadParams()
-		if (checkIfTheVariable) checkIfTheVariableData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-		checkIfTheActorObject = checkIf == 2;						// ActionFragmentWriter.writeReadParams()
-		if (checkIfTheActorObject) checkIfTheActorObjectData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-		checkIfTheActor = checkIf == 3;								// ActionFragmentWriter.writeReadParams()
-		if (checkIfTheActor) checkIfTheActorData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	
+	public ActionIf() {
+		checkIfTheSwitchData = new CheckIfTheSwitchData();
+		checkIfTheVariableData = new CheckIfTheVariableData();
+		checkIfTheActorObjectData = new CheckIfTheActorObjectData();
+		checkIfTheActorData = new CheckIfTheActorData();
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		int checkIf = iterator.getInt();
+		checkIfTheSwitch = checkIf == 0;
+		if (checkIfTheSwitch) checkIfTheSwitchData.readParams(iterator);
+		checkIfTheVariable = checkIf == 1;
+		if (checkIfTheVariable) checkIfTheVariableData.readParams(iterator);
+		checkIfTheActorObject = checkIf == 2;
+		if (checkIfTheActorObject) checkIfTheActorObjectData.readParams(iterator);
+		checkIfTheActor = checkIf == 3;
+		if (checkIfTheActor) checkIfTheActorData.readParams(iterator);
+		
+	}
 	/**
 	 * 007 <b><i>If...</i></b> (Control)<br />
 	 * <ul>
@@ -603,6 +603,6 @@ public class ActionIf extends ScriptableInstance {					// ActionFragmentWriter.w
 	 * </ul>
 	 * </ul>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

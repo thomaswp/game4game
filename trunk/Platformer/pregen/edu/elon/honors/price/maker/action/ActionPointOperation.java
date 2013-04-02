@@ -1,143 +1,143 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionPointOperation extends ScriptableInstance {		// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Point Operation";			// ScriptableWriter.writeHeader()
-	public static final int ID = 12;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Variables";				// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;variablePoint&gt;</b> */						// ActionFragmentWriter.writeElement()
-	public Parameters point;										// ActionFragmentWriter.writeElement()
-	public boolean operatorSetItTo;									// ActionFragmentWriter.writeElement()
-	public boolean operatorAdd;										// ActionFragmentWriter.writeElement()
-	public boolean operatorSubtract;								// ActionFragmentWriter.writeElement()
-	public boolean withPoint;										// ActionFragmentWriter.writeElement()
-	public WithPointData withPointData;								// ActionFragmentWriter.writeElement()
-	public class WithPointData extends ScriptableFragment {			// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;point&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public Parameters point;									// ActionFragmentWriter.writeElement()
-		public Point readPoint(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readPoint(point);						// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			point = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionPointOperation extends ScriptableInstance {
+	public static final String NAME = "Point Operation";
+	public static final int ID = 12;
+	public static final String CATEGORY = "Variables";
+	
+	/** Type: <b>&lt;variablePoint&gt;</b> */
+	public Parameters point;
+	public boolean operatorSetItTo;
+	public boolean operatorAdd;
+	public boolean operatorSubtract;
+	public boolean withPoint;
+	public WithPointData withPointData;
+	public class WithPointData extends ScriptableFragment {
+		/** Type: <b>&lt;point&gt;</b> */
+		public Parameters point;
+		public Point readPoint(GameState gameState) throws ParameterException {
+			return gameState.readPoint(point);
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			point = iterator.getParameters();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;point&gt;</b> point</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean withVector;										// ActionFragmentWriter.writeElement()
-	public WithVectorData withVectorData;							// ActionFragmentWriter.writeElement()
-	public class WithVectorData extends ScriptableFragment {		// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;vector&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public Parameters vector;									// ActionFragmentWriter.writeElement()
-		public Vector readVector(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readVector(vector);					// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-		/** Type: <b>&lt;number&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public Parameters magnitude;								// ActionFragmentWriter.writeElement()
-		public int readMagnitude(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readNumber(magnitude);					// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			vector = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
-			magnitude = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean withVector;
+	public WithVectorData withVectorData;
+	public class WithVectorData extends ScriptableFragment {
+		/** Type: <b>&lt;vector&gt;</b> */
+		public Parameters vector;
+		public Vector readVector(GameState gameState) throws ParameterException {
+			return gameState.readVector(vector);
+		}
+		/** Type: <b>&lt;number&gt;</b> */
+		public Parameters magnitude;
+		public int readMagnitude(GameState gameState) throws ParameterException {
+			return gameState.readNumber(magnitude);
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			vector = iterator.getParameters();
+			magnitude = iterator.getParameters();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;vector&gt;</b> vector</li>
 		 * <li><b>&lt;number&gt;</b> magnitude</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean withActorLocation;								// ActionFragmentWriter.writeElement()
-	public WithActorLocationData withActorLocationData;				// ActionFragmentWriter.writeElement()
-	public class WithActorLocationData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;actorInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
-		public Parameters actorInstance;							// ActionFragmentWriter.writeElement()
-		public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readActorInstance(actorInstance);		// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			actorInstance = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean withActorLocation;
+	public WithActorLocationData withActorLocationData;
+	public class WithActorLocationData extends ScriptableFragment {
+		/** Type: <b>&lt;actorInstance&gt;</b> */
+		public Parameters actorInstance;
+		public ActorBody readActorInstance(GameState gameState) throws ParameterException {
+			return gameState.readActorInstance(actorInstance);
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			actorInstance = iterator.getParameters();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean withObjectLocation;								// ActionFragmentWriter.writeElement()
-	public WithObjectLocationData withObjectLocationData;			// ActionFragmentWriter.writeElement()
-	public class WithObjectLocationData extends ScriptableFragment {// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;objectInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
-		public Parameters objectInstance;							// ActionFragmentWriter.writeElement()
-		public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readObjectInstance(objectInstance);	// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			objectInstance = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean withObjectLocation;
+	public WithObjectLocationData withObjectLocationData;
+	public class WithObjectLocationData extends ScriptableFragment {
+		/** Type: <b>&lt;objectInstance&gt;</b> */
+		public Parameters objectInstance;
+		public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {
+			return gameState.readObjectInstance(objectInstance);
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			objectInstance = iterator.getParameters();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-																	// ActionFragmentWriter.writeConstructor()
-	public ActionPointOperation() {									// ActionFragmentWriter.writeConstructor()
-		withPointData = new WithPointData();						// ActionFragmentWriter.writeConstructor()
-		withVectorData = new WithVectorData();						// ActionFragmentWriter.writeConstructor()
-		withActorLocationData = new WithActorLocationData();		// ActionFragmentWriter.writeConstructor()
-		withObjectLocationData = new WithObjectLocationData();		// ActionFragmentWriter.writeConstructor()
-	}																// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		point = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
-		int operator = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-		operatorSetItTo = operator == 0;							// ActionFragmentWriter.writeReadParams()
-		operatorAdd = operator == 1;								// ActionFragmentWriter.writeReadParams()
-		operatorSubtract = operator == 2;							// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		int with = iterator.getInt();								// ActionFragmentWriter.writeReadParams()
-		withPoint = with == 0;										// ActionFragmentWriter.writeReadParams()
-		if (withPoint) withPointData.readParams(iterator);			// ActionFragmentWriter.writeReadParams()
-		withVector = with == 1;										// ActionFragmentWriter.writeReadParams()
-		if (withVector) withVectorData.readParams(iterator);		// ActionFragmentWriter.writeReadParams()
-		withActorLocation = with == 2;								// ActionFragmentWriter.writeReadParams()
-		if (withActorLocation) withActorLocationData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-		withObjectLocation = with == 3;								// ActionFragmentWriter.writeReadParams()
-		if (withObjectLocation) withObjectLocationData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	
+	public ActionPointOperation() {
+		withPointData = new WithPointData();
+		withVectorData = new WithVectorData();
+		withActorLocationData = new WithActorLocationData();
+		withObjectLocationData = new WithObjectLocationData();
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		point = iterator.getParameters();
+		int operator = iterator.getInt();
+		operatorSetItTo = operator == 0;
+		operatorAdd = operator == 1;
+		operatorSubtract = operator == 2;
+		
+		int with = iterator.getInt();
+		withPoint = with == 0;
+		if (withPoint) withPointData.readParams(iterator);
+		withVector = with == 1;
+		if (withVector) withVectorData.readParams(iterator);
+		withActorLocation = with == 2;
+		if (withActorLocation) withActorLocationData.readParams(iterator);
+		withObjectLocation = with == 3;
+		if (withObjectLocation) withObjectLocationData.readParams(iterator);
+		
+	}
 	/**
 	 * 012 <b><i>Point Operation</i></b> (Variables)<br />
 	 * <ul>
@@ -167,6 +167,6 @@ public class ActionPointOperation extends ScriptableInstance {		// ActionFragmen
 	 * </ul>
 	 * </ul>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

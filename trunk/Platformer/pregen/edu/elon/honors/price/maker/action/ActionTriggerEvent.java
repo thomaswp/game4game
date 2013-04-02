@@ -1,35 +1,35 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionTriggerEvent extends ScriptableInstance {		// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Trigger Event";				// ScriptableWriter.writeHeader()
-	public static final int ID = 23;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Control";				// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;event&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Object event;											// ActionFragmentWriter.writeElement()
-	public Event readEvent(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readEvent(event);							// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		event = iterator.getObject();								// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionTriggerEvent extends ScriptableInstance {
+	public static final String NAME = "Trigger Event";
+	public static final int ID = 23;
+	public static final String CATEGORY = "Control";
+	
+	/** Type: <b>&lt;event&gt;</b> */
+	public Object event;
+	public Event readEvent(GameState gameState) throws ParameterException {
+		return gameState.readEvent(event);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		event = iterator.getObject();
+	}
 	/**
 	 * 023 <b><i>Trigger Event</i></b> (Control)<br />
 	 * <ul>
 	 * <li><b>&lt;event&gt;</b> event</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

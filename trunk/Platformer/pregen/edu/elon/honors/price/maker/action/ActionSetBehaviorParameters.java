@@ -1,85 +1,85 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionSetBehaviorParameters extends ScriptableInstance {// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Set Behavior Parameters";	// ScriptableWriter.writeHeader()
-	public static final int ID = 25;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Actor|Object";			// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	public boolean ofTheActor;										// ActionFragmentWriter.writeElement()
-	public OfTheActorData ofTheActorData;							// ActionFragmentWriter.writeElement()
-	public class OfTheActorData extends ScriptableFragment {		// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;actorInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
-		public Parameters actorInstance;							// ActionFragmentWriter.writeElement()
-		public ActorBody readActorInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readActorInstance(actorInstance);		// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-		/** Type: <b>&lt;behavior&gt;</b> */						// ActionFragmentWriter.writeElement()
-		public Parameters behavior;									// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			actorInstance = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
-			behavior = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionSetBehaviorParameters extends ScriptableInstance {
+	public static final String NAME = "Set Behavior Parameters";
+	public static final int ID = 25;
+	public static final String CATEGORY = "Actor|Object";
+	
+	public boolean ofTheActor;
+	public OfTheActorData ofTheActorData;
+	public class OfTheActorData extends ScriptableFragment {
+		/** Type: <b>&lt;actorInstance&gt;</b> */
+		public Parameters actorInstance;
+		public ActorBody readActorInstance(GameState gameState) throws ParameterException {
+			return gameState.readActorInstance(actorInstance);
+		}
+		/** Type: <b>&lt;behavior&gt;</b> */
+		public Parameters behavior;
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			actorInstance = iterator.getParameters();
+			behavior = iterator.getParameters();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;actorInstance&gt;</b> actorInstance</li>
 		 * <li><b>&lt;behavior&gt;</b> behavior</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean ofTheObject;										// ActionFragmentWriter.writeElement()
-	public OfTheObjectData ofTheObjectData;							// ActionFragmentWriter.writeElement()
-	public class OfTheObjectData extends ScriptableFragment {		// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;objectInstance&gt;</b> */					// ActionFragmentWriter.writeElement()
-		public Parameters objectInstance;							// ActionFragmentWriter.writeElement()
-		public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readObjectInstance(objectInstance);	// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-		/** Type: <b>&lt;behavior&gt;</b> */						// ActionFragmentWriter.writeElement()
-		public Parameters behavior;									// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			objectInstance = iterator.getParameters();				// ActionFragmentWriter.writeReadParams()
-			behavior = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean ofTheObject;
+	public OfTheObjectData ofTheObjectData;
+	public class OfTheObjectData extends ScriptableFragment {
+		/** Type: <b>&lt;objectInstance&gt;</b> */
+		public Parameters objectInstance;
+		public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {
+			return gameState.readObjectInstance(objectInstance);
+		}
+		/** Type: <b>&lt;behavior&gt;</b> */
+		public Parameters behavior;
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			objectInstance = iterator.getParameters();
+			behavior = iterator.getParameters();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
 		 * <li><b>&lt;behavior&gt;</b> behavior</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-																	// ActionFragmentWriter.writeConstructor()
-	public ActionSetBehaviorParameters() {							// ActionFragmentWriter.writeConstructor()
-		ofTheActorData = new OfTheActorData();						// ActionFragmentWriter.writeConstructor()
-		ofTheObjectData = new OfTheObjectData();					// ActionFragmentWriter.writeConstructor()
-	}																// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		int of = iterator.getInt();									// ActionFragmentWriter.writeReadParams()
-		ofTheActor = of == 0;										// ActionFragmentWriter.writeReadParams()
-		if (ofTheActor) ofTheActorData.readParams(iterator);		// ActionFragmentWriter.writeReadParams()
-		ofTheObject = of == 1;										// ActionFragmentWriter.writeReadParams()
-		if (ofTheObject) ofTheObjectData.readParams(iterator);		// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	
+	public ActionSetBehaviorParameters() {
+		ofTheActorData = new OfTheActorData();
+		ofTheObjectData = new OfTheObjectData();
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		int of = iterator.getInt();
+		ofTheActor = of == 0;
+		if (ofTheActor) ofTheActorData.readParams(iterator);
+		ofTheObject = of == 1;
+		if (ofTheObject) ofTheObjectData.readParams(iterator);
+		
+	}
 	/**
 	 * 025 <b><i>Set Behavior Parameters</i></b> (Actor|Object)<br />
 	 * <ul>
@@ -96,6 +96,6 @@ public class ActionSetBehaviorParameters extends ScriptableInstance {// ActionFr
 	 * </ul>
 	 * </ul>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

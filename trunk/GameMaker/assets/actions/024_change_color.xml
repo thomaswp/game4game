@@ -1,5 +1,5 @@
 <action id="24" name="Change Color" category="Actor|Object">
-    <text text="For" />
+    <text text="Make" />
     <radio name="color">
         <choice text="the actor" mute="true" >
             <actorInstance />
@@ -8,6 +8,13 @@
             <objectInstance />
         </choice>
     </radio>
-    <text text="change the color to" />
+    <text text="turn" />
     <color name="newColor" />
+    <radio name="turn">
+        <choice text="permanently" />
+        <choice text="flashing for" >
+            <number min="0" max="600" />
+            <text text="tenths of a second" />
+        </choice>
+    </radio>
 </action>

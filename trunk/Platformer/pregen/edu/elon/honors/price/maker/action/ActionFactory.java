@@ -1,207 +1,207 @@
-package edu.elon.honors.price.maker.action;							// ActionFactoryWriter.writeHeader()
-																	// ActionFactoryWriter.writeHeader()
-public class ActionFactory {										// ActionFactoryWriter.writeHeader()
-	public final static int[] ACTION_IDS = new int[] {				// ActionFactoryWriter.writeHeader()
-		0,															// ActionFactoryWriter.writeHeader()
-		1,															// ActionFactoryWriter.writeHeader()
-		2,															// ActionFactoryWriter.writeHeader()
-		3,															// ActionFactoryWriter.writeHeader()
-		4,															// ActionFactoryWriter.writeHeader()
-		5,															// ActionFactoryWriter.writeHeader()
-		7,															// ActionFactoryWriter.writeHeader()
-		8,															// ActionFactoryWriter.writeHeader()
-		9,															// ActionFactoryWriter.writeHeader()
-		10,															// ActionFactoryWriter.writeHeader()
-		11,															// ActionFactoryWriter.writeHeader()
-		12,															// ActionFactoryWriter.writeHeader()
-		13,															// ActionFactoryWriter.writeHeader()
-		14,															// ActionFactoryWriter.writeHeader()
-		15,															// ActionFactoryWriter.writeHeader()
-		16,															// ActionFactoryWriter.writeHeader()
-		17,															// ActionFactoryWriter.writeHeader()
-		18,															// ActionFactoryWriter.writeHeader()
-		19,															// ActionFactoryWriter.writeHeader()
-		20,															// ActionFactoryWriter.writeHeader()
-		21,															// ActionFactoryWriter.writeHeader()
-		22,															// ActionFactoryWriter.writeHeader()
-		23,															// ActionFactoryWriter.writeHeader()
-		24,															// ActionFactoryWriter.writeHeader()
-		25,															// ActionFactoryWriter.writeHeader()
-		26,															// ActionFactoryWriter.writeHeader()
-	};																// ActionFactoryWriter.writeHeader()
-	public final static String[] ACTION_NAMES = new String[] {		// ActionFactoryWriter.writeHeader()
-		"Set Switch",												// ActionFactoryWriter.writeHeader()
-		"Set Variable",												// ActionFactoryWriter.writeHeader()
-		"Create Actor",												// ActionFactoryWriter.writeHeader()
-		"Debug Box",												// ActionFactoryWriter.writeHeader()
-		"Move Actor",												// ActionFactoryWriter.writeHeader()
-		"Trigger Actor Behavior",									// ActionFactoryWriter.writeHeader()
-		"",															// ActionFactoryWriter.writeHeader()
-		"If...",													// ActionFactoryWriter.writeHeader()
-		"Create Object",											// ActionFactoryWriter.writeHeader()
-		"Move Object",												// ActionFactoryWriter.writeHeader()
-		"Set Velocity",												// ActionFactoryWriter.writeHeader()
-		"Debug Message",											// ActionFactoryWriter.writeHeader()
-		"Point Operation",											// ActionFactoryWriter.writeHeader()
-		"Change Gravity",											// ActionFactoryWriter.writeHeader()
-		"UI Action",												// ActionFactoryWriter.writeHeader()
-		"Destroy Object",											// ActionFactoryWriter.writeHeader()
-		"Draw to Screen",											// ActionFactoryWriter.writeHeader()
-		"Loop...",													// ActionFactoryWriter.writeHeader()
-		"Trigger Actor Animation",									// ActionFactoryWriter.writeHeader()
-		"Animate",													// ActionFactoryWriter.writeHeader()
-		"Wait",														// ActionFactoryWriter.writeHeader()
-		"Stop",														// ActionFactoryWriter.writeHeader()
-		"Else",														// ActionFactoryWriter.writeHeader()
-		"Trigger Event",											// ActionFactoryWriter.writeHeader()
-		"Change Color",												// ActionFactoryWriter.writeHeader()
-		"Set Behavior Parameters",									// ActionFactoryWriter.writeHeader()
-		"Change Scale",												// ActionFactoryWriter.writeHeader()
-	};																// ActionFactoryWriter.writeHeader()
-	public final static String[] ACTION_CATEGORIES = new String[] {	// ActionFactoryWriter.writeHeader()
-		"Variables",												// ActionFactoryWriter.writeHeader()
-		"Variables",												// ActionFactoryWriter.writeHeader()
-		"Actor",													// ActionFactoryWriter.writeHeader()
-		"Debug",													// ActionFactoryWriter.writeHeader()
-		"Actor",													// ActionFactoryWriter.writeHeader()
-		"Actor",													// ActionFactoryWriter.writeHeader()
-		"Misc",														// ActionFactoryWriter.writeHeader()
-		"Control",													// ActionFactoryWriter.writeHeader()
-		"Object",													// ActionFactoryWriter.writeHeader()
-		"Object",													// ActionFactoryWriter.writeHeader()
-		"Physics",													// ActionFactoryWriter.writeHeader()
-		"Debug",													// ActionFactoryWriter.writeHeader()
-		"Variables",												// ActionFactoryWriter.writeHeader()
-		"Physics",													// ActionFactoryWriter.writeHeader()
-		"UI",														// ActionFactoryWriter.writeHeader()
-		"Object",													// ActionFactoryWriter.writeHeader()
-		"UI",														// ActionFactoryWriter.writeHeader()
-		"Control",													// ActionFactoryWriter.writeHeader()
-		"Animate",													// ActionFactoryWriter.writeHeader()
-		"Animate",													// ActionFactoryWriter.writeHeader()
-		"Control",													// ActionFactoryWriter.writeHeader()
-		"Control",													// ActionFactoryWriter.writeHeader()
-		"Hidden",													// ActionFactoryWriter.writeHeader()
-		"Control",													// ActionFactoryWriter.writeHeader()
-		"Actor|Object",												// ActionFactoryWriter.writeHeader()
-		"Actor|Object",												// ActionFactoryWriter.writeHeader()
-		"Actor|Object",												// ActionFactoryWriter.writeHeader()
-	};																// ActionFactoryWriter.writeHeader()
-	public static ScriptableInstance getInstance(int id) {			// ActionFactoryWriter.writeHeader()
-		if (id == ActionSetSwitch.ID) return new ActionSetSwitch();	// ActionFactoryWriter.writeHeader()
-		if (id == ActionSetVariable.ID) return new ActionSetVariable();// ActionFactoryWriter.writeHeader()
-		if (id == ActionCreateActor.ID) return new ActionCreateActor();// ActionFactoryWriter.writeHeader()
-		if (id == ActionDebugBox.ID) return new ActionDebugBox();	// ActionFactoryWriter.writeHeader()
-		if (id == ActionMoveActor.ID) return new ActionMoveActor();	// ActionFactoryWriter.writeHeader()
-		if (id == ActionTriggerActorBehavior.ID) return new ActionTriggerActorBehavior();// ActionFactoryWriter.writeHeader()
-		if (id == ActionIf.ID) return new ActionIf();				// ActionFactoryWriter.writeHeader()
-		if (id == ActionCreateObject.ID) return new ActionCreateObject();// ActionFactoryWriter.writeHeader()
-		if (id == ActionMoveObject.ID) return new ActionMoveObject();// ActionFactoryWriter.writeHeader()
-		if (id == ActionSetVelocity.ID) return new ActionSetVelocity();// ActionFactoryWriter.writeHeader()
-		if (id == ActionDebugMessage.ID) return new ActionDebugMessage();// ActionFactoryWriter.writeHeader()
-		if (id == ActionPointOperation.ID) return new ActionPointOperation();// ActionFactoryWriter.writeHeader()
-		if (id == ActionChangeGravity.ID) return new ActionChangeGravity();// ActionFactoryWriter.writeHeader()
-		if (id == ActionUIAction.ID) return new ActionUIAction();	// ActionFactoryWriter.writeHeader()
-		if (id == ActionDestroyObject.ID) return new ActionDestroyObject();// ActionFactoryWriter.writeHeader()
-		if (id == ActionDrawToScreen.ID) return new ActionDrawToScreen();// ActionFactoryWriter.writeHeader()
-		if (id == ActionLoop.ID) return new ActionLoop();			// ActionFactoryWriter.writeHeader()
-		if (id == ActionTriggerActorAnimation.ID) return new ActionTriggerActorAnimation();// ActionFactoryWriter.writeHeader()
-		if (id == ActionAnimate.ID) return new ActionAnimate();		// ActionFactoryWriter.writeHeader()
-		if (id == ActionWait.ID) return new ActionWait();			// ActionFactoryWriter.writeHeader()
-		if (id == ActionStop.ID) return new ActionStop();			// ActionFactoryWriter.writeHeader()
-		if (id == ActionElse.ID) return new ActionElse();			// ActionFactoryWriter.writeHeader()
-		if (id == ActionTriggerEvent.ID) return new ActionTriggerEvent();// ActionFactoryWriter.writeHeader()
-		if (id == ActionChangeColor.ID) return new ActionChangeColor();// ActionFactoryWriter.writeHeader()
-		if (id == ActionSetBehaviorParameters.ID) return new ActionSetBehaviorParameters();// ActionFactoryWriter.writeHeader()
-		if (id == ActionChangeScale.ID) return new ActionChangeScale();// ActionFactoryWriter.writeHeader()
-		return null;												// ActionFactoryWriter.writeHeader()
-	}																// ActionFactoryWriter.writeHeader()
-	public static boolean isParent(int id) {						// ActionFactoryWriter.writeHeader()
-		if (id == ActionIf.ID) return true;							// ActionFactoryWriter.writeHeader()
-		if (id == ActionLoop.ID) return true;						// ActionFactoryWriter.writeHeader()
-		if (id == ActionElse.ID) return true;						// ActionFactoryWriter.writeHeader()
-		return false;												// ActionFactoryWriter.writeHeader()
-	}																// ActionFactoryWriter.writeHeader()
-	public static java.util.LinkedList<Class<?>> getInterpreters() {// ActionFactoryWriter.writeHeader()
-		java.util.LinkedList<Class<?>> classes = new java.util.LinkedList<Class<?>>();// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetSwitch"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetVariable"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterCreateActor"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDebugBox"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterMoveActor"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterTriggerActorBehavior"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterIf"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterCreateObject"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterMoveObject"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetVelocity"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDebugMessage"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterPointOperation"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterChangeGravity"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterUIAction"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDestroyObject"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDrawToScreen"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterLoop"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterTriggerActorAnimation"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterAnimate"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterWait"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterStop"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterElse"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterTriggerEvent"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterChangeColor"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetBehaviorParameters"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		try {														// ActionFactoryWriter.writeHeader()
-			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterChangeScale"));// ActionFactoryWriter.writeHeader()
-		} catch (Exception e) { }									// ActionFactoryWriter.writeHeader()
-		return classes;												// ActionFactoryWriter.writeHeader()
-	}																// ActionFactoryWriter.writeHeader()
-}																	// ActionFactoryWriter.writeHeader()
+package edu.elon.honors.price.maker.action;
+
+public class ActionFactory {
+	public final static int[] ACTION_IDS = new int[] {
+		0,
+		1,
+		2,
+		3,
+		4,
+		5,
+		7,
+		8,
+		9,
+		10,
+		11,
+		12,
+		13,
+		14,
+		15,
+		16,
+		17,
+		18,
+		19,
+		20,
+		21,
+		22,
+		23,
+		24,
+		25,
+		26,
+	};
+	public final static String[] ACTION_NAMES = new String[] {
+		"Set Switch",
+		"Set Variable",
+		"Create Actor",
+		"Debug Box",
+		"Move Actor",
+		"Trigger Actor Behavior",
+		"",
+		"If...",
+		"Create Object",
+		"Move Object",
+		"Set Velocity",
+		"Debug Message",
+		"Point Operation",
+		"Change Gravity",
+		"UI Action",
+		"Destroy Object",
+		"Draw to Screen",
+		"Loop...",
+		"Trigger Actor Animation",
+		"Animate",
+		"Wait",
+		"Stop",
+		"Else",
+		"Trigger Event",
+		"Change Color",
+		"Set Behavior Parameters",
+		"Change Scale",
+	};
+	public final static String[] ACTION_CATEGORIES = new String[] {
+		"Variables",
+		"Variables",
+		"Actor",
+		"Debug",
+		"Actor",
+		"Actor",
+		"Misc",
+		"Control",
+		"Object",
+		"Object",
+		"Physics",
+		"Debug",
+		"Variables",
+		"Physics",
+		"UI",
+		"Object",
+		"UI",
+		"Control",
+		"Animate",
+		"Animate",
+		"Control",
+		"Control",
+		"Hidden",
+		"Control",
+		"Actor|Object",
+		"Actor|Object",
+		"Actor|Object",
+	};
+	public static ScriptableInstance getInstance(int id) {
+		if (id == ActionSetSwitch.ID) return new ActionSetSwitch();
+		if (id == ActionSetVariable.ID) return new ActionSetVariable();
+		if (id == ActionCreateActor.ID) return new ActionCreateActor();
+		if (id == ActionDebugBox.ID) return new ActionDebugBox();
+		if (id == ActionMoveActor.ID) return new ActionMoveActor();
+		if (id == ActionTriggerActorBehavior.ID) return new ActionTriggerActorBehavior();
+		if (id == ActionIf.ID) return new ActionIf();
+		if (id == ActionCreateObject.ID) return new ActionCreateObject();
+		if (id == ActionMoveObject.ID) return new ActionMoveObject();
+		if (id == ActionSetVelocity.ID) return new ActionSetVelocity();
+		if (id == ActionDebugMessage.ID) return new ActionDebugMessage();
+		if (id == ActionPointOperation.ID) return new ActionPointOperation();
+		if (id == ActionChangeGravity.ID) return new ActionChangeGravity();
+		if (id == ActionUIAction.ID) return new ActionUIAction();
+		if (id == ActionDestroyObject.ID) return new ActionDestroyObject();
+		if (id == ActionDrawToScreen.ID) return new ActionDrawToScreen();
+		if (id == ActionLoop.ID) return new ActionLoop();
+		if (id == ActionTriggerActorAnimation.ID) return new ActionTriggerActorAnimation();
+		if (id == ActionAnimate.ID) return new ActionAnimate();
+		if (id == ActionWait.ID) return new ActionWait();
+		if (id == ActionStop.ID) return new ActionStop();
+		if (id == ActionElse.ID) return new ActionElse();
+		if (id == ActionTriggerEvent.ID) return new ActionTriggerEvent();
+		if (id == ActionChangeColor.ID) return new ActionChangeColor();
+		if (id == ActionSetBehaviorParameters.ID) return new ActionSetBehaviorParameters();
+		if (id == ActionChangeScale.ID) return new ActionChangeScale();
+		return null;
+	}
+	public static boolean isParent(int id) {
+		if (id == ActionIf.ID) return true;
+		if (id == ActionLoop.ID) return true;
+		if (id == ActionElse.ID) return true;
+		return false;
+	}
+	public static java.util.LinkedList<Class<?>> getInterpreters() {
+		java.util.LinkedList<Class<?>> classes = new java.util.LinkedList<Class<?>>();
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetSwitch"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetVariable"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterCreateActor"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDebugBox"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterMoveActor"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterTriggerActorBehavior"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterIf"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterCreateObject"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterMoveObject"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetVelocity"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDebugMessage"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterPointOperation"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterChangeGravity"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterUIAction"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDestroyObject"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterDrawToScreen"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterLoop"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterTriggerActorAnimation"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterAnimate"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterWait"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterStop"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterElse"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterTriggerEvent"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterChangeColor"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterSetBehaviorParameters"));
+		} catch (Exception e) { }
+		try {
+			classes.add(Class.forName("edu.elon.honors.price.maker.action.InterpreterChangeScale"));
+		} catch (Exception e) { }
+		return classes;
+	}
+}

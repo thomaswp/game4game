@@ -1,6 +1,9 @@
 package edu.elon.honors.price.maker;
 
 import android.graphics.Color;
+import android.text.Spannable;
+import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
 
 public class TextUtils {
 
@@ -8,6 +11,7 @@ public class TextUtils {
 	public static final String COLOR_MODE = "#FFCC00";
 	public static final String COLOR_VALUE = "#5555FF";
 	public static final String COLOR_ACTION = "#8800FF";
+	public static final String COLOR_DISABLED = "#444444";
 	
 	public static void addColoredText(StringBuilder sb, int text, String color) {
 		addColoredText(sb, "" + text, color);
@@ -64,5 +68,11 @@ public class TextUtils {
 			text = text.replace(replace[i], with[i]);
 		}
 		return text;
+	}
+
+	private static final StrikethroughSpan STRIKE_THROUGH_SPAN = new StrikethroughSpan();
+	public static void strikeText(Spannable text) {
+		text.setSpan(STRIKE_THROUGH_SPAN, 0, text.length(), 
+				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 	}
 }

@@ -1,42 +1,42 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionChangeGravity extends ScriptableInstance {		// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Change Gravity";				// ScriptableWriter.writeHeader()
-	public static final int ID = 13;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Physics";				// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;vector&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters vector;										// ActionFragmentWriter.writeElement()
-	public Vector readVector(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readVector(vector);						// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-	/** Type: <b>&lt;number&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters magnitude;									// ActionFragmentWriter.writeElement()
-	public int readMagnitude(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readNumber(magnitude);						// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		vector = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
-		magnitude = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionChangeGravity extends ScriptableInstance {
+	public static final String NAME = "Change Gravity";
+	public static final int ID = 13;
+	public static final String CATEGORY = "Physics";
+	
+	/** Type: <b>&lt;vector&gt;</b> */
+	public Parameters vector;
+	public Vector readVector(GameState gameState) throws ParameterException {
+		return gameState.readVector(vector);
+	}
+	/** Type: <b>&lt;number&gt;</b> */
+	public Parameters magnitude;
+	public int readMagnitude(GameState gameState) throws ParameterException {
+		return gameState.readNumber(magnitude);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		vector = iterator.getParameters();
+		magnitude = iterator.getParameters();
+	}
 	/**
 	 * 013 <b><i>Change Gravity</i></b> (Physics)<br />
 	 * <ul>
 	 * <li><b>&lt;vector&gt;</b> vector</li>
 	 * <li><b>&lt;number&gt;</b> magnitude</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

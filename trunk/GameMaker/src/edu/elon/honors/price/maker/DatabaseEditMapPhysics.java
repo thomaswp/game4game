@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.physics.Vector;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SeekBar;
 
@@ -29,6 +30,13 @@ public class DatabaseEditMapPhysics extends DatabaseActivity {
 		seekBarGravity.setProgress(Math.round(v.magnitude() * GRAVITY_GRADATIONS));
 		v.makeUnitVector();
 		selectorVectorGravity.setVector(v.getX(), v.getY());
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			selectorVectorGravity.onActivityResult(requestCode, data);
+		}
 	}
 	
 	@Override

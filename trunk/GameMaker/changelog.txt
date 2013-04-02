@@ -1,0 +1,14 @@
+v0.1 - First Alpha
+
+v0.2
+-Hopefully fixed bugs #3, 4 and 6
+-Other minor bug fixes
+-Online mode should be active
+-Actors now start facing left
+-"If" can now check if an Actor Instance of of a given type of Actor
+-Long-clicking a game on the main menu will create a copy (this is just a temporary fix until the new Main Menu)
+
+v0.3
+-Addressed Issues 5, 7, 9, 11, 12, 14, 15
+-Added new tilesets and new sprites to old tilesets
+-Added "flash color" option to the "Change Color" action

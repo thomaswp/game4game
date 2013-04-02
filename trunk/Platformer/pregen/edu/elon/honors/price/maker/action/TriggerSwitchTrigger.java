@@ -1,42 +1,42 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class TriggerSwitchTrigger extends ScriptableInstance {		// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Switch Trigger";				// ScriptableWriter.writeHeader()
-	public static final int ID = 0;									// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = null;						// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;switch&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Switch aSwitch;											// ActionFragmentWriter.writeElement()
-	public boolean readASwitch(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readSwitch(aSwitch);						// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-	/** Type: <b>&lt;boolean&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters value;										// ActionFragmentWriter.writeElement()
-	public boolean readValue(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readBoolean(value);						// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		aSwitch = iterator.getSwitch();								// ActionFragmentWriter.writeReadParams()
-		value = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class TriggerSwitchTrigger extends ScriptableInstance {
+	public static final String NAME = "Switch Trigger";
+	public static final int ID = 0;
+	public static final String CATEGORY = null;
+	
+	/** Type: <b>&lt;switch&gt;</b> */
+	public Switch aSwitch;
+	public boolean readASwitch(GameState gameState) throws ParameterException {
+		return gameState.readSwitch(aSwitch);
+	}
+	/** Type: <b>&lt;boolean&gt;</b> */
+	public Parameters value;
+	public boolean readValue(GameState gameState) throws ParameterException {
+		return gameState.readBoolean(value);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		aSwitch = iterator.getSwitch();
+		value = iterator.getParameters();
+	}
 	/**
 	 * 000 <b><i>Switch Trigger</i></b> (null)<br />
 	 * <ul>
 	 * <li><b>&lt;switch&gt;</b> aSwitch</li>
 	 * <li><b>&lt;boolean&gt;</b> value</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

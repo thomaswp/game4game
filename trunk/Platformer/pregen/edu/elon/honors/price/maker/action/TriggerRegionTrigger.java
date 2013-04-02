@@ -1,43 +1,43 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class TriggerRegionTrigger extends ScriptableInstance {		// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Region Trigger";				// ScriptableWriter.writeHeader()
-	public static final int ID = 3;									// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = null;						// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;body&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters body;											// ActionFragmentWriter.writeElement()
-	public boolean actionBeginsToEnter;								// ActionFragmentWriter.writeElement()
-	public boolean actionFullyEnters;								// ActionFragmentWriter.writeElement()
-	public boolean actionBeginsToLeave;								// ActionFragmentWriter.writeElement()
-	public boolean actionFullyLeaves;								// ActionFragmentWriter.writeElement()
-	/** Type: <b>&lt;region&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters region;										// ActionFragmentWriter.writeElement()
-	public android.graphics.Rect readRegion(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readRegion(region);						// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		body = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
-		int action = iterator.getInt();								// ActionFragmentWriter.writeReadParams()
-		actionBeginsToEnter = action == 0;							// ActionFragmentWriter.writeReadParams()
-		actionFullyEnters = action == 1;							// ActionFragmentWriter.writeReadParams()
-		actionBeginsToLeave = action == 2;							// ActionFragmentWriter.writeReadParams()
-		actionFullyLeaves = action == 3;							// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		region = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class TriggerRegionTrigger extends ScriptableInstance {
+	public static final String NAME = "Region Trigger";
+	public static final int ID = 3;
+	public static final String CATEGORY = null;
+	
+	/** Type: <b>&lt;body&gt;</b> */
+	public Parameters body;
+	public boolean actionBeginsToEnter;
+	public boolean actionFullyEnters;
+	public boolean actionBeginsToLeave;
+	public boolean actionFullyLeaves;
+	/** Type: <b>&lt;region&gt;</b> */
+	public Parameters region;
+	public android.graphics.Rect readRegion(GameState gameState) throws ParameterException {
+		return gameState.readRegion(region);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		body = iterator.getParameters();
+		int action = iterator.getInt();
+		actionBeginsToEnter = action == 0;
+		actionFullyEnters = action == 1;
+		actionBeginsToLeave = action == 2;
+		actionFullyLeaves = action == 3;
+		
+		region = iterator.getParameters();
+	}
 	/**
 	 * 003 <b><i>Region Trigger</i></b> (null)<br />
 	 * <ul>
@@ -50,6 +50,6 @@ public class TriggerRegionTrigger extends ScriptableInstance {		// ActionFragmen
 	 * </ul>
 	 * <li><b>&lt;region&gt;</b> region</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

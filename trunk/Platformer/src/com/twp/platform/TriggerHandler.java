@@ -126,6 +126,8 @@ public class TriggerHandler {
 	protected PlatformGameState gameState;
 	
 	private void checkEvent(Event event) {
+		if (event.disabled) return;
+		
 		for (int j = 0; j < event.triggers.size(); j++) {
 			Trigger generic = event.triggers.get(j);
 

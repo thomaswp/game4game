@@ -58,16 +58,20 @@ public class ElementRadio extends Element {
 
 	@Override
 	protected void addParameters(Parameters params) {
+		//write the index of the selected <choice> element
 		int index = getSelectedIndex();
 		params.addParam(index);
+		//have the child Element at the index write its params
 		children.get(index).addParameters(params);
 	}
 
 	@Override
 	protected void readParameters(Iterator params) {
-		int i = params.getInt();
-		setSelectedIndex(i);
-		children.get(i).readParameters(params);
+		//read the index of the <choice> element to select
+		int index = params.getInt();
+		setSelectedIndex(index);
+		//have the child Element at that index read its params
+		children.get(index).readParameters(params);
 	}
 
 	@Override

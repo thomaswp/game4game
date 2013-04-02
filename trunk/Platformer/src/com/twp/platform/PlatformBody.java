@@ -147,7 +147,10 @@ public abstract class PlatformBody implements IBehaving {
 		this.id = id;
 	}
 
-	public void dispose() {
+	public void destroy() {
+		if (disposed) {
+			throw new RuntimeException("Body is already disposed!");
+		}
 		this.sprite.dispose();
 		physics.postDisposeBody(this);
 		disposed = true;

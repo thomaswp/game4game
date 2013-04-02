@@ -24,6 +24,7 @@ public class Event extends GameData {
 	private static final long serialVersionUID = 2L;
 
 	public String name = "";
+	public boolean disabled;
 	public ArrayList<Action> actions = new ArrayList<Event.Action>();
 	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
 
@@ -112,6 +113,8 @@ public class Event extends GameData {
 
 		private ArrayList<Object> params = new ArrayList<Object>();
 		private Object tag;
+		
+		public int version = 0;
 		
 		public void setTag(Object tag) {
 			this.tag = tag;
@@ -310,6 +313,7 @@ public class Event extends GameData {
 					o.addParam(param);
 				}
 			}
+			o.version = version;
 			return o;
 		}
 		

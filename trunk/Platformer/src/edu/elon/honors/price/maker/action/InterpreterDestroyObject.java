@@ -5,7 +5,7 @@ public class InterpreterDestroyObject extends ActionInterpreter<ActionDestroyObj
 	@Override
 	protected void interperate(ActionDestroyObject action,
 			PlatformGameState gameState) throws ParameterException {
-		action.readObjectInstance(gameState).dispose();
+		action.readObjectInstance(gameState).destroy();
 	}
 
 }

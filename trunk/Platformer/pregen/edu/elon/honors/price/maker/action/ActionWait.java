@@ -1,35 +1,35 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionWait extends ScriptableInstance {				// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Wait";						// ScriptableWriter.writeHeader()
-	public static final int ID = 20;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Control";				// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;number&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters number;										// ActionFragmentWriter.writeElement()
-	public int readNumber(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readNumber(number);						// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		number = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionWait extends ScriptableInstance {
+	public static final String NAME = "Wait";
+	public static final int ID = 20;
+	public static final String CATEGORY = "Control";
+	
+	/** Type: <b>&lt;number&gt;</b> */
+	public Parameters number;
+	public int readNumber(GameState gameState) throws ParameterException {
+		return gameState.readNumber(number);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		number = iterator.getParameters();
+	}
 	/**
 	 * 020 <b><i>Wait</i></b> (Control)<br />
 	 * <ul>
 	 * <li><b>&lt;number&gt;</b> number</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}
