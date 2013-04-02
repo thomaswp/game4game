@@ -125,6 +125,7 @@ public class Sprite implements Comparable<Sprite> {
 
 	public void setBaseColor(int color) {
 		this.baseColor = color;
+		updateCompositeColor();
 	}
 
 	public float getOpacity() {
@@ -553,29 +554,39 @@ public class Sprite implements Comparable<Sprite> {
 		}
 		
 		if (flashFrame < flashDuration) {
-			float perc = flashFrame * 1.0f / flashDuration;
-			
-			int c1 = baseColor;
-			int c2 = flashColor;
-			if (perc < 0.5f) {
-				perc *= 2;
-			} else {
-				perc = (1 - perc) * 2;
-			}
-		
-			
-			this.compositeColor = Color.argb(
-					(int)(Color.alpha(c1) * (1 - perc) + Color.alpha(c2) * perc), 
-					(int)(Color.red(c1) * (1 - perc) + Color.red(c2) * perc), 
-					(int)(Color.green(c1) * (1 - perc) + Color.green(c2) * perc), 
-					(int)(Color.blue(c1) * (1 - perc) + Color.blue(c2) * perc));
+			updateCompositeColor();
 			
 			flashFrame += timeElapsed;
 			
 			if (flashFrame >= flashDuration) {
-				this.compositeColor = baseColor;
+				updateCompositeColor();
 			}
 		}
+	}
+	
+	private void updateCompositeColor() {
+		
+		if (flashFrame >= flashDuration) {
+			compositeColor = baseColor;
+			return;
+		}
+		
+		float perc = flashFrame * 1.0f / flashDuration;
+		
+		int c1 = baseColor;
+		int c2 = flashColor;
+		if (perc < 0.5f) {
+			perc *= 2;
+		} else {
+			perc = (1 - perc) * 2;
+		}
+	
+		
+		this.compositeColor = Color.argb(
+				(int)(Color.alpha(c1) * (1 - perc) + Color.alpha(c2) * perc), 
+				(int)(Color.red(c1) * (1 - perc) + Color.red(c2) * perc), 
+				(int)(Color.green(c1) * (1 - perc) + Color.green(c2) * perc), 
+				(int)(Color.blue(c1) * (1 - perc) + Color.blue(c2) * perc));
 	}
 	
 	public void flash(int color, int duration) {

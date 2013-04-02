@@ -22,6 +22,20 @@ public class ElementVector extends ElementMulti {
 	public ElementVector(Attributes atts, Context context) {
 		super(atts, context);
 	}
+	
+	@Override
+	protected int getVersion() {
+		return 1;
+	}
+	
+	@Override
+	protected void upgrade(Parameters params) {
+		if (params.version < 1) {
+			if (params.getInt(0) > 0) {
+				params.set(0, params.getInt(0) + 1);
+			}
+		}
+	}
 
 	@Override
 	protected Option[] getOptions() {
@@ -59,14 +73,16 @@ public class ElementVector extends ElementMulti {
 		
 		Option[] options = new Option[] {
 				optionExact,
+				new OptionEmpty(context, "a random vector",
+						"a random vector"),
 				new OptionEmpty(context, "the triggering vector", 
 						"the triggering vector"),
 				new OptionElement("a joystick's vector",
 						new ElementJoystick(attributes, context))
 		};
 		
-		options[1].enabled = eventContext.hasTrigger(TriggerType.UITrigger);
-		options[2].visible = eventContext.getScope() == Scope.MapEvent;
+		options[2].enabled = eventContext.hasTrigger(TriggerType.UITrigger);
+		options[3].visible = eventContext.getScope() == Scope.MapEvent;
 		
 		return options;
 	}

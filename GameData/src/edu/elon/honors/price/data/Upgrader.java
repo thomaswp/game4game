@@ -16,7 +16,7 @@ import edu.elon.honors.price.physics.Vector;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 15;
+	public final static int LATEST_VERSION = 18;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -145,6 +145,29 @@ public class Upgrader {
 					actor.imageName = "a2/ghost.png";
 				}
 			}
+			upgraded(game);
+		}
+		if (version < 16) {
+			game.tilesets = Arrays.copyOf(game.tilesets, 3);
+			game.tilesets[2] = new Tileset("Castle", "castle.png", 64, 64, 8, 8);
+			
+			upgraded(game);
+		}
+		if (version < 17) {
+			for (Event event : game.getAllEvents()) {
+				for (Action action : event.actions) {
+					if (action.id == 24) {
+						action.params.addParam(0);
+					}
+				}
+			}
+			
+			upgraded(game);
+		}
+		if (version < 18) {
+			game.tilesets = Arrays.copyOf(game.tilesets, game.tilesets.length + 1);
+			game.tilesets[game.tilesets.length - 1] = new Tileset("Night", "night.png", 64, 64, 8, 8);
+			
 			upgraded(game);
 		}
 	}

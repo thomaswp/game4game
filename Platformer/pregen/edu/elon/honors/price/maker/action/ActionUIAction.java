@@ -1,42 +1,42 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionUIAction extends ScriptableInstance {			// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "UI Action";					// ScriptableWriter.writeHeader()
-	public static final int ID = 14;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "UI";						// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;ui&gt;</b> */									// ActionFragmentWriter.writeElement()
-	public Parameters ui;											// ActionFragmentWriter.writeElement()
-	public UIControl readUi(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readUi(ui);								// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-	public boolean setItsVisibility;								// ActionFragmentWriter.writeElement()
-	public boolean setItsDefaultBehavior;							// ActionFragmentWriter.writeElement()
-	/** Type: <b>&lt;boolean&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters to;											// ActionFragmentWriter.writeElement()
-	public boolean readTo(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readBoolean(to);							// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		ui = iterator.getParameters();								// ActionFragmentWriter.writeReadParams()
-		int setIts = iterator.getInt();								// ActionFragmentWriter.writeReadParams()
-		setItsVisibility = setIts == 0;								// ActionFragmentWriter.writeReadParams()
-		setItsDefaultBehavior = setIts == 1;						// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		to = iterator.getParameters();								// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionUIAction extends ScriptableInstance {
+	public static final String NAME = "UI Action";
+	public static final int ID = 14;
+	public static final String CATEGORY = "UI";
+	
+	/** Type: <b>&lt;ui&gt;</b> */
+	public Parameters ui;
+	public UIControl readUi(GameState gameState) throws ParameterException {
+		return gameState.readUi(ui);
+	}
+	public boolean setItsVisibility;
+	public boolean setItsDefaultBehavior;
+	/** Type: <b>&lt;boolean&gt;</b> */
+	public Parameters to;
+	public boolean readTo(GameState gameState) throws ParameterException {
+		return gameState.readBoolean(to);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		ui = iterator.getParameters();
+		int setIts = iterator.getInt();
+		setItsVisibility = setIts == 0;
+		setItsDefaultBehavior = setIts == 1;
+		
+		to = iterator.getParameters();
+	}
 	/**
 	 * 014 <b><i>UI Action</i></b> (UI)<br />
 	 * <ul>
@@ -47,6 +47,6 @@ public class ActionUIAction extends ScriptableInstance {			// ActionFragmentWrit
 	 * </ul>
 	 * <li><b>&lt;boolean&gt;</b> to</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

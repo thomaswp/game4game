@@ -5,6 +5,7 @@ import org.xml.sax.Attributes;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.DatabaseEditEvent;
 import edu.elon.honors.price.maker.R;
 import edu.elon.honors.price.maker.Screen;
@@ -33,6 +34,14 @@ public abstract class ElementMulti extends Element {
 				radioGroup.findViewById(
 						radioGroup.getCheckedRadioButtonId()));
 	}
+
+	//Used for upgrading the parameters when using a new
+	//multi-selector for a data-type
+	protected int getVersion() {
+		return 0;
+	}
+	
+	protected void upgrade(Parameters params) { }
 	
 	@Override
 	public String getWarning() {
@@ -61,6 +70,7 @@ public abstract class ElementMulti extends Element {
 	protected void addParameters(Parameters params) {
 		int mode = getMode();
 		Parameters ps = new Parameters();
+		ps.version = getVersion();
 		ps.addParam(mode);
 		options[mode].addParams(ps);
 		params.addParam(ps);
@@ -69,6 +79,11 @@ public abstract class ElementMulti extends Element {
 	@Override
 	protected void readParameters(Iterator params) {
 		Parameters ps = params.getParameters();
+		if (ps.version != getVersion()) {
+			upgrade(ps);
+			Debug.write("Upgraded params from v%d to v%d", ps.version, getVersion());
+			ps.version = getVersion();
+		}
 		Iterator iterator = ps.iterator(true);
 		int mode = iterator.getInt();
 		if (options[mode].visible) {

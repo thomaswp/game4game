@@ -28,14 +28,11 @@ import edu.elon.honors.price.physics.Vector;
 
 public class ActorBody extends PlatformBody {
 
-	private static final int BEHAVIOR_REST = 3;
-
 	private Sprite sprite;
 	private ActorClass actor;
 	private boolean isHero;
 	private int directionX;
 	private boolean stopped;
-	private int lastBehaviorTime;
 	private int stun;
 	private boolean onLadder;
 	private World world;
@@ -195,12 +192,21 @@ public class ActorBody extends PlatformBody {
 			respawnLocation = new Vector2(body.getPosition());
 		}
 	}
+	
+	@Override
+	public void destroy() {
+		if (isHero) {
+			respawnHero();
+		} else {
+			super.destroy();
+		}
+	}
 
 	@Override
 	public void update(long timeElapsed, Vector offset) {
 		super.update(timeElapsed, offset);
 		
-		lastBehaviorTime += timeElapsed;
+//		lastBehaviorTime += timeElapsed;
 		stun -= timeElapsed;
 		collidedBodies.clear();
 		collidedWall = false;
@@ -245,14 +251,14 @@ public class ActorBody extends PlatformBody {
 	private void checkDeath() {
 		if (body.getPosition().y - sprite.getHeight() / SCALE > 
 			physics.getMapFloorMeters()) {
-			if (isHero) {
-				body.setTransform(respawnLocation, body.getAngle());
-				body.setLinearVelocity(body.getLinearVelocity().mul(0));
-				stun(null);
-			} else {
-				dispose();
-			}
+			destroy();
 		}
+	}
+	
+	private void respawnHero() {
+		body.setTransform(respawnLocation, body.getAngle());
+		body.setLinearVelocity(body.getLinearVelocity().mul(0));
+		stun(null);
 	}
 	
 	public void doBehaviorWall() {
@@ -274,7 +280,7 @@ public class ActorBody extends PlatformBody {
 	public void doBehavior(int behavior, ActorBody cause) {
 //		if (lastBehaviorTime < BEHAVIOR_REST)
 //			return;
-		lastBehaviorTime = 0;
+//		lastBehaviorTime = 0;
 
 		switch (behavior) {
 		case ActorClass.BEHAVIOR_STOP:
@@ -295,7 +301,7 @@ public class ActorBody extends PlatformBody {
 			stun(cause);
 			break;
 		case ActorClass.BEHAVIOR_DIE:
-			dispose();
+			destroy();
 			break;
 		}	
 	}

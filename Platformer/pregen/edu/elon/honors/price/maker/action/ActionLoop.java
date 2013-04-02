@@ -1,35 +1,35 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionLoop extends ScriptableInstance {				// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Loop...";					// ScriptableWriter.writeHeader()
-	public static final int ID = 17;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Control";				// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;number&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters numTimes;										// ActionFragmentWriter.writeElement()
-	public int readNumTimes(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readNumber(numTimes);						// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		numTimes = iterator.getParameters();						// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionLoop extends ScriptableInstance {
+	public static final String NAME = "Loop...";
+	public static final int ID = 17;
+	public static final String CATEGORY = "Control";
+	
+	/** Type: <b>&lt;number&gt;</b> */
+	public Parameters numTimes;
+	public int readNumTimes(GameState gameState) throws ParameterException {
+		return gameState.readNumber(numTimes);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		numTimes = iterator.getParameters();
+	}
 	/**
 	 * 017 <b><i>Loop...</i></b> (Control)<br />
 	 * <ul>
 	 * <li><b>&lt;number&gt;</b> numTimes</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

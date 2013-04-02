@@ -1,87 +1,87 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class TriggerUserInputTrigger extends ScriptableInstance {	// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "User Input Trigger";			// ScriptableWriter.writeHeader()
-	public static final int ID = 4;									// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = null;						// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	public boolean inputTheButton;									// ActionFragmentWriter.writeElement()
-	public InputTheButtonData inputTheButtonData;					// ActionFragmentWriter.writeElement()
-	public class InputTheButtonData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;button&gt;</b> */							// ActionFragmentWriter.writeElement()
-		public int button;											// ActionFragmentWriter.writeElement()
-		public Button readButton(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readButton(button);					// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			button = iterator.getInt();								// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class TriggerUserInputTrigger extends ScriptableInstance {
+	public static final String NAME = "User Input Trigger";
+	public static final int ID = 4;
+	public static final String CATEGORY = null;
+	
+	public boolean inputTheButton;
+	public InputTheButtonData inputTheButtonData;
+	public class InputTheButtonData extends ScriptableFragment {
+		/** Type: <b>&lt;button&gt;</b> */
+		public int button;
+		public Button readButton(GameState gameState) throws ParameterException {
+			return gameState.readButton(button);
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			button = iterator.getInt();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;button&gt;</b> button</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean inputTheJoystick;								// ActionFragmentWriter.writeElement()
-	public InputTheJoystickData inputTheJoystickData;				// ActionFragmentWriter.writeElement()
-	public class InputTheJoystickData extends ScriptableFragment {	// ActionFragmentWriter.writeHeader()
-		/** Type: <b>&lt;joystick&gt;</b> */						// ActionFragmentWriter.writeElement()
-		public int joystick;										// ActionFragmentWriter.writeElement()
-		public JoyStick readJoystick(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-			return gameState.readJoystick(joystick);				// ActionFragmentWriter.writeElement()
-		}															// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-		@Override													// ActionFragmentWriter.writeReadParams()
-		public void readParams(Iterator iterator) {					// ActionFragmentWriter.writeReadParams()
-			joystick = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-		}															// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean inputTheJoystick;
+	public InputTheJoystickData inputTheJoystickData;
+	public class InputTheJoystickData extends ScriptableFragment {
+		/** Type: <b>&lt;joystick&gt;</b> */
+		public int joystick;
+		public JoyStick readJoystick(GameState gameState) throws ParameterException {
+			return gameState.readJoystick(joystick);
+		}
+		
+		@Override
+		public void readParams(Iterator iterator) {
+			joystick = iterator.getInt();
+		}
 		/**
 		 * <ul>
 		 * <li><b>&lt;joystick&gt;</b> joystick</li>
 		 * </ul>
-		 */															// ActionFragmentWriter.writeJavadoc()
-		public static final String JAVADOC = "";					// ActionFragmentWriter.writeJavadoc()
-	}																// ActionFragmentWriter.writeFooter()
-																	// ActionFragmentWriter.endElement()
-	public boolean inputTheScreen;									// ActionFragmentWriter.writeElement()
-	public boolean actionIsPressed;									// ActionFragmentWriter.writeElement()
-	public boolean actionIsReleased;								// ActionFragmentWriter.writeElement()
-	public boolean actionIsDragged;									// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeConstructor()
-	public TriggerUserInputTrigger() {								// ActionFragmentWriter.writeConstructor()
-		inputTheButtonData = new InputTheButtonData();				// ActionFragmentWriter.writeConstructor()
-		inputTheJoystickData = new InputTheJoystickData();			// ActionFragmentWriter.writeConstructor()
-	}																// ActionFragmentWriter.writeConstructor()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		int input = iterator.getInt();								// ActionFragmentWriter.writeReadParams()
-		inputTheButton = input == 0;								// ActionFragmentWriter.writeReadParams()
-		if (inputTheButton) inputTheButtonData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-		inputTheJoystick = input == 1;								// ActionFragmentWriter.writeReadParams()
-		if (inputTheJoystick) inputTheJoystickData.readParams(iterator);// ActionFragmentWriter.writeReadParams()
-		inputTheScreen = input == 2;								// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		int action = iterator.getInt();								// ActionFragmentWriter.writeReadParams()
-		actionIsPressed = action == 0;								// ActionFragmentWriter.writeReadParams()
-		actionIsReleased = action == 1;								// ActionFragmentWriter.writeReadParams()
-		actionIsDragged = action == 2;								// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+		 */
+		public static final String JAVADOC = "";
+	}
+	
+	public boolean inputTheScreen;
+	public boolean actionIsPressed;
+	public boolean actionIsReleased;
+	public boolean actionIsDragged;
+	
+	public TriggerUserInputTrigger() {
+		inputTheButtonData = new InputTheButtonData();
+		inputTheJoystickData = new InputTheJoystickData();
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		int input = iterator.getInt();
+		inputTheButton = input == 0;
+		if (inputTheButton) inputTheButtonData.readParams(iterator);
+		inputTheJoystick = input == 1;
+		if (inputTheJoystick) inputTheJoystickData.readParams(iterator);
+		inputTheScreen = input == 2;
+		
+		int action = iterator.getInt();
+		actionIsPressed = action == 0;
+		actionIsReleased = action == 1;
+		actionIsDragged = action == 2;
+		
+	}
 	/**
 	 * 004 <b><i>User Input Trigger</i></b> (null)<br />
 	 * <ul>
@@ -102,6 +102,6 @@ public class TriggerUserInputTrigger extends ScriptableInstance {	// ActionFragm
 	 * <li>actionIsDragged:</li>
 	 * </ul>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

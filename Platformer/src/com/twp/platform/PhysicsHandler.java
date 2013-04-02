@@ -167,6 +167,10 @@ public class PhysicsHandler {
 		this.map = game.getSelectedMap();
 		initPhysics();
 	}
+	
+	public boolean isBodyAlive(PlatformBody body) {
+		return platformBodies.contains(body);
+	}
 
 	public void queueActor(ActorAddable actor) {
 		toAdd.add(actor);
@@ -548,7 +552,7 @@ public class PhysicsHandler {
 
 	public void addAndRemove() {
 		for (int i = 0; i < toRemove.size(); i++) {
-			toRemove.get(i).dispose();
+			toRemove.get(i).destroy();
 		}
 		toRemove.clear();
 		for (int i = 0; i < toAdd.size(); i++) {

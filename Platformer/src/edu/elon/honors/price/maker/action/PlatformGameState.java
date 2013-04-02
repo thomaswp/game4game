@@ -162,10 +162,17 @@ public class PlatformGameState implements GameState {
 	@Override
 	public Vector readVector(Parameters ps) throws ParameterException {
 		int type = ps.getInt();
+		if (ps.version < 1) {
+			//for when random vector was added
+			if (type > 0) type++;
+		}
 		if (type == 0) {
 			vector.set(ps.getFloat(1), ps.getFloat(2));
-		} else if (type == 1 || type == 2){ 
-			if (type == 1) {
+		} else if (type == 1) {
+			double angle = Math.random() * Math.PI * 2;
+			vector.set((float)Math.cos(angle), (float)Math.sin(angle));
+		} else if (type == 2 || type == 3){ 
+			if (type == 2) {
 				if (triggeringInfo.triggeringVector == null) {
 					throw new ParameterException("No triggering vector");
 				}
@@ -179,7 +186,6 @@ public class PlatformGameState implements GameState {
 			} else {
 				vector.multiply(1f / vector.magnitude());
 			}
-			Debug.write(vector);
 		}
 		return vector;
 	}
@@ -217,14 +223,13 @@ public class PlatformGameState implements GameState {
 		if (mode == 0) {
 			int id = ps.getInt(1);
 			ActorBody body = physics.getActorBodyFromId(id);
-			if (body == null) {
-				throw new ParameterException("Actor Instance not found: " + id);
-			}
+			assertThat(body != null, "Actor Instance not found: %d", id);
 			return body;
 		} else if (mode == 1) {
-			if (triggeringInfo.triggeringActor == null) {
-				throw new ParameterException("No triggering actor");
-			}
+			assertThat(triggeringInfo.triggeringActor != null,
+					"No triggering actor");
+			assertThat(!triggeringInfo.triggeringActor.isDisposed(),
+					"Triggering actor no longer exists");
 			return triggeringInfo.triggeringActor;
 		} else if (mode == 2) {
 			ActorBody actor = physics.getLastCreatedActor();
@@ -234,6 +239,8 @@ public class PlatformGameState implements GameState {
 			assertThat(triggeringInfo.behaving != null && 
 					triggeringInfo.behaving instanceof ActorBody,
 					"Behaving object is not an Actor");
+			assertThat(!((ActorBody)triggeringInfo.behaving).isDisposed(),
+					"Behaving actor no longer exists");
 			return (ActorBody)triggeringInfo.behaving;
 		}
 	}
@@ -253,14 +260,13 @@ public class PlatformGameState implements GameState {
 		if (mode == 0) {
 			int id = ps.getInt(1);
 			ObjectBody body = physics.getObjectBodyFromId(id);
-			if (body == null) {
-				throw new ParameterException("Object Instance not found: " + id);
-			}
+			assertThat(body != null, "Object Instance not found: %d", id);
 			return body;
 		} else if (mode == 1) {
-			if (triggeringInfo.triggeringObject == null) {
-				throw new ParameterException("No triggering object");
-			}
+			assertThat(triggeringInfo.triggeringObject != null,
+				"No triggering object");
+			assertThat(!triggeringInfo.triggeringObject.isDisposed(),
+				"Triggering object no longer exists");
 			return triggeringInfo.triggeringObject;
 		} else if (mode == 2) {
 			ObjectBody last = physics.getLastCreatedObject();
@@ -272,6 +278,8 @@ public class PlatformGameState implements GameState {
 			assertThat(triggeringInfo.behaving != null && 
 					triggeringInfo.behaving instanceof ObjectBody,
 					"Behaving object is not an Object");
+			assertThat(!((ObjectBody)triggeringInfo.behaving).isDisposed(),
+				"Behaving object no longer exists");
 			return (ObjectBody)triggeringInfo.behaving;
 		}
 	}

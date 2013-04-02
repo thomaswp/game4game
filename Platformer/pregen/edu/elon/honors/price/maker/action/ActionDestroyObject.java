@@ -1,35 +1,35 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class ActionDestroyObject extends ScriptableInstance {		// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Destroy Object";				// ScriptableWriter.writeHeader()
-	public static final int ID = 15;								// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = "Object";					// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;objectInstance&gt;</b> */						// ActionFragmentWriter.writeElement()
-	public Parameters objectInstance;								// ActionFragmentWriter.writeElement()
-	public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readObjectInstance(objectInstance);		// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		objectInstance = iterator.getParameters();					// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class ActionDestroyObject extends ScriptableInstance {
+	public static final String NAME = "Destroy Object";
+	public static final int ID = 15;
+	public static final String CATEGORY = "Object";
+	
+	/** Type: <b>&lt;objectInstance&gt;</b> */
+	public Parameters objectInstance;
+	public ObjectBody readObjectInstance(GameState gameState) throws ParameterException {
+		return gameState.readObjectInstance(objectInstance);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		objectInstance = iterator.getParameters();
+	}
 	/**
 	 * 015 <b><i>Destroy Object</i></b> (Object)<br />
 	 * <ul>
 	 * <li><b>&lt;objectInstance&gt;</b> objectInstance</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}

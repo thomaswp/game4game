@@ -146,6 +146,9 @@ public class MainMenu extends Activity {
 					selectedMap = fileName;
 					b.setChecked(true);
 				}
+			} else {
+				deleteFile(file);
+				Debug.write("Deleted invalid file: %s", file);
 			}
 		}
 	}

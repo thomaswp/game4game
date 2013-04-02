@@ -4,7 +4,13 @@ import java.util.Arrays;
 
 import edu.elon.honors.price.data.Event;
 import android.content.Intent;
+import android.graphics.Paint;
+import android.text.Html;
+import android.text.Spannable;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class PageEvents extends PageList<Event> {
@@ -19,6 +25,23 @@ public class PageEvents extends PageList<Event> {
 	
 	public PageEvents(Database parent) {
 		super(parent);
+	}
+	
+	@Override
+	public void onCreate(ViewGroup parentView) {
+		super.onCreate(parentView);
+
+		Button buttonEnable = new Button(parent);
+		buttonEnable.setText("Enable/Disable");
+		buttonEnable.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Event event = getEvent(getSelectedIndex());
+				event.disabled = !event.disabled;
+				listView.invalidateViews();
+			}
+		});
+		addPanelView(buttonEnable);
 	}
 
 	@Override
@@ -52,8 +75,16 @@ public class PageEvents extends PageList<Event> {
 				R.layout.array_adapter_row_string, getEvents()) {
 			@Override
 			protected void setRow(int position, Event item, View view) {
-				((TextView)view.findViewById(R.id.textViewTitle))
-				.setText(item.name);
+				TextView tv = ((TextView)view.findViewById(R.id.textViewTitle));
+				if (item.disabled) {
+					CharSequence text = Html.fromHtml(
+							TextUtils.getColoredText(item.name, TextUtils.COLOR_DISABLED));
+					Spannable span = Spannable.Factory.getInstance().newSpannable(text);
+					TextUtils.strikeText(span);
+					tv.setText(span);
+				} else {
+					tv.setText(item.name);
+				}
 			}
 		};
 	}

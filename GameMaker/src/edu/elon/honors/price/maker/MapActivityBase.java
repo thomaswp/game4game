@@ -27,13 +27,13 @@ import edu.elon.honors.price.input.Input;
 public abstract class MapActivityBase extends SaveableActivity {
 
 	public static final int SELECTION_FILL_COLOR = 
-		Color.argb(200, 150, 150, 255);
+			Color.argb(200, 150, 150, 255);
 	public static final int SELECTION_BORDER_COLOR = 
-		Color.argb(255, 50, 50, 255);
+			Color.argb(255, 50, 50, 255);
 	public static final int SELECTION_BORDER_WIDTH = 2;
-	
+
 	public static final int BUTTON_TEXT_SIZE = 18;
-	
+
 	private static final boolean DEBUG_FPS = true;
 
 	protected PlatformGame game;
@@ -49,7 +49,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 		if (savedInstanceState != null && savedInstanceState.containsKey("game")) {
 			game = (PlatformGame)savedInstanceState.getSerializable("game");
 		}
-		
+
 		if (game == null) {
 			game = (PlatformGame)getIntent().getExtras().getSerializable("game");
 		}
@@ -58,20 +58,20 @@ public abstract class MapActivityBase extends SaveableActivity {
 
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable("game", game);
 		view.onSaveInstanceState(outState);
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
 		view.pause();
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -113,12 +113,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 			paint = new Paint();
 
 			refresh();
-			
+
 			if (savedInstanceState != null) {
 				onLoadInstanceState(savedInstanceState);
 			}
 		}
-		
+
 		public void refresh() {
 			Tileset tileset = game.tilesets[game.getSelectedMap().tilesetId];
 			Bitmap tilesetBmp = Data.loadTileset(tileset.bitmapName, getContext());
@@ -128,12 +128,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 			bgBmp = null;
 			midgrounds = null;
 		}
-		
+
 		protected void onLoadInstanceState(Bundle savedInstanceState) {
 			offX = savedInstanceState.getFloat("offX");
 			offY = savedInstanceState.getFloat("offY");
 		}
-		
+
 		public void onSaveInstanceState(Bundle outState) {
 			outState.putFloat("offX", offX);
 			outState.putFloat("offY", offY);
@@ -199,7 +199,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					offX = edgeX;
 				}
 			}
-			
+
 			if (mapHeight < height) {
 				offY = (height - mapHeight) / 2;
 			} else {
@@ -243,7 +243,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			if (grid == null) createGrid();
 
 			updateFPS();
-			
+
 			if (transShader == null) {
 				Bitmap transBg = Data.loadEditorBmp("trans.png");
 				transShader = new BitmapShader(transBg, 
@@ -251,7 +251,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			}
 
 			c.drawColor(Color.WHITE);
-			
+
 			int mapHeight = game.getMapHeight(game.getSelectedMap());
 			if (mapHeight < height) {
 				paint.setShader(transShader);
@@ -259,7 +259,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				c.drawRect(0,  mapHeight - 1, width, height, paint);
 				paint.setShader(null);
 			}
-			
+
 			synchronized (game) {	
 				drawBackground(c);
 				drawContent(c);
@@ -275,7 +275,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 
 		int frames = 0;
 		long lastUpdate = System.currentTimeMillis();
-		
+
 		private void updateFPS() {
 			frames++;
 			long passed = System.currentTimeMillis() - lastUpdate;
@@ -283,14 +283,14 @@ public abstract class MapActivityBase extends SaveableActivity {
 				int fps = (int)(frames * 1000 / passed);
 				if (DEBUG_FPS)
 					Debug.write("%d fps", fps);
-				
+
 				while (lastUpdate + 1000 < System.currentTimeMillis()) {
 					lastUpdate += 1000;
 				}
 				frames = 0;
 			}
 		}
-		
+
 		protected abstract void drawContent(Canvas c);
 
 		protected int getBackgroundTransparency() {
@@ -303,28 +303,28 @@ public abstract class MapActivityBase extends SaveableActivity {
 				bgBmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 			}
 			//Canvas canvas = new Canvas(bgBmp);
-//			canvas.drawColor(Color.WHITE);
-			
+			//			canvas.drawColor(Color.WHITE);
+
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
 			int mapWidth = tileset.tileWidth * map.columns;
 			int mapHeight = tileset.tileHeight * map.rows;
-			
+
 			paint.setColor(Color.WHITE);
 			paint.setStyle(Style.FILL);
 			//should be main canvas whether rendering offscreen or not
 			canvas.drawRect(offX,  offY, offX + mapWidth, offY + mapHeight, paint);
 			canvas.drawRect(0, 0, width, (int)offY + mapHeight, paint);
-			
-			
+
+
 			float paralax = 0.7f;
 			int pOffX = (int)(paralax * offX);
 			float mOffY = offY + mapHeight - height;
 			int pOffY = (int)(paralax * mOffY);
 			if (offY > 0) pOffY = (mapHeight - height) / 2;
-			
+
 			int endWidth = Math.max(mapWidth, width);
-			
+
 			paint.reset();
 			paint.setAlpha(getBackgroundTransparency());
 			Bitmap foreground = Data.loadForeground(map.groundImageName);
@@ -340,25 +340,34 @@ public abstract class MapActivityBase extends SaveableActivity {
 					canvas.drawBitmap(background, i + pOffX, j + pOffY, paint);
 				}
 			}
-			
+
 			if (map.midGrounds.size() > 0 && midgrounds == null) {
 				createMidgrounds();
 			}
-			
+
 			if (midgrounds != null) {
-				int mgHeight = fgHeight - foreground.getHeight();
-				for (int i = -midgrounds.getWidth(); i < endWidth; i += midgrounds.getWidth()) {
-					canvas.drawBitmap(midgrounds, i + pOffX, mgHeight + pOffY, paint);
+				synchronized(midgrounds) {
+					int mgHeight = fgHeight - foreground.getHeight();
+					for (int i = -midgrounds.getWidth(); i < endWidth; i += midgrounds.getWidth()) {
+						canvas.drawBitmap(midgrounds, i + pOffX, mgHeight + pOffY, paint);
+					}
 				}
 			}
-			
+
 			//paint.setAlpha(getBackgroundTransparency());
 			//c.drawBitmap(bgBmp, 0, 0, paint);
 		}
-		
+
 		protected void createMidgrounds() {
-			midgrounds = Data.loadMidgrounds(
-					game.getSelectedMap().midGrounds);
+			if (midgrounds != null) {
+				synchronized(midgrounds) {
+					midgrounds = Data.loadMidgrounds(
+							game.getSelectedMap().midGrounds);
+				}	
+			} else {
+				midgrounds = Data.loadMidgrounds(
+						game.getSelectedMap().midGrounds);
+			}
 		}
 
 		protected void drawButtons(Canvas c) {
@@ -371,18 +380,18 @@ public abstract class MapActivityBase extends SaveableActivity {
 		}
 
 		protected void drawGrid(Canvas c) {
-		
+
 			Map map = game.getSelectedMap();
 			Tileset tileset = game.tilesets[map.tilesetId];
-			
-			
+
+
 			float minX = Math.max(0, offX), minY = Math.max(0, offY);
 			float maxX = Math.min(width, map.width(game) + offX);
 			float maxY = Math.min(height, map.height(game) + offY);
 			paint.setColor(Color.argb(123, 123, 123, 123));
 			paint.setStrokeWidth(2);
 			paint.setStyle(Style.STROKE);
-			
+
 			for (int i = 0; i <= map.columns; i++) {
 				float x = offX + i * tileset.tileWidth;
 				if (x < minX || x > maxX) continue;
@@ -394,7 +403,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				if (y < minY || y > maxY) continue;
 				c.drawLine(minX, y, maxX, y, paint);
 			}
-			
+
 			paint.setStyle(Style.FILL);
 		}
 
@@ -409,7 +418,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			int rows = this.height / tileHeight + 2;
 
 			cols = 1; rows = 1;
-			
+
 			int width = cols * tileWidth;
 			int height = rows * tileHeight;
 
@@ -429,7 +438,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					c.drawRect(x + 1, y + 1, x + tileWidth - 1, y + tileHeight - 1, paint);
 				}
 			}
-			
+
 			this.grid = grid;
 		}
 
@@ -439,7 +448,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				actors[i] = createActor(i, game);
 			}
 		}
-		
+
 		protected Bitmap createActor(int index, PlatformGame game) {
 			Bitmap bmp = Data.loadActorIcon(game.actors[index].imageName);
 			bmp = Bitmap.createScaledBitmap(bmp,
@@ -455,7 +464,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 				objects[i] = createObject(i, game);
 			}
 		}
-		
+
 		protected Bitmap createObject(int index, PlatformGame game) {
 			Bitmap bmp = Data.loadObject(game.objects[index].imageName);
 			bmp = Bitmap.createScaledBitmap(bmp,
@@ -486,7 +495,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			return createTiles(bmp, tileset.tileWidth, 
 					tileset.tileHeight, tileset.tileSpacing);
 		}
-		
+
 		protected static Bitmap[] createTiles(Bitmap tilesBitmap, int tileWidth, int tileHeight, int tileSpacing) {
 			if ((tilesBitmap.getWidth() + tileSpacing) % (tileWidth + tileSpacing) != 0) {
 				throw new RuntimeException("Impropper tile width: " + tileWidth + "x + " + tileSpacing + " != " + tilesBitmap.getWidth());
@@ -528,7 +537,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					cty,
 					getButtonRad(),
 					text
-			);
+					);
 		}
 
 		protected Button createBottomRightButton(String text) {
@@ -542,7 +551,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					cty,
 					getButtonRad(),
 					text
-			);
+					);
 		}
 
 		protected Button createTopRightButton(String text) {
@@ -556,7 +565,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					cty,
 					getButtonRad(),
 					text
-			);
+					);
 		}
 
 		protected Button createTopLeftButton(String text) {
@@ -570,7 +579,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					cty,
 					getButtonRad(),
 					text
-			);
+					);
 		}
 
 		protected class Button {

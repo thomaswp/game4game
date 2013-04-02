@@ -1,52 +1,52 @@
-package edu.elon.honors.price.maker.action;							// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.maker.action.*;						// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.types.*;							// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters.Iterator;		// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.data.Event.Parameters;					// ScriptableWriter.writeHeader()
-import com.twp.platform.*;											// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.physics.*;								// ScriptableWriter.writeHeader()
-import edu.elon.honors.price.input.*;								// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-@SuppressWarnings("unused")											// ScriptableWriter.writeHeader()
-public class TriggerVariableTrigger extends ScriptableInstance {	// ActionFragmentWriter.writeHeader()
-	public static final String NAME = "Variable Trigger";			// ScriptableWriter.writeHeader()
-	public static final int ID = 1;									// ScriptableWriter.writeHeader()
-	public static final String CATEGORY = null;						// ScriptableWriter.writeHeader()
-																	// ScriptableWriter.writeHeader()
-	/** Type: <b>&lt;variable&gt;</b> */							// ActionFragmentWriter.writeElement()
-	public Variable variable;										// ActionFragmentWriter.writeElement()
-	public int readVariable(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readVariable(variable);					// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-	public boolean operatorEquals;									// ActionFragmentWriter.writeElement()
-	public boolean operatorNotEquals;								// ActionFragmentWriter.writeElement()
-	public boolean operatorGreater;									// ActionFragmentWriter.writeElement()
-	public boolean operatorGreaterOrEqual;							// ActionFragmentWriter.writeElement()
-	public boolean operatorLess;									// ActionFragmentWriter.writeElement()
-	public boolean operatorLessOrEqual;								// ActionFragmentWriter.writeElement()
-	public boolean operatorDivisible;								// ActionFragmentWriter.writeElement()
-	/** Type: <b>&lt;number&gt;</b> */								// ActionFragmentWriter.writeElement()
-	public Parameters value;										// ActionFragmentWriter.writeElement()
-	public int readValue(GameState gameState) throws ParameterException {// ActionFragmentWriter.writeElement()
-		return gameState.readNumber(value);							// ActionFragmentWriter.writeElement()
-	}																// ActionFragmentWriter.writeElement()
-																	// ActionFragmentWriter.writeReadParams()
-	@Override														// ActionFragmentWriter.writeReadParams()
-	public void readParams(Iterator iterator) {						// ActionFragmentWriter.writeReadParams()
-		variable = iterator.getVariable();							// ActionFragmentWriter.writeReadParams()
-		int operator = iterator.getInt();							// ActionFragmentWriter.writeReadParams()
-		operatorEquals = operator == 0;								// ActionFragmentWriter.writeReadParams()
-		operatorNotEquals = operator == 1;							// ActionFragmentWriter.writeReadParams()
-		operatorGreater = operator == 2;							// ActionFragmentWriter.writeReadParams()
-		operatorGreaterOrEqual = operator == 3;						// ActionFragmentWriter.writeReadParams()
-		operatorLess = operator == 4;								// ActionFragmentWriter.writeReadParams()
-		operatorLessOrEqual = operator == 5;						// ActionFragmentWriter.writeReadParams()
-		operatorDivisible = operator == 6;							// ActionFragmentWriter.writeReadParams()
-																	// ActionFragmentWriter.writeReadParams()
-		value = iterator.getParameters();							// ActionFragmentWriter.writeReadParams()
-	}																// ActionFragmentWriter.writeReadParams()
+package edu.elon.honors.price.maker.action;
+
+import edu.elon.honors.price.maker.action.*;
+import edu.elon.honors.price.data.*;
+import edu.elon.honors.price.data.types.*;
+import edu.elon.honors.price.data.Event.Parameters.Iterator;
+import edu.elon.honors.price.data.Event.Parameters;
+import com.twp.platform.*;
+import edu.elon.honors.price.physics.*;
+import edu.elon.honors.price.input.*;
+
+@SuppressWarnings("unused")
+public class TriggerVariableTrigger extends ScriptableInstance {
+	public static final String NAME = "Variable Trigger";
+	public static final int ID = 1;
+	public static final String CATEGORY = null;
+	
+	/** Type: <b>&lt;variable&gt;</b> */
+	public Variable variable;
+	public int readVariable(GameState gameState) throws ParameterException {
+		return gameState.readVariable(variable);
+	}
+	public boolean operatorEquals;
+	public boolean operatorNotEquals;
+	public boolean operatorGreater;
+	public boolean operatorGreaterOrEqual;
+	public boolean operatorLess;
+	public boolean operatorLessOrEqual;
+	public boolean operatorDivisible;
+	/** Type: <b>&lt;number&gt;</b> */
+	public Parameters value;
+	public int readValue(GameState gameState) throws ParameterException {
+		return gameState.readNumber(value);
+	}
+	
+	@Override
+	public void readParams(Iterator iterator) {
+		variable = iterator.getVariable();
+		int operator = iterator.getInt();
+		operatorEquals = operator == 0;
+		operatorNotEquals = operator == 1;
+		operatorGreater = operator == 2;
+		operatorGreaterOrEqual = operator == 3;
+		operatorLess = operator == 4;
+		operatorLessOrEqual = operator == 5;
+		operatorDivisible = operator == 6;
+		
+		value = iterator.getParameters();
+	}
 	/**
 	 * 001 <b><i>Variable Trigger</i></b> (null)<br />
 	 * <ul>
@@ -62,6 +62,6 @@ public class TriggerVariableTrigger extends ScriptableInstance {	// ActionFragme
 	 * </ul>
 	 * <li><b>&lt;number&gt;</b> value</li>
 	 * </ul>
-	 */																// ActionFragmentWriter.writeJavadoc()
-	public static final String JAVADOC = "";						// ActionFragmentWriter.writeJavadoc()
-}																	// ActionFragmentWriter.writeFooter()
+	 */
+	public static final String JAVADOC = "";
+}
