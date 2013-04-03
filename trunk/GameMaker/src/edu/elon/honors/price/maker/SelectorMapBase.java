@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.os.Bundle;
 
 public class SelectorMapBase extends MapActivityBase {
@@ -110,7 +111,7 @@ public class SelectorMapBase extends MapActivityBase {
 			return false;
 		}
 
-		protected void updateSelection() {
+		protected void updateSelection(float x, float y) {
 
 		}
 
@@ -130,31 +131,25 @@ public class SelectorMapBase extends MapActivityBase {
 		protected void doUpdate(int width, int height, float x, float y) {
 			doReleaseTouch(x, y);
 
-			if (Input.isTapped()) {
-				boolean buttons = true;
-				if (shouldSelect()) {
-					buttons = !doSelection();
-				}
-
-				boolean move = shouldMove();
-				if (buttons) {
-					if (doPressButtons(x, y)) move = false;
-				}
-
-				if (move) {
-					doMovementStart();
-				}
+			boolean buttons = true;
+			if (Input.isTapped() && shouldSelect()) {
+				buttons = !doSelection();
 			}
+			updateTouchInput(buttons);
 
 			doMovement();
 
 			if (!moving && shouldSelect()) {
-				updateSelection();
+				updateSelection(x, y);
 			}
 
 			doOriginBounding(width, height);
 			leftButton.text = getLeftButtonText();
 			rightButton.text = getRightButtonText();
+		}
+		
+		protected boolean inMovementMode() {
+			return shouldMove();
 		}
 
 		@Override
@@ -194,7 +189,7 @@ public class SelectorMapBase extends MapActivityBase {
 		protected void drawObject(Canvas c, ObjectInstance instance, float cx, float cy, 
 				Bitmap bitmap, Paint paint) {
 			c.drawBitmap(bitmap, cx - bitmap.getWidth() / 2, 
-					cy - bitmap.getWidth() / 2, paint);
+					cy - bitmap.getHeight() / 2, paint);
 		}
 
 		protected void drawObjects(Canvas c) {

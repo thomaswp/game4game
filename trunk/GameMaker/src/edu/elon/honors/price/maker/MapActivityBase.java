@@ -8,6 +8,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
 import android.graphics.Paint.Style;
@@ -31,13 +32,17 @@ public abstract class MapActivityBase extends SaveableActivity {
 	public static final int SELECTION_BORDER_COLOR = 
 			Color.argb(255, 50, 50, 255);
 	public static final int SELECTION_BORDER_WIDTH = 2;
-
+	
+	private final static int PAN_START_THRESH = 75;
 	public static final int BUTTON_TEXT_SIZE = 18;
 
 	private static final boolean DEBUG_FPS = true;
 
 	protected PlatformGame game;
 	protected MapView view;
+	
+
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -97,6 +102,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 		private Bitmap bgBmp;
 		private Bitmap midgrounds;
 		protected ArrayList<Button> buttons;
+		
+
+		private boolean delay;
+		private PointF delayedTap = new PointF(), tappedPoint;
+		private int secondPid = -1;
+		private long touchStart;
 
 		public int getButtonRad() {
 			//return toPx(65);
@@ -168,10 +179,56 @@ public abstract class MapActivityBase extends SaveableActivity {
 			}
 			return false;
 		}
+		
+		
+		protected boolean inMovementMode() {
+			return true;
+		}
+		
+		protected PointF getTappedPoint() {
+			return tappedPoint;
+		}
+		
+		protected void updateTouchInput(boolean checkButtons) {
+			float x = Input.getLastTouchX();
+			float y = Input.getLastTouchY();
+			
+			
+			if (Input.isTapped()) {
+				if (!checkButtons || !doPressButtons(x, y)) {
+					if (inMovementMode()) {
+						doMovementStart();
+					} else {
+						delay = true;
+						delayedTap.set(x, y);
+						touchStart = System.currentTimeMillis();
+					}
+				}
+			}
+			
+			tappedPoint = null;
+			if (delay && System.currentTimeMillis() - touchStart > PAN_START_THRESH) {
+				delay = false;
+				tappedPoint = delayedTap;
+			}
+			
+			if (Input.isSecondaryTapped()) { //&& 
+					//System.currentTimeMillis() - touchStart < PAN_THRESH) {
+				secondPid = Input.getTappedPointer();
+				delay = false;
+				doMovementStart();
+			}
+			if (moving && (!Input.isTouchDown(secondPid) ||
+					!Input.isTouchDown())) {
+				if (!inMovementMode()) {
+					moving = false;
+				}
+			}
+		}
 
 		protected void doMovementStart() {
-			startDragOffX = offX;
-			startDragOffY = offY;
+			startDragOffX = offX - Input.getDistanceTouchX();
+			startDragOffY = offY - Input.getDistanceTouchY();
 			moving = true;
 		}
 

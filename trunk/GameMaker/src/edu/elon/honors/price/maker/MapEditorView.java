@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -287,17 +288,13 @@ public class MapEditorView extends MapView {
 				strayedOutOfSelectionButton = true;
 			}
 		}
-
-		if (Input.isTapped()) {
-			if (!doPressButtons(x, y)) {
-				if (mode == MODE_MOVE) {
-					doMovementStart();
-				} else {
-					layer.onTouchDown(x, y);
-					if (editMode == EDIT_NORMAL) {
-						showCancelButton(x, y);
-					}
-				}
+		
+		updateTouchInput(true);
+		PointF screenTapped = getTappedPoint(); 
+		if (screenTapped != null) {
+			layer.onTouchDown(screenTapped.x, screenTapped.y);
+			if (editMode == EDIT_NORMAL) {
+				showCancelButton(screenTapped.x, screenTapped.y);
 			}
 		}
 
@@ -306,6 +303,11 @@ public class MapEditorView extends MapView {
 
 		doMovement();
 		doOriginBounding(width, height);
+	}
+	
+	@Override
+	protected boolean inMovementMode() {
+		return mode == MODE_MOVE;
 	}
 
 	protected void doScroll(float x, float y, int width, int height) {

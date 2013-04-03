@@ -33,11 +33,6 @@ public class SelectorMapObjectSize extends SelectorMapBase {
 		}
 		
 		@Override
-		protected void updateSelection() {
-			
-		}
-		
-		@Override
 		protected void drawContent(Canvas c) {
 			super.drawContent(c);
 			
