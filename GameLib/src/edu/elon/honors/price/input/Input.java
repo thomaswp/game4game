@@ -72,6 +72,7 @@ public final class Input {
 	}
 
 	public static boolean isTouchDown(int pid) {
+		if (pid < 0 || pid >= touchStates.size()) return false;
 		return touchStates.get(pid).touchDown;
 	}
 
@@ -111,6 +112,14 @@ public final class Input {
 			}
 		} else {
 			return touchStates.get(0).tapped;
+		}
+		return false;
+	}
+	
+	public static boolean isSecondaryTapped() {
+		for (int i = 1; i < touchStates.size(); i++) {
+			if (touchStates.get(i).tapped)
+				return true;
 		}
 		return false;
 	}

@@ -64,21 +64,21 @@ public class DatabaseEditMapHorizon extends SelectorMapBase {
 
 			if (!leftButton.isInButton(x, y) && !rightButton.isInButton(x, y)) {
 				mapStartHorizon = game.getSelectedMap().groundY;
-				touchStartY = y;
+				touchStartY = y - offY;
 			}
 			return super.doSelection();
 		}
 
 		@Override
-		protected void updateSelection() {
+		protected void updateSelection(float x, float y) {
 			if (Input.isTouchDown() && !leftButton.down && !rightButton.down) {
 				synchronized (game) {
 					game.getSelectedMap().groundY =	
 							mapStartHorizon + 
-							(int)(touchStartY - Input.getLastTouchY());
+							(int)(touchStartY - (Input.getLastTouchY() - offY));
 				} 
 			}
-			super.updateSelection();
+			super.updateSelection(x, y);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
@@ -94,10 +95,8 @@ public class SelectorMapPoint extends SelectorMapBase {
 		}
 
 		@Override
-		protected void updateSelection() {
+		protected void updateSelection(float x, float y) {
 			if (Input.isTouchDown() && !leftButton.down && !rightButton.down) {
-				float x = Input.getLastTouchX();
-				float y = Input.getLastTouchY();
 
 				this.x = (int)(x - offX);
 				this.y = (int)(y - offY);
