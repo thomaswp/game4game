@@ -1,0 +1,39 @@
+<action id="16" name="Draw to Screen" category="UI">
+
+	<radio name="action">
+		<choice text="Clear the screen" />
+		<choice text="Draw a">
+			<color />
+			<radio name="style">
+				<choice text="hollow" />
+				<choice text="filled in" />
+			</radio>
+			<radio name="shape">
+				<choice text="line">
+					<text text="from" />
+					<point name="from" />
+					<text text="to" />
+					<point name="to" />
+				</choice>
+				<choice text="circle">
+					<text text="centered at" />
+					<point name="center" />
+					<text text="with radius" />
+					<number name="radius" />
+				</choice>
+				<choice text="box">
+					<text text="with one corner at" />
+					<point name="corner1" />
+					<text text="and the other at" />
+					<point name="corner2" />
+				</choice>
+			</radio>
+			<text text="using" />
+			<radio name="use">
+				<choice text="world coordinates" />
+				<choice text="screen coordinates" />
+			</radio>
+		</choice>
+	</radio>
+
+</action>

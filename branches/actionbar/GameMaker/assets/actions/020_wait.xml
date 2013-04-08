@@ -1,0 +1,5 @@
+<action id="20" name="Wait" category="Control">
+    <text text="Wait for" />
+    <number />
+    <text text="tenths of a second" />
+</action>

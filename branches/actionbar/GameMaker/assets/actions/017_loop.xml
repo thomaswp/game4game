@@ -1,0 +1,5 @@
+<action id="17" name="Loop..." category="Control" parent="true">
+	<text text="Do this" />
+	<number name="numTimes"/>
+	<text text="times" />
+</action>

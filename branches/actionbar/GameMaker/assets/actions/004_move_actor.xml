@@ -1,0 +1,16 @@
+<action id="4" name="Move Actor" category="Actor">
+
+	<text text="Move" />
+	<actorInstance />
+	<text text="to" />
+	
+	<point />
+	
+	<text text="facing" />
+	<radio name="facing" >
+		<choice text="left" color="value" />
+		<choice text="right" color="value" />
+		<choice text="the same direction" />
+	</radio>
+
+</action>

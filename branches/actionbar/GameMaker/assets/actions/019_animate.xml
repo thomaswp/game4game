@@ -1,0 +1,36 @@
+<action id="19" name="Animate" category="Animate">
+
+	<text text="Animate" />
+	<radio name="animate">
+	    <choice text="Actor" mute="true">
+	        <actorInstance />
+	    </choice>
+	    <choice text="Object" mute="true">
+	        <objectInstance />
+	    </choice>
+	</radio>
+	
+	<text text="with a" />
+	<radio name="with">
+	    <choice text="bounce">
+	        <text text="in the direction" />
+	        <vector name="direction" />
+	        <text text="moving" />
+	        <number name="distance" />
+	        <text text="pixels before coming back, taking" />
+	        <number name="duration" />
+	        <text text="tenths of a second." />
+	    </choice>
+	    <choice text="swirl">
+	        
+	    </choice>
+	</radio>
+	
+	<text text="Then" />
+	<radio name="then">
+	    <choice text="wait for the animation to end" />
+	    <choice text="continue the event" />
+	</radio>
+	
+
+</action>

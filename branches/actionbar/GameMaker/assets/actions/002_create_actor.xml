@@ -1,0 +1,15 @@
+<action id="2" name="Create Actor" category="Actor">
+
+	<text text="Create a" />
+	<actorClass />
+	<text text="at" />
+	
+	<point />
+	
+	<text text="facing" />
+	<radio name="facing">
+		<choice text="left" color="value" />
+		<choice text="right" color="value" />
+	</radio>
+
+</action>

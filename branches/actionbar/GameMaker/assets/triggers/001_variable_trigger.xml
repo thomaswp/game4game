@@ -1,0 +1,16 @@
+<action id="1" name="Variable Trigger">
+
+	<text text="The event is triggered when" />
+	<variable name="variable" />
+	<radio name="operator">
+		<choice name="equals" text="="/>
+		<choice name="notEquals" text="≠" />
+		<choice name="greater" text="&gt;" />
+		<choice name="greaterOrEqual" text="≥" />
+		<choice name="less" text="&lt;" />
+		<choice name="lessOrEqual" text="≤" />
+		<choice name="divisible" text="divisible by" />
+	</radio>
+	<number name="value" />
+
+</action>

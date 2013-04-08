@@ -1,0 +1,20 @@
+<action id="2" name="Actor or Object Trigger">
+
+	<text text="The event is triggered when" />
+	<body />
+	
+	<radio name="when">
+	    <choice text="collides with">
+	        <radio name="collidesWith">
+			    <choice text="the hero" name="hero"  />
+			    <choice text="an actor" name="actor" />
+			    <choice text="an object" name="object"  />
+	    		<choice text="a wall" name="wall"  />
+	    		<choice text="a ledge" name="ledge"  />
+	        </radio>
+	    </choice>
+	    <choice text="is created" />
+	    <choice text="is destroyed" />
+	</radio>
+
+</action>
