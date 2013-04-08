@@ -238,6 +238,7 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 				}
 			} else {
 				solidTiles.remove(loc);
+				selectedObjects.remove(loc);
 			}
 		}
 
@@ -312,33 +313,90 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 					
 	}
 
-	@Override
-	protected void shiftItem(Point item, float offX, float offY) {
-		MapLayer layer = map.layers[this.layer];
-		Tileset tileset = map.getTileset(game);
-		int newRow = item.x + Math.round(offY / tileset.tileHeight);
-		int newCol = item.y + Math.round(offX / tileset.tileWidth);
-		layer.tiles[newRow][newCol] = layer.tiles[item.x][item.y];
-		layer.tiles[item.x][item.y] = 0;
-		while (solidTiles.remove(item));
-		item.set(newRow, newCol);
-		solidTiles.add(item);
-	}
-
-	@Override
-	protected void delete(Point item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void add(Point item) {
-		// TODO Auto-generated method stub
-		
-	}
+//	@Override
+//	protected void shiftItem(Point item, float offX, float offY) {
+//		MapLayer layer = map.layers[this.layer];
+//		Tileset tileset = map.getTileset(game);
+//		int newRow = item.x + Math.round(offY / tileset.tileHeight);
+//		int newCol = item.y + Math.round(offX / tileset.tileWidth);
+//		layer.tiles[newRow][newCol] = layer.tiles[item.x][item.y];
+//		layer.tiles[item.x][item.y] = 0;
+//		while (solidTiles.remove(item));
+//		item.set(newRow, newCol);
+//		solidTiles.add(item);
+//	}
+//
+//	@Override
+//	protected void delete(Point item) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	protected void add(Point item) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 	@Override
 	protected boolean inSelectingMode() {
 		return parent.editMode == MapEditorView.EDIT_ALT2;
+	}
+
+	@Override
+	protected Action doShift(final LinkedList<Point> items, 
+			final float offX, final float offY) {
+		
+		Tileset tileset = map.getTileset(game);
+		final int offRows = Math.round(offY / tileset.tileHeight);
+		final int offCols = Math.round(offX / tileset.tileWidth);
+		
+		if (offRows == 0 && offCols == 0) return null;
+		
+		TileAction action = new TileAction(layer) {;
+			@Override
+			public void redo(PlatformGame game) {
+				LinkedList<Point> reselect = new LinkedList<Point>();
+				for (Point item : items) {
+					if (selectedObjects.contains(item)) reselect.add(item);
+				}
+				super.redo(game);
+				for (Point item : reselect) {
+					selectedObjects.add(new Point(
+							item.x + offRows, item.y + offCols));
+				}
+			}
+		};
+		for (Point item : items) {
+			int nx = item.x + offRows, ny = item.y + offCols;
+			int nId = map.layers[layer].tiles[nx][ny];
+			int oId = map.layers[layer].tiles[item.x][item.y];
+			action.addPlacement(nx, ny, oId, nId);
+			
+			boolean skipDelete = false;
+			for (Point mItem : items) {
+				if (mItem.x + offRows == item.x &&
+						mItem.y + offCols == item.y) {
+					skipDelete = true;
+					break;
+				}
+			}
+			if (!skipDelete) {
+				action.addPlacement(item.x, item.y, 0, oId);
+			}
+		}
+		
+		return action;
+	}
+
+	@Override
+	protected Action doDelete(final LinkedList<Point> items) {
+		TileAction action = new TileAction(layer);
+		for (Point item : items) {
+			int oId = map.layers[layer].tiles[item.x][item.y];
+			action.addPlacement(item.x, item.y, 0, oId);
+		}
+		
+		return action;
 	}
 }
