@@ -11,8 +11,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import android.widget.Toast;
 
 public class MapEditor extends MapActivityBase {
@@ -59,11 +59,13 @@ public class MapEditor extends MapActivityBase {
 		menu.add("Save");
 		menu.add("Load");
 		menu.add("Test");
-		return super.onCreateOptionsMenu(menu);
+		return true;
+		//return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		Debug.write(item.getTitle());
 		if (item.getTitle().equals("Database")) {
 			Intent intent = new Intent(this, Database.class);
 			intent.putExtra("game", game);
@@ -116,7 +118,7 @@ public class MapEditor extends MapActivityBase {
 			}
 			
 		}
-		return super.onMenuItemSelected(featureId, item);
+		return true;
 	}
 	
 	private void test() {

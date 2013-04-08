@@ -3,6 +3,8 @@ package edu.elon.honors.price.maker;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.actionbarsherlock.app.SherlockActivity;
+
 import edu.elon.honors.price.game.Debug;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,7 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 
-public abstract class SaveableActivity extends Activity {
+public abstract class SaveableActivity extends SherlockActivity {
 
 	private Handler finishHandler = new Handler();
 	private boolean loaded;
@@ -26,6 +28,13 @@ public abstract class SaveableActivity extends Activity {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
+		if (hasActionBar()) {
+			setTheme(R.style.Theme_Sherlock);
+		} else {
+			setTheme(R.style.Theme_Sherlock_NoActionBar);
+		}
+
 		super.onCreate(savedInstanceState);
 		preferences = new Preferences();
 		
@@ -47,6 +56,10 @@ public abstract class SaveableActivity extends Activity {
 				});
 			}
 		});
+	}
+	
+	protected boolean hasActionBar() {
+		return false;
 	}
 	
 	@Override
@@ -282,7 +295,7 @@ public abstract class SaveableActivity extends Activity {
 				}
 			}
 			
-			Debug.write("Preferences loaded in: %ds", System.currentTimeMillis() - time);
+			Debug.write("Preferences loaded in: %dms", System.currentTimeMillis() - time);
 		}
 		
 		public void save() {

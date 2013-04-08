@@ -51,6 +51,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+		
 		if (savedInstanceState != null && savedInstanceState.containsKey("game")) {
 			game = (PlatformGame)savedInstanceState.getSerializable("game");
 		}
@@ -58,10 +59,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 		if (game == null) {
 			game = (PlatformGame)getIntent().getExtras().getSerializable("game");
 		}
+
+		super.onCreate(savedInstanceState);
+		
 		view = getMapView(game, savedInstanceState);
 		setContentView(view);
 
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override

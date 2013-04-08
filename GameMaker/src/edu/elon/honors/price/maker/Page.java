@@ -40,7 +40,7 @@ public abstract class Page extends LinearLayout {
 		isCreated = true;
 		parent.getLayoutInflater().inflate(getLayoutId(), this);
 		ViewGroup.LayoutParams lps = new ViewGroup.LayoutParams(
-				LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		parentView.addView(this, lps);
 	}
 	
