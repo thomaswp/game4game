@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.elon.honors.price.data.ObjectClass;
@@ -205,20 +206,17 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 		
 	}
 
-	@Override
 	protected void shiftItem(ObjectInstance item, float offX, float offY) {
 		item.startX += offX;
 		item.startY += offY;
 	}
 
-	@Override
 	protected void delete(ObjectInstance item) {
 		game.getSelectedMap().objects.remove(item);
 	}
 
-	@Override
 	protected void add(ObjectInstance item) {
-		game.getSelectedMap().objects.add(item);
+		game.getSelectedMap().addObject(item);
 	}
 
 	@Override
@@ -246,5 +244,45 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 	@Override
 	protected boolean inSelectingMode() {
 		return parent.editMode == MapEditorView.EDIT_ALT1;
+	}
+
+	@Override
+	protected Action doShift(final LinkedList<ObjectInstance> items, 
+			final float offX, final float offY) {
+		return new Action() {
+			@Override
+			public void undo(PlatformGame game) {
+				for (int i = 0; i < items.size(); i++) {
+					ObjectInstance object = items.get(i);
+					shiftItem(object, -offX, -offY);
+				}
+			}
+			@Override
+			public void redo(PlatformGame game) {
+				for (int i = 0; i < items.size(); i++) {
+					ObjectInstance object = items.get(i);
+					shiftItem(object, offX, offY);
+				}
+			}
+		};
+	}
+
+	@Override
+	protected Action doDelete(final LinkedList<ObjectInstance> items) {
+		return new Action() {
+			@Override
+			public void undo(PlatformGame game) {
+				for (int i = 0; i < items.size(); i++) {
+					add(items.get(i));
+				}
+			}
+
+			@Override
+			public void redo(PlatformGame game) {
+				for (int i = 0; i < items.size(); i++) {
+					delete(items.get(i));
+				}
+			}
+		};
 	}
 }

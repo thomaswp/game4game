@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -9,7 +10,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
+import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ActorInstance;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.maker.MapEditorView;
@@ -188,7 +191,6 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 		Tileset tileset = game.getMapTileset(map);
 
 		Bitmap bmp = actors[item.classIndex];
-		float zoom = item.getActorClass(game).zoom;
 		float width = bmp.getWidth();
 		float height = bmp.getHeight();
 		float x = item.column * tileset.tileWidth;
@@ -207,23 +209,23 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 		return mode == DrawMode.Below ? darkActors[actorClass] : actors[actorClass];
 	}
 
-	@Override
-	protected void shiftItem(ActorInstance item, float offX, float offY) {
-		Tileset tileset = map.getTileset(game);
-		
-		item.column = Math.round(item.column + offX / tileset.tileWidth);
-		item.row = Math.round(item.row + offY / tileset.tileHeight);
-	}
-
-	@Override
-	protected void delete(ActorInstance item) {
-		map.actors.remove(item);
-	}
-
-	@Override
-	protected void add(ActorInstance item) {
-		map.setActor(item.row, item.column, item.classIndex, item.id);
-	}
+//	@Override
+//	protected void shiftItem(ActorInstance item, float offX, float offY) {
+//		Tileset tileset = map.getTileset(game);
+//		
+//		item.column = Math.round(item.column + offX / tileset.tileWidth);
+//		item.row = Math.round(item.row + offY / tileset.tileHeight);
+//	}
+//
+//	@Override
+//	protected void delete(ActorInstance item) {
+//		map.actors.remove(item);
+//	}
+//
+//	@Override
+//	protected void add(ActorInstance item) {
+//		map.setActor(item.row, item.column, item.classIndex, item.id);
+//	}
 
 	@Override
 	protected void snapDrawBounds(ActorInstance item, RectF bounds, 
@@ -244,5 +246,125 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 	@Override
 	protected boolean inSelectingMode() {
 		return parent.editMode == MapEditorView.EDIT_ALT1;
+	}
+
+	@Override
+	protected Action doShift(final LinkedList<ActorInstance> items, final float offX,
+			final float offY) {
+		final LinkedList<ActorInstance> toDelete = new LinkedList<ActorInstance>();
+		//final LinkedList<ActorInstance> toIgnore = new LinkedList<ActorInstance>();
+		
+		Tileset tileset = game.tilesets[game.getSelectedMap().tilesetId];
+
+		final int offRows = Math.round(offY / tileset.tileHeight);
+		final int offCols = Math.round(offX / tileset.tileWidth);
+		
+		if (offRows == 0 && offCols == 0) return null;
+		
+		for (ActorInstance toPlace : items) {
+			ActorInstance oldInstance = map.getActorInstance(
+					toPlace.row + offRows, 
+					toPlace.column + offCols);
+			
+			if (oldInstance == null) continue;
+			
+			boolean skipDelete = false;
+			for (ActorInstance check : items) {
+				if (check.row == oldInstance.row &&
+						check.column == oldInstance.column) {
+					skipDelete = true;
+					break;
+				}
+			}
+			
+			if (skipDelete) continue;
+			
+			if (oldInstance.id != Map.HERO_ID) {
+				toDelete.add(oldInstance);
+			} else {
+				toDelete.add(toPlace);
+			}
+		}
+		
+		if (toDelete.size() > 0) {
+			return null;
+		}
+		
+		return new Action() {
+			@Override
+			public void undo(PlatformGame game) {
+				for (ActorInstance move : items) {
+					if (!toDelete.contains(move)) {
+						move.row -= offRows;
+						move.column -= offCols;
+					}
+				}
+				for (ActorInstance instance : toDelete) {
+					Map map = game.getSelectedMap();
+					map.setActor(instance.row, instance.column, 
+							instance.classIndex, instance.id);
+				}
+				cleanupSelection();
+			}
+			
+			@Override
+			public void redo(PlatformGame game) {
+				for (ActorInstance instance : toDelete) {
+					Map map = game.getSelectedMap();
+					ActorInstance delete = map.getActorInstance(
+							instance.row, instance.column);
+					map.actors.remove(delete);
+				}
+				for (ActorInstance move : items) {
+					if (!toDelete.contains(move)) {
+						move.row += offRows;
+						move.column += offCols;
+					}
+				}
+				cleanupSelection();
+			}
+		};
+	}
+	
+	private void cleanupSelection() {
+		for (int i = 0; i < selectedObjects.size(); i++) {
+			ActorInstance selected = selectedObjects.get(i);
+			ActorInstance real = map.getActorInstanceById(selected.id);
+			if (real == null) {
+				selectedObjects.remove(i);
+				i--;
+			} else {
+				selectedObjects.set(i, real);
+			}
+		}
+	}
+
+	@Override
+	protected Action doDelete(final LinkedList<ActorInstance> items) {
+		for (ActorInstance instance : items) {
+			if (instance.id == Map.HERO_ID) return null;
+		}
+		
+		return new Action() {
+			
+			@Override
+			public void undo(PlatformGame game) {
+				for (ActorInstance instance : items) {
+					if (instance.id != Map.HERO_ID) {
+						map.addActor(instance);
+					}
+				}
+			}
+			
+			@Override
+			public void redo(PlatformGame game) {
+				for (ActorInstance instance : items) {
+					ActorInstance toRemove = map.getActorInstance(
+							instance.row, instance.column); 
+					map.actors.remove(toRemove);
+					selectedObjects.remove(toRemove);
+				}
+			}
+		};
 	}
 }

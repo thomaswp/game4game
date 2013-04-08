@@ -53,9 +53,9 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	protected abstract void getDrawBounds(T item, RectF bounds);
 	protected abstract void snapDrawBounds(T item, RectF bounds, List<T> ignore);
 	protected abstract Bitmap getBitmap(T item, DrawMode mode);
-	protected abstract void shiftItem(T item, float offX, float offY);
-	protected abstract void delete(T item);
-	protected abstract void add(T item);
+//	protected abstract void shiftItem(T item, float offX, float offY);
+//	protected abstract void delete(T item);
+//	protected abstract void add(T item);
 	protected abstract boolean inSelectingMode();
 
 	protected void getWorldBounds(T item, RectF bounds) { 
@@ -136,29 +136,35 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 				objects.addAll(selectedObjects);
 				final float offX = dragOffset.x;
 				final float offY = dragOffset.y;
-				Action action = new Action() {
-					@Override
-					public void undo(PlatformGame game) {
-						for (int i = 0; i < objects.size(); i++) {
-							T object = objects.get(i);
-							shiftItem(object, -offX, -offY);
-						}
-					}
-					@Override
-					public void redo(PlatformGame game) {
-						for (int i = 0; i < objects.size(); i++) {
-							T object = objects.get(i);
-							shiftItem(object, offX, offY);
-						}
-					}
-				};
-				parent.doAction(action);
+//				Action action = new Action() {
+//					@Override
+//					public void undo(PlatformGame game) {
+//						for (int i = 0; i < objects.size(); i++) {
+//							T object = objects.get(i);
+//							shiftItem(object, -offX, -offY);
+//						}
+//					}
+//					@Override
+//					public void redo(PlatformGame game) {
+//						for (int i = 0; i < objects.size(); i++) {
+//							T object = objects.get(i);
+//							shiftItem(object, offX, offY);
+//						}
+//					}
+//				};
+				Action action = doShift(objects, offX, offY);
+				if (action != null) {
+					parent.doAction(action);
+				}
 			}
 			selecting = false;
 		} else {
 			onTouchUpNormal(x, y);
 		}
 	}
+	
+	protected abstract Action doShift(final LinkedList<T> items, 
+			final float offX, final float offY);
 	
 	@Override
 	public final void onTouchCanceled(float x, float y) {
@@ -259,26 +265,32 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 	private void doDelete() {
 		final LinkedList<T> selected = new LinkedList<T>();
 		selected.addAll(selectedObjects);
-		Action action = new Action() {
-			@Override
-			public void undo(PlatformGame game) {
-				for (int i = 0; i < selected.size(); i++) {
-					add(selected.get(i));
-				}
-			}
-			
-			@Override
-			public void redo(PlatformGame game) {
-				for (int i = 0; i < selected.size(); i++) {
-					delete(selected.get(i));
-					if (selectedObjects.contains(selected.get(i))) {
-						selectedObjects.remove(selected.get(i));
-					}
-				}
-			}
-		};
-		parent.doAction(action);
+//		Action action = new Action() {
+//			@Override
+//			public void undo(PlatformGame game) {
+//				for (int i = 0; i < selected.size(); i++) {
+//					add(selected.get(i));
+//				}
+//			}
+//			
+//			@Override
+//			public void redo(PlatformGame game) {
+//				for (int i = 0; i < selected.size(); i++) {
+//					delete(selected.get(i));
+//					if (selectedObjects.contains(selected.get(i))) {
+//						selectedObjects.remove(selected.get(i));
+//					}
+//				}
+//			}
+//		};
+		Action action = doDelete(selected);
+		if (action != null) {
+			selectedObjects.clear();
+			parent.doAction(action);
+		}
 	}
+	
+	protected abstract Action doDelete(final LinkedList<T> items);
 	
 	protected void setCSelection() {
 		cSelection.set(selection);
