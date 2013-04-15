@@ -307,6 +307,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 		}
 	}
 	
+	private RectF boundedRect = new RectF();
 	protected void boundOffset(PointF offset) {
 		float offX = offset.x, offY = offset.y;
 		
@@ -315,26 +316,40 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 		int height = tileset.tileHeight * map.rows;
 		for (int i = 0; i < selectedObjects.size(); i++) {
 			T instance = selectedObjects.get(i);
-			getDrawBounds(instance, boundsRect);
 			
-			float x = boundsRect.centerX() - getOffX();
-			if (offX < -x) {
-				offX = -x;
+			setBoundedRect(instance, boundedRect);
+			
+			float left = boundedRect.left;
+			float right = boundedRect.right;
+			float top = boundedRect.top;
+			float bottom = boundedRect.bottom;
+			
+			if (offX < -left) {
+				offX = -left;
 			}
-			if (offX > width - x) {
-				offX = width - x;
+			if (offX > width - right) {
+				offX = width - right;
 			}
 			
-			float y = boundsRect.centerY() - getOffY();
-			if (offY < -y) {
-				offY = -y;
+			if (offY < -top) {
+				offY = -top;
 			}
-			if (offY > height - y) {
-				offY = height - y;
+			if (offY > height - bottom) {
+				offY = height - bottom;
 			}
 		}
 		
 		offset.set(offX, offY);
+	}
+	
+	/**
+	 * Sets the rect which cannot go offscreen.
+	 */
+	protected void setBoundedRect(T item, RectF rect) {
+		getDrawBounds(item, boundsRect);
+		rect.set(boundsRect.centerX(), boundsRect.centerY(), 
+				boundsRect.centerX(), boundsRect.centerY());
+		rect.offset(-getOffX(), -getOffY());
 	}
 
 }

@@ -176,9 +176,13 @@ public class Map extends GameData {
 	}
 
 	public int addObject(int classIndex, int startX, int startY, int id) {
-		objects.add(new ObjectInstance(id, classIndex, startX, startY));
+		return addObject(new ObjectInstance(id, classIndex, startX, startY));
+	}
+	
+	public int addObject(ObjectInstance instance) {
+		objects.add(instance);
 		Collections.sort(objects);
-		return id;
+		return instance.id;
 	}
 
 	//	public int getObjectType(int row, int column) {
@@ -246,6 +250,12 @@ public class Map extends GameData {
 			}
 		}
 		return null;
+	}
+	
+	public int addActor(ActorInstance instance) {
+		actors.add(instance);
+		Collections.sort(actors);
+		return instance.id;
 	}
 
 	public int setActor(int row, int column, int type) {

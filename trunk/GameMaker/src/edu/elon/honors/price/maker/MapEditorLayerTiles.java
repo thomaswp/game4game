@@ -28,12 +28,14 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 	private int layer;
 	private Bitmap[] tiles, darkTiles;
 	private ArrayList<Point> solidTiles = new ArrayList<Point>();
+	private Tileset tileset;
 
 	@Override
 	public void setGame(PlatformGame game) {
 		super.setGame(game);
 		tiles = parent.tiles;
 		darkTiles = parent.darkTiles;
+		tileset = map.getTileset(game);
 		
 		solidTiles.clear();
 		int[][] layer = map.layers[this.layer].tiles;
@@ -55,7 +57,6 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 	@Override
 	public void drawContentNormal(Canvas c) {
 		if (touchDown && showPreview) {
-			Tileset tileset = game.getMapTileset(map);
 			int tileWidth = tileset.tileWidth;
 			int tileHeight = tileset.tileHeight;
 
@@ -109,7 +110,6 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 
 	@Override
 	public void refreshSelection() {
-		Tileset tileset = game.tilesets[map.tilesetId];
 		Rect selection = parent.tilesetSelection;
 		if (selection.width() * selection.height() == 0) {
 			parent.tilesetImage = null;
@@ -152,21 +152,18 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 	}
 	
 	private int getBitmapRow(float touchY) {
-		Tileset tileset = game.getMapTileset(map);
 		int tileHeight = tileset.tileHeight;
 		Bitmap bmp = parent.tilesetImage;
 		return Math.round((touchY - parent.offY - bmp.getHeight() / 2) / tileHeight);
 	}
 
 	private int getBitmapCol(float touchX) {
-		Tileset tileset = game.getMapTileset(map);
 		int tileWidth = tileset.tileWidth;
 		Bitmap bmp = parent.tilesetImage;
 		return Math.round((touchX - parent.offX - bmp.getWidth() / 2) / tileWidth);
 	}
 	
 	private void placeTiles(float x, float y) {
-		Tileset tileset = game.getMapTileset(map);
 		Rect rect = parent.tilesetSelection;
 
 		int row = getBitmapRow(y);
@@ -285,7 +282,6 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 
 	@Override
 	protected void getDrawBounds(Point item, RectF bounds) {
-		Tileset tileset = map.getTileset(game);
 		bounds.set(item.y * tileset.tileWidth, item.x * tileset.tileHeight,
 				(item.y + 1) * tileset.tileWidth, (item.x + 1) * tileset.tileHeight);
 		bounds.offset(getOffX(), getOffY());
@@ -296,11 +292,17 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 		float left = bounds.left;
 		float top = bounds.top;
 		
-		Tileset tileset = map.getTileset(game);
 		int tileWidth = tileset.tileWidth;
 		int tileHeight = tileset.tileHeight;
 		left = (int)(left / tileWidth + 0.5f) * tileWidth;
 		top = (int)(top / tileHeight + 0.5f) * tileHeight;
+		
+		int maxLeft = tileWidth * (map.columns - 2);
+		int maxTop = tileWidth * (map.rows - 2);
+		
+		left = Math.min(Math.max(tileset.tileWidth, left), maxLeft);
+		top = Math.min(Math.max(tileset.tileHeight, top), maxTop);
+		Debug.write(left);
 				
 		bounds.offsetTo(left, top);
 	}
@@ -347,7 +349,6 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 	protected Action doShift(final LinkedList<Point> items, 
 			final float offX, final float offY) {
 		
-		Tileset tileset = map.getTileset(game);
 		final int offRows = Math.round(offY / tileset.tileHeight);
 		final int offCols = Math.round(offX / tileset.tileWidth);
 		
@@ -398,5 +399,12 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 		}
 		
 		return action;
+	}
+	
+	@Override
+	protected void setBoundedRect(Point item, RectF rect) {
+		rect.set(item.y * tileset.tileWidth, item.x * tileset.tileHeight, 
+				(item.y + 1) * tileset.tileWidth - 1, 
+				(item.x + 1) * tileset.tileHeight - 1);
 	}
 }
