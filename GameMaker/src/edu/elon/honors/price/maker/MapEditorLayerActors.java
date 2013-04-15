@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import edu.elon.honors.price.data.ActorClass;
@@ -240,6 +241,8 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 		centerX = (int)(centerX / tileWidth) * tileWidth + tileWidth / 2;
 		bottom = (int)(bottom / tileHeight + 0.5f) * tileHeight;
 		
+//		int minBottom = tileset.tileHeight
+		
 		bounds.offsetTo(centerX - bounds.width() / 2, bottom - bounds.height());
 	}
 
@@ -286,6 +289,8 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 			}
 		}
 		
+		//This makes the delete implementation below
+		//useless, but it's kept in case the mechanism changes
 		if (toDelete.size() > 0) {
 			return null;
 		}
@@ -366,5 +371,14 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 				}
 			}
 		};
+	}
+	
+	@Override
+	protected void setBoundedRect(ActorInstance item, RectF rect) {
+		Tileset tileset = map.getTileset(game);
+		int row = item.row, col = item.column;
+		rect.set(col * tileset.tileWidth, row * tileset.tileHeight, 
+				(col + 1) * tileset.tileWidth - 1, 
+				(row + 1) * tileset.tileHeight - 1);
 	}
 }
