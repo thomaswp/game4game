@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker.share;
 
+import java.util.EnumSet;
+
 import com.eujeux.data.GameInfo;
 import com.eujeux.data.RatingInfo;
 
@@ -16,7 +18,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.GameCache;
+import edu.elon.honors.price.data.GameCache.GameType;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.GameCache.GameDetails;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.AutoAssign;
 import edu.elon.honors.price.maker.AutoAssignUtils;
@@ -44,7 +49,8 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 	
 	private GameInfo gameInfo;
 	private boolean owner;
-	private String gamePath;
+	private GameDetails gameDetails;
+	private GameCache gameCache;
 
 	private ProgressDialog loadingDialog;
 
@@ -55,6 +61,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 		setContentView(R.layout.web_edit_game);
 
 		gameInfo = getCancelResult();
+		gameCache = GameCache.getGameCache(this);
 
 		AutoAssignUtils.autoAssign(this);
 
@@ -167,11 +174,6 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 			public void fetchComplete(PlatformGame result) {
 				loadingDialog.dismiss();
 				buttonDownload.setEnabled(false);
-				String name = gamePath;
-				if (name == null) {
-					name = MainMenu.getNewMapName(
-							WebEditGame.this, result.name);
-				}
 				try {
 					GameInfo cancelResult = getCancelResult();
 					cancelResult.downloads++;
@@ -179,7 +181,14 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 
 					gameInfo.downloads++;
 					result.websiteInfo = gameInfo;
-					Data.saveGame(name, WebEditGame.this, result);
+					if (gameDetails != null) {
+						gameCache.updateGame(gameDetails, result, WebEditGame.this);	
+					} else {
+						GameType type = owner ? GameType.Edit : GameType.Play;
+						gameDetails = gameCache.addGame(result.getName("Game"), 
+								type, result, WebEditGame.this);
+					}
+					
 					loadInfo();
 					DialogUtils.createAlertDialog(WebEditGame.this, 
 							"Download Successful", 
@@ -197,7 +206,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 	}
 
 	private void publish() {
-		final PlatformGame game = (PlatformGame)Data.loadGame(gamePath, WebEditGame.this);
+		final PlatformGame game = gameDetails.loadGame(this);
 		if (game == null) {
 			DialogUtils.showErrorDialog(WebEditGame.this, 
 					"No game to publish", 
@@ -230,7 +239,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 									gameInfo = result;
 									setCancelResult(result);
 									game.websiteInfo = result;
-									Data.saveGame(gamePath, WebEditGame.this, game);
+									Data.saveData(gameDetails.filename, WebEditGame.this, game);
 									loadInfo();
 								}
 							}
@@ -301,10 +310,13 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 
 		buttonPublish.setEnabled(false);
 
-		for (String file : MainMenu.getGameFilenames(this)) {
-			PlatformGame game = (PlatformGame)Data.loadGame(file, this);
+		GameCache gameCache = GameCache.getGameCache(this);
+		Iterable<GameDetails> games = gameCache.getGames(
+				EnumSet.of(GameType.Edit, GameType.Play));
+		for (GameDetails details : games) {
+			PlatformGame game = details.loadGame(this);
 			if (game != null && game.hasWebisiteId(gameInfo.id)) {
-				gamePath = file;
+				gameDetails = details;
 				downloaded = true;
 				if (game.lastEdited < gameInfo.lastEdited) {
 					buttonDownload.setText("Update Version");
@@ -347,11 +359,11 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 					public void postComplete() {
 						loadingDialog.dismiss();
 						data.putExtra("gameInfo", gameInfo);
-						if (gamePath != null) {
-							PlatformGame game = (PlatformGame)Data.loadGame(gamePath, WebEditGame.this);
+						if (gameDetails != null) {
+							PlatformGame game = gameDetails.loadGame(WebEditGame.this);
 							if (game != null) {
 								game.websiteInfo = gameInfo;
-								Data.saveGame(gamePath, WebEditGame.this, game);
+								gameCache.updateGame(gameDetails, game, WebEditGame.this);
 							}
 						}
 						WebEditGame.super.finishOk(data);

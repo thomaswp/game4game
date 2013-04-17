@@ -6,7 +6,10 @@ import java.util.List;
 import com.eujeux.data.GameInfo;
 import com.eujeux.data.MyUserInfo;
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.GameCache;
+import edu.elon.honors.price.data.GameCache.GameDetails;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.GameCache.GameType;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.AutoAssign;
 import edu.elon.honors.price.maker.AutoAssignUtils;
@@ -115,15 +118,15 @@ public class WebLogin extends Activity implements IViewContainer {
 	}
 
 	private void addGame() {
-		List<String> allGames = MainMenu.getGameFilenames(this);
 
+		GameCache gameCache = GameCache.getGameCache(this);
+		
 		LinkedList<String> files = new LinkedList<String>();
 		LinkedList<String> names = new LinkedList<String>();
-		for (String gameName : allGames) {
-			PlatformGame game = (PlatformGame)Data.loadGame(gameName, this);
-			if (game.websiteInfo == null) {
-				names.add(gameName.substring(MainMenu.PREFIX.length()));
-				files.add(gameName);
+		for (GameDetails details : gameCache.getGames(GameType.Edit)) {
+			if (!details.hasWebsiteInfo) {
+				names.add(details.name);
+				files.add(details.filename);
 			}
 		}
 		Bundle bundle = new Bundle();
@@ -144,14 +147,14 @@ public class WebLogin extends Activity implements IViewContainer {
 
 	private void addGame(final String filename) {
 		Debug.write(filename);
-		final PlatformGame game = (PlatformGame)Data.loadGame(filename, this);
+		final PlatformGame game = (PlatformGame)Data.loadData(filename, this);
 		showDialog(DIALOG_LOADING);
 		DataUtils.createGame(this, game, new CreateCallback<GameInfo>() {
 			@Override
 			public void createComplete(GameInfo result) {
 				progressDialog.dismiss();
 				game.websiteInfo = result;
-				Data.saveGame(filename, WebLogin.this, game);
+				Data.saveData(filename, WebLogin.this, game);
 				WebGameView gameView = new WebGameView(
 						WebLogin.this, result);
 				linearLayoutGames.addView(gameView);

@@ -2,7 +2,6 @@ Before Beta:
 -Tutorial System
 -Auto-upgrade system
 -Main Menu
--Actor and Tile layer selection
 -Known bugs: website browse ok, variable renaming, missing action implementations
 -Actions: Move to new map, win, lose
 -Website: delete map

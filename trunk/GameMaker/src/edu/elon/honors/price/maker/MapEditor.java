@@ -130,8 +130,8 @@ public class MapEditor extends MapActivityBase {
 		try {
 			((MapEditorView)view).saveMapData();
 			game.lastEdited = System.currentTimeMillis();
-			Data.saveGame(gameName, this, game);
-			PlatformGame gameCopy = (PlatformGame) Data.loadGame(gameName, this);
+			Data.saveData(gameName, this, game);
+			PlatformGame gameCopy = (PlatformGame) Data.loadData(gameName, this);
 			getIntent().putExtra("game", gameCopy);
 			Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
 		} catch (Exception ex) {
@@ -146,9 +146,9 @@ public class MapEditor extends MapActivityBase {
 
 	private void load() {
 		try {
-			game = (PlatformGame) Data.loadGame(gameName, this);
+			game = (PlatformGame) Data.loadData(gameName, this);
 			((MapEditorView)view).setGame(game, true);
-			PlatformGame gameCopy = (PlatformGame) Data.loadGame(gameName, this);
+			PlatformGame gameCopy = (PlatformGame) Data.loadData(gameName, this);
 			getIntent().putExtra("game", gameCopy);
 			refresh();
 			Toast.makeText(this, "Load Successful!", Toast.LENGTH_SHORT).show(); 
