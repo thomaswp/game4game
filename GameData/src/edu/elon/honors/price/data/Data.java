@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -303,21 +304,28 @@ public final class Data {
 	 * be used outside of this namespace.
 	 * @param name The file name of the game to be loaded. No directory
 	 * should be provided
-	 * @param parent The context in which to load the game. This does not
+	 * @param context The context in which to load the game. This does not
 	 * have to be in the GameMaker namespace.
 	 * @return The PlatformGame object.
 	 */
-	public static Object loadGame(String name, Activity parent) {
+	public static <T extends Serializable> T loadData(String name, Context context) {
 		try {
-			InputStream is = parent.getContentResolver().openInputStream(Uri.withAppendedPath(Data.CONTENT_URI, name));
-			ObjectInputStream in = new ObjectInputStream(is);
-			Object data = in.readObject();
-			in.close();
-			return data;
+			InputStream is = context.getContentResolver().openInputStream(
+					Uri.withAppendedPath(Data.CONTENT_URI, name));
+			return loadData(is);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T extends Serializable> T loadData(InputStream is) 
+			throws OptionalDataException, ClassNotFoundException, IOException {
+			ObjectInputStream in = new ObjectInputStream(is);
+			Object data = in.readObject();
+			in.close();
+			return (T)data;
 	}
 
 	/**
@@ -325,15 +333,15 @@ public final class Data {
 	 * be used outside of this namespace.
 	 * @param name The file name of the game to be saved. No directory
 	 * should be provided
-	 * @param parent The context in which to save the game. This does not
+	 * @param context The context in which to save the game. This does not
 	 * have to be in the GameMaker namespace.
 	 * @param data The PlatformGame object.
 	 * @return true if the save was successful.
 	 */
 	@SuppressLint("WorldReadableFiles")
-	public static boolean saveGame(String name, Activity parent, Serializable data) {
+	public static boolean saveData(String name, Context context, Serializable data) {
 		try {
-			FileOutputStream fos = parent.openFileOutput(name, 
+			FileOutputStream fos = context.openFileOutput(name, 
 					Context.MODE_WORLD_READABLE);
 			ObjectOutputStream out = new ObjectOutputStream(fos);
 			out.writeObject(data);

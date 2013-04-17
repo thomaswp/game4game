@@ -21,7 +21,9 @@ public class PlatformGame extends GameData {
 	
 	public GameInfo websiteInfo;
 	
+	@Deprecated
 	public String name;
+
 	public long lastEdited;
 
 	public ArrayList<Map> maps;
@@ -44,7 +46,7 @@ public class PlatformGame extends GameData {
 
 	public Object copyData;
 	
-	public final String ID;
+	public String ID;
 
 	public int getVersion() {
 		return _VERSION_;
@@ -88,9 +90,7 @@ public class PlatformGame extends GameData {
 		return events;
 	}
 	
-	public PlatformGame(String id, String name) {
-		ID = id;
-		this.name = name;
+	public PlatformGame() {
 		
 		switchNames = new String[] { };
 		switchValues = new boolean[] { };
