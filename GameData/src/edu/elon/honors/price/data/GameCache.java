@@ -7,14 +7,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.eujeux.data.GameInfo;
+
 import edu.elon.honors.price.game.Debug;
 
 import android.content.Context;
 import android.provider.Settings.Secure;
 
 public class GameCache implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	private static final String FILE_NAME = "gameCache";
+	
+	private static GameCache instance;
 	
 	public enum GameType { Edit, Play, Tutorial }
 	
@@ -51,7 +55,7 @@ public class GameCache implements Serializable {
 	}
 	
 	private String getNewFilename(String base, Context context) {
-		base.replace(" ", "_");
+		base = base.replaceAll("[^A-Za-z0-9_]", "");
 		String[] files = context.fileList();
 		int n = 0;
 		String name;
@@ -71,11 +75,15 @@ public class GameCache implements Serializable {
 	
 	public GameDetails addGame(String name, GameType type, PlatformGame game, 
 			Context context) {
+		return addGame(name, type, game, null, context);
+	}
+	
+	public GameDetails addGame(String name, GameType type, PlatformGame game, 
+			GameInfo websiteInfo, Context context) {
 		String filename = getNewFilename(name, context);
 		game.ID = getNewGameID(context);
 		if (Data.saveData(filename, context, game)) {
-			GameDetails details = new GameDetails(name, filename, 
-					game.websiteInfo != null);
+			GameDetails details = new GameDetails(name, filename, websiteInfo);
 			getGamesList(type).add(details);
 			save(context);
 			return details;
@@ -85,10 +93,12 @@ public class GameCache implements Serializable {
 		}
 	}
 	
-	public boolean updateGame(GameDetails details, PlatformGame game, Context context) {
+	public boolean updateGame(GameDetails details, PlatformGame game, 
+			GameInfo websiteInfo, Context context) {
 		if (Data.saveData(details.filename, context, game)) {
-			details.name = game.getName(details.name);
-			details.hasWebsiteInfo = game.websiteInfo != null;
+			if (websiteInfo != null) details.name = websiteInfo.name;
+			details.websiteInfo = websiteInfo;
+			details.lastEdited = websiteInfo.lastEdited;
 			save(context);
 			return true;
 		}
@@ -105,22 +115,27 @@ public class GameCache implements Serializable {
 	
 	@SuppressWarnings("deprecation")
 	public static GameCache getGameCache(Context context) {
+		if (instance != null) return instance;
+		
 		GameCache cache = Data.loadData(FILE_NAME, context);
 		
 		if (cache != null) return cache;
+		
+		context.deleteFile(FILE_NAME);
 		
 		cache = new GameCache();
 		String[] files = context.fileList();
 		for (String file : files) {
 			PlatformGame game = (PlatformGame)Data.loadData(file, context);
 			if (game != null) {
-				GameDetails details = new GameDetails(game.name, file, 
-						game.websiteInfo != null);
+				GameDetails details = new GameDetails(game.getName("Map"), file, 
+						game.websiteInfo);
 				cache.myGames.add(details);
 			}
 		}
 		
 		Data.saveData(FILE_NAME, context, cache);
+		instance = cache;
 		
 		return cache;
 	}
@@ -131,12 +146,20 @@ public class GameCache implements Serializable {
 		public String name;
 		public String filename;	
 		public Date dateCreated;
-		public boolean hasWebsiteInfo;
+		public GameInfo websiteInfo;
+		public long lastEdited;
 		
-		public GameDetails(String name, String filename, boolean hasWebsiteInfo) {
+		public boolean hasWebsiteInfo() {
+			return websiteInfo != null;
+		}
+		
+		public GameDetails(String name, String filename, GameInfo websiteInfo) {
 			this.name = name;
 			this.filename = filename;
-			this.hasWebsiteInfo = hasWebsiteInfo;
+			this.websiteInfo = websiteInfo;
+			if (websiteInfo != null) {
+				lastEdited = websiteInfo.lastEdited;
+			}
 			dateCreated = new Date();
 		}
 		
@@ -148,6 +171,10 @@ public class GameCache implements Serializable {
 		public String toString() {
 			return String.format("%s [%s]; %s", name, filename, 
 					dateCreated.toLocaleString());
+		}
+
+		public boolean hasWebisiteId(long id) {
+			return websiteInfo != null && websiteInfo.id == id;
 		}
 		
 //		@Override

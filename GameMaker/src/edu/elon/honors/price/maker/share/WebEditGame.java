@@ -180,13 +180,12 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 					setCancelResult(cancelResult);
 
 					gameInfo.downloads++;
-					result.websiteInfo = gameInfo;
 					if (gameDetails != null) {
-						gameCache.updateGame(gameDetails, result, WebEditGame.this);	
+						gameCache.updateGame(gameDetails, result, gameInfo, WebEditGame.this);	
 					} else {
 						GameType type = owner ? GameType.Edit : GameType.Play;
-						gameDetails = gameCache.addGame(result.getName("Game"), 
-								type, result, WebEditGame.this);
+						gameDetails = gameCache.addGame(gameInfo.name, 
+								type, result, gameInfo, WebEditGame.this);
 					}
 					
 					loadInfo();
@@ -238,8 +237,7 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 									loadingDialog.dismiss();
 									gameInfo = result;
 									setCancelResult(result);
-									game.websiteInfo = result;
-									Data.saveData(gameDetails.filename, WebEditGame.this, game);
+									gameCache.updateGame(gameDetails, game, result, WebEditGame.this);
 									loadInfo();
 								}
 							}
@@ -314,16 +312,15 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 		Iterable<GameDetails> games = gameCache.getGames(
 				EnumSet.of(GameType.Edit, GameType.Play));
 		for (GameDetails details : games) {
-			PlatformGame game = details.loadGame(this);
-			if (game != null && game.hasWebisiteId(gameInfo.id)) {
+			if (details.hasWebisiteId(gameInfo.id)) {
 				gameDetails = details;
 				downloaded = true;
-				if (game.lastEdited < gameInfo.lastEdited) {
+				if (details.lastEdited < gameInfo.lastEdited) {
 					buttonDownload.setText("Update Version");
 				} else {
 					buttonDownload.setEnabled(false);
 				}
-				if (game.lastEdited > gameInfo.lastEdited && owner) {
+				if (details.lastEdited > gameInfo.lastEdited && owner) {
 					buttonPublish.setEnabled(true);
 				}
 				break;
@@ -362,8 +359,8 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 						if (gameDetails != null) {
 							PlatformGame game = gameDetails.loadGame(WebEditGame.this);
 							if (game != null) {
-								game.websiteInfo = gameInfo;
-								gameCache.updateGame(gameDetails, game, WebEditGame.this);
+								gameCache.updateGame(gameDetails, game, 
+										gameInfo, WebEditGame.this);
 							}
 						}
 						WebEditGame.super.finishOk(data);
@@ -397,6 +394,8 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 					WebEditGame.super.finishOk(data);
 				}
 			});
+		} else {
+			super.finishCancel();
 		}
 	}
 }
