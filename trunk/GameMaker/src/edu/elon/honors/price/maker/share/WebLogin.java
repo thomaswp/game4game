@@ -124,7 +124,7 @@ public class WebLogin extends Activity implements IViewContainer {
 		LinkedList<String> files = new LinkedList<String>();
 		LinkedList<String> names = new LinkedList<String>();
 		for (GameDetails details : gameCache.getGames(GameType.Edit)) {
-			if (!details.hasWebsiteInfo) {
+			if (!details.hasWebsiteInfo()) {
 				names.add(details.name);
 				files.add(details.filename);
 			}

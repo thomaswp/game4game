@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,9 +57,7 @@ public class MainMenu extends Activity {
 		createDirs();
 
 		loadButtons();
-		
-		gameCache = GameCache.getGameCache(this);
-		Debug.write(gameCache.getGames(GameType.Edit));
+		Debug.write("Files: %s", Arrays.toString(fileList()));
 
 		super.onCreate(savedInstanceState);
 	}
@@ -66,6 +65,8 @@ public class MainMenu extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		gameCache = GameCache.getGameCache(this);
+		Debug.write(gameCache.getGames(GameType.Play));
 		loadMaps();
 	}
 
@@ -106,9 +107,9 @@ public class MainMenu extends Activity {
 		
 		for (final GameDetails details : gameCache.getGames(GameType.Edit)) {
 			final String fileName = details.filename;
-			PlatformGame game = details.loadGame(this);
-			if (game != null) {
-				final String name = game.getName(details.name);
+			//PlatformGame game = details.loadGame(this);
+			//if (game != null) {
+				final String name = details.name;
 				RadioButton b = new RadioButton(this);
 				b.setText(name);
 				b.setOnClickListener(new OnClickListener() {
@@ -136,10 +137,10 @@ public class MainMenu extends Activity {
 					selectedMap = details;
 					b.setChecked(true);
 				}
-			} else {
-				Debug.write("Deleted invalid file: %s", fileName);
-				gameCache.deleteGame(details, GameType.Edit, this);
-			}
+//			} else {
+//				Debug.write("Deleted invalid file: %s", fileName);
+//				gameCache.deleteGame(details, GameType.Edit, this);
+//			}
 		}
 	}
 

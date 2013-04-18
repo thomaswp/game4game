@@ -19,11 +19,13 @@ public class PlatformGame extends GameData {
 
 	protected int _VERSION_ = Upgrader.LATEST_VERSION;
 	
+	@Deprecated
 	public GameInfo websiteInfo;
 	
 	@Deprecated
 	public String name;
 
+	@Deprecated
 	public long lastEdited;
 
 	public ArrayList<Map> maps;
@@ -52,11 +54,7 @@ public class PlatformGame extends GameData {
 		return _VERSION_;
 	}
 	
-	public boolean hasWebisiteId(long id) {
-		return websiteInfo != null &&
-				websiteInfo.id == id;
-	}
-	
+	@Deprecated
 	public String getName(String fallback) {
 		return websiteInfo == null ? fallback :
 			websiteInfo.name;
