@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -298,6 +299,16 @@ public final class Data {
 	public static Bitmap loadEditorBmp(String name) {
 		return loadEditorBmp(name, getDefaultParent());
 	}
+	
+	public static <T extends Serializable> T loadData(String name, Context context) {
+		try {
+			InputStream is = context.openFileInput(name);
+			return loadData(is);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 
 	/**
 	 * Used to load game data stored in the GameMaker namespace. Can
@@ -308,7 +319,7 @@ public final class Data {
 	 * have to be in the GameMaker namespace.
 	 * @return The PlatformGame object.
 	 */
-	public static <T extends Serializable> T loadData(String name, Context context) {
+	public static <T extends Serializable> T loadDataGlobal(String name, Context context) {
 		try {
 			InputStream is = context.getContentResolver().openInputStream(
 					Uri.withAppendedPath(Data.CONTENT_URI, name));
@@ -328,6 +339,17 @@ public final class Data {
 			return (T)data;
 	}
 
+	public static boolean saveData(String name, Context context, Serializable data) {
+		try {
+			FileOutputStream fos = context.openFileOutput(name, 
+					Context.MODE_PRIVATE);
+			return saveData(fos, data);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
 	/**
 	 * Used to save game data stored in the GameMaker namespace. Can
 	 * be used outside of this namespace.
@@ -337,19 +359,25 @@ public final class Data {
 	 * have to be in the GameMaker namespace.
 	 * @param data The PlatformGame object.
 	 * @return true if the save was successful.
+	 * @throws IOException 
 	 */
 	@SuppressLint("WorldReadableFiles")
-	public static boolean saveData(String name, Context context, Serializable data) {
+	public static boolean saveDataGlobal(String name, Context context, Serializable data) {
 		try {
 			FileOutputStream fos = context.openFileOutput(name, 
 					Context.MODE_WORLD_READABLE);
-			ObjectOutputStream out = new ObjectOutputStream(fos);
-			out.writeObject(data);
-			out.close();
-			return true;
+			return saveData(fos, data);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return false;
 		}
+	}
+
+	private static boolean saveData(OutputStream os, Serializable data) 
+			throws IOException {
+		ObjectOutputStream out = new ObjectOutputStream(os);
+		out.writeObject(data);
+		out.close();
+		return true;
 	}
 }

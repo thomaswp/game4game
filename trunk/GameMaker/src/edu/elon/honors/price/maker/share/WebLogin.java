@@ -53,7 +53,9 @@ public class WebLogin extends Activity implements IViewContainer {
 	private LinearLayout linearLayoutGames;
 	private ProgressDialog progressDialog;
 	private Button buttonLogin, buttonAddGame, buttonBrowse;
-
+	
+	private GameCache gameCache;
+	
 	private Handler handler = new Handler();
 
 	private MyUserInfo userInfo;
@@ -63,6 +65,8 @@ public class WebLogin extends Activity implements IViewContainer {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.web_login);
 
+		gameCache = GameCache.getGameCache(this);
+		
 		AutoAssignUtils.autoAssign(this);
 
 		progressDialog = DialogUtils.createLoadingDialog(this);
@@ -118,26 +122,23 @@ public class WebLogin extends Activity implements IViewContainer {
 	}
 
 	private void addGame() {
-
-		GameCache gameCache = GameCache.getGameCache(this);
 		
-		LinkedList<String> files = new LinkedList<String>();
+		LinkedList<GameDetails> validDetails = new LinkedList<GameDetails>();
 		LinkedList<String> names = new LinkedList<String>();
 		for (GameDetails details : gameCache.getGames(GameType.Edit)) {
 			if (!details.hasWebsiteInfo()) {
-				names.add(details.name);
-				files.add(details.filename);
+				names.add(details.getName());
+				validDetails.add(details);
 			}
 		}
 		Bundle bundle = new Bundle();
 
 
 
-		if (files.size() > 0) {
-			String[] filesA = files.toArray(new String[files.size()]);
+		if (validDetails.size() > 0) {
 			String[] namesA = names.toArray(new String[names.size()]);
-			bundle.putStringArray("files", filesA);
 			bundle.putStringArray("names", namesA);
+			bundle.putSerializable("details", validDetails);
 
 			showDialog(DIALOG_ADD_GAME, bundle);
 		} else {
@@ -145,16 +146,16 @@ public class WebLogin extends Activity implements IViewContainer {
 		}
 	}
 
-	private void addGame(final String filename) {
+	private void addGame(final GameDetails details) {
+		final String filename = details.getFilename();
 		Debug.write(filename);
-		final PlatformGame game = (PlatformGame)Data.loadData(filename, this);
+		final PlatformGame game = details.loadGame(this);
 		showDialog(DIALOG_LOADING);
-		DataUtils.createGame(this, game, new CreateCallback<GameInfo>() {
+		DataUtils.createGame(this, game, details, new CreateCallback<GameInfo>() {
 			@Override
 			public void createComplete(GameInfo result) {
 				progressDialog.dismiss();
-				game.websiteInfo = result;
-				Data.saveData(filename, WebLogin.this, game);
+				gameCache.updateGame(details, result, WebLogin.this);
 				WebGameView gameView = new WebGameView(
 						WebLogin.this, result);
 				linearLayoutGames.addView(gameView);
@@ -263,14 +264,16 @@ public class WebLogin extends Activity implements IViewContainer {
 		} else if (id == DIALOG_ADD_GAME) {
 
 			String[] names = args.getStringArray("names");
-			final String[] files = args.getStringArray("files");
+			@SuppressWarnings("unchecked")
+			final List<GameDetails> details = 
+					(List<GameDetails>)args.getSerializable("details");
 
 			return new AlertDialog.Builder(this)
 			.setTitle("Choose game to upload")
 			.setItems(names, new Dialog.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					addGame(files[which]);
+					addGame(details.get(which));
 					removeDialog(DIALOG_ADD_GAME);
 				}
 			})

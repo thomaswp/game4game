@@ -228,8 +228,8 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 						new PostCallback() {
 					@Override
 					public void postComplete() {
-						DataUtils.updateGame(WebEditGame.this, game, which == 0, 
-								new CreateCallback<GameInfo>() {
+						DataUtils.updateGame(WebEditGame.this, game, gameDetails, 
+								which == 0, new CreateCallback<GameInfo>() {
 							@Override
 							public void createComplete(GameInfo result) {
 								if (result == null) {
@@ -313,14 +313,15 @@ public class WebEditGame extends SaveableActivity implements IViewContainer {
 				EnumSet.of(GameType.Edit, GameType.Play));
 		for (GameDetails details : games) {
 			if (details.hasWebisiteId(gameInfo.id)) {
+				Debug.write("%d v %d", details.getLastEdited(), gameInfo.lastEdited);
 				gameDetails = details;
 				downloaded = true;
-				if (details.lastEdited < gameInfo.lastEdited) {
+				if (details.getLastEdited() < gameInfo.lastEdited) {
 					buttonDownload.setText("Update Version");
 				} else {
 					buttonDownload.setEnabled(false);
 				}
-				if (details.lastEdited > gameInfo.lastEdited && owner) {
+				if (details.getLastEdited() > gameInfo.lastEdited && owner) {
 					buttonPublish.setEnabled(true);
 				}
 				break;

@@ -2,7 +2,9 @@ package edu.elon.honors.price.maker;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -17,6 +19,7 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.GameCache;
 import edu.elon.honors.price.data.GameCache.GameDetails;
 import edu.elon.honors.price.data.GameCache.GameType;
+import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.share.WebLogin;
@@ -59,6 +62,23 @@ public class MainMenu extends Activity {
 		loadButtons();
 		Debug.write("Files: %s", Arrays.toString(fileList()));
 
+//		gameCache = GameCache.getGameCache(this);
+//		for (GameDetails gameDetails : gameCache.getGames(GameType.Edit)) {
+//			PlatformGame game = gameDetails.loadGame(this);
+//			for (Map map : game.maps) {
+//				map.events = null;
+//			}
+//			game.actorBehaviors = null;
+//			game.objectBehaviors = null;
+//			
+//			
+//			long time = System.currentTimeMillis();
+//			Data.saveDataGlobal("test", this, game);
+//			time = System.currentTimeMillis() - time;
+//			Debug.write("%s: %d", gameDetails.getName(), time);
+//		}
+//		deleteFile("test");
+
 		super.onCreate(savedInstanceState);
 	}
 	
@@ -66,7 +86,7 @@ public class MainMenu extends Activity {
 	public void onResume() {
 		super.onResume();
 		gameCache = GameCache.getGameCache(this);
-		Debug.write(gameCache.getGames(GameType.Play));
+		Debug.write(gameCache.getGames(GameType.Edit));
 		loadMaps();
 	}
 
@@ -106,41 +126,32 @@ public class MainMenu extends Activity {
 		selectedMap = null;
 		
 		for (final GameDetails details : gameCache.getGames(GameType.Edit)) {
-			final String fileName = details.filename;
-			//PlatformGame game = details.loadGame(this);
-			//if (game != null) {
-				final String name = details.name;
-				RadioButton b = new RadioButton(this);
-				b.setText(name);
-				b.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						if (selectedMap == details)
-							edit();
-						else
-							selectedMap = details;
-					}
-				});
-				b.setOnLongClickListener(new OnLongClickListener() {
-					@Override
-					public boolean onLongClick(View arg0) {
-						PlatformGame data = Data.loadData(fileName, MainMenu.this);
-						data.websiteInfo = null; 
-						gameCache.addGame("Copy of " + name, GameType.Edit, 
-								data, MainMenu.this);
-						loadMaps();
-						return true;
-					}
-				});
-				group.addView(b);
-				if (selectedMap == null) {
-					selectedMap = details;
-					b.setChecked(true);
+			final String name = details.getName();
+			RadioButton b = new RadioButton(this);
+			b.setText(name);
+			b.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (selectedMap == details)
+						edit();
+					else
+						selectedMap = details;
 				}
-//			} else {
-//				Debug.write("Deleted invalid file: %s", fileName);
-//				gameCache.deleteGame(details, GameType.Edit, this);
-//			}
+			});
+			b.setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View arg0) {
+					gameCache.makeCopy(details, "Copy of " + name, 
+							GameType.Edit, MainMenu.this);
+					loadMaps();
+					return true;
+				}
+			});
+			group.addView(b);
+			if (selectedMap == null) {
+				selectedMap = details;
+				b.setChecked(true);
+			}
 		}
 	}
 
@@ -218,7 +229,7 @@ public class MainMenu extends Activity {
 			public void onClick(View v) {
 				if (selectedMap != null) {
 					Intent intent = new Intent(MainMenu.this, TestActivity.class);
-					PlatformGame game = Data.loadData(selectedMap.filename, MainMenu.this);
+					PlatformGame game = Data.loadData(selectedMap.getFilename(), MainMenu.this);
 					intent.putExtra("gameName", selectedMap);
 					intent.putExtra("game", game);
 					startActivity(intent);
@@ -279,7 +290,7 @@ public class MainMenu extends Activity {
 			name = "Map" + n++;
 			boolean novel = true;
 			for (GameDetails details : gameCache.getGames(GameType.Edit)) {
-				if (details.name.equals(name)) {
+				if (details.getFilename().equals(name)) {
 					novel = false;
 				}
 			}
@@ -312,8 +323,8 @@ public class MainMenu extends Activity {
 	private void edit() {
 		if (selectedMap != null) {
 			Intent intent = new Intent(this, MapEditor.class);
-			PlatformGame game = Data.loadData(selectedMap.filename, this);
-			intent.putExtra("gameName", selectedMap.filename);
+			PlatformGame game = Data.loadData(selectedMap.getFilename(), this);
+			intent.putExtra("gameDetails", selectedMap);
 			intent.putExtra("game", game);
 			startActivity(intent);
 		}
