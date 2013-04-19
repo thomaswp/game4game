@@ -3,6 +3,8 @@ package edu.elon.honors.price.maker;
 import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.GameCache.GameDetails;
+import edu.elon.honors.price.data.GameCache;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
@@ -17,13 +19,15 @@ import android.widget.Toast;
 
 public class MapEditor extends MapActivityBase {
 
-	protected String gameName;
+	protected GameDetails gameDetails;
 	protected ReturnResponse returnResponse;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Data.setDefaultParent(this);
-		gameName = getIntent().getExtras().getString("gameName");
+		gameDetails = (GameDetails)getIntent().getExtras().getSerializable(
+				"gameDetails");
+		//gameDetails = gameDetails.getSynced(this);
 		super.onCreate(savedInstanceState);
 	}
 
@@ -121,7 +125,7 @@ public class MapEditor extends MapActivityBase {
 	
 	private void test() {
 		Intent intent = new Intent(this, Platformer.class);
-		intent.putExtra("map", gameName);
+		intent.putExtra("map", gameDetails.getFilename());
 		startActivity(intent);
 		Debug.write(System.currentTimeMillis());
 	}
@@ -129,9 +133,8 @@ public class MapEditor extends MapActivityBase {
 	private void save() {
 		try {
 			((MapEditorView)view).saveMapData();
-			game.lastEdited = System.currentTimeMillis();
-			Data.saveData(gameName, this, game);
-			PlatformGame gameCopy = (PlatformGame) Data.loadData(gameName, this);
+			gameDetails.saveGame(game, this);
+			PlatformGame gameCopy = gameDetails.loadGame(this);
 			getIntent().putExtra("game", gameCopy);
 			Toast.makeText(this, "Save Successful!", Toast.LENGTH_SHORT).show(); 
 		} catch (Exception ex) {
@@ -146,9 +149,9 @@ public class MapEditor extends MapActivityBase {
 
 	private void load() {
 		try {
-			game = (PlatformGame) Data.loadData(gameName, this);
+			game = gameDetails.loadGame(this);
 			((MapEditorView)view).setGame(game, true);
-			PlatformGame gameCopy = (PlatformGame) Data.loadData(gameName, this);
+			PlatformGame gameCopy = gameDetails.loadGame(this);
 			getIntent().putExtra("game", gameCopy);
 			refresh();
 			Toast.makeText(this, "Load Successful!", Toast.LENGTH_SHORT).show(); 

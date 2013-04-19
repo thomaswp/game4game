@@ -22,6 +22,7 @@ import com.eujeux.data.UserInfo;
 import com.eujeux.data.WebSettings;
 import com.eujeux.data.WebSettings.SortType;
 
+import edu.elon.honors.price.data.GameCache.GameDetails;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.game.Debug;
 
@@ -84,18 +85,18 @@ public class DataUtils {
 		task.execute(info);
 	}
 	
-	public static void createGame(Context context, PlatformGame game, CreateCallback<GameInfo> callback) {
-		String escapedName = URLEncoder.encode(game.name);
+	public static void createGame(Context context, PlatformGame game, GameDetails details, CreateCallback<GameInfo> callback) {
+		String escapedName = URLEncoder.encode(details.getName());
 		
 		CreateTask<PlatformGame, GameInfo> task = new CreateTask<PlatformGame, GameInfo>(context, 
-				GAME + "?name=" + escapedName + "&lastEdited=" + game.lastEdited, callback);
+				GAME + "?name=" + escapedName + "&lastEdited=" + details.getLastEdited(), callback);
 		task.execute(game);
 	}
 	
-	public static void updateGame(Context context, PlatformGame game, boolean majorUpdate, CreateCallback<GameInfo> callback) {
+	public static void updateGame(Context context, PlatformGame game, GameDetails details, boolean majorUpdate, CreateCallback<GameInfo> callback) {
 		CreateTask<PlatformGame, GameInfo> task = new CreateTask<PlatformGame, GameInfo>(context, 
 			String.format("%s?lastEdited=%d&majorUpdate=%s&id=%d", GAME,
-						game.lastEdited, "" + majorUpdate, game.websiteInfo.id), callback);
+						details.getLastEdited(), "" + majorUpdate, details.getWebsiteInfo().id), callback);
 		task.execute(game);
 	}
 	

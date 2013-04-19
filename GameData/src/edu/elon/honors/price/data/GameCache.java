@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.eujeux.data.GameInfo;
 
+import edu.elon.honors.price.data.GameCache.GameDetails;
+import edu.elon.honors.price.data.GameCache.GameType;
 import edu.elon.honors.price.game.Debug;
 
 import android.content.Context;
@@ -56,21 +58,26 @@ public class GameCache implements Serializable {
 	
 	private String getNewFilename(String base, Context context) {
 		base = base.replaceAll("[^A-Za-z0-9_]", "");
+		if (base.length() == 0) base = "Map";
+		if (base.length() > 10) base = base.substring(0, 10);
 		String[] files = context.fileList();
 		int n = 0;
-		String name;
+		String name = base;
 		boolean exists = false;
 		do {
-			name = base + ++n;
 			exists = false;
 			for (int i = 0; i < files.length; i++) 
-				exists |= files[i].equals(name); 
-		} while (exists);
+				exists |= files[i].equals(name);
+			if (!exists) break;
+			name = base + ++n;
+		} while (true);
 		return name;
 	}
 	
 	private void save(Context context) {
+		Debug.write("start save cache");
 		Data.saveData(FILE_NAME, context, this);
+		Debug.write("end save cache");
 	}
 	
 	public GameDetails addGame(String name, GameType type, PlatformGame game, 
@@ -94,15 +101,29 @@ public class GameCache implements Serializable {
 	}
 	
 	public boolean updateGame(GameDetails details, PlatformGame game, 
+			Context context) {
+		return updateGame(details, game, null, context);
+	}
+	
+	public boolean updateGame(GameDetails details, PlatformGame game, 
 			GameInfo websiteInfo, Context context) {
+		Debug.write("start save game");
 		if (Data.saveData(details.filename, context, game)) {
-			if (websiteInfo != null) details.name = websiteInfo.name;
-			details.websiteInfo = websiteInfo;
-			details.lastEdited = websiteInfo.lastEdited;
-			save(context);
-			return true;
+			Debug.write("end save game");
+			return updateGame(details, websiteInfo, context);
 		}
 		return false;
+	}
+	
+	public boolean updateGame(GameDetails details, GameInfo websiteInfo, 
+			Context context) {
+		if (websiteInfo != null) {
+			details.name = websiteInfo.name;
+			details.websiteInfo = websiteInfo;
+			details.lastEdited = websiteInfo.lastEdited;
+		}
+		save(context);
+		return true;
 	}
 	
 	public void deleteGame(GameDetails details, GameType type, Context context) {
@@ -115,12 +136,18 @@ public class GameCache implements Serializable {
 	
 	@SuppressWarnings("deprecation")
 	public static GameCache getGameCache(Context context) {
-		if (instance != null) return instance;
+		if (instance != null) {
+			Debug.write("load instance");
+			return instance;
+		}
 		
+		Debug.write("load cache");
 		GameCache cache = Data.loadData(FILE_NAME, context);
+		instance = cache;
 		
 		if (cache != null) return cache;
 		
+		Debug.write("create cache");
 		context.deleteFile(FILE_NAME);
 		
 		cache = new GameCache();
@@ -130,6 +157,7 @@ public class GameCache implements Serializable {
 			if (game != null) {
 				GameDetails details = new GameDetails(game.getName("Map"), file, 
 						game.websiteInfo);
+				details.lastEdited = game.lastEdited;
 				cache.myGames.add(details);
 			}
 		}
@@ -140,15 +168,40 @@ public class GameCache implements Serializable {
 		return cache;
 	}
 	
+	public void makeCopy(GameDetails details, String name, GameType type,
+			Context context) {
+		 addGame(name, type, details.loadGame(context), context);
+	}
+	
 	public static class GameDetails implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
-		public String name;
-		public String filename;	
-		public Date dateCreated;
-		public GameInfo websiteInfo;
-		public long lastEdited;
+		private String name;
+		private String filename;	
+		private Date dateCreated;
+		private GameInfo websiteInfo;
+		private long lastEdited;
 		
+		public String getName() {
+			return name;
+		}
+
+		public String getFilename() {
+			return filename;
+		}
+
+		public Date getDateCreated() {
+			return dateCreated;
+		}
+
+		public GameInfo getWebsiteInfo() {
+			return websiteInfo;
+		}
+
+		public long getLastEdited() {
+			return lastEdited;
+		}
+
 		public boolean hasWebsiteInfo() {
 			return websiteInfo != null;
 		}
@@ -163,9 +216,24 @@ public class GameCache implements Serializable {
 			dateCreated = new Date();
 		}
 		
-		public PlatformGame loadGame(Context Context) {
-			return (PlatformGame)Data.loadData(filename, Context);
+		public PlatformGame loadGame(Context context) {
+			return (PlatformGame)Data.loadData(filename, context);
 		}
+		
+		public boolean saveGame(PlatformGame game, Context context) {
+//			if (getByFilename(filename, context) != this) {
+//				throw new RuntimeException("GameDetails out of sync!");
+//			}
+			
+			GameCache gameCache = getGameCache(context);
+			GameDetails details = getByFilename(filename, context);
+			details.lastEdited = System.currentTimeMillis();
+			return gameCache.updateGame(details, game, context);
+		}
+		
+//		public GameDetails getSynced(Context context) {
+//			return getByFilename(filename, context);
+//		}
 		
 		@Override
 		public String toString() {
@@ -175,6 +243,19 @@ public class GameCache implements Serializable {
 
 		public boolean hasWebisiteId(long id) {
 			return websiteInfo != null && websiteInfo.id == id;
+		}
+		
+
+		public static GameDetails getByFilename(String filename, Context context) {
+			GameCache gameCache = GameCache.getGameCache(context);
+			for (GameType type : GameType.values()) {
+				for (GameDetails details : gameCache.getGamesList(type)) {
+					if (details.filename.equals(filename)) {
+						return details;
+					}
+				}
+			}
+			return null;
 		}
 		
 //		@Override
