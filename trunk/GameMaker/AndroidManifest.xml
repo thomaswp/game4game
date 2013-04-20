@@ -16,7 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        
+    	
     	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebLogin" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebEditGame" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />
     	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebBrowseGames" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />

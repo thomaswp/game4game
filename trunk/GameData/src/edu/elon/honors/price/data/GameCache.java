@@ -37,7 +37,8 @@ public class GameCache implements Serializable {
 		return new CompoundIterable<GameDetails>(lists);
 	}
 	
-	public Iterable<GameDetails> getGames(GameType type) {
+	//public Iterable<GameDetails> getGames(GameType type) {
+	public List<GameDetails> getGames(GameType type) {
 		return getGamesList(type);
 	}
 	
@@ -127,6 +128,20 @@ public class GameCache implements Serializable {
 	}
 	
 	public void deleteGame(GameDetails details, GameType type, Context context) {
+		boolean found = false;
+		for (GameDetails d : getGamesList(type)) {
+			if (d.filename.equals(details.filename)) {
+				found = true;
+				break;
+			}
+		}
+		
+		if (!found) {
+			Debug.write("No game with filename %s for type %s", 
+					details.filename, type.toString());
+			return;
+		}
+		
 		context.deleteFile(details.filename);
 		getGamesList(type).remove(details);
 		save(context);
@@ -168,9 +183,14 @@ public class GameCache implements Serializable {
 		return cache;
 	}
 	
-	public void makeCopy(GameDetails details, String name, GameType type,
+	public GameDetails makeCopy(GameDetails details, String name, GameType type,
 			Context context) {
-		 addGame(name, type, details.loadGame(context), context);
+		 GameDetails d = addGame(name, type, details.loadGame(context), context);
+		 if (details.hasWebsiteInfo()) {
+			 d.branchedGameId = details.websiteInfo.id;
+			 save(context);
+		 }
+		 return d;
 	}
 	
 	public static class GameDetails implements Serializable {
@@ -181,6 +201,7 @@ public class GameCache implements Serializable {
 		private Date dateCreated;
 		private GameInfo websiteInfo;
 		private long lastEdited;
+		private long branchedGameId;
 		
 		public String getName() {
 			return name;
@@ -206,6 +227,10 @@ public class GameCache implements Serializable {
 			return websiteInfo != null;
 		}
 		
+		public long getBranchedGameId() {
+			return branchedGameId;
+		}
+
 		public GameDetails(String name, String filename, GameInfo websiteInfo) {
 			this.name = name;
 			this.filename = filename;

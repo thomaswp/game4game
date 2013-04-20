@@ -28,6 +28,8 @@ public class PlatformGame extends GameData {
 	@Deprecated
 	public long lastEdited;
 
+	public Tutorial tutorial;
+	
 	public ArrayList<Map> maps;
 	public int selectedMapId;
 
@@ -89,6 +91,8 @@ public class PlatformGame extends GameData {
 	}
 	
 	public PlatformGame() {
+		
+		tutorial = new Tutorial();
 		
 		switchNames = new String[] { };
 		switchValues = new boolean[] { };
