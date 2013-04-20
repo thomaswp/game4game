@@ -157,4 +157,15 @@
     <string name="friction_c">Friction:</string>
     <string name="changeColor">Change Color</string>
     <string name="enableDisable">Enable/Disable</string>
+    <string name="welcomeTO">"Welcome to "</string>
+    <string name="bang">!</string>
+    <string name="mainMenuEditHint">
+        It looks like you don\'t have any games of your own. Why don\'t you try creating 
+        one with the "New Game" button, or "Branch" a game on the Play tab to edit it 
+        yourself.
+    </string>
+    <string name="mainMenuPlayHint">
+        It looks like you haven\'t downloaded any games from other players. Click the 
+        "Go Online" button to find some games other folks have made.
+    </string>
 </resources>
