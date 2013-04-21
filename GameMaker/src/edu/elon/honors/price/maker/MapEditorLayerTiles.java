@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.MapEditorView;
 import android.graphics.Bitmap;
@@ -142,6 +143,8 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 	@Override
 	public void onTouchUpNormal(float x, float y) {
 		placeTiles(x, y);
+		TutorialUtils.fireCondition(EditorAction.MapEditorPlaceTile, 
+				parent.getContext());
 	}
 
 	@Override

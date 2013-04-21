@@ -45,7 +45,9 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		Input.onTouch(this, event);
+		if (!paused) {
+			Input.onTouch(this, event);
+		}
 		return true;
 	}
 	

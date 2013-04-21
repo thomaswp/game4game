@@ -15,6 +15,8 @@ import edu.elon.honors.price.data.GameCache;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.GameCache.GameDetails;
 import edu.elon.honors.price.data.GameCache.GameType;
+import edu.elon.honors.price.data.tutorial.Tutorial;
+import edu.elon.honors.price.data.tutorial.Tutorial1;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.share.WebLogin;
 import android.app.Activity;
@@ -131,6 +133,16 @@ public class MainMenu extends Activity implements IViewContainer {
 		});
 		
 		gameCache = GameCache.getGameCache(this);
+		
+		PlatformGame game = new PlatformGame();
+		game.tutorial = new Tutorial1(this);
+		if (gameCache.getGames(GameType.Tutorial).size() == 0) {
+			gameCache.addGame("Tutorial 1", GameType.Tutorial, game, this);
+		} else {
+			GameDetails details = gameCache.getGames(GameType.Tutorial).get(0);
+			gameCache.updateGame(details, game, this);
+		}
+		
 		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabId) {

@@ -21,9 +21,12 @@ import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButtonAction;
 import edu.elon.honors.price.game.Cache;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
+import edu.elon.honors.price.maker.action.ActionChangeColor.TurnFlashingForData;
 
 public abstract class MapActivityBase extends SaveableActivity {
 
@@ -158,6 +161,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 						if (button.onReleasedHandler != null) {
 							button.onReleasedHandler.run();
 						}
+						if (button.editorButton != null) {
+							TutorialUtils.fireCondition(button.editorButton, 
+									EditorButtonAction.ButtonUp, getContext());
+						}
 					}
 					button.down = false;
 				}
@@ -171,6 +178,10 @@ public abstract class MapActivityBase extends SaveableActivity {
 					if (button.enabled) {
 						if (button.onPressedHandler != null) {
 							button.onPressedHandler.run();
+						}
+						if (button.editorButton != null) {
+							TutorialUtils.fireCondition(button.editorButton, 
+									EditorButtonAction.ButtonDown, getContext());
 						}
 						button.down = true;
 					}
@@ -653,6 +664,8 @@ public abstract class MapActivityBase extends SaveableActivity {
 			public boolean opaque;
 			public float alphaFactor;
 			public boolean enabled;
+			public EditorButton editorButton;
+			
 			private Rect bounds, src;
 			private RectF dest;
 
@@ -685,8 +698,11 @@ public abstract class MapActivityBase extends SaveableActivity {
 			protected void drawButton(Canvas c, Paint paint) {
 				int innerRad = (int)(radius * 0.9f);
 				int trans = (int)(150 * alphaFactor);
-
+				
 				paint.setColor(Color.DKGRAY);
+				if (TutorialUtils.isHighlighted(editorButton)) {
+					paint.setColor(TutorialUtils.getHightlightColor());
+				}
 				if (!down && !opaque) paint.setAlpha(trans);
 				paint.setStyle(Style.FILL);
 				c.drawCircle(cx, cy, radius, paint);
@@ -702,7 +718,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 					float maxSemiHeight = radius - Math.abs(cty - cy);
 					maxSemiWidth /= 1.9;
 					maxSemiHeight /= 1.9;
-					float semiWidth = image.getWidth() / 2;
+					float semiWidth = image.getWidth() / 2f;
 					float semiHeight = image.getHeight() / 2f;
 					float scaleWidth = Math.min(maxSemiWidth / semiWidth, 1);
 					float scaleHeight = Math.min(maxSemiHeight / semiHeight, 1);

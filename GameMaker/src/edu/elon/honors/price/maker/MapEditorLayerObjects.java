@@ -8,6 +8,7 @@ import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
 import edu.elon.honors.price.game.Debug;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -169,6 +170,8 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 		int index = game.getSelectedMap().objects.size();
 		final ObjectInstance object = new ObjectInstance(index, classIndex, startX, startY);
 
+		TutorialUtils.fireCondition(EditorAction.MapEditorPlaceObject, 
+				parent.getContext());
 		Action action = new Action() {
 			@Override
 			public void undo(PlatformGame game) {

@@ -28,10 +28,19 @@ public abstract class ScrollingImageSelectorView extends BasicCanvasView {
 	private LinearGradient gradient;
 	private float[] lastVelocities;
 	private int velocityIndex;
+	private OnSelectionListener onSelectionListener;
 
 	protected abstract Bitmap[] getBitmaps();
 	protected abstract String getDescription(int id);
-	protected abstract void onSelection(int id);
+	//protected abstract void onSelection(int id);
+	
+	public interface OnSelectionListener {
+		void onSelection(int id);
+	}
+	
+	public void setOnSelectionListener(OnSelectionListener onSelectionListener) {
+		this.onSelectionListener = onSelectionListener;
+	}
 	
 	public ScrollingImageSelectorView(Context context, int id) {
 		super(context);
@@ -118,7 +127,9 @@ public abstract class ScrollingImageSelectorView extends BasicCanvasView {
 				float minY = (height - objects[i].getHeight()) / 2;
 				if (y >= minY && y <= minY + objects[i].getHeight()) {
 					if (selectedId == i) {
-						onSelection(i);
+						if (onSelectionListener != null) {
+							onSelectionListener.onSelection(i);
+						}
 					} else {
 						selectedId = i;
 					}

@@ -16,6 +16,7 @@ import edu.elon.honors.price.data.ActorInstance;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
 import edu.elon.honors.price.maker.MapEditorView;
 
 public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance> {
@@ -133,6 +134,9 @@ public class MapEditorLayerActors extends MapEditorLayerSelectable<ActorInstance
 			return;
 		}
 
+		TutorialUtils.fireCondition(EditorAction.MapEditorPlaceActor, 
+				parent.getContext());
+		
 		Action action;
 		if (newClass == 0) {
 			final int heroRow = map.getHeroRow();
