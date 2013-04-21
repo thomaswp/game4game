@@ -5,7 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,17 +21,24 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.FloatMath;
+import android.view.View;
+import android.view.WindowManager;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButtonAction;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.maker.MapActivityBase.MapView;
 import edu.elon.honors.price.maker.MapEditorLayer.Action;
 import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
 import edu.elon.honors.price.maker.MapEditor.ReturnResponse;
+import edu.elon.honors.price.maker.MapEditorTextureSelectorView.Poster;
+import edu.elon.honors.price.maker.ScrollingImageSelectorView.OnSelectionListener;
 
 public class MapEditorView extends MapView {
 
@@ -81,6 +92,7 @@ public class MapEditorView extends MapView {
 
 	public void setGame(PlatformGame game, boolean loadEditorData) {
 		synchronized(this.game) {
+			TutorialUtils.setTutorial(game.tutorial, getContext());
 			updateActors(game);
 			updateObjects(game);
 			updateTileset(game);
@@ -105,6 +117,8 @@ public class MapEditorView extends MapView {
 			Bundle savedInstanceState) {
 		super(context, game, savedInstanceState);
 		createDarkTiles();
+		
+		TutorialUtils.setTutorial(game.tutorial, getContext());
 
 		if (game.getSelectedMap().editorData != null) {
 			loadMapData((EditorData)game.getSelectedMap().editorData);
@@ -156,15 +170,18 @@ public class MapEditorView extends MapView {
 	@Override
 	protected void createButtons() {
 		layerButton = createBottomRightButton("Layer");
+		layerButton.editorButton = EditorButton.MapEditorLayer;
 		layerButton.onPressedHandler = new Runnable() {
 			@Override
 			public void run() {
 				selectingLayer = true;
+				
 			}
 		};
 		buttons.add(layerButton);
 
 		selectionButton = createTopRightButton("");
+		selectionButton.editorButton = EditorButton.MapEditorDrawMode;
 		//selectionButton.imageBorder = true;
 		selectionButton.onPressedHandler = new Runnable() {
 			@Override
@@ -185,6 +202,7 @@ public class MapEditorView extends MapView {
 		buttons.add(selectionButton);
 
 		modeButton = createBottomLeftButton("Move");
+		modeButton.editorButton = EditorButton.MapEditorMoveMode;
 		modeButton.onReleasedHandler = new Runnable() {
 			@Override
 			public void run() {
@@ -234,6 +252,7 @@ public class MapEditorView extends MapView {
 		int y = height + getButtonBorder() / 2;
 		float cty = height - getButtonBorder() * 0.8f;
 		undoButton = new Button(x, y, x, cty, rad, "Undo");
+		undoButton.editorButton = EditorButton.MapEditorUndo;
 		undoButton.onReleasedHandler = new Runnable() {
 			@Override
 			public void run() {
@@ -244,6 +263,7 @@ public class MapEditorView extends MapView {
 
 		x = width - x;
 		redoButton = new Button(x, y, x, cty, rad, "Redo");
+		redoButton.editorButton = EditorButton.MapEditorRedo;
 		redoButton.onReleasedHandler = new Runnable() {
 			@Override
 			public void run() {
@@ -666,61 +686,91 @@ public class MapEditorView extends MapView {
 	}
 
 	public void selectActor() {
-		Intent intent = new Intent(getContext(), MapEditorActorSelector.class);
-		intent.putExtra("game", game);
-		intent.putExtra("id", actorSelection);
-
-		getEditor().returnResponse = new ReturnResponse() {
+		postOnUiThread(new Runnable() {
 			@Override
-			public void onReturn(Intent data) {
-				actorSelection = data.getExtras().getInt("id");
+			public void run() {
+				pause();
+				MapEditorActorSelectorView view = new MapEditorActorSelectorView(
+						getContext(), actorSelection + 1, game);
+				final AlertDialog dialog = getViewDialog(view);
+				view.setOnSelectionListener(new OnSelectionListener() {
+					
+					@Override
+					public void onSelection(int id) {
+						dialog.dismiss();
+						actorSelection = id - 1;
+						refreshLayers();
+					}
+				});
+				dialog.show();
 			}
-		};
-
-		getEditor().startActivityForResult(intent, REQ_SELECTOR);
+		});
 	}
 
 	public void selectTileset() {
-		Intent intent = new Intent(getContext(), MapEditorTextureSelector.class);
 		int id = game.getSelectedMap().tilesetId;
-		Tileset tileset = game.tilesets[id];
-		intent.putExtra("id", tileset.bitmapName);
-		intent.putExtra("tileWidth", tileset.tileWidth);
-		intent.putExtra("tileHeight", tileset.tileHeight);
-		intent.putExtra("game", game);
-		intent.putExtra("left", tilesetSelection.left);
-		intent.putExtra("top", tilesetSelection.top);
-		intent.putExtra("right", tilesetSelection.right);
-		intent.putExtra("bottom", tilesetSelection.bottom);
-
-		getEditor().returnResponse = new ReturnResponse() {
+		final Tileset tileset = game.tilesets[id];
+		
+		postOnUiThread(new Runnable() {
 			@Override
-			public void onReturn(Intent data) {
-				int left = data.getExtras().getInt("left");
-				int top = data.getExtras().getInt("top");
-				int right = data.getExtras().getInt("right");
-				int bottom = data.getExtras().getInt("bottom");
-				tilesetSelection.set(left, top, right, bottom);
+			public void run() {
+				pause();
+				MapEditorTextureSelectorView view = new MapEditorTextureSelectorView(
+						getContext(), tileset, tilesetSelection); 
+				final AlertDialog dialog = getViewDialog(view);
+				view.setPoster(new Poster() {
+					@Override
+					void post(Rect rect) {
+						dialog.dismiss();
+						tilesetSelection.set(rect);
+						refreshLayers();
+					}
+				});
+				dialog.show();
 			}
-		};
-
-
-		getEditor().startActivityForResult(intent, REQ_SELECTOR);
+		});
+	}
+	
+	private void postOnUiThread(Runnable r) {
+		new Handler(getContext().getMainLooper()).post(r);
+	}
+	
+	private AlertDialog getViewDialog(View view) {
+		AlertDialog dialog = new AlertDialog.Builder(getContext())
+		.setView(view)
+		.create();
+		dialog.setOnDismissListener(new OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				resume();
+			}
+		});
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.getWindow().clearFlags(
+				WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		return dialog;
 	}
 
 	public void selectObject() {
-		Intent intent = new Intent(getContext(), MapEditorObjectSelector.class);
-		intent.putExtra("game", game);
-		intent.putExtra("id", objectSelection);
-
-		getEditor().returnResponse = new ReturnResponse() {
+		postOnUiThread(new Runnable() {
 			@Override
-			public void onReturn(Intent data) {
-				objectSelection =  data.getExtras().getInt("id");
+			public void run() {
+				pause();
+				MapEditorObjectSelectorView view = new MapEditorObjectSelectorView(
+						getContext(), objectSelection, game);
+				final AlertDialog dialog = getViewDialog(view);
+				view.setOnSelectionListener(new OnSelectionListener() {
+					
+					@Override
+					public void onSelection(int id) {
+						dialog.dismiss();
+						objectSelection = id;
+						refreshLayers();
+					}
+				});
+				dialog.show();
 			}
-		};
-
-		getEditor().startActivityForResult(intent, REQ_SELECTOR);
+		});
 	}
 
 	public void refreshLayers() {

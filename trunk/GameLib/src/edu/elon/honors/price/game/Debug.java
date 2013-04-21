@@ -27,6 +27,13 @@ public class Debug {
 		}
 	}
 	
+	public static void writeFrame(String format, Object... args) {
+		long time = System.currentTimeMillis() % 1000;
+		if (time < 1000 / 40) {
+			write(format, args);
+		}
+	}
+	
 	public static void write(Exception e) {
 		e.printStackTrace();
 	}

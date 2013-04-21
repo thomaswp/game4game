@@ -1,0 +1,15 @@
+Welcome to your first tutorial! In this tutorial, we’ll introduce you to the <h>Map Editor</h>, and teach your how to add <h>Tiles</h>, <h>Actors</h> and <h>Objects</h> to your <h>Map</h>. 
+
+This screen is the <h>Map Editor</h>.  In the bottom-left corner, is the <h>Move Mode</h> button. Pressing this button toggles whether you are moving around the map, or editing it. Try pressing the <h>Move Mode</h> button.
+
+Good job! Now you’re in <h>Edit</h> mode. In this mode you can place objects onto the map. You can choose what to place by pressing the <h>Selection</h> button in the top-right corner.
+
+Right now, you’re on the <h>Tile</h> layer, so you can choose from pieces of terrain to put on the map. Select a group of tiles you want to place on the map, then hit the small Ok button in the corner.
+
+To place the tiles on the map, just tap where you want them. Hold down until you have them just right, then let go to place them. If you decide you’d rather not place that item, just drop it on the <h>Cancel</h> button that appears.
+
+Great, try placing a few more tiles. Don’t forget, you can pan around the map by switching back into Move mode.
+
+If you don’t like how something turned out, you can use the <h>Undo</h> button to go back one action, or use <h>Redo</h> to try it again. Give it a shot.
+
+

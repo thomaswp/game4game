@@ -185,12 +185,14 @@ public class GameCache implements Serializable {
 	
 	public GameDetails makeCopy(GameDetails details, String name, GameType type,
 			Context context) {
-		 GameDetails d = addGame(name, type, details.loadGame(context), context);
-		 if (details.hasWebsiteInfo()) {
-			 d.branchedGameId = details.websiteInfo.id;
-			 save(context);
-		 }
-		 return d;
+		PlatformGame game = details.loadGame(context);
+		game.tutorial = null;
+		GameDetails d = addGame(name, type, game, context);
+		if (details.hasWebsiteInfo()) {
+			d.branchedGameId = details.websiteInfo.id;
+			save(context);
+		}
+		return d;
 	}
 	
 	public static class GameDetails implements Serializable {

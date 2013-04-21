@@ -10,6 +10,7 @@ import java.util.List;
 import com.eujeux.data.GameInfo;
 
 import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.data.tutorial.Tutorial;
 import android.graphics.Rect;
 
 public class PlatformGame extends GameData {
@@ -91,8 +92,6 @@ public class PlatformGame extends GameData {
 	}
 	
 	public PlatformGame() {
-		
-		tutorial = new Tutorial();
 		
 		switchNames = new String[] { };
 		switchValues = new boolean[] { };

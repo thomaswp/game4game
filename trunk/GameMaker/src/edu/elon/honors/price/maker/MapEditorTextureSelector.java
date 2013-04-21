@@ -1,6 +1,8 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.Tutorial.EditorAction;
+import edu.elon.honors.price.data.Tutorial.EditorButton;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
 import android.app.Activity;
@@ -136,6 +138,9 @@ public class MapEditorTextureSelector extends Activity {
 
 			int alpha = buttonDown ? 255 : 150;
 			paint.setColor(Color.DKGRAY);
+			if (TutorialUtils.isHighlighted(EditorButton.TextureSelectorOk)) {
+				paint.setColor(TutorialUtils.getHightlightColor());
+			}
 			paint.setAlpha(alpha);
 			paint.setStyle(Style.FILL);
 			c.drawCircle(okCenter.x, okCenter.y, okRad, paint);
@@ -163,13 +168,15 @@ public class MapEditorTextureSelector extends Activity {
 				if (inButton) {
 					buttonDown = true;
 					move = false;
+					TutorialUtils.fireCondition(EditorButton.TextureSelectorOk, 
+							EditorAction.ButtonDown, getContext());
 				} else {
 					startBitmapY = bitmapY;
 					move = Input.getLastTouchX() > bitmap.getWidth();
 					if (!move) {
 						startSelectX = Input.getLastTouchX();
 						startSelectY = Input.getLastTouchY() - bitmapY;
-					}
+					}					
 				}
 			}
 
@@ -198,6 +205,8 @@ public class MapEditorTextureSelector extends Activity {
 			} else {
 				if (buttonDown && inButton) {
 					poster.post(selection);
+					TutorialUtils.fireCondition(EditorButton.TextureSelectorOk, 
+							EditorAction.ButtonUp, getContext());
 				}
 				buttonDown = false;
 			}
