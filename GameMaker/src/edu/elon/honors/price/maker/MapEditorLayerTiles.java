@@ -9,6 +9,7 @@ import edu.elon.honors.price.data.MapLayer;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.MapEditorView;
 import android.graphics.Bitmap;
@@ -263,6 +264,17 @@ public class MapEditorLayerTiles extends MapEditorLayerSelectable<Point> {
 		}
 		return null;
 
+	}
+	
+	private final static EditorButton[] editButtons = new EditorButton[] {
+		EditorButton.MapEditorDrawModePencil,
+		EditorButton.MapEditorDrawModePaint,
+		EditorButton.MapEditorDrawModeSelect
+	};
+	
+	@Override
+	protected EditorButton[] getEditButtons() {
+		return editButtons;
 	}
 	
 	@Override

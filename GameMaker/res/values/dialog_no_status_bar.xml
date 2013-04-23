@@ -1,0 +1,11 @@
+<resources>
+	<style
+	    name="Theme.Dialog.NoStatusBar"
+	    parent="android:Theme.Dialog" >
+	
+	    <item name="android:windowBackground">
+			@null
+	    </item>
+	
+	</style>
+</resources>

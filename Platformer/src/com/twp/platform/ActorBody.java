@@ -398,10 +398,11 @@ public class ActorBody extends PlatformBody {
 		}
 		collidedEdge = false;
 		if (getDirectionX() != 0) {
-			float y = getPosition().y + (sprite.getHeight() / 2 + 5) / SCALE;
-			float x = getPosition().x + (sprite.getWidth() / 2 + 5) * getDirectionX() / SCALE;
+			float y = getPosition().y + (sprite.getHeight() / 2f + 10) / SCALE;
+			float x = getPosition().x + (sprite.getWidth() / 2f + 5) * getDirectionX() / SCALE;
 			fixtureCallback.reset();
-			world.QueryAABB(fixtureCallback, x, y, x + 3 / SCALE, y + 3 / SCALE);
+			float r = 1.5f / SCALE;
+			world.QueryAABB(fixtureCallback, x - r, y - r, x + r, y + r);
 			boolean contact = fixtureCallback.contact;
 			if (!contact && isGrounded()) {
 				collidedEdge = true;

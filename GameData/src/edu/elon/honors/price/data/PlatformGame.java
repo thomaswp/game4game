@@ -118,6 +118,7 @@ public class PlatformGame extends GameData {
 		ActorClass ghost = actors[1];
 		ghost.imageName = "a2/ghost.png";
 		ghost.speed = 1.5f;
+		ghost.zoom = 0.7f;
 		ghost.jumpVelocity = 4f;
 		ghost.edgeBehavior = ActorClass.BEHAVIOR_TURN;
 		ghost.wallBehavior = ActorClass.BEHAVIOR_JUMP_TURN;
@@ -126,16 +127,16 @@ public class PlatformGame extends GameData {
 		ghost.heroContactBehaviors[ActorClass.ABOVE] = ActorClass.BEHAVIOR_DIE;
 		ghost.name = "Ghost";
 
-		ActorClass vlad = new ActorClass();
-		vlad.imageName = "a2/skeleton.png";
-		vlad.speed = 1f;
-		vlad.edgeBehavior = ActorClass.BEHAVIOR_TURN;
-		vlad.wallBehavior = ActorClass.BEHAVIOR_TURN;
-		vlad.actorContactBehaviors = new int[] {ActorClass.BEHAVIOR_NONE, 
+		ActorClass skeleton = new ActorClass();
+		skeleton.imageName = "a2/skeleton.png";
+		skeleton.speed = 1f;
+		skeleton.edgeBehavior = ActorClass.BEHAVIOR_TURN;
+		skeleton.wallBehavior = ActorClass.BEHAVIOR_TURN;
+		skeleton.actorContactBehaviors = new int[] {ActorClass.BEHAVIOR_NONE, 
 				ActorClass.BEHAVIOR_NONE, ActorClass.BEHAVIOR_TURN, ActorClass.BEHAVIOR_TURN};
-		vlad.heroContactBehaviors[ActorClass.ABOVE] = ActorClass.BEHAVIOR_DIE;
-		vlad.name = "Skeleton";
-		actors[2] = vlad;
+		skeleton.heroContactBehaviors[ActorClass.ABOVE] = ActorClass.BEHAVIOR_DIE;
+		skeleton.name = "Skeleton";
+		actors[2] = skeleton;
 
 		Hero hero = new Hero();
 		hero.speed = 3.5f;

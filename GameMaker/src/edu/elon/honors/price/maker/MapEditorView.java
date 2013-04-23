@@ -24,11 +24,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.FloatMath;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorButtonAction;
 import edu.elon.honors.price.game.Debug;
@@ -39,6 +41,7 @@ import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
 import edu.elon.honors.price.maker.MapEditor.ReturnResponse;
 import edu.elon.honors.price.maker.MapEditorTextureSelectorView.Poster;
 import edu.elon.honors.price.maker.ScrollingImageSelectorView.OnSelectionListener;
+import edu.elon.honors.price.maker.action.ActionChangeColor.TurnFlashingForData;
 
 public class MapEditorView extends MapView {
 
@@ -181,7 +184,7 @@ public class MapEditorView extends MapView {
 		buttons.add(layerButton);
 
 		selectionButton = createTopRightButton("");
-		selectionButton.editorButton = EditorButton.MapEditorDrawMode;
+		selectionButton.editorButton = EditorButton.MapEditorSelection;
 		//selectionButton.imageBorder = true;
 		selectionButton.onPressedHandler = new Runnable() {
 			@Override
@@ -227,6 +230,7 @@ public class MapEditorView extends MapView {
 					});
 				}
 			};
+			menuButton.editorButton = EditorButton.MapEditorMenu;
 			buttons.add(menuButton);
 		}
 
@@ -417,6 +421,7 @@ public class MapEditorView extends MapView {
 		int button = getTouchingLayerButton();
 		if (button >= 0) {
 			if (selectedLayer != button) {
+				TutorialUtils.fireCondition(LAYER_BUTTONS[button], getContext());
 				editMode = EDIT_NORMAL;
 				selectedLayer = button;
 			}
@@ -427,7 +432,13 @@ public class MapEditorView extends MapView {
 		selectingEditMode = false;
 		int button = getTouchingEditModeButton();
 		if (button >= 0) {
-			editMode = button;
+			if (editMode != button) {
+				TutorialUtils.fireCondition(
+						layers[selectedLayer].getEditButtons()[button], 
+						getContext());
+				
+				editMode = button;
+			}
 		}
 	}
 
@@ -534,6 +545,15 @@ public class MapEditorView extends MapView {
 		}
 	}
 
+	
+	private static final EditorButton[] LAYER_BUTTONS = new EditorButton[] {
+		EditorButton.MapEditorLayerTerrain1,
+		EditorButton.MapEditorLayerTerrain2,
+		EditorButton.MapEditorLayerTerrain3,
+		EditorButton.MapEditorLayerActors,
+		EditorButton.MapEditorLayerObjects
+	};
+	
 	private void drawLayerButton(Canvas c, int layer, boolean selected) {
 		int nOptions = layers.length;
 		float rad = getOptionButtonRadius();
@@ -544,7 +564,7 @@ public class MapEditorView extends MapView {
 		float y = -FloatMath.sin(degree) * outterRadius + height;
 
 		int alpha = (int)((selected ? 255 : 150) * layerButtonsExtention); 
-
+		
 		if (selected) {
 			paint.setColor(Color.DKGRAY);
 			paint.setAlpha(alpha);
@@ -555,6 +575,10 @@ public class MapEditorView extends MapView {
 		hsv[1] = 0.6f;
 		hsv[2] = 0.8f;
 		paint.setColor(Color.HSVToColor(alpha, hsv));
+		
+		if (TutorialUtils.isHighlighted(LAYER_BUTTONS[layer])) {
+			paint.setColor(TutorialUtils.getHightlightColor());
+		}
 
 		c.drawCircle(x, y, rad, paint);
 
@@ -564,8 +588,7 @@ public class MapEditorView extends MapView {
 		c.drawBitmap(icon, null, destRect, paint);
 	}
 	private RectF destRect = new RectF();
-
-
+	
 	private void drawEditModeButton(Canvas c, int layer, boolean selected) {
 		int nOptions = layers[selectedLayer].editIcons.size();
 		float rad = getOptionButtonRadius();
@@ -587,6 +610,10 @@ public class MapEditorView extends MapView {
 		hsv[1] = 0.6f;
 		hsv[2] = 0.8f;
 		paint.setColor(Color.HSVToColor(alpha, hsv));
+		
+		if (TutorialUtils.isHighlighted(layers[selectedLayer].getEditButtons()[layer])) {
+			paint.setColor(TutorialUtils.getHightlightColor());
+		}
 
 		c.drawCircle(x, y, rad, paint);
 
@@ -692,7 +719,7 @@ public class MapEditorView extends MapView {
 				pause();
 				MapEditorActorSelectorView view = new MapEditorActorSelectorView(
 						getContext(), actorSelection + 1, game);
-				final AlertDialog dialog = getViewDialog(view);
+				final Dialog dialog = getViewDialog(view);
 				view.setOnSelectionListener(new OnSelectionListener() {
 					
 					@Override
@@ -700,6 +727,8 @@ public class MapEditorView extends MapView {
 						dialog.dismiss();
 						actorSelection = id - 1;
 						refreshLayers();
+						TutorialUtils.fireCondition(
+								EditorAction.MapEditorFinishSelection, getContext());
 					}
 				});
 				dialog.show();
@@ -717,13 +746,15 @@ public class MapEditorView extends MapView {
 				pause();
 				MapEditorTextureSelectorView view = new MapEditorTextureSelectorView(
 						getContext(), tileset, tilesetSelection); 
-				final AlertDialog dialog = getViewDialog(view);
+				final Dialog dialog = getViewDialog(view);
 				view.setPoster(new Poster() {
 					@Override
 					void post(Rect rect) {
 						dialog.dismiss();
 						tilesetSelection.set(rect);
 						refreshLayers();
+						TutorialUtils.fireCondition(
+								EditorAction.MapEditorFinishSelection, getContext());
 					}
 				});
 				dialog.show();
@@ -735,10 +766,26 @@ public class MapEditorView extends MapView {
 		new Handler(getContext().getMainLooper()).post(r);
 	}
 	
-	private AlertDialog getViewDialog(View view) {
-		AlertDialog dialog = new AlertDialog.Builder(getContext())
-		.setView(view)
-		.create();
+//	private AlertDialog getViewDialog(View view) {
+//		AlertDialog dialog = new AlertDialog.Builder(getContext())
+//		.setView(view)
+//		.create();
+//		dialog.setOnDismissListener(new OnDismissListener() {
+//			@Override
+//			public void onDismiss(DialogInterface dialog) {
+//				resume();
+//			}
+//		});
+//		dialog.setCanceledOnTouchOutside(true);
+//		dialog.getWindow().clearFlags(
+//				WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+//		return dialog;
+//	}
+	
+	private Dialog getViewDialog(View view) {
+		Dialog dialog = new Dialog(getContext(), android.R.style.Theme_Dialog);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(view);
 		dialog.setOnDismissListener(new OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
@@ -758,7 +805,7 @@ public class MapEditorView extends MapView {
 				pause();
 				MapEditorObjectSelectorView view = new MapEditorObjectSelectorView(
 						getContext(), objectSelection, game);
-				final AlertDialog dialog = getViewDialog(view);
+				final Dialog dialog = getViewDialog(view);
 				view.setOnSelectionListener(new OnSelectionListener() {
 					
 					@Override
@@ -766,6 +813,8 @@ public class MapEditorView extends MapView {
 						dialog.dismiss();
 						objectSelection = id;
 						refreshLayers();
+						TutorialUtils.fireCondition(
+								EditorAction.MapEditorFinishSelection, getContext());
 					}
 				});
 				dialog.show();

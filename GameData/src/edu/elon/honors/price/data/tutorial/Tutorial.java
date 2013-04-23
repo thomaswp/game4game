@@ -19,7 +19,7 @@ public class Tutorial implements Serializable {
 
 	public enum EditorButton {
 		MapEditorMoveMode,
-		MapEditorDrawMode,
+		MapEditorSelection,
 		MapEditorDrawModePencil,
 		MapEditorDrawModePaint,
 		MapEditorDrawModeSelect,
@@ -31,6 +31,7 @@ public class Tutorial implements Serializable {
 		MapEditorLayerObjects,
 		MapEditorUndo,
 		MapEditorRedo,
+		MapEditorMenu,
 		TextureSelectorOk
 	}
 	
@@ -46,7 +47,9 @@ public class Tutorial implements Serializable {
 		MapEditorPlaceTile,
 		MapEditorPlaceMidground,
 		MapEditorPlaceForeground,
-		MapEditorPlaceBackground
+		MapEditorPlaceBackground, 
+		MapEditorFinishTest, 
+		MapEditorFinishSelection
 	}
 	
 	
@@ -102,6 +105,12 @@ public class Tutorial implements Serializable {
 		public LinkedList<EditorButton> highlights
 		 	= new LinkedList<Tutorial.EditorButton>();
 		public int dialogDelay;
+		public int dialogImageId;
+		
+		public TutorialAction setDialogImageId(int dialogImageId) {
+			this.dialogImageId = dialogImageId;
+			return this;
+		}
 		
 		public TutorialAction setCondition(Condition condition) {
 			this.condition = condition;

@@ -22,9 +22,9 @@
     	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebBrowseGames" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />
     
         <activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".MapEditor" android:screenOrientation="landscape" />
-    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorTextureSelector" android:screenOrientation="landscape" android:theme="@style/Theme.DoNoDim"/>
-    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:theme="@style/Theme.DoNoDim"/>
-    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:theme="@style/Theme.DoNoDim"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorTextureSelector" android:screenOrientation="landscape" android:theme="@style/Theme.Dialog.NoDim"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:theme="@style/Theme.Dialog.NoDim"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:theme="@style/Theme.Dialog.NoDim"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".Database" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditActorClass" android:screenOrientation="landscape"/>
     	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditObjectClass" android:screenOrientation="landscape"/>

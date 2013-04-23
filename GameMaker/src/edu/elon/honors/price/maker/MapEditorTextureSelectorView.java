@@ -68,12 +68,24 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		int width = bitmap.getWidth() + toPx(BUTTON_RAD_DIP);
 		int height = bitmap.getHeight();
+		
+		width = boundDim(width, widthMeasureSpec);
+		height = boundDim(height, heightMeasureSpec);
 
-		int mWidth = MeasureSpec.getSize(widthMeasureSpec);
-		int mHeight = MeasureSpec.getSize(heightMeasureSpec);
-
-		setMeasuredDimension(Math.min(width, mWidth),
-				Math.min(height, mHeight));
+		setMeasuredDimension(width, height);
+	}
+	
+	protected int boundDim(int dim, int measureSpec) {
+		int size = MeasureSpec.getSize(measureSpec);
+		int mode = MeasureSpec.getMode(measureSpec);
+		
+		if (mode == MeasureSpec.AT_MOST) {
+			return Math.min(dim, size);
+		} else if (mode == MeasureSpec.EXACTLY) {
+			return size;
+		} else {
+			return dim;
+		}
 	}
 
 

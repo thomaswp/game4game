@@ -28,7 +28,9 @@ public class MapEditorActorSelectorView extends ScrollingImageSelectorView {
 		for (int i = 0; i < game.actors.length; i++) {
 			ActorClass actor = game.actors[i];
 			bitmaps[i+1] = Data.loadActorIcon(actor.imageName);
-			bitmaps[i+1] = Bitmap.createScaledBitmap(bitmaps[i+1], bitmaps[i+1].getWidth() * 2, bitmaps[i+1].getHeight() * 2, false);
+			bitmaps[i+1] = Bitmap.createScaledBitmap(bitmaps[i+1], 
+					(int)(bitmaps[i+1].getWidth() * 2 * actor.zoom), 
+					(int)(bitmaps[i+1].getHeight() * 2 * actor.zoom), false);
 		}
 		return bitmaps;
 	}
