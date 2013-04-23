@@ -238,7 +238,7 @@ public class Sprite implements Comparable<Sprite> {
 	 * @return The width
 	 */
 	public float getWidth() {
-		return bitmap.getWidth() * zoomX;
+		return bitmap.getWidth() * Math.abs(zoomX);
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class Sprite implements Comparable<Sprite> {
 	 * @return The height
 	 */
 	public float getHeight() {
-		return bitmap.getHeight() * zoomY;
+		return bitmap.getHeight() * Math.abs(zoomY);
 	}
 
 	/**

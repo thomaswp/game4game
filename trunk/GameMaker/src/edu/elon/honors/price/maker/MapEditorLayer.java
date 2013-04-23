@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.maker.MapEditorView;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -87,4 +88,6 @@ public abstract class MapEditorLayer {
 		public abstract void undo(PlatformGame game);
 		public abstract void redo(PlatformGame game);
 	}
+
+	protected abstract EditorButton[] getEditButtons();
 }

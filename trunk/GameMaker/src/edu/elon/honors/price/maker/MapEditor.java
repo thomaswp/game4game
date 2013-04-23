@@ -4,6 +4,8 @@ import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.GameCache.GameDetails;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.data.GameCache;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
@@ -21,6 +23,7 @@ public class MapEditor extends MapActivityBase {
 
 	protected GameDetails gameDetails;
 	protected ReturnResponse returnResponse;
+	private boolean testing;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,10 @@ public class MapEditor extends MapActivityBase {
 	public void onResume() {
 		super.onResume();
 		Graphics.reset();
+		if (testing) {
+			TutorialUtils.fireCondition(EditorAction.MapEditorFinishTest, this);
+			testing = false;
+		}
 	}
 	
 	@Override
@@ -66,6 +73,14 @@ public class MapEditor extends MapActivityBase {
 		return super.onCreateOptionsMenu(menu);
 	}
 	
+	
+	
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		TutorialUtils.fireCondition(EditorButton.MapEditorMenu, this);
+		return super.onMenuOpened(featureId, menu);
+	}
+
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getTitle().equals("Database")) {
@@ -124,10 +139,10 @@ public class MapEditor extends MapActivityBase {
 	}
 	
 	private void test() {
+		testing = true;
 		Intent intent = new Intent(this, Platformer.class);
 		intent.putExtra("map", gameDetails.getFilename());
 		startActivity(intent);
-		Debug.write(System.currentTimeMillis());
 	}
 
 	private void save() {

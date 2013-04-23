@@ -10,9 +10,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Html;
+import android.widget.ImageView;
 
 import edu.elon.honors.price.data.tutorial.Tutorial;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
@@ -28,6 +31,8 @@ public class TutorialUtils {
 	public final static int HIGHLIGHT_COLOR_1 = Color.parseColor("#ffaa00");
 	public final static int HIGHLIGHT_COLOR_2 = Color.parseColor("#ff0000");
 	public final static int HIGHLIGHT_CYCLE = 1500;	
+	
+	private static boolean dialogShowing;
 	
 	public static void setTutorial(Tutorial tutorial, Context context) {
 		TutorialUtils.tutorial = tutorial;
@@ -82,22 +87,39 @@ public class TutorialUtils {
 					m.appendTail(sb);
 					message = sb.toString();
 					
-					new AlertDialog.Builder(context)
+					ImageView view = null;
+					if (action.dialogImageId > 0) {
+						view = new ImageView(context);
+						Drawable drawable = context.getResources()
+								.getDrawable(action.dialogImageId);
+						view.setImageDrawable(drawable);
+					}
+					
+					AlertDialog dialog = new AlertDialog.Builder(context)
 					.setTitle(action.dialogTitle)
 					.setMessage(Html.fromHtml(message))
-					.setPositiveButton("Ok", new OnClickListener() {
+					.setPositiveButton("Ok", null)
+					.setView(view)
+					.create();
+					
+					
+					
+					dialog.setOnDismissListener(new OnDismissListener() {
 						@Override
-						public void onClick(DialogInterface dialog, int which) {
+						public void onDismiss(DialogInterface dialog) {
+							dialogShowing = false;
 							fireCondition(context);
 						}
-					})
-					.show();
+					});
+					dialogShowing = true;
+					dialog.show();
 				}
 			}, action.dialogDelay);
 		}
 	}
 	
 	private static boolean checkCondition(Context context) {
+		if (dialogShowing) return false;
 		if (tutorial != null && tutorial.hasNext()) {
 			TutorialAction action = tutorial.peek();
 			if (action.condition == null) {

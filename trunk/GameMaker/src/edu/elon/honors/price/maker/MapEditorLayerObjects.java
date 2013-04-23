@@ -9,6 +9,7 @@ import edu.elon.honors.price.data.ObjectInstance;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.game.Debug;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -226,6 +227,16 @@ public class MapEditorLayerObjects extends MapEditorLayerSelectable<ObjectInstan
 	public Bitmap loadIcon() {
 		return BitmapFactory.decodeResource(parent.getResources(), 
 				R.drawable.layerobject);
+	}
+	
+	private final static EditorButton[] editButtons = new EditorButton[] {
+		EditorButton.MapEditorDrawModePencil,
+		EditorButton.MapEditorDrawModeSelect
+	};
+	
+	@Override
+	protected EditorButton[] getEditButtons() {
+		return editButtons;
 	}
 
 	@Override
