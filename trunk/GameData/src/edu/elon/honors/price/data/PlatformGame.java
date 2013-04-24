@@ -91,6 +91,15 @@ public class PlatformGame extends GameData {
 		return events;
 	}
 	
+	public void stripEditorData() {
+		websiteInfo = null;
+		tutorial = null;
+		copyData = null;
+		for (Map map : maps) {
+			if (map != null) map.editorData = null;
+		}
+	}
+	
 	public PlatformGame() {
 		
 		switchNames = new String[] { };

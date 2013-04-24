@@ -1,6 +1,10 @@
 package edu.elon.honors.price.maker;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -51,7 +55,7 @@ import android.widget.TabHost.TabContentFactory;
 @AutoAssign
 public class MainMenu extends Activity implements IViewContainer {
 	
-	private final static String APP_NAME = "GameMaker";
+	private final static String APP_NAME = "PlatForge";
 	
 	private final static String[] HELP_TEXT = new String[] {
 		"Select a game to Edit or Test!",
@@ -134,15 +138,9 @@ public class MainMenu extends Activity implements IViewContainer {
 		
 		gameCache = GameCache.getGameCache(this);
 		
-		PlatformGame game = new PlatformGame();
-		game.tutorial = new Tutorial1(this);
-		if (gameCache.getGames(GameType.Tutorial).size() == 0) {
-			gameCache.addGame("Tutorial 1", GameType.Tutorial, game, this);
-		} else {
-			GameDetails details = gameCache.getGames(GameType.Tutorial).get(0);
-			gameCache.updateGame(details, game, this);
-		}
+		addTutorials();
 		
+		textViewHelp.setText(HELP_TEXT[0]);
 		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabId) {
@@ -151,6 +149,22 @@ public class MainMenu extends Activity implements IViewContainer {
 			}
 		});
 		tabHost.setCurrentTab(0);
+	}
+	
+	
+	
+	private void addTutorials() {
+		if (!gameCache.tutorialsUpToDate()) {
+			gameCache.getGames(GameType.Tutorial).clear();
+			Tutorial[] tutorials = new Tutorial[] {
+				new Tutorial1(this)	
+			};
+			for (Tutorial tutorial : tutorials) {
+				PlatformGame game = tutorial.loadGame(this);
+				gameCache.addGame(tutorial.getName(), GameType.Tutorial, game, this);
+			}
+			gameCache.updateTutorialVersion(this);
+		}
 	}
 	
 	@Override 
@@ -214,11 +228,26 @@ public class MainMenu extends Activity implements IViewContainer {
 			}
 		};
 		
+		@SuppressWarnings("unused")
+		OnClickListener goExport = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				export();
+			}
+		};
+		OnClickListener goReset = new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				reset();
+			}
+		};
+		
 		LinkedList<Button> editButtons = new LinkedList<Button>();
 		editButtons.add(makeButton("Edit", goEdit));
 		editButtons.add(makeButton("Test", goPlay));
 		editButtons.add(makeButton("Copy", goCopy));
 		editButtons.add(makeButton("Delete", goDelete));
+		//editButtons.add(makeButton("Export", goExport));
 		contextButtons.add(editButtons);
 		
 		LinkedList<Button> playButtons = new LinkedList<Button>();
@@ -229,7 +258,7 @@ public class MainMenu extends Activity implements IViewContainer {
 		
 		LinkedList<Button> tutorialButtons = new LinkedList<Button>();
 		tutorialButtons.add(makeButton("Go!", goEdit));
-		tutorialButtons.add(makeButton("Reset", goCopy));
+		tutorialButtons.add(makeButton("Reset", goReset));
 		tutorialButtons.add(makeButton("Branch", goCopy));
 		contextButtons.add(tutorialButtons);	
 	}
@@ -399,6 +428,39 @@ public class MainMenu extends Activity implements IViewContainer {
 	
 	private void goOnline() {
 		startActivity(new Intent(MainMenu.this, WebLogin.class));
+	}
+	
+	private void export() {
+		if (selectedGame == null) return;
+		try {
+			PlatformGame game = selectedGame.loadGame(this);
+			File fileOut = new File(Environment.getExternalStorageDirectory(), 
+					Data.SD_FOLDER + "export/" + selectedGame.getFilename());
+			FileOutputStream fos = new FileOutputStream(fileOut);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(game);
+			oos.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private void reset() {
+		if (selectedGame == null || getType() != GameType.Tutorial) return;
+		
+		new AlertDialog.Builder(this)
+		.setTitle("Reset?")
+		.setMessage("Are you sure you want to reset this tutorial? " +
+				"Any progress you've made will be lost.")
+		.setPositiveButton("Yes", new Dialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				PlatformGame game = selectedGame.getTutorial().loadGame(MainMenu.this);
+				gameCache.updateGame(selectedGame, game, MainMenu.this);
+			}
+		})
+		.setNegativeButton("No", null)
+		.show();
 	}
 	
 

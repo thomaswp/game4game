@@ -11,6 +11,7 @@ import com.eujeux.data.GameInfo;
 
 import edu.elon.honors.price.data.GameCache.GameDetails;
 import edu.elon.honors.price.data.GameCache.GameType;
+import edu.elon.honors.price.data.tutorial.Tutorial;
 import edu.elon.honors.price.game.Debug;
 
 import android.content.Context;
@@ -19,6 +20,8 @@ import android.provider.Settings.Secure;
 public class GameCache implements Serializable {
 	private static final long serialVersionUID = 2L;
 	private static final String FILE_NAME = "gameCache";
+	
+	private int tutorialVersion;
 	
 	private static GameCache instance;
 	
@@ -35,6 +38,15 @@ public class GameCache implements Serializable {
 			lists.add(getGamesList(t));
 		}
 		return new CompoundIterable<GameDetails>(lists);
+	}
+	
+	public boolean tutorialsUpToDate() {
+		return tutorialVersion == Tutorial.VERSION;
+	}
+	
+	public void updateTutorialVersion(Context context) {
+		this.tutorialVersion = Tutorial.VERSION;
+		save(context);
 	}
 	
 	//public Iterable<GameDetails> getGames(GameType type) {
@@ -92,6 +104,7 @@ public class GameCache implements Serializable {
 		game.ID = getNewGameID(context);
 		if (Data.saveData(filename, context, game)) {
 			GameDetails details = new GameDetails(name, filename, websiteInfo);
+			details.tutorial = game.tutorial;
 			getGamesList(type).add(details);
 			save(context);
 			return details;
@@ -108,9 +121,8 @@ public class GameCache implements Serializable {
 	
 	public boolean updateGame(GameDetails details, PlatformGame game, 
 			GameInfo websiteInfo, Context context) {
-		Debug.write("start save game");
 		if (Data.saveData(details.filename, context, game)) {
-			Debug.write("end save game");
+			details.tutorial = game.tutorial;
 			return updateGame(details, websiteInfo, context);
 		}
 		return false;
@@ -186,7 +198,7 @@ public class GameCache implements Serializable {
 	public GameDetails makeCopy(GameDetails details, String name, GameType type,
 			Context context) {
 		PlatformGame game = details.loadGame(context);
-		game.tutorial = null;
+		game.stripEditorData();
 		GameDetails d = addGame(name, type, game, context);
 		if (details.hasWebsiteInfo()) {
 			d.branchedGameId = details.websiteInfo.id;
@@ -196,6 +208,8 @@ public class GameCache implements Serializable {
 	}
 	
 	public static class GameDetails implements Serializable {
+		
+
 		private static final long serialVersionUID = 1L;
 		
 		private String name;
@@ -204,6 +218,7 @@ public class GameCache implements Serializable {
 		private GameInfo websiteInfo;
 		private long lastEdited;
 		private long branchedGameId;
+		private Tutorial tutorial;
 		
 		public String getName() {
 			return name;
@@ -231,6 +246,10 @@ public class GameCache implements Serializable {
 		
 		public long getBranchedGameId() {
 			return branchedGameId;
+		}
+		
+		public Tutorial getTutorial() {
+			return tutorial;
 		}
 
 		public GameDetails(String name, String filename, GameInfo websiteInfo) {
