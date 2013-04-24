@@ -229,10 +229,14 @@ public class ActorBody extends PlatformBody {
 				body.getPosition().y, bAngle);
 		
 		if (isHero) {
-			directionX = (int)Math.signum(getVelocity().x);
-			stopped = Math.abs(directionX) < 0.001f; 
-			if (getVelocity().x != 0)
+			stopped = true;
+			if (Math.abs(getVelocity().x) > 0.0001) {
+				directionX = (int)Math.signum(getVelocity().x);
+				stopped = false;
 				setOnLadder(false);
+			} else {
+				directionX = 0;
+			}
 		}
 
 		animator.update(timeElapsed, directionX, isGrounded(), isOnLadder());
@@ -241,8 +245,9 @@ public class ActorBody extends PlatformBody {
 			sprite.setZoomX(sprite.getZoomX() * -1);
 		}
 		
-		if (!isHero && actor.speed > 0)
+		if (!isHero && actor.speed > 0) {
 			setVelocityX(stopped ? 0 : directionX * actor.speed);
+		}
 
 		updateSprite(offset);
 		lastVelocity.set(getVelocity());

@@ -26,8 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 public class MapEditorTextureSelectorView extends BasicCanvasView {
-	
-	private final static int BUTTON_RAD_DIP = 60; 
 
 	private Bitmap bitmap;
 	private SurfaceHolder holder;
@@ -38,7 +36,7 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 	private int tileWidth, tileHeight;
 	private float startSelectX, startSelectY;
 	private PointF okCenter;
-	private float okRad;
+	private int okRad;
 	private Poster poster;
 	private boolean buttonDown;
 
@@ -54,6 +52,8 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 		this.selection.set(selection);
 		holder = getHolder();
 		holder.addCallback(this);
+		okRad = (int)context.getResources().getDimension(
+				R.dimen.terrain_selector_button_width);
 
 		setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -66,7 +66,7 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int width = bitmap.getWidth() + toPx(BUTTON_RAD_DIP);
+		int width = bitmap.getWidth() + okRad;
 		int height = bitmap.getHeight();
 		
 		width = boundDim(width, widthMeasureSpec);
@@ -91,7 +91,6 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 
 	@Override
 	protected void initializeGraphics() {
-		okRad = toPx(BUTTON_RAD_DIP);
 		float x = bitmap.getWidth() + okRad;
 		float y = width - x;
 		okCenter = new PointF(x, y);
@@ -141,7 +140,7 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 		paint.setColor(Color.BLACK);
 		float textWidth = paint.measureText(text);
 		float x = (width + bitmap.getWidth()) / 2f - textWidth * 1 / 3;
-		float y = paint.getTextSize() * 1.4f;
+		float y = (okRad + paint.getTextSize()) * 0.3f;
 		c.drawText(text, x, y, paint);
 	}
 

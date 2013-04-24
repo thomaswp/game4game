@@ -5,18 +5,25 @@ import java.io.FileDescriptor;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.PlatformGame;
+
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 
-public class Tutorial implements Serializable {
+public abstract class Tutorial implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
+	public static final int VERSION = 3;
+	private static final String DIR = "tutorials/";
+	
 	public enum EditorButton {
 		MapEditorMoveMode,
 		MapEditorSelection,
@@ -53,18 +60,25 @@ public class Tutorial implements Serializable {
 	}
 	
 	
-	public List<TutorialAction> tutorialActions =
+	private List<TutorialAction> tutorialActions =
 			new LinkedList<Tutorial.TutorialAction>();
+	private int actionIndex;
+	
+	public String gameFile;
 	
 	private LinkedList<String> messages = new LinkedList<String>();
+	
+	public abstract String getName();
+	public abstract Tutorial getResetCopy(Context context);
 	
 	private String nextMessage() {
 		return messages.remove(0);
 	}
 	
-	public Tutorial(String textfile, Context context) {
+	public Tutorial(String textfile, String gameFile, Context context) {
+		this.gameFile = gameFile;
 		try {
-			InputStream is = context.getAssets().open("tutorials/" + textfile);
+			InputStream is = context.getAssets().open(DIR + textfile);
 			Scanner sc = new Scanner(is);
 			while (sc.hasNext()) {
 				String line = sc.nextLine();
@@ -78,16 +92,43 @@ public class Tutorial implements Serializable {
 		}
 	}
 	
+	public PlatformGame loadGame(Context context) {
+		try {
+			InputStream is = context.getAssets().open(DIR + gameFile);
+			ObjectInputStream ois = new ObjectInputStream(is);
+			PlatformGame game = (PlatformGame)ois.readObject();
+			game.stripEditorData();
+			game.tutorial = getResetCopy(context);
+			is.close();
+			return game;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public boolean hasNext() {
-		return tutorialActions.size() > 0;
+		return actionIndex < tutorialActions.size();
 	}
 	
 	public TutorialAction peek() {
-		return tutorialActions.get(0);
+		return tutorialActions.get(actionIndex);
 	}
 	
 	public TutorialAction next() {
-		return tutorialActions.remove(0);
+		return tutorialActions.get(actionIndex++);
+	}
+	
+	public boolean hasPrevious() {
+		return actionIndex > 0;
+	}
+	
+	public TutorialAction previous() {
+		return tutorialActions.get(--actionIndex);
+	}
+	
+	public TutorialAction peekPrevious() {
+		return tutorialActions.get(actionIndex - 1);
 	}
 	
 	protected TutorialAction addAction() {

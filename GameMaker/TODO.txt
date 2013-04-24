@@ -1,8 +1,5 @@
 Before Beta:
--Tutorial System
--Auto-upgrade system
--Main Menu
--Known bugs: website browse ok, variable renaming, missing action implementations
+-Known bugs: variable renaming, missing action implementations
 -Actions: Move to new map, win, lose
 -Website: delete map
 

@@ -11,8 +11,18 @@ import android.content.Context;
 public class Tutorial1 extends Tutorial {
 	private static final long serialVersionUID = 1L;
 
+	@Override
+	public String getName() {
+		return "Map Editor Basics";
+	}
+
+	@Override
+	public Tutorial getResetCopy(Context context) {
+		return new Tutorial1(context);
+	}
+	
 	public Tutorial1(Context context) {
-		super("tutorial1.txt", context);
+		super("tutorial1.txt", "tutorial1.game", context);
 		addAction()
 		.setDialog("Welcome!");
 		

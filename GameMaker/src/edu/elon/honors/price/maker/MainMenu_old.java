@@ -263,26 +263,26 @@ public class MainMenu_old extends Activity {
 //		}
 //	}
 //
-//	private void exportGames() {
-//		String[] files = fileList();
-//		for (String file : files) {
-//			if (file.indexOf(PREFIX) == 0) {
-//				try {
-//					FileInputStream fis = openFileInput(file);
-//					ObjectInputStream ois = new ObjectInputStream(fis);
-//					PlatformGame game = (PlatformGame)ois.readObject();
-//					File file2 = new File(Environment.getExternalStorageDirectory(), 
-//							Data.SD_FOLDER + "export/" + file);
-//					FileOutputStream fos = new FileOutputStream(file2);
-//					ObjectOutputStream oos = new ObjectOutputStream(fos);
-//					oos.writeObject(game);
-//					oos.close();
-//				} catch (Exception ex) {
-//					ex.printStackTrace();
-//				}
-//			}
-//		}
-//	}
+	private void exportGames() {
+		String[] files = fileList();
+		for (String file : files) {
+			if (file.indexOf(PREFIX) == 0) {
+				try {
+					FileInputStream fis = openFileInput(file);
+					ObjectInputStream ois = new ObjectInputStream(fis);
+					PlatformGame game = (PlatformGame)ois.readObject();
+					File file2 = new File(Environment.getExternalStorageDirectory(), 
+							Data.SD_FOLDER + "export/" + file);
+					FileOutputStream fos = new FileOutputStream(file2);
+					ObjectOutputStream oos = new ObjectOutputStream(fos);
+					oos.writeObject(game);
+					oos.close();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+	}
 	
 	private void newGame() {
 		PlatformGame game = new PlatformGame();

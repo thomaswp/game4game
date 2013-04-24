@@ -37,7 +37,20 @@ public class TutorialUtils {
 	public static void setTutorial(Tutorial tutorial, Context context) {
 		TutorialUtils.tutorial = tutorial;
 		highlighted.clear();
+		if (tutorial == null) return;
 		fireCondition(context);
+	}
+	
+	public static void backOneMessage(Context context) {
+		if (!hasPreviousMessage()) return;
+		do {
+			tutorial.previous();
+		} while (!tutorial.peek().hasDialog() && tutorial.hasPrevious());
+		doAction(context);
+	}
+	
+	public static boolean hasPreviousMessage() {
+		return tutorial != null && tutorial.hasPrevious();
 	}
 	
 	public static boolean isHighlighted(EditorButton button) {
