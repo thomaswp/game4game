@@ -1,5 +1,7 @@
 Welcome to your first tutorial! In this tutorial, we’ll introduce you to the <h>Map Editor</h>, and teach your how to add <h>Tiles</h> and <h>Actors</h> to your <h>Map</h>. 
 
+At any time, you can repeat the last instruction by clicking on the "?" button on the right side of your screen. You can skip back or forward in the tutorial with the "&lt;" and "&gt;" buttons below.
+
 This screen is the <h>Map Editor</h>.  In the bottom-left corner, is the <h>Move Mode</h> button. Pressing this button toggles whether you are moving around the map, or editing it. Try moving around a bit, and then pressing the <h>Move Mode</h> button to switch to <h>Edit</h> mode.
 
 Good job! Now you’re in <h>Edit</h> mode. In this mode you can place objects onto the map. You can choose what to place by pressing the <h>Selection</h> button in the top-right corner.

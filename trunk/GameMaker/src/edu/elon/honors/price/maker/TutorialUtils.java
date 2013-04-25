@@ -9,12 +9,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.Html;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import edu.elon.honors.price.data.tutorial.Tutorial;
@@ -46,6 +48,24 @@ public class TutorialUtils {
 		do {
 			tutorial.previous();
 		} while (!tutorial.peek().hasDialog() && tutorial.hasPrevious());
+		doAction(context);
+	}
+	
+	public static void backTwoMessages(Context context) {
+		for (int i = 0; i < 2; i++) {
+			if (!hasPreviousMessage()) return;
+			do {
+				tutorial.previous();
+			} while (!tutorial.peek().hasDialog() && tutorial.hasPrevious());
+		}
+		
+		doAction(context);
+	}
+	
+	public static void skipOneMessage(Context context) {
+		while (tutorial.hasNext() && !tutorial.peek().hasDialog()) {
+			tutorial.next();
+		}
 		doAction(context);
 	}
 	
@@ -111,21 +131,52 @@ public class TutorialUtils {
 					AlertDialog dialog = new AlertDialog.Builder(context)
 					.setTitle(action.dialogTitle)
 					.setMessage(Html.fromHtml(message))
-					.setPositiveButton("Ok", null)
+					.setNeutralButton("Ok", new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialogShowing = false;
+							fireCondition(context);
+						}
+					})
+					.setOnCancelListener(new OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialog) {
+							dialogShowing = false;
+							fireCondition(context);
+						}
+					})
+					.setNegativeButton(">", new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							skipOneMessage(context);
+						}
+					})
+					.setPositiveButton("<", new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							tutorial.previous();
+							backOneMessage(context);
+						}
+					})
 					.setView(view)
 					.create();
-					
-					
 					
 					dialog.setOnDismissListener(new OnDismissListener() {
 						@Override
 						public void onDismiss(DialogInterface dialog) {
 							dialogShowing = false;
-							fireCondition(context);
 						}
 					});
 					dialogShowing = true;
 					dialog.show();
+					
+					Button backButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
+					backButton.setEnabled(tutorial.getActionIndex() > 1);
+					backButton.setWidth(Screen.dipToPx(50, context));
+					
+					Button nextButton = dialog.getButton(Dialog.BUTTON_NEGATIVE);
+					nextButton.setEnabled(tutorial.hasNext());
+					backButton.setWidth(Screen.dipToPx(50, context));
 				}
 			}, action.dialogDelay);
 		}
