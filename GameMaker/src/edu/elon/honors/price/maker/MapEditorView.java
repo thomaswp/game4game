@@ -121,7 +121,7 @@ public class MapEditorView extends MapView {
 		super(context, game, savedInstanceState);
 		createDarkTiles();
 		
-		boolean goBack = game.tutorial.hasPrevious();
+		boolean goBack = game.tutorial != null && game.tutorial.hasPrevious();
 		TutorialUtils.setTutorial(game.tutorial, getContext());
 		if (goBack) TutorialUtils.backOneMessage(context);
 
@@ -284,6 +284,7 @@ public class MapEditorView extends MapView {
 			x = width - rad + offX;
 			y = height / 2;
 			Button helpButton = new Button(x, y, x - offX / 4, y, rad, "?");
+			helpButton.editorButton = EditorButton.MapEditorHelpButton;
 			helpButton.onReleasedHandler = new Runnable() {
 				@Override
 				public void run() {

@@ -10,7 +10,15 @@ import android.content.Context;
 
 public class Tutorial1 extends Tutorial {
 	private static final long serialVersionUID = 1L;
-
+	
+	private static int VERSION = 2;
+	private final int myVersion = VERSION;
+	
+	@Override
+	public boolean isUpToDate() {
+		return VERSION == myVersion;	
+	}
+	
 	@Override
 	public String getName() {
 		return "Map Editor Basics";
@@ -25,6 +33,10 @@ public class Tutorial1 extends Tutorial {
 		super("tutorial1.txt", "tutorial1.game", context);
 		addAction()
 		.setDialog("Welcome!");
+		
+		addAction()
+		.setDialog("Tutorials")
+		.addHighlight(EditorButton.MapEditorHelpButton);
 		
 		addAction()
 		.setDialog("Move Mode")

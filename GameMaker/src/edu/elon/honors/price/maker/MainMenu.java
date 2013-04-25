@@ -160,10 +160,12 @@ public class MainMenu extends Activity implements IViewContainer {
 				new Tutorial1(this)	
 			};
 			for (Tutorial tutorial : tutorials) {
-				PlatformGame game = tutorial.loadGame(this);
+				PlatformGame game = tutorial.loadGameFromAssets(this);
 				gameCache.addGame(tutorial.getName(), GameType.Tutorial, game, this);
 			}
 			gameCache.updateTutorialVersion(this);
+		} else {
+			
 		}
 	}
 	
@@ -367,6 +369,9 @@ public class MainMenu extends Activity implements IViewContainer {
 		if (selectedGame != null) {
 			Intent intent = new Intent(this, MapEditor.class);
 			PlatformGame game = Data.loadData(selectedGame.getFilename(), this);
+			if (game.tutorial != null && !game.tutorial.isUpToDate()) {
+				game.tutorial = game.tutorial.getResetCopy(this);
+			}
 			intent.putExtra("gameDetails", selectedGame);
 			intent.putExtra("game", game);
 			startActivity(intent);
@@ -455,7 +460,7 @@ public class MainMenu extends Activity implements IViewContainer {
 		.setPositiveButton("Yes", new Dialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				PlatformGame game = selectedGame.getTutorial().loadGame(MainMenu.this);
+				PlatformGame game = selectedGame.getTutorial().loadGameFromAssets(MainMenu.this);
 				gameCache.updateGame(selectedGame, game, MainMenu.this);
 			}
 		})

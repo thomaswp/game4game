@@ -21,7 +21,8 @@ import android.graphics.Color;
 public abstract class Tutorial implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	public static final int VERSION = 3;
+	//Change to reload all tutorials and maps.
+	public static final int VERSION = 4;
 	private static final String DIR = "tutorials/";
 	
 	public enum EditorButton {
@@ -39,6 +40,7 @@ public abstract class Tutorial implements Serializable {
 		MapEditorUndo,
 		MapEditorRedo,
 		MapEditorMenu,
+		MapEditorHelpButton,
 		TextureSelectorOk
 	}
 	
@@ -70,6 +72,8 @@ public abstract class Tutorial implements Serializable {
 	
 	public abstract String getName();
 	public abstract Tutorial getResetCopy(Context context);
+	/** Change to reload just the tutorial information **/
+	public abstract boolean isUpToDate();
 	
 	private String nextMessage() {
 		return messages.remove(0);
@@ -92,7 +96,7 @@ public abstract class Tutorial implements Serializable {
 		}
 	}
 	
-	public PlatformGame loadGame(Context context) {
+	public PlatformGame loadGameFromAssets(Context context) {
 		try {
 			InputStream is = context.getAssets().open(DIR + gameFile);
 			ObjectInputStream ois = new ObjectInputStream(is);
@@ -135,6 +139,10 @@ public abstract class Tutorial implements Serializable {
 		TutorialAction action = new TutorialAction();
 		tutorialActions.add(action);
 		return action;
+	}
+
+	public int getActionIndex() {
+		return actionIndex;
 	}
 	
 	public class TutorialAction implements Serializable {

@@ -1,7 +1,18 @@
-Before Beta:
+Tutorials:
+-Terrain, Actors
+-Objects (1)
+-Actor and Object Properties (2)
+-Map Properties (1)
+-Events 1 (single, easy event) (2)
+-Events 2 (1/3 of zombie run) (2)
+-Events 3 (2/3 of zombie run) (1)
+-Behaviors (3/3 of zombie run) (2)
+
+ASAP:
 -Known bugs: variable renaming, missing action implementations
 -Actions: Move to new map, win, lose
 -Website: delete map
+-fix art (bad tiles, tileset order, illegal stuff)
 
 
 General:
@@ -18,6 +29,7 @@ Behaviors:
 -sometimes behaviorinstanceeditor doesn't save (long click?)
 
 Events:
+-help functions would be lovely
 -rework placement of map event editor to go along with behaviors theme
 -rename actions when var names change
 -reset instead of resize global variables
