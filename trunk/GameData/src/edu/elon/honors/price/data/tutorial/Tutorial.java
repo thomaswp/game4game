@@ -58,7 +58,10 @@ public abstract class Tutorial implements Serializable {
 		MapEditorPlaceForeground,
 		MapEditorPlaceBackground, 
 		MapEditorFinishTest, 
-		MapEditorFinishSelection
+		MapEditorFinishSelection,
+		MapEditorStartActorSelection,
+		MapEditorStartObjectSelection,
+		MapEditorStartTextureSelection
 	}
 	
 	
