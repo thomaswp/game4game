@@ -10,8 +10,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -20,6 +22,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.FloatMath;
@@ -185,7 +188,43 @@ public class MapEditorView extends MapView {
 		};
 		buttons.add(layerButton);
 
-		selectionButton = createTopRightButton("");
+		Button trb = createTopRightButton("");
+		selectionButton = new Button(trb.cx, trb.cy, trb.ctx, trb.cty, 
+				trb.radius, trb.text) {
+						
+			private Rect src = new Rect();
+			private RectF dest = new RectF();
+			
+			@Override
+			protected void drawButtonImage(Canvas c, Paint p, int trans) {
+
+				super.drawButtonImage(c, p, trans);
+				
+				Bitmap cornerImage = layers[selectedLayer].editIcons.get(editMode);
+
+				float cW = radius * 0.15f;
+				float cH = radius * 0.15f;
+				
+				float ccx = cx - radius * 0.0f;
+				float ccy = cy + radius * 0.5f;
+				
+				src.set(0, 0, cornerImage.getWidth(), cornerImage.getHeight());
+				dest.set(ccx - cW, ccy - cH, ccx + cW, ccy + cH);
+				
+				paint.setColor(Color.LTGRAY);
+				paint.setAlpha(trans);
+				paint.setStyle(Style.FILL);
+				c.drawRect(dest, paint);
+				
+				paint.setColor(Color.DKGRAY);
+				paint.setAlpha(trans);
+				paint.setStyle(Style.STROKE);
+				c.drawRect(dest, paint);
+				
+				c.drawBitmap(cornerImage, src, dest, paint);
+
+			}
+		};
 		selectionButton.editorButton = EditorButton.MapEditorSelection;
 		//selectionButton.imageBorder = true;
 		selectionButton.onPressedHandler = new Runnable() {
@@ -439,8 +478,18 @@ public class MapEditorView extends MapView {
 		int button = getTouchingLayerButton();
 		if (button >= 0) {
 			if (selectedLayer != button) {
+				//adjust for the paint mode
+				if (selectedLayer < 3 && button >= 3) {
+					//switch off of tile layer
+					if (editMode == EDIT_ALT1) editMode = EDIT_NORMAL;
+					if (editMode == EDIT_ALT2) editMode = EDIT_ALT1;
+				} else if (selectedLayer >= 3 && button < 3) {
+					//switch onto tile layer
+					if (editMode == EDIT_ALT1) editMode = EDIT_ALT2;
+				}
+				
+				layers[selectedLayer].deSelect();
 				TutorialUtils.fireCondition(LAYER_BUTTONS[button], getContext());
-				editMode = EDIT_NORMAL;
 				selectedLayer = button;
 			}
 		}
@@ -738,6 +787,14 @@ public class MapEditorView extends MapView {
 				MapEditorActorSelectorView view = new MapEditorActorSelectorView(
 						getContext(), actorSelection + 1, game);
 				final Dialog dialog = getViewDialog(view);
+				dialog.setOnShowListener(new OnShowListener() {
+					@Override
+					public void onShow(DialogInterface dialog) {
+						TutorialUtils.fireCondition(
+								EditorAction.MapEditorStartActorSelection, 
+								getContext());
+					}
+				});
 				view.setOnSelectionListener(new OnSelectionListener() {
 					
 					@Override
@@ -765,6 +822,14 @@ public class MapEditorView extends MapView {
 				MapEditorTextureSelectorView view = new MapEditorTextureSelectorView(
 						getContext(), tileset, tilesetSelection); 
 				final Dialog dialog = getViewDialog(view);
+				dialog.setOnShowListener(new OnShowListener() {
+					@Override
+					public void onShow(DialogInterface dialog) {
+						TutorialUtils.fireCondition(
+								EditorAction.MapEditorStartTextureSelection, 
+								getContext());
+					}
+				});
 				view.setPoster(new Poster() {
 					@Override
 					void post(Rect rect) {
@@ -824,6 +889,14 @@ public class MapEditorView extends MapView {
 				MapEditorObjectSelectorView view = new MapEditorObjectSelectorView(
 						getContext(), objectSelection, game);
 				final Dialog dialog = getViewDialog(view);
+				dialog.setOnShowListener(new OnShowListener() {
+					@Override
+					public void onShow(DialogInterface dialog) {
+						TutorialUtils.fireCondition(
+								EditorAction.MapEditorStartObjectSelection, 
+								getContext());
+					}
+				});
 				view.setOnSelectionListener(new OnSelectionListener() {
 					
 					@Override

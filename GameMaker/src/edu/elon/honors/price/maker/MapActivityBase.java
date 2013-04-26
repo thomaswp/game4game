@@ -713,31 +713,40 @@ public abstract class MapActivityBase extends SaveableActivity {
 					c.drawCircle(cx, cy, innerRad, paint);
 				}
 
-				if (image != null) {
-					float maxSemiWidth = radius - Math.abs(ctx - cx);
-					float maxSemiHeight = radius - Math.abs(cty - cy);
-					maxSemiWidth /= 1.9;
-					maxSemiHeight /= 1.9;
-					float semiWidth = image.getWidth() / 2f;
-					float semiHeight = image.getHeight() / 2f;
-					float scaleWidth = Math.min(maxSemiWidth / semiWidth, 1);
-					float scaleHeight = Math.min(maxSemiHeight / semiHeight, 1);
-					float scale = Math.min(scaleWidth, scaleHeight);
 
-					semiWidth *= scale; semiHeight *= scale;
-					src.set(0, 0, image.getWidth(), image.getHeight());
-					dest.set(ctx - semiWidth, cty - semiHeight, 
-							ctx + semiWidth, cty + semiHeight);
-					c.drawBitmap(image, src, dest, paint);
-					if (imageBorder) {
-						paint.setStyle(Style.STROKE);
-						paint.setColor(Color.DKGRAY);
-						if (!down && !opaque) paint.setAlpha(trans);
-						c.drawRect(dest, paint);
-						paint.setStyle(Style.FILL);
-					}
+				if (image != null) {
+					drawButtonImage(c, paint, trans);
 				}
 
+				drawButtonText(c, paint);
+			}
+			
+			protected void drawButtonImage(Canvas c, Paint paint, int trans) {
+				float maxSemiWidth = radius - Math.abs(ctx - cx);
+				float maxSemiHeight = radius - Math.abs(cty - cy);
+				maxSemiWidth /= 1.9;
+				maxSemiHeight /= 1.9;
+				float semiWidth = image.getWidth() / 2f;
+				float semiHeight = image.getHeight() / 2f;
+				float scaleWidth = Math.min(maxSemiWidth / semiWidth, 1);
+				float scaleHeight = Math.min(maxSemiHeight / semiHeight, 1);
+				float scale = Math.min(scaleWidth, scaleHeight);
+
+				semiWidth *= scale; semiHeight *= scale;
+				src.set(0, 0, image.getWidth(), image.getHeight());
+				dest.set(ctx - semiWidth, cty - semiHeight, 
+						ctx + semiWidth, cty + semiHeight);
+				c.drawBitmap(image, src, dest, paint);
+				if (imageBorder) {
+					paint.setStyle(Style.STROKE);
+					paint.setColor(Color.DKGRAY);
+					if (!down && !opaque) paint.setAlpha(trans);
+					c.drawRect(dest, paint);
+					paint.setStyle(Style.FILL);
+				}
+			}
+			
+			protected void drawButtonText(Canvas c, Paint paint) {
 
 				paint.getTextBounds(text, 0, text.length(), bounds);
 				paint.setColor(textColor);

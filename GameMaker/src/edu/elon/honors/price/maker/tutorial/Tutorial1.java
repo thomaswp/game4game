@@ -50,8 +50,7 @@ public class Tutorial1 extends Tutorial {
 		
 		addAction()
 		.setDialog("Select")
-		.setCondition(new Condition(EditorButton.MapEditorSelection, 
-				EditorButtonAction.ButtonUp))
+		.setCondition(new Condition(EditorAction.MapEditorStartTextureSelection))
 		.addHighlight(EditorButton.TextureSelectorOk);
 		
 		addAction()
@@ -92,11 +91,8 @@ public class Tutorial1 extends Tutorial {
 		.setDialog("Layers")
 		.setCondition(new Condition(EditorButton.MapEditorLayer))
 		.addHighlight(EditorButton.MapEditorLayer)
+		.addHighlight(EditorButton.MapEditorLayerActors)
 		.setDialogImageId(R.drawable.layeractor);
-		
-		addAction()
-		.setCondition(new Condition(EditorButton.MapEditorLayer))
-		.addHighlight(EditorButton.MapEditorLayerActors);
 		
 		addAction()
 		.setDialog("Actor Layer")
@@ -114,9 +110,7 @@ public class Tutorial1 extends Tutorial {
 		
 		addAction()
 		.setDialog("Actors")
-		.setDialogDelay(500)
-		.setCondition(new Condition(EditorButton.MapEditorSelection, 
-				EditorButtonAction.ButtonUp));
+		.setCondition(new Condition(EditorAction.MapEditorStartActorSelection));
 		
 		addAction()
 		.setDialog("Place Actors")

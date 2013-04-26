@@ -62,7 +62,7 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 		getDrawBounds(item, bounds);
 		bounds.offset(-getOffX(), -getOffY());
 	}
-
+	
 	@Override
 	public final void drawContent(Canvas c) {
 		if (inSelectingMode()) {
@@ -124,6 +124,8 @@ public abstract class MapEditorLayerSelectable<T> extends MapEditorLayer {
 
 				}
 			}
+		} else {
+			selectedObjects.clear();
 		}
 	}
 
