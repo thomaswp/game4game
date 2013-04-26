@@ -23,6 +23,7 @@ import edu.elon.honors.price.data.tutorial.Tutorial;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.share.WebLogin;
 import edu.elon.honors.price.maker.tutorial.Tutorial1;
+import edu.elon.honors.price.maker.tutorial.Tutorial2;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -56,6 +57,7 @@ import android.widget.TabHost.TabContentFactory;
 public class MainMenu extends Activity implements IViewContainer {
 	
 	private final static String APP_NAME = "PlatForge";
+	private final static boolean ALLOW_EXPORT = false;
 	
 	private final static String[] HELP_TEXT = new String[] {
 		"Select a game to Edit or Test!",
@@ -154,18 +156,24 @@ public class MainMenu extends Activity implements IViewContainer {
 	
 	
 	private void addTutorials() {
+		Tutorial[] tutorials = new Tutorial[] {
+			new Tutorial1(this),
+			new Tutorial2(this)
+		};
+		List<GameDetails> loadedTutorials = gameCache.getGames(GameType.Tutorial);
 		if (!gameCache.tutorialsUpToDate()) {
-			gameCache.getGames(GameType.Tutorial).clear();
-			Tutorial[] tutorials = new Tutorial[] {
-				new Tutorial1(this)	
-			};
+			loadedTutorials.clear();
 			for (Tutorial tutorial : tutorials) {
 				PlatformGame game = tutorial.loadGameFromAssets(this);
 				gameCache.addGame(tutorial.getName(), GameType.Tutorial, game, this);
 			}
 			gameCache.updateTutorialVersion(this);
-		} else {
-			
+		} else if (loadedTutorials.size() < tutorials.length) {
+			for (int i = loadedTutorials.size(); i < tutorials.length; i++) {
+				Tutorial tutorial = tutorials[i];
+				PlatformGame game = tutorial.loadGameFromAssets(this);
+				gameCache.addGame(tutorial.getName(), GameType.Tutorial, game, this);
+			}
 		}
 	}
 	
@@ -230,7 +238,6 @@ public class MainMenu extends Activity implements IViewContainer {
 			}
 		};
 		
-		@SuppressWarnings("unused")
 		OnClickListener goExport = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -249,7 +256,7 @@ public class MainMenu extends Activity implements IViewContainer {
 		editButtons.add(makeButton("Test", goPlay));
 		editButtons.add(makeButton("Copy", goCopy));
 		editButtons.add(makeButton("Delete", goDelete));
-		//editButtons.add(makeButton("Export", goExport));
+		if (ALLOW_EXPORT) editButtons.add(makeButton("Export", goExport));
 		contextButtons.add(editButtons);
 		
 		LinkedList<Button> playButtons = new LinkedList<Button>();

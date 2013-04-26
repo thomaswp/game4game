@@ -60,6 +60,9 @@ public abstract class MapEditorLayer {
 	protected abstract Bitmap loadIcon();
 	protected abstract void loadEditIcons();
 	
+	//no use right now...
+	public void deSelect() { }
+	
 	public Bitmap getIcon() {
 		if (icon == null) icon = loadIcon();
 		return icon;
@@ -90,4 +93,5 @@ public abstract class MapEditorLayer {
 	}
 
 	protected abstract EditorButton[] getEditButtons();
+
 }
