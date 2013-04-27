@@ -7,7 +7,7 @@ import edu.elon.honors.price.data.tutorial.Tutorial;
 public class Tutorial2 extends Tutorial {
 	private static final long serialVersionUID = 1L;
 
-	private static int VERSION = 1;
+	private static int VERSION = 2;
 	private final int myVersion = VERSION; 
 	
 	@Override
@@ -47,7 +47,8 @@ public class Tutorial2 extends Tutorial {
 		addAction()
 		.setDialog("Test")
 		.setCondition(new Condition(EditorAction.MapEditorPlaceObject))
-		.addHighlight(EditorButton.MapEditorMenu);
+		.addHighlight(EditorButton.MapEditorMenu)
+		.addHighlight(EditorButton.MapEditorMenuPlay);
 		
 		addAction()
 		.setDialog("Object Selection")

@@ -41,7 +41,9 @@ public abstract class Tutorial implements Serializable {
 		MapEditorRedo,
 		MapEditorMenu,
 		MapEditorHelpButton,
-		TextureSelectorOk
+		MapEditorMenuPlay,
+		MapEditorMenuDatabase,
+		TextureSelectorOk 
 	}
 	
 	public enum EditorButtonAction {

@@ -1,6 +1,6 @@
 Welcome to your first tutorial! In this tutorial, we’ll introduce you to the <h>Map Editor</h>, and teach your how to add <h>Tiles</h> and <h>Actors</h> to your <h>Map</h>. 
 
-At any time, you can repeat the last instruction by clicking on the "?" button on the right side of your screen. You can skip back or forward in the tutorial with the "&lt;" and "&gt;" buttons below.
+At any time, you can repeat the last instruction by clicking on the "?" button on the left side of your screen. You can skip back or forward in the tutorial with the "&lt;" and "&gt;" buttons below.
 
 This screen is the <h>Map Editor</h>.  In the bottom-left corner, is the <h>Move Mode</h> button. Pressing this button toggles whether you are moving around the map, or editing it. Try moving around a bit, and then pressing the <h>Move Mode</h> button to switch to <h>Edit</h> mode.
 
@@ -22,7 +22,7 @@ Each map has 5 <h>Layers</h>. Right now we’re working with the <h>Terrain</h> 
 
 Just like on the Terrain layer, you can place <h>Actors</h> on the map by tapping on the map where you want them. Try placing your <h>Hero</h> (the robot) on one of the platforms. Because you’re only allowed one Hero per map, this just moves it to where you tap.
 
-Good job! Now it’s time to test your map. Hit the <h>Menu</h> button (on the map or on your phone) and select “Test.” When it asks you to save, hit “Save and Test.” When you’re playing, you’ll be able move with the joystick and jump with the button. When you’re done, hit Back to return to editing.
+Good job! Now it’s time to test your map. Tap the <h>Menu</h> button (on the map or on your phone) and select “Test.” When it asks you to save, hit “Save and Test.” When you’re playing, you’ll be able move with the joystick and jump with the button. When you’re done, hit Back to return to editing.
 
 How’d you like your game? It probably didn’t feel much like a game yet, with just a hero, so let’s add some other <h>Actors</h>.  Press the <h>Selection</h> button to choose a different actor to place on the screen.
 

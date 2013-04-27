@@ -84,9 +84,7 @@ public class MapEditor extends MapActivityBase {
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getTitle().equals("Database")) {
-			Intent intent = new Intent(this, Database.class);
-			intent.putExtra("game", game);
-			startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
+			openDatabase();
 		} else if (item.getTitle().equals("Save")) {
 			save();
 		} else if (item.getTitle().equals("Load")) {
@@ -138,14 +136,20 @@ public class MapEditor extends MapActivityBase {
 		return super.onMenuItemSelected(featureId, item);
 	}
 	
-	private void test() {
+	protected void openDatabase() {
+		Intent intent = new Intent(this, Database.class);
+		intent.putExtra("game", game);
+		startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
+	}
+	
+	protected void test() {
 		testing = true;
 		Intent intent = new Intent(this, Platformer.class);
 		intent.putExtra("map", gameDetails.getFilename());
 		startActivity(intent);
 	}
 
-	private void save() {
+	protected void save() {
 		try {
 			((MapEditorView)view).saveMapData();
 			gameDetails.saveGame(game, this);
@@ -162,7 +166,7 @@ public class MapEditor extends MapActivityBase {
 		((MapEditorView)view).refreshLayers();
 	}
 
-	private void load() {
+	protected void load() {
 		try {
 			game = gameDetails.loadGame(this);
 			((MapEditorView)view).setGame(game, true);
