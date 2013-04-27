@@ -35,7 +35,7 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 	private Rect selection = new Rect(0, 0, 1, 1), drawRect = new Rect();
 	private int tileWidth, tileHeight;
 	private float startSelectX, startSelectY;
-	private PointF okCenter;
+	private PointF okCenter = new PointF();
 	private int okRad;
 	private Poster poster;
 	private boolean buttonDown;
@@ -68,34 +68,17 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		int width = bitmap.getWidth() + okRad;
 		int height = bitmap.getHeight();
-		
-		width = boundDim(width, widthMeasureSpec);
+
 		height = boundDim(height, heightMeasureSpec);
 
 		setMeasuredDimension(width, height);
 	}
 	
-	protected int boundDim(int dim, int measureSpec) {
-		int size = MeasureSpec.getSize(measureSpec);
-		int mode = MeasureSpec.getMode(measureSpec);
-		
-		if (mode == MeasureSpec.AT_MOST) {
-			return Math.min(dim, size);
-		} else if (mode == MeasureSpec.EXACTLY) {
-			return size;
-		} else {
-			return dim;
-		}
-	}
-
-
 	@Override
-	protected void initializeGraphics() {
+	protected void onScreenSizeChanged(int width, int height) {
 		float x = bitmap.getWidth() + okRad;
 		float y = width - x;
-		okCenter = new PointF(x, y);
-
-		Debug.write("%d, %d", width, height);
+		okCenter.set(x, y);
 	}
 
 	@Override

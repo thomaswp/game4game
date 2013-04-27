@@ -29,6 +29,7 @@ import android.util.FloatMath;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.SeekBar;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
@@ -59,13 +60,12 @@ public class MapEditorView extends MapView {
 	protected final static int SCROLL_BORDER = 25;
 	protected final static int SCROLL_TICK = 3;
 
-
 	private MapEditorLayer[] layers;
 	private int selectedLayer;
-	private int previewSelectedLayer;
-	private boolean selectingLayer, selectingEditMode;
-	private float hsv[] = new float[3];
-	private float layerButtonsExtention, editModeButtonsExtention;
+	//private boolean selectingLayer, selectingEditMode, selectingMenu;
+	//private float hsv[] = new float[3];
+	//private float layerButtonsExtention, editModeButtonsExtention, menuButtonsExtention;
+	private ButtonFan layerFan, editModeFan, menuFan;
 	private Button layerButton, selectionButton, modeButton;
 	//Keeps track of when the player drags out of the selection button
 	private boolean strayedOutOfSelectionButton;
@@ -179,13 +179,8 @@ public class MapEditorView extends MapView {
 	protected void createButtons() {
 		layerButton = createBottomRightButton("Layer");
 		layerButton.editorButton = EditorButton.MapEditorLayer;
-		layerButton.onPressedHandler = new Runnable() {
-			@Override
-			public void run() {
-				selectingLayer = true;
-				
-			}
-		};
+		layerFan = new LayerFan(layerButton);
+		
 		buttons.add(layerButton);
 
 		Button trb = createTopRightButton("");
@@ -230,19 +225,19 @@ public class MapEditorView extends MapView {
 		selectionButton.onPressedHandler = new Runnable() {
 			@Override
 			public void run() {
-				selectingEditMode = true;
 				strayedOutOfSelectionButton = false;
 			}
 		};
 		selectionButton.onReleasedHandler = new Runnable() {
 			@Override
 			public void run() {
-				editModeButtonsExtention = 0;
 				if (!strayedOutOfSelectionButton) {
+					editModeFan.collapse();
 					layers[selectedLayer].onSelect();
 				}
 			}
 		};
+		editModeFan = new EditModeFan(selectionButton);
 		buttons.add(selectionButton);
 
 		modeButton = createBottomLeftButton("Move");
@@ -255,10 +250,9 @@ public class MapEditorView extends MapView {
 		};
 		buttons.add(modeButton);
 
-
 		Button menuButton = null;
 
-		if (android.os.Build.VERSION.SDK_INT > 10) {
+		//if (android.os.Build.VERSION.SDK_INT > 10) {
 			menuButton = createTopLeftButton("Menu");
 			menuButton.onReleasedHandler = new Runnable() {
 				@Override
@@ -272,8 +266,9 @@ public class MapEditorView extends MapView {
 				}
 			};
 			menuButton.editorButton = EditorButton.MapEditorMenu;
+			menuFan = new MenuFan(menuButton);
 			buttons.add(menuButton);
-		}
+		//}
 
 		cancelButtons = new Button[4];
 		cancelReplacedButtons = new Button[4];
@@ -320,9 +315,9 @@ public class MapEditorView extends MapView {
 		if (game.tutorial != null) {
 			rad = (int)(modeButton.radius / 2.5f);
 			int offX = (int)(rad * 0.6);
-			x = width - rad + offX;
+			x = rad - offX;
 			y = height / 2;
-			Button helpButton = new Button(x, y, x - offX / 4, y, rad, "?");
+			Button helpButton = new Button(x, y, x + offX / 4, y, rad, "?");
 			helpButton.editorButton = EditorButton.MapEditorHelpButton;
 			helpButton.onReleasedHandler = new Runnable() {
 				@Override
@@ -340,13 +335,12 @@ public class MapEditorView extends MapView {
 		undimButtons();
 
 		doReleaseTouch(x, y);
+		
+		layerFan.upate();
+		editModeFan.upate();
+		if (menuFan != null) menuFan.upate();
+		
 		if (!Input.isTouchDown()) {
-			if (selectingLayer) {
-				selectLayer();
-			}
-			if (selectingEditMode) {
-				selectEditMode();
-			}
 			if (layer.isTouchDown()) {
 				if (checkCancel(x, y)) {
 					layer.touchDown = false;
@@ -473,47 +467,10 @@ public class MapEditorView extends MapView {
 		return false;
 	}
 
-	protected void selectLayer() {
-		selectingLayer = false;
-		int button = getTouchingLayerButton();
-		if (button >= 0) {
-			if (selectedLayer != button) {
-				//adjust for the paint mode
-				if (selectedLayer < 3 && button >= 3) {
-					//switch off of tile layer
-					if (editMode == EDIT_ALT1) editMode = EDIT_NORMAL;
-					if (editMode == EDIT_ALT2) editMode = EDIT_ALT1;
-				} else if (selectedLayer >= 3 && button < 3) {
-					//switch onto tile layer
-					if (editMode == EDIT_ALT1) editMode = EDIT_ALT2;
-				}
-				
-				layers[selectedLayer].deSelect();
-				TutorialUtils.fireCondition(LAYER_BUTTONS[button], getContext());
-				selectedLayer = button;
-			}
-		}
-	}
-
-	protected void selectEditMode() {
-		selectingEditMode = false;
-		int button = getTouchingEditModeButton();
-		if (button >= 0) {
-			if (editMode != button) {
-				TutorialUtils.fireCondition(
-						layers[selectedLayer].getEditButtons()[button], 
-						getContext());
-				
-				editMode = button;
-			}
-		}
-	}
-
 	@Override
 	protected void drawContent(Canvas c) {
 
-		int selectedLayer = previewSelectedLayer >= 0 ? 
-				previewSelectedLayer : this.selectedLayer;
+		int selectedLayer = layerFan.getPreviewSelectedOption();
 		for (int i = 0; i < layers.length; i++) {
 			DrawMode mode = DrawMode.Selected;
 			if (i < selectedLayer) mode = DrawMode.Below;
@@ -537,158 +494,214 @@ public class MapEditorView extends MapView {
 		return getOptionButtonRadius() * layers.length * 4 / (float)Math.PI / 1.5f;
 	}
 
-	protected int getTouchingLayerButton() {
-		float dx = width - Input.getLastTouchX();
-		float dy = height - Input.getLastTouchY();
-		float rad = (float)Math.pow(dx * dx + dy * dy, 0.5);
-		if (Math.abs(rad - getOptionButtonOuterRadius()) < getOptionButtonRadius() * 1.5f) {
-			int layer = (int)((-Math.atan2(-dy, dx)) / (Math.PI / 2) * layers.length);
-			return Math.min(Math.max(layer, 0), layers.length - 1);
-		}
-		return -1;
-	}
-
-	protected int getTouchingEditModeButton() {
-		int nButtons = layers[selectedLayer].editIcons.size();
-		float dx = width - Input.getLastTouchX();
-		float dy = Input.getLastTouchY();
-		float rad = (float)Math.pow(dx * dx + dy * dy, 0.5);
-		if (Math.abs(rad - getOptionButtonOuterRadius()) < getOptionButtonRadius() * 1.5f) {
-			int layer = (int)((Math.atan2(dy, dx)) / (Math.PI / 2) * nButtons);
-			return Math.min(Math.max(layer, 0), nButtons - 1);
-		}
-		return -1;
-	}
+//	protected int getTouchingLayerButton() {
+//		float dx = width - Input.getLastTouchX();
+//		float dy = height - Input.getLastTouchY();
+//		float rad = (float)Math.pow(dx * dx + dy * dy, 0.5);
+//		if (Math.abs(rad - getOptionButtonOuterRadius()) < getOptionButtonRadius() * 1.5f) {
+//			int layer = (int)((-Math.atan2(-dy, dx)) / (Math.PI / 2) * layers.length);
+//			return Math.min(Math.max(layer, 0), layers.length - 1);
+//		}
+//		return -1;
+//	}
+//
+//	protected int getTouchingEditModeButton() {
+//		int nButtons = layers[selectedLayer].editIcons.size();
+//		float dx = width - Input.getLastTouchX();
+//		float dy = Input.getLastTouchY();
+//		float rad = (float)Math.pow(dx * dx + dy * dy, 0.5);
+//		if (Math.abs(rad - getOptionButtonOuterRadius()) < getOptionButtonRadius() * 1.5f) {
+//			int layer = (int)((Math.atan2(dy, dx)) / (Math.PI / 2) * nButtons);
+//			return Math.min(Math.max(layer, 0), nButtons - 1);
+//		}
+//		return -1;
+//	}
+//	
+//	protected int getTouchingMenuButton() {
+//		int nButtons = MENU_OPTIONS;
+//		float dx = Input.getLastTouchX();
+//		float dy = Input.getLastTouchY();
+//		float rad = (float)Math.pow(dx * dx + dy * dy, 0.5);
+//		if (Math.abs(rad - getOptionButtonOuterRadius()) < getOptionButtonRadius() * 1.5f) {
+//			int layer = (int)((Math.PI - Math.atan2(dy, dx)) / (Math.PI / 2) * nButtons);
+//			return Math.min(Math.max(layer, 0), nButtons - 1);
+//		}
+//		return -1;
+//	}
 
 	@Override
 	protected void drawButtons(Canvas c) {
-		drawLayerButtons(c);
-		drawEditModeButtons(c);
+		layerFan.draw(c, paint);
+		editModeFan.draw(c, paint);
+		if (menuFan != null) menuFan.draw(c, paint);
 
-		int layer = previewSelectedLayer >= 0 ? previewSelectedLayer : selectedLayer;
+		int layer = layerFan.getPreviewSelectedOption();
 		selectionButton.image = layers[layer].getSelection();
 		modeButton.text = getModeButtonText();
 		super.drawButtons(c);
 	}
 
-	private void drawLayerButtons(Canvas c) {
-		if (selectingLayer) {
-			layerButtonsExtention = (5 * layerButtonsExtention + 1) / 6;
-		} else {
-			layerButtonsExtention = (5 * layerButtonsExtention) / 6;
-		}
+//	private void drawLayerButtons(Canvas c) {
+//		if (selectingLayer) {
+//			layerButtonsExtention = (5 * layerButtonsExtention + 1) / 6;
+//		} else {
+//			layerButtonsExtention = (5 * layerButtonsExtention) / 6;
+//		}
+//
+//		if (layerButtonsExtention > 0.2) {
+//			int nOptions = layers.length;
+//			int button = getTouchingLayerButton();
+//			button = button >= 0 ? button : selectedLayer;
+//
+//			for (int i = 0; i < nOptions; i++) {
+//				if (i != button) drawLayerButton(c, i, false);
+//			}
+//			if (button >= 0) drawLayerButton(c, button, true);
+//			previewSelectedLayer = button;
+//		} else {
+//			previewSelectedLayer = -1;
+//		}
+//	}
+//
+//	private void drawEditModeButtons(Canvas c) {
+//		if (selectingEditMode) {
+//			editModeButtonsExtention = (5 * editModeButtonsExtention + 1) / 6;
+//		} else {
+//			editModeButtonsExtention = (5 * editModeButtonsExtention) / 6;
+//		}
+//
+//		if (editModeButtonsExtention > 0.2) {
+//			int nOptions = layers[selectedLayer].editIcons.size();
+//			int button = getTouchingEditModeButton();
+//			button = button >= 0 ? button : editMode;
+//
+//			for (int i = 0; i < nOptions; i++) {
+//				if (i != button) drawEditModeButton(c, i, false);
+//			}
+//			if (button >= 0) drawEditModeButton(c, button, true);
+//		}
+//	}
+//	
+//	private void drawMenuButtons(Canvas c) {
+//		if (selectingMenu) {
+//			menuButtonsExtention = (5 * menuButtonsExtention + 1) / 6;
+//		} else {
+//			menuButtonsExtention = (5 * menuButtonsExtention) / 6;
+//		}
+//
+//		if (menuButtonsExtention > 0.2) {
+//			int nOptions = MENU_OPTIONS;
+//			int button = getTouchingMenuButton();
+//			button = button >= 0 ? button : editMode;
+//
+//			for (int i = 0; i < nOptions; i++) {
+//				if (i != button) drawMenuButton(c, i, false);
+//			}
+//			if (button >= 0) drawMenuButton(c, button, true);
+//		}
+//	}
+//
+//	
 
-		if (layerButtonsExtention > 0.2) {
-			int nOptions = layers.length;
-			int button = getTouchingLayerButton();
-			button = button >= 0 ? button : selectedLayer;
-
-			for (int i = 0; i < nOptions; i++) {
-				if (i != button) drawLayerButton(c, i, false);
-			}
-			if (button >= 0) drawLayerButton(c, button, true);
-			previewSelectedLayer = button;
-		} else {
-			previewSelectedLayer = -1;
-		}
-	}
-
-	private void drawEditModeButtons(Canvas c) {
-		if (selectingEditMode) {
-			editModeButtonsExtention = (5 * editModeButtonsExtention + 1) / 6;
-		} else {
-			editModeButtonsExtention = (5 * editModeButtonsExtention) / 6;
-		}
-
-		if (editModeButtonsExtention > 0.2) {
-			int nOptions = layers[selectedLayer].editIcons.size();
-			int button = getTouchingEditModeButton();
-			button = button >= 0 ? button : editMode;
-
-			for (int i = 0; i < nOptions; i++) {
-				if (i != button) drawEditModeButton(c, i, false);
-			}
-			if (button >= 0) drawEditModeButton(c, button, true);
-		}
-	}
-
-	
-	private static final EditorButton[] LAYER_BUTTONS = new EditorButton[] {
-		EditorButton.MapEditorLayerTerrain1,
-		EditorButton.MapEditorLayerTerrain2,
-		EditorButton.MapEditorLayerTerrain3,
-		EditorButton.MapEditorLayerActors,
-		EditorButton.MapEditorLayerObjects
-	};
-	
-	private void drawLayerButton(Canvas c, int layer, boolean selected) {
-		int nOptions = layers.length;
-		float rad = getOptionButtonRadius();
-
-		float degree = (float)(Math.PI - Math.PI / 2 * (layer + 0.5) / (nOptions));
-		float outterRadius = getOptionButtonOuterRadius() * layerButtonsExtention;
-		float x = FloatMath.cos(degree) * outterRadius + width;
-		float y = -FloatMath.sin(degree) * outterRadius + height;
-
-		int alpha = (int)((selected ? 255 : 150) * layerButtonsExtention); 
-		
-		if (selected) {
-			paint.setColor(Color.DKGRAY);
-			paint.setAlpha(alpha);
-			c.drawCircle(x, y, rad * 1.1f, paint);
-		}
-
-		hsv[0] = (layer + 0.5f) * 160f / nOptions + 100;
-		hsv[1] = 0.6f;
-		hsv[2] = 0.8f;
-		paint.setColor(Color.HSVToColor(alpha, hsv));
-		
-		if (TutorialUtils.isHighlighted(LAYER_BUTTONS[layer])) {
-			paint.setColor(TutorialUtils.getHightlightColor());
-		}
-
-		c.drawCircle(x, y, rad, paint);
-
-		Bitmap icon = layers[layer].getIcon();
-		float demi = (rad / FloatMath.sqrt(2));
-		destRect.set(x - demi, y - demi, x + demi, y + demi);
-		c.drawBitmap(icon, null, destRect, paint);
-	}
-	private RectF destRect = new RectF();
-	
-	private void drawEditModeButton(Canvas c, int layer, boolean selected) {
-		int nOptions = layers[selectedLayer].editIcons.size();
-		float rad = getOptionButtonRadius();
-
-		float degree = (float)(Math.PI + Math.PI / 2 * (layer + 0.5) / (nOptions));
-		float outterRadius = getOptionButtonOuterRadius() * editModeButtonsExtention;
-		float x = FloatMath.cos(degree) * outterRadius + width;
-		float y = -FloatMath.sin(degree) * outterRadius;
-
-		int alpha = (int)((selected ? 255 : 150) * editModeButtonsExtention); 
-
-		if (selected) {
-			paint.setColor(Color.DKGRAY);
-			paint.setAlpha(alpha);
-			c.drawCircle(x, y, rad * 1.1f, paint);
-		}
-
-		hsv[0] = (layer + 0.5f) * 80f / nOptions;
-		hsv[1] = 0.6f;
-		hsv[2] = 0.8f;
-		paint.setColor(Color.HSVToColor(alpha, hsv));
-		
-		if (TutorialUtils.isHighlighted(layers[selectedLayer].getEditButtons()[layer])) {
-			paint.setColor(TutorialUtils.getHightlightColor());
-		}
-
-		c.drawCircle(x, y, rad, paint);
-
-		Bitmap icon = layers[selectedLayer].editIcons.get(layer);
-		float demi = (float)(rad / Math.sqrt(2));
-		destRect.set(x - demi, y - demi, x + demi, y + demi);
-		c.drawBitmap(icon, null, destRect, paint);
-	}
+//	
+//	private void drawLayerButton(Canvas c, int layer, boolean selected) {
+//		int nOptions = layers.length;
+//		float rad = getOptionButtonRadius();
+//
+//		float degree = (float)(Math.PI - Math.PI / 2 * (layer + 0.5) / (nOptions));
+//		float outterRadius = getOptionButtonOuterRadius() * layerButtonsExtention;
+//		float x = FloatMath.cos(degree) * outterRadius + width;
+//		float y = -FloatMath.sin(degree) * outterRadius + height;
+//
+//		int alpha = (int)((selected ? 255 : 150) * layerButtonsExtention); 
+//		
+//		if (selected) {
+//			paint.setColor(Color.DKGRAY);
+//			paint.setAlpha(alpha);
+//			c.drawCircle(x, y, rad * 1.1f, paint);
+//		}
+//
+//		hsv[0] = (layer + 0.5f) * 160f / nOptions + 100;
+//		hsv[1] = 0.6f;
+//		hsv[2] = 0.8f;
+//		paint.setColor(Color.HSVToColor(alpha, hsv));
+//		
+//		if (TutorialUtils.isHighlighted(LAYER_BUTTONS[layer])) {
+//			paint.setColor(TutorialUtils.getHightlightColor());
+//		}
+//
+//		c.drawCircle(x, y, rad, paint);
+//
+//		Bitmap icon = layers[layer].getIcon();
+//		float demi = (rad / FloatMath.sqrt(2));
+//		destRect.set(x - demi, y - demi, x + demi, y + demi);
+//		c.drawBitmap(icon, null, destRect, paint);
+//	}
+//	private RectF destRect = new RectF();
+//	
+//	private void drawEditModeButton(Canvas c, int layer, boolean selected) {
+//		int nOptions = layers[selectedLayer].editIcons.size();
+//		float rad = getOptionButtonRadius();
+//
+//		float degree = (float)(Math.PI + Math.PI / 2 * (layer + 0.5) / (nOptions));
+//		float outterRadius = getOptionButtonOuterRadius() * editModeButtonsExtention;
+//		float x = FloatMath.cos(degree) * outterRadius + width;
+//		float y = -FloatMath.sin(degree) * outterRadius;
+//
+//		int alpha = (int)((selected ? 255 : 150) * editModeButtonsExtention); 
+//
+//		if (selected) {
+//			paint.setColor(Color.DKGRAY);
+//			paint.setAlpha(alpha);
+//			c.drawCircle(x, y, rad * 1.1f, paint);
+//		}
+//
+//		hsv[0] = (layer + 0.5f) * 80f / nOptions;
+//		hsv[1] = 0.6f;
+//		hsv[2] = 0.8f;
+//		paint.setColor(Color.HSVToColor(alpha, hsv));
+//		
+//		if (TutorialUtils.isHighlighted(layers[selectedLayer].getEditButtons()[layer])) {
+//			paint.setColor(TutorialUtils.getHightlightColor());
+//		}
+//
+//		c.drawCircle(x, y, rad, paint);
+//
+//		Bitmap icon = layers[selectedLayer].editIcons.get(layer);
+//		float demi = (float)(rad / Math.sqrt(2));
+//		destRect.set(x - demi, y - demi, x + demi, y + demi);
+//		c.drawBitmap(icon, null, destRect, paint);
+//	}
+//	
+//	private void drawMenuButton(Canvas c, int layer, boolean selected) {
+//		int nOptions = MENU_OPTIONS;
+//		float rad = getOptionButtonRadius();
+//
+//		float degree = (float)(-Math.PI / 2 * (layer + 0.5) / (nOptions));
+//		float outterRadius = getOptionButtonOuterRadius() * menuButtonsExtention;
+//		float x = FloatMath.cos(degree) * outterRadius;
+//		float y = -FloatMath.sin(degree) * outterRadius;
+//
+//		int alpha = (int)((selected ? 255 : 150) * menuButtonsExtention); 
+//
+//		if (selected) {
+//			paint.setColor(Color.DKGRAY);
+//			paint.setAlpha(alpha);
+//			c.drawCircle(x, y, rad * 1.1f, paint);
+//		}
+//
+//		hsv[0] = (layer + 0.5f) * 80f / nOptions;
+//		hsv[1] = 0.6f;
+//		hsv[2] = 0.8f;
+//		paint.setColor(Color.HSVToColor(alpha, hsv));
+//
+//		c.drawCircle(x, y, rad, paint);
+//
+////		Bitmap icon = layers[selectedLayer].editIcons.get(layer);
+////		float demi = (float)(rad / Math.sqrt(2));
+////		destRect.set(x - demi, y - demi, x + demi, y + demi);
+////		c.drawBitmap(icon, null, destRect, paint);
+//	}
 
 	private void updateActors(PlatformGame newGame) {
 		this.game.actors = Arrays.copyOf(this.game.actors, newGame.actors.length);
@@ -933,6 +946,293 @@ public class MapEditorView extends MapView {
 	private void redoAction() {
 		actions.get(actionIndex).redo(game);
 		actionIndex++;
+	}
+	
+	private class LayerFan extends ButtonFan {
+
+		public LayerFan(Button button) {
+			super(button, Math.PI, -1);
+		}
+
+		@Override
+		protected Bitmap getBitmap(int index) {
+			return layers[index].getIcon();
+		}
+
+		@Override
+		protected int getOptionsCount() {
+			return layers.length;
+		}
+
+		private final EditorButton[] LAYER_BUTTONS = new EditorButton[] {
+			EditorButton.MapEditorLayerTerrain1,
+			EditorButton.MapEditorLayerTerrain2,
+			EditorButton.MapEditorLayerTerrain3,
+			EditorButton.MapEditorLayerActors,
+			EditorButton.MapEditorLayerObjects
+		};
+		
+		@Override
+		protected EditorButton getEditorButton(int index) {
+			return LAYER_BUTTONS[index];
+		}
+
+		@Override
+		protected void onSelected(int option) {
+			if (selectedLayer != option) {
+				//adjust for the paint mode
+				if (selectedLayer < 3 && option >= 3) {
+					//switch off of tile layer
+					if (editMode == EDIT_ALT1) editMode = EDIT_NORMAL;
+					if (editMode == EDIT_ALT2) editMode = EDIT_ALT1;
+				} else if (selectedLayer >= 3 && option < 3) {
+					//switch onto tile layer
+					if (editMode == EDIT_ALT1) editMode = EDIT_ALT2;
+				}
+				
+				layers[selectedLayer].deSelect();
+				selectedLayer = option;
+			}
+		}
+
+		@Override
+		protected int getSelectedOption() {
+			return selectedLayer;
+		}
+
+		@Override
+		protected int getColor(int option) {
+			return getColorFromHue((option + 0.5f) * 160f / getOptionsCount() + 100);
+		}
+		
+	}
+	
+	private class EditModeFan extends ButtonFan {
+
+		public EditModeFan(Button button) {
+			super(button, Math.PI, 1);
+		}
+
+		@Override
+		protected Bitmap getBitmap(int index) {
+			return layers[selectedLayer].editIcons.get(index);
+		}
+
+		@Override
+		protected int getOptionsCount() {
+			return layers[selectedLayer].editIcons.size();
+		}
+
+		@Override
+		protected EditorButton getEditorButton(int index) {
+			return layers[selectedLayer].getEditButtons()[index];
+		}
+
+		@Override
+		protected void onSelected(int option) {
+			editMode = option;
+		}
+
+		@Override
+		protected int getSelectedOption() {
+			return editMode;
+		}
+
+		@Override
+		protected int getColor(int option) {
+			return getColorFromHue((option + 0.5f) * 80f / getOptionsCount());
+		}
+		
+	}
+	
+	private class MenuFan extends ButtonFan {
+
+		private final Bitmap playIcon, databaseIcon;
+		private final Handler handler;
+		
+		public MenuFan(Button button) {
+			super(button, 0, -1);
+			playIcon = BitmapFactory.decodeResource(getResources(), R.drawable.play);
+			databaseIcon = BitmapFactory.decodeResource(getResources(), R.drawable.database);
+			handler = new Handler(getContext().getMainLooper());
+		}
+
+		@Override
+		protected Bitmap getBitmap(int index) {
+			return index == 0 ? playIcon : databaseIcon;
+		}
+
+		@Override
+		protected int getOptionsCount() {
+			return 2;
+		}
+
+		@Override
+		protected EditorButton getEditorButton(int index) {
+			return index == 0 ? EditorButton.MapEditorMenuPlay : 
+				EditorButton.MapEditorMenuDatabase;
+		}
+
+		@Override
+		protected void onSelected(final int option) {
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					collapse();
+					if (option == 0) {
+						((MapEditor)getContext()).save();
+						((MapEditor)getContext()).test();
+					} else if (option == 1) {
+						((MapEditor)getContext()).openDatabase();
+					}
+				}
+			});
+		}
+
+		@Override
+		protected int getSelectedOption() {
+			return -1;
+		}
+
+		@Override
+		protected int getColor(int option) {
+			return Color.LTGRAY;
+		}
+		
+	}
+	
+	private abstract class ButtonFan {
+		
+		private final static float SHOW_EXTENTION = 0.2f;
+		
+		private float extention;
+		private boolean selecting;
+		private boolean buttonDown;
+		
+		private final float hsv[] = new float[3];
+		private final RectF destRect = new RectF();
+		
+		private final int dir;
+		private final double startAngle;
+		private final Button button;
+		
+		protected abstract Bitmap getBitmap(int option);
+		protected abstract int getOptionsCount();
+		protected abstract EditorButton getEditorButton(int index);
+		protected abstract void onSelected(int option);
+		protected abstract int getSelectedOption();
+		protected abstract int getColor(int option);
+		
+		public int getPreviewSelectedOption() {
+			if (extention > SHOW_EXTENTION) {
+				int preview = getTouchingButton();
+				return preview >= 0 ? preview : getSelectedOption();
+			}
+			return getSelectedOption();
+		}
+		
+		public void collapse() {
+			extention = 0;
+		}
+		
+		public ButtonFan(Button button, double startAngle, int dir) {
+			this.startAngle = startAngle;
+			this.dir = dir;
+			this.button = button;
+		}
+		
+		public void upate() {
+			if (selecting && !Input.isTouchDown()) {
+				selecting = false;
+				int selected = getTouchingButton();
+				if (selected >= 0) {
+					onSelected(selected);
+					TutorialUtils.fireCondition(getEditorButton(selected), 
+							getContext());
+				}
+			}
+			
+			if (buttonDown != button.down) {
+				buttonDown = button.down;
+				if (buttonDown) selecting = true;
+			}
+			
+			if (selecting) {
+				extention = (5 * extention + 1) / 6;
+			} else {
+				extention = (5 * extention) / 6;
+			}
+		}
+		
+		private int getTouchingButton() {
+			int nButtons = getOptionsCount();
+			float dx = Input.getLastTouchX() - button.cx;
+			float dy = -(Input.getLastTouchY() - button.cy);
+			float rad = (float)Math.pow(dx * dx + dy * dy, 0.5);
+			if (Math.abs(rad - getOptionButtonOuterRadius()) < getOptionButtonRadius() * 1.5f) {
+				double angle = Math.atan2(dy, dx) * dir - startAngle;
+				angle = (angle + 2 * Math.PI) % (Math.PI * 2);
+				int layer = (int)(angle / (Math.PI / 2) * nButtons);
+				return Math.min(Math.max(layer, 0), nButtons - 1);
+			}
+			return -1;
+		}
+		
+		public void draw(Canvas c, Paint paint) {
+
+			if (extention > SHOW_EXTENTION) {
+				int nOptions = getOptionsCount();
+				int button = getTouchingButton();
+				button = button >= 0 ? button : getSelectedOption();
+
+				for (int i = 0; i < nOptions; i++) {
+					if (i != button) drawButton(c, paint, i, false);
+				}
+				if (button >= 0) drawButton(c, paint, button, true);
+			}
+		}
+		
+		protected int getColorFromHue(float hue) {
+			hsv[0] = hue;
+			hsv[1] = 0.6f;
+			hsv[2] = 0.8f;
+			return Color.HSVToColor(hsv);
+		}
+		
+		private void drawButton(Canvas c, Paint paint, int index, boolean selected) {
+			float rad = getOptionButtonRadius();
+
+			int nOptions = getOptionsCount();
+			
+			float degree = (float)(startAngle + dir * Math.PI / 2 * (index + 0.5) / (nOptions));
+			float outterRadius = getOptionButtonOuterRadius() * extention;
+			float x = button.cx +  FloatMath.cos(degree) * outterRadius;
+			float y = button.cy - FloatMath.sin(degree) * outterRadius;
+
+			int alpha = (int)((selected ? 255 : 150) * extention); 
+			
+			if (selected) {
+				paint.setColor(Color.DKGRAY);
+				paint.setAlpha(alpha);
+				c.drawCircle(x, y, rad * 1.1f, paint);
+			}
+
+			paint.setColor(getColor(index));
+			paint.setAlpha(alpha);
+			
+			if (TutorialUtils.isHighlighted(getEditorButton(index))) {
+				paint.setColor(TutorialUtils.getHightlightColor());
+			}
+
+			c.drawCircle(x, y, rad, paint);
+
+			Bitmap icon = getBitmap(index);
+			if (icon != null) {
+				float demi = (rad / FloatMath.sqrt(2));
+				destRect.set(x - demi, y - demi, x + demi, y + demi);
+				c.drawBitmap(icon, null, destRect, paint);
+			}
+		}
 	}
 
 	public static class EditorData implements Serializable {

@@ -9,6 +9,7 @@ import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View.MeasureSpec;
 
 public abstract class BasicCanvasView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -56,14 +57,31 @@ public abstract class BasicCanvasView extends SurfaceView implements SurfaceHold
 			int height) {
 		this.width = width;
 		this.height = height;
+		onScreenSizeChanged(width, height);
 		//Debug.write("Change: %d, %d", width, height);
 	}
+	
+	protected int boundDim(int dim, int measureSpec) {
+		int size = MeasureSpec.getSize(measureSpec);
+		int mode = MeasureSpec.getMode(measureSpec);
+		
+		if (mode == MeasureSpec.AT_MOST) {
+			return Math.min(dim, size);
+		} else if (mode == MeasureSpec.EXACTLY) {
+			return size;
+		} else {
+			return dim;
+		}
+	}
+	
+	protected void onScreenSizeChanged(int width, int height) { }
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		this.width = holder.getSurfaceFrame().width();
 		this.height = holder.getSurfaceFrame().height();
 		initializeGraphics();
+		onScreenSizeChanged(width, height);
 		running = true;
 		thread = new Thread(new Runnable() {
 			@Override
