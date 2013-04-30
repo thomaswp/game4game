@@ -10,12 +10,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Paint.Style;
+import android.graphics.Shader.TileMode;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -46,7 +49,6 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 	
 	public MapEditorTextureSelectorView(Context context, Tileset tileset, Rect selection) {
 		super(context);
-		this.bitmap = Data.loadTileset(tileset.bitmapName);
 		this.tileWidth = tileset.tileWidth;
 		this.tileHeight = tileset.tileHeight;
 		this.selection.set(selection);
@@ -54,6 +56,20 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 		holder.addCallback(this);
 		okRad = (int)context.getResources().getDimension(
 				R.dimen.terrain_selector_button_width);
+		
+		Bitmap transBg = Data.loadEditorBmp("trans.png");
+		BitmapShader transShader = new BitmapShader(transBg, 
+				TileMode.REPEAT, TileMode.REPEAT);
+		Bitmap bmp = Data.loadTileset(tileset.bitmapName);
+		
+		bitmap = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
+		Paint paint = new Paint();
+		paint.setShader(transShader);
+		Canvas c = new Canvas(bitmap);
+		Rect rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
+		c.drawRect(rect, paint);
+		c.drawBitmap(bmp, 0, 0, paint);
+		
 
 		setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -84,9 +100,13 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 	@Override
 	public void onDraw(Canvas c) {
 		c.drawColor(Color.LTGRAY);
-		paint.setColor(Color.WHITE);
-		c.drawRect(bitmapX, 0, bitmapX + bitmap.getWidth(), 
-				height, paint);
+
+//		paint.setShader(backgroundShader);
+//		paint.setColor(Color.WHITE);
+//		c.drawRect(bitmapX, bitmapY, bitmapX + bitmap.getWidth(), 
+//				height, paint);
+//		paint.setShader(null);
+		
 		c.drawBitmap(bitmap, bitmapX, bitmapY, paint);
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeWidth(MapActivityBase.SELECTION_BORDER_WIDTH);

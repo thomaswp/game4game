@@ -4,12 +4,65 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/relativeLayoutHost"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="10" >
-    </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/imageButtonEvents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/layeractor" />
+
+            <ImageButton
+                android:id="@+id/imageButtonActors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/layeractor" />
+
+            <ImageButton
+                android:id="@+id/imageButtonObjects"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/layerobject" />
+
+            <ImageButton
+                android:id="@+id/imageButtonMaps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/layeractor" />
+
+            <ImageButton
+                android:id="@+id/imageButtonBehaviors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/layeractor" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayoutHost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="10" >
+        </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/relativeLayout2"
@@ -22,16 +75,14 @@
             android:layout_width="100dip"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="Prev" >
-        </Button>
+            android:text="Prev" />
 
         <Button
             android:id="@+id/buttonNext"
             android:layout_width="100dip"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Next" >
-        </Button>
+            android:text="Next" />
 
         <LinearLayout
             android:id="@+id/linearLayout2"
@@ -45,15 +96,13 @@
                 android:layout_width="100dip"
                 android:layout_height="50dip"
                 android:layout_marginRight="20dip"
-                android:text="Ok" >
-            </Button>
+                android:text="Ok" />
 
             <Button
                 android:id="@+id/buttonCancel"
                 android:layout_width="100dip"
                 android:layout_height="50dip"
-                android:text="Cancel" >
-            </Button>
+                android:text="Cancel" />
         </LinearLayout>
     </RelativeLayout>
 
