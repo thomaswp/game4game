@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -35,10 +34,16 @@ public class TutorialUtils {
 	public final static int HIGHLIGHT_CYCLE = 1500;	
 	
 	private static boolean dialogShowing;
+	private static Runnable onHighlightChangedListener;
+	
+	public static void setOnHighlightChangedListener(Runnable onHighlightChangedListener) {
+		TutorialUtils.onHighlightChangedListener = onHighlightChangedListener;
+	}
 	
 	public static void setTutorial(Tutorial tutorial, Context context) {
 		TutorialUtils.tutorial = tutorial;
 		highlighted.clear();
+		onHighlightChangedListener = null;
 		if (tutorial == null) return;
 		fireCondition(context);
 	}
@@ -102,6 +107,10 @@ public class TutorialUtils {
 		
 		highlighted.clear();
 		highlighted.addAll(action.highlights);
+		if (onHighlightChangedListener != null) {
+			Handler handler = new Handler(context.getMainLooper());
+			handler.post(onHighlightChangedListener);
+		}
 		
 		if (action.hasDialog()) {
 			Handler handler = new Handler(context.getMainLooper());

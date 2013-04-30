@@ -11,12 +11,13 @@ import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.game.Game;
+import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.physics.Vector;
 
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 18;
+	public final static int LATEST_VERSION = 19;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -168,6 +169,60 @@ public class Upgrader {
 			game.tilesets = Arrays.copyOf(game.tilesets, game.tilesets.length + 1);
 			game.tilesets[game.tilesets.length - 1] = new Tileset("Night", "night.png", 64, 64, 8, 8);
 			
+			upgraded(game);
+		}
+		if (version < 19) {
+			int[] map_grass = new int[] {
+					0, 1, 2, 0, 0, 0, 0, 0,
+					8, 9, 10, 0, 11, 12, 13, 14, 
+					16, 16, 16, 0, 19, 0, 0, 22, 
+					24, 16, 26, 0, 0, 0, 0, 0, 
+					32, 33, 34, 15, 36, 37, 0, 0, 
+					40, 41, 42, 0, 44, 45, 53, 52, 
+					48, 49, 50, 0, 0, 0, 43, 46, 
+					56, 57, 58, 0, 0, 0, 0, 0
+			};
+			int[] map_castle = new int[] {
+					0, 0, 0, 0, 0, 0, 0, 0, 
+					8, 9, 10, 15, 11, 12, 13, 14, 
+					24, 16, 26, 23, 19, 36, 37, 22, 
+					38, 39, 31, 0, 43, 44, 45, 46, 
+					60, 61, 62, 63, 52, 53, 54, 55, 
+					48, 49, 0, 0, 0, 0, 0, 0, 
+					56, 57, 0, 0, 0, 0, 0, 0, 
+					64, 65, 0, 0, 0, 0, 0, 0
+			};
+			int[] map_night = new int[] {
+					0, 0, 2, 0, 0, 0, 0, 0, 
+					8, 9, 10, 0, 11, 12, 13, 14, 
+					16, 16, 16, 0, 19, 0, 0, 22, 
+					24, 16, 26, 0, 0, 0, 0, 0, 
+					32, 33, 34, 31, 36, 37, 0, 0, 
+					40, 41, 42, 0, 44, 45, 53, 52, 
+					48, 49, 50, 51, 0, 0, 43, 46, 
+					56, 57, 58, 59, 0, 0, 54, 55
+			};
+			for (Map map : game.maps) {
+				int[] convert;
+				if (map.tilesetId == 0) {
+					convert = map_grass;
+				} else if (map.tilesetId == 1) {
+					convert = map_castle;
+				} else {
+					convert = map_night;
+				}
+				for (int k = 0; k < map.layers.length; k++) {
+					MapLayer layer = map.layers[k];
+					for (int i = 0; i < layer.rows; i++) {
+						for (int j = 0; j < layer.columns; j++) {
+							layer.tiles[i][j] = convert[layer.tiles[i][j]];
+						}
+					}
+				}
+			}
+			game.tilesets[0] = new Tileset("Grass", "grass.png", 64, 64, 10, 8);
+			game.tilesets[1] = new Tileset("Castle", "castle.png", 64, 64, 10, 8);
+			game.tilesets[2] = new Tileset("Night", "night.png", 64, 64, 10, 8);
 			upgraded(game);
 		}
 	}

@@ -45,7 +45,7 @@ public class BackgroundHandler {
 	
 	public void updateScroll(Vector offset) {
 		float parallax = 0.7f;
-		float scrollX = -offset.getX() * parallax;
+		float scrollX = Math.round(-offset.getX() * parallax); //Not sure about rounding
 		float offY = (offset.getY()) * parallax - (1 - parallax) * (map.height(game) - Graphics.getHeight());
 		
 		foreground.setY(startForegroundY + offY);

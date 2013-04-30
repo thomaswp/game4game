@@ -37,6 +37,7 @@ import edu.elon.honors.price.graphics.Graphics;
 import edu.elon.honors.price.graphics.Sprite;
 import edu.elon.honors.price.graphics.Tilemap;
 import edu.elon.honors.price.graphics.Viewport;
+import edu.elon.honors.price.maker.action.ActionSetVariable.WithARandomNumberData.Group;
 import edu.elon.honors.price.physics.Vector;
 
 public class PhysicsHandler {
@@ -254,92 +255,114 @@ public class PhysicsHandler {
 		SparseArray<double[]> shapeMap = new SparseArray<double[]>(12);
 
 		//Ground Up 30 Left
-		shapeMap.put(12, new double[] {
+		double[] groundUp30Left = new double[] {
 				-0.5, -0.5,
 				0.5, 0,
 				0.5, -0.5
-		});
+		}; 
+		shapeMap.put(11, groundUp30Left);
+		shapeMap.put(60, groundUp30Left);
 
 		//Ground Up 30 Right
-		shapeMap.put(13, new double[] {
+		double[] groundUp30Right = new double[] {
 				-0.5, -0.5,
 				-0.5, 0,
 				0.5, 0.5,
 				0.5, -0.5
-		});
+		}; 
+		shapeMap.put(12, groundUp30Right);
+		shapeMap.put(61, groundUp30Right);
 
 		//Ground Down 30 Left
-		shapeMap.put(14, new double[] {
+		double[] groundDown30Left = new double[] {
 				-0.5, -0.5,
 				-0.5, 0.5,
 				0.5, 0,
 				0.5, -0.5
-		});
+		}; 
+		shapeMap.put(13, groundDown30Left);
+		shapeMap.put(62, groundDown30Left);
 
 		//Ground Down 30 Right
-		shapeMap.put(15, new double[] {
+		double[] groundDown30Right = new double[] {
 				-0.5, -0.5,
 				-0.5, 0,
 				0.5, -0.5
-		});
+		}; 
+		shapeMap.put(14, groundDown30Right);
+		shapeMap.put(63, groundDown30Right);
 
 		//Ground Up 45
-		shapeMap.put(36, new double[] {
+		double[] groundUp45 = new double[] {
 				-0.5, -0.5,
 				0.5, 0.5,
 				0.5, -0.5
 
-		});
+		}; 
+		shapeMap.put(36, groundUp45);
+		shapeMap.put(54, groundUp45);
+		
 		//Ground Down 45
-		shapeMap.put(37, new double[] {
+		double[] groundDown45 = new double[] {
 				-0.5, 0.5,
 				0.5, -0.5,
 				-0.5, -0.5
-		});
+		};
+		shapeMap.put(37, groundDown45);
+		shapeMap.put(55, groundDown45);
 
 		//Roof Up 30 Left
-		shapeMap.put(28, new double[] {
+		double[] roofUp30Left = new double[] {
 				-0.5, -0.5,
 				-0.5, 0.5,
 				0.5, 0.5,
 				0.5, 0
-		});
+		}; 
+		shapeMap.put(29, roofUp30Left);
 
 		//Roof Up 30 Right
-		shapeMap.put(29, new double[] {
+		double[] roofUp30Right = new double[] {
 				-0.5, 0,
 				-0.5, 0.5,
 				0.5, 0.5
-		});
+		}; 
+		shapeMap.put(30, roofUp30Right);
 
 		//Roof Down 30 Left
-		shapeMap.put(30, new double[] {
+		double[] roofDown30Left = new double[] {
 				-0.5, 0.5,
 				0.5, 0.5,
 				0.5, 0
-		});
+		}; 
+		shapeMap.put(27, roofDown30Left);
 
 		//Roof Down 30 Right
-		shapeMap.put(31, new double[] {
+		double[] roofDown30Right = new double[] {
 				-0.5, 0,
 				-0.5, 0.5,
 				0.5, 0.5,
 				0.5, -0.5
-		});
+		}; 
+		shapeMap.put(28, roofDown30Right);
 
 		//Roof Up 45
-		shapeMap.put(46, new double[] {
+		double[] roofUp45 = new double[] {
 				-0.5, -0.5,
 				-0.5, 0.5,
 				0.5, 0.5
 
-		});
+		};
+		shapeMap.put(53, roofUp45);
+		shapeMap.put(46, roofUp45);
+		
 		//Roof Down 45
-		shapeMap.put(47, new double[] {
+		double[] roofDown45 = new double[] {
 				-0.5, 0.5,
 				0.5, 0.5,
 				0.5, -0.5
-		});
+		}; 
+		shapeMap.put(52, roofDown45);
+		shapeMap.put(43, roofDown45);
 
 		for (int k = 0; k < layers.length; k++) {
 			if (!map.layers[k].active)

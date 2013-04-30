@@ -307,17 +307,30 @@ public class PlatformLogic implements Logic {
 
 		if (!hero.isDisposed()) {
 			RectF heroRect = hero.getRect();
-			if (heroRect.left < BORDER_X) {
-				cameraOffset.setX(BORDER_X - heroRect.left);
+			boolean offLeft = heroRect.left < BORDER_X,
+					offRight = heroRect.right > Graphics.getWidth() - BORDER_X,
+					offUp = heroRect.top < BORDER_Y,
+					offDown = heroRect.bottom > Graphics.getHeight() - BORDER_Y;
+			
+			if (offLeft && offRight) {
+				cameraOffset.setX(Math.round((Graphics.getWidth() - heroRect.left - heroRect.right) / 2));
+			} else {
+				if (offLeft) {
+					cameraOffset.setX(BORDER_X - heroRect.left);
+				}
+				if (offRight) {
+					cameraOffset.setX((Graphics.getWidth() - BORDER_X) - heroRect.right);
+				}
 			}
-			if (heroRect.right > Graphics.getWidth() - BORDER_X) {
-				cameraOffset.setX((Graphics.getWidth() - BORDER_X) - heroRect.right);
-			}
-			if (heroRect.top < BORDER_Y) {
-				cameraOffset.setY(BORDER_Y - heroRect.top);
-			}
-			if (heroRect.bottom > Graphics.getHeight() - BORDER_Y) {
-				cameraOffset.setY((Graphics.getHeight() - BORDER_Y) - heroRect.bottom);
+			if (offUp && offDown) {
+				cameraOffset.setY(Math.round((Graphics.getHeight() - heroRect.top - heroRect.bottom) / 2));
+			} else {
+				if (offUp) {
+					cameraOffset.setY(BORDER_Y - heroRect.top);
+				}
+				if (offDown) {
+					cameraOffset.setY((Graphics.getHeight() - BORDER_Y) - heroRect.bottom);
+				}
 			}
 		}
 		

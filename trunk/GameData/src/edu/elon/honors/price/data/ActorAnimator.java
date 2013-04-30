@@ -221,7 +221,7 @@ public abstract class ActorAnimator {
 				} else {
 					state = State.Walking;
 				}
-				updateFrame(0);
+				update(0, dir, grounded, climbing);
 				if (isJumping()) {
 					resetFrame(getJumpHold());
 				}
