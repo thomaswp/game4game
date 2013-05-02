@@ -91,6 +91,12 @@ public class PageMap extends PageList<Map> {
 		return "Maps";
 	}
 
+	@Override
+	public void addEditorButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
 //	@Override
 //	public int getLayoutId() {
 //		return R.layout.page_map;

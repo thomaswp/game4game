@@ -24,6 +24,7 @@ public class MapEditor extends MapActivityBase {
 	protected GameDetails gameDetails;
 	protected ReturnResponse returnResponse;
 	private boolean testing;
+	private boolean inDatabase;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,10 @@ public class MapEditor extends MapActivityBase {
 		if (testing) {
 			TutorialUtils.fireCondition(EditorAction.MapEditorFinishTest, this);
 			testing = false;
+		}
+		if (inDatabase) {
+			TutorialUtils.fireCondition(EditorAction.MapEditorReturnedDatabase, this);
+			inDatabase = false;
 		}
 	}
 	
@@ -137,6 +142,7 @@ public class MapEditor extends MapActivityBase {
 	}
 	
 	protected void openDatabase() {
+		inDatabase = true;
 		Intent intent = new Intent(this, Database.class);
 		intent.putExtra("game", game);
 		startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);

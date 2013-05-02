@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ public abstract class PageList<T> extends Page {
 	protected final static int REQUEST_EDIT_ITEM = 101;
 	protected int editIndex;
 	private LinearLayout linearLayoutButtons;
+	protected Button buttonEdit, buttonReset, buttonAdd;
 	
 	@Override
 	public int getLayoutId() {
@@ -79,8 +81,8 @@ public abstract class PageList<T> extends Page {
 	
 	private void createButtonEvents() {
 
-		Button editButton = (Button)findViewById(R.id.buttonEdit);
-		editButton.setOnClickListener(new OnClickListener() {
+		buttonEdit = (Button)findViewById(R.id.buttonEdit);
+		buttonEdit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				int index = getSelectedIndex();
@@ -90,8 +92,8 @@ public abstract class PageList<T> extends Page {
 			}
 		});
 
-		Button reset = (Button)findViewById(R.id.buttonReset);
-		reset.setOnClickListener(new OnClickListener() {
+		buttonReset = (Button)findViewById(R.id.buttonReset);
+		buttonReset.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				final int index = getSelectedIndex();
@@ -113,8 +115,8 @@ public abstract class PageList<T> extends Page {
 			}
 		});
 
-		Button add = (Button)findViewById(R.id.buttonAdd);
-		add.setOnClickListener(new OnClickListener() {
+		buttonAdd = (Button)findViewById(R.id.buttonAdd);
+		buttonAdd.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				int startSize = listView.getAdapter().getCount();
@@ -122,7 +124,7 @@ public abstract class PageList<T> extends Page {
 				getListViewAdapter().insert(getItem(startSize), startSize);
 			}
 		});
-		add.setText("Add " + getItemCategory());
+		buttonAdd.setText("Add " + getItemCategory());
 	}
 	
 

@@ -3,6 +3,7 @@ package edu.elon.honors.price.maker;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.game.Debug;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -117,6 +119,7 @@ public abstract class SaveableActivity extends Activity {
 	 * be overwritten to change this behavior.
 	 */
 	protected void finishCancel() {
+		TutorialUtils.queueButton(findViewById(R.id.buttonCancel));
 		finish();
 	}
 	
@@ -126,6 +129,7 @@ public abstract class SaveableActivity extends Activity {
 	 * is final an not meant to be overridden.
 	 */
 	protected final void finishOk() {
+		TutorialUtils.queueButton(findViewById(R.id.buttonOk));
 		onFinishing();
 		Intent intent = new Intent();
 		finishOk(intent);
@@ -175,6 +179,7 @@ public abstract class SaveableActivity extends Activity {
 		Button buttonCancel = (Button)findViewById(R.id.buttonCancel);
 
 		if (buttonOk != null) {
+			TutorialUtils.addHighlightable(buttonOk, EditorButton.DatabaseOk, this);
 			buttonOk.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -185,7 +190,6 @@ public abstract class SaveableActivity extends Activity {
 				}
 			});
 			buttonOk.setOnLongClickListener(new OnLongClickListener() {
-
 				@Override
 				public boolean onLongClick(View v) {
 					Vibrator vb =(Vibrator)getSystemService(VIBRATOR_SERVICE);
@@ -197,6 +201,7 @@ public abstract class SaveableActivity extends Activity {
 		}
 
 		if (buttonCancel != null) {
+			TutorialUtils.addHighlightable(buttonCancel, EditorButton.DatabaseCancel, this);
 			buttonCancel.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -225,6 +230,7 @@ public abstract class SaveableActivity extends Activity {
 				}
 			}
 		}
+		TutorialUtils.fireActivityResult(this);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	

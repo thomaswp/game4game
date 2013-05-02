@@ -98,7 +98,6 @@ public class MapEditorView extends MapView {
 
 	public void setGame(PlatformGame game, boolean loadEditorData) {
 		synchronized(this.game) {
-			TutorialUtils.setTutorial(game.tutorial, getContext());
 			updateActors(game);
 			updateObjects(game);
 			updateTileset(game);

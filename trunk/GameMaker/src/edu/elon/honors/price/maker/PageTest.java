@@ -91,4 +91,10 @@ public class PageTest extends Page {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void addEditorButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

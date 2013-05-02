@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.maker.R;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -75,6 +78,17 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 		});
 
 		imageSpinner.setSelectedImageName(actor.imageName);
+		imageSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				TutorialUtils.fireCondition(EditorButton.EditActorImage, 
+						DatabaseEditActorClass.this);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) { }
+		});
 
 		speed.setMax(INCREMENTS);
 		jump.setMax(INCREMENTS);
@@ -88,6 +102,7 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 		buttonScale.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				onFinishing();
 				SelectorActivityScale.startForResult(
 						DatabaseEditActorClass.this, true, actorId);
 			}
@@ -104,8 +119,19 @@ public class DatabaseEditActorClass extends DatabaseActivity {
 		});
 		
 		setDefaultButtonActions();
+		
+		TutorialUtils.fireCondition(EditorButton.DatabaseActorsEdit, this);
 	}
 	
+	@Override
+	public void onResume() { 
+		super.onResume();
+		TutorialUtils.addHighlightable(findViewById(R.id.linearLayoutActorImage), 
+				EditorButton.EditActorImage, this);
+		TutorialUtils.addHighlightable(findViewById(R.id.buttonOk), 
+				EditorButton.EditActorOk, this);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode,
 			Intent data) {

@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.view.View;
@@ -157,6 +159,8 @@ public class SelectorActivityScale extends DatabaseActivity {
 			}
 		}
 		
+		private Rect src = new Rect();
+		private RectF dest = new RectF();
 		@Override
 		protected void drawActor(Canvas c, float dx, float dy, int instanceId, 
 				Bitmap bmp, Paint paint) {
@@ -165,26 +169,28 @@ public class SelectorActivityScale extends DatabaseActivity {
 			if (isActor && (instance = game.getSelectedMap().
 					getActorInstanceById(instanceId)).classIndex == index) {
 				ActorClass actorClass = instance.getActorClass(game);
+				float cx = dx + bmp.getWidth() / 2; //center x
+				float by = dy + bmp.getHeight(); //bottom y
 				bmp = image;
-				float cx = dx + bmp.getWidth() / 2;
-				float cy = dy + bmp.getHeight() / 2;
+				src.set(0, 0, bmp.getWidth(), bmp.getHeight());
+				float scaledWidth = bmp.getWidth() * actorClass.zoom;
+				float scaledHeight = bmp.getHeight() * actorClass.zoom;
+				dest.set(cx - scaledWidth / 2, by - scaledHeight, 
+						cx + scaledWidth / 2, by);
 
 				paint.reset();
 				paint.setAntiAlias(true);
 				paint.setDither(true);
 				paint.setFilterBitmap(true);
-				c.save();
-				c.scale(actorClass.zoom, actorClass.zoom, cx, cy);
-				c.drawBitmap(bmp, dx, dy, paint);
-				c.restore();
+				c.drawBitmap(bmp, src, dest, paint);
 				paint.reset();
 	
 				String text = "" + instanceId;
 				paint.setColor(Color.WHITE);
 				paint.setAlpha(150);
 				paint.setStyle(Style.FILL);
-				int blX = (int)(cx - bmp.getWidth() * actorClass.zoom / 2);
-				int blY = (int)(cy + bmp.getHeight() * actorClass.zoom / 2);
+				int blX = (int)(dest.left);
+				int blY = (int)(by);
 				c.drawRect(blX, blY - paint.getTextSize(), 
 						blX + paint.measureText(text), blY, paint);
 				paint.setColor(Color.BLACK);

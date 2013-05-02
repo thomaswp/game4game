@@ -1,7 +1,8 @@
 Tutorials:
 -Terrain, Actors
 -Objects (1)
--Actor and Object Properties (2)
+-Actors 
+-Objects Properties (2)
 -Map Properties (1)
 -Events 1 (single, easy event) (2)
 -Events 2 (1/3 of zombie run) (2)

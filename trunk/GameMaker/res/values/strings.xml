@@ -168,4 +168,6 @@
         It looks like you haven\'t downloaded any games from other players. Click the 
         "Go Online" button to find some games other folks have made.
     </string>
+    <string name="jumpHeight">Jump Height</string>
+    <string name="questionMark">\?</string>
 </resources>

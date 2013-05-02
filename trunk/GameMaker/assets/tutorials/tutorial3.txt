@@ -1,0 +1,51 @@
+Welcome to Tutorial 3. This time we’re going to be talking about the <h>Database</h>. The Database is where you can edit the details of your <h>Actors</h>, <h>Objects</h> and <h>Maps</h>. It’s also where you can add <h>Events</h> that allow you to make your map into a real game.
+
+To get to the <h>Database</h> from the <h>Map Editor</h>, you can open the menu and click the Database option. Alternately, you can use the menu shortcut by holding the <h>Menu</h> button in the top-left corner and dragging over to the Database icon. Try it out now.
+
+This is the <h>Database</h>. If you need a tutorial instruction repeated while in the Database, use the “?” button in the bottom-right corner of the screen.
+
+Just like the <h>Map Editor</h>, the Database has different components, represented by the tabs on your left. Right now you’re on the <h>Actors</h> page. Try a little navigation by switching to the <h>Objects</h> page.
+
+Good job. We’re only going to be working with the first two pages of the <h>Database</h> today, but go ahead and try navigating through them, and when you’re done come back to the <h>Actors</h> page.
+
+Here you can see a list of all the <h>Actors</h> in your game. The first one will always be your hero, so go ahead and select the <h>Hero</h> (if it’s not already selected) and click the <h>Edit</h> button.
+
+This page lets you change various properties of the <h>Actor</h> you selected. You can edit any of them, but let’s try changing the <h>Hero’s</h> image. Click the drop-down to the right of the “Image:” prompt and select a new image for the Hero.
+
+Good. Whenever you’ve made changes to a page in the <h>Database</h>, you can either accept them by clicking the <h>Ok</h> button or cancel them with the <h>Cancel</h> button. This affects any changes you’ve made since first seeing that page. Go ahead and accept your changes by pressing Ok.
+
+You can see that your actor has now changed its image on the <h>Actors</h> page as well. You could still cancel by hitting <i>this page’s</i> <h>Cancel</h> button, but let’s go ahead and accept again by hitting Ok one more time.
+
+Great, now let’s save and test your game by using the <h>Menu</h> button shortcut. Hold down Menu and drag over to the <h>Test</h> button:
+
+Ok, let’s head back to the <h>Actor</h> editor to change some more properties.
+
+This time, why don’t you select a different <h>Actor</h> to edit, like the Ghost. When you change the property of an Actor, it changes for each instance of that Actor on the map. So every Ghost will have the new properties your set.
+
+We’ll quickly go over the <h>Actor</h> properties here, but you’ll want to experiment some on your own too. It shouldn’t surprise you that <h>Scale</h> changes the size of an Actor, <h>Speed</h> changes how fast it walks and <h>Jump Height</h> changes how high it can jump. Enabling <h>Double Jump</h> allows the Actor to jump twice while in the air (which makes the most sense for a Hero). You can also decide what the Actor should collide with, and what it should just pass through. 
+
+The last group there is for adding <h>Behaviors</h> to your Actor. Right now, your Ghost has a “Pace” behavior, which is what causes it to move back and forth. We’ll talk more about behaviors in later tutorials, so for now let’s just leave it alone. Play around with some of the other properties and test out your map to see how your Ghosts are different.
+
+One more thing before you go. The <h>Add</h> button lets you add another Actor to the game. Be warned: this is a permanent action. You can’t delete Actors. Instead, you can reset them with the <h>Reset</h> button to start over.
+
+Try out the changes you made to the Ghost. When you’re done, come back to the <h>Database</h> and choose the Objects tab.
+
+Select an <h>Object</h> to edit it, just like with <h>Actors</h>.
+
+This should look pretty familiar after dealing with <h>Actors</h>, but there are a few new properties you should learn. In the previous tutorial, we learned about <h>Density</h>, <h>Bounciness</h> and <h>Friction</h>. On this page, you can change those properties of an <h>Object</h>. The best way to understand what they do is to play around with their values and test out the game.
+
+You can also change whether or not an <h>Object</h> can move or rotate. Immobile objects are stuck in space where you place them for the whole game. Objects that can’t rotate still move, but they stay upright, like <h>Actors</h>. Play around with the Object properties and test your game, and then come back to this page when you’re done to learn about the <h>Is Platform</h> property.
+
+You’re back – great. This time, try selecting the Brick to edit.
+
+The <h>Is Platform</h> property lets you treat an <h>Object</h> like it’s part of a map’s terrain. The player can jump off of it and walk on it like normal tiles. This is useful if you want a mobile platform (don’t worry – we’ll talk about how to move it in a later tutorial). The other side-effect of this property is that the Map Editor will help you line them up when you place them. So try making the Brick a platform Object. 
+
+While you’re at it, you should probably make it immobile, too. That way our Brick platform doesn’t fall out of the sky.
+
+Ok, now return to the map so we can try placing the Bricks.
+
+Select the Brick in the <h>Objects</h> layer and try placing one.
+
+Now place another right next to it. If you made it a Platform object, the Map Editor will help you line them up.
+
+Good job. Ok, that’s all for this tutorial. Next time we’ll talk about Map properties. Remember, you can keep working on this map by <h>Branching</h> it in the main menu.

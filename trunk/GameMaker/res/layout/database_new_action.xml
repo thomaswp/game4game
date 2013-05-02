@@ -3,36 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textViewImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
         android:text="@string/newAction"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginBottom="10dip" />
-
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1" >
-
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
         <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="200dip"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginRight="10dip" >
+            android:layout_marginRight="10dip"
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/textViewHelp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
                 android:text="@string/category"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_marginBottom="10dip" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <ListView
                 android:id="@+id/listViewCategory"
@@ -43,20 +43,20 @@
                 android:scrollbars="vertical" >
             </ListView>
         </LinearLayout>
-
+
         <LinearLayout
             android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
-
+
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
                 android:text="@string/actions"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_marginBottom="10dip" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <ScrollView
                 android:id="@+id/scrollView1"
@@ -70,9 +70,7 @@
                     android:orientation="vertical" >
                 </LinearLayout>
             </ScrollView>
-
         </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -80,13 +78,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center" >
-
+
         <Button
             android:id="@+id/buttonCancel"
             android:layout_width="100dip"
             android:layout_height="wrap_content"
             android:text="@string/cancel" />
-
     </LinearLayout>
 
 </LinearLayout>

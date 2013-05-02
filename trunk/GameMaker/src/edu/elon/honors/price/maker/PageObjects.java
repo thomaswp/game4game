@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.ObjectClass;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.maker.DatabaseEditObjectClass;
 
 public class PageObjects extends PageList<ObjectClass> {
@@ -82,81 +83,9 @@ public class PageObjects extends PageList<ObjectClass> {
 		return "Object";
 	}
 
-
-//	@Override
-//	public void onCreate(ViewGroup parentView) {
-//		super.onCreate(parentView);
-//		listViewObjects = (ListView)findViewById(R.id.listViewObjects);
-//
-//		Button buttonEdit = (Button)findViewById(R.id.buttonEdit);
-//		buttonEdit.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				if (selectedId >= 0) {
-//					Intent intent = new Intent(parent, DatabaseEditObjectClass.class);
-//					intent.putExtra("game", getGame());
-//					intent.putExtra("id", selectedId);
-//					parent.startActivityForResult(intent, DatabaseActivity.REQUEST_RETURN_GAME);
-//				}
-//			}
-//		});
-//
-//		Button buttonReset = (Button)findViewById(R.id.buttonReset);
-//		buttonReset.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				ObjectClass o = new ObjectClass();
-//				getGame().objects[selectedId] = o;
-//				CheckableArrayAdapterString adapter = 
-//					(CheckableArrayAdapterString)listViewObjects.getAdapter();
-//				adapter.replaceItem(selectedId, o.name);
-//			}
-//		});
-//
-//		Button buttonAdd = (Button)findViewById(R.id.buttonAdd);
-//		buttonAdd.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) { 
-//				CheckableArrayAdapterString adapter = 
-//					(CheckableArrayAdapterString)listViewObjects.getAdapter();
-//				
-//				ObjectClass[] objects = getGame().objects;
-//				int oldLength = objects.length;
-//				objects = Arrays.copyOf(objects, oldLength + 1);
-//				for (int i = oldLength; i < objects.length; i++) {
-//					objects[i] = new ObjectClass();
-//					adapter.add(objects[i].name);
-//				}
-//				getGame().objects = objects;
-//				((CheckableArrayAdapterString)listViewObjects.getAdapter())
-//					.notifyDataSetChanged();
-//			}
-//		});
-//		
-//		listViewObjects.setOnItemClickListener(new OnItemClickListener() {
-//
-//			@Override
-//			public void onItemClick(AdapterView<?> parent, View view, int selected,
-//					long id) {
-//				selectedId = selected;
-//			}
-//		});
-//	}
-//
-//	@Override
-//	public void onResume() {
-//		populateListView();
-//	}
-//
-//	private void populateListView() {
-//		ObjectClass[] objects = getGame().objects;
-//		ArrayList<String> names = new ArrayList<String>();
-//		for (int i = 0; i < objects.length; i++) {
-//			ObjectClass object = objects[i];
-//			names.add(object.name);
-//		}
-//		listViewObjects.setAdapter(new CheckableArrayAdapterString(parent, names));
-//		listViewObjects.setSelection(0);
-//	}
-
+	@Override
+	public void addEditorButtons() {
+		TutorialUtils.addHighlightable(buttonEdit, 
+				EditorButton.DatabaseObjectsEdit, parent);
+	}
 }

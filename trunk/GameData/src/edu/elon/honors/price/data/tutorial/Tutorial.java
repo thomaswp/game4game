@@ -43,7 +43,22 @@ public abstract class Tutorial implements Serializable {
 		MapEditorHelpButton,
 		MapEditorMenuPlay,
 		MapEditorMenuDatabase,
-		TextureSelectorOk 
+		TextureSelectorOk, 
+		DatabaseOk,
+		DatabaseCancel, 
+		DatabaseActors, 
+		DatabaseActorsEdit,
+		DatabaseObjects,
+		DatabaseObjectsEdit,
+		DatabaseMaps,
+		DatabaseEvents,
+		DatabaseBehaviors, 
+		DatabaseHelp, 
+		EditActorImage, 
+		EditActorOk,
+		EditObjectIsPlatform, 
+		EditObjectIsMovable, 
+		EditObjectOk,
 	}
 	
 	public enum EditorButtonAction {
@@ -63,7 +78,9 @@ public abstract class Tutorial implements Serializable {
 		MapEditorFinishSelection,
 		MapEditorStartActorSelection,
 		MapEditorStartObjectSelection,
-		MapEditorStartTextureSelection
+		MapEditorStartTextureSelection,
+		MapEditorReturnedDatabase,
+		DatabaseSelected,
 	}
 	
 	
@@ -169,6 +186,14 @@ public abstract class Tutorial implements Serializable {
 		public TutorialAction setCondition(Condition condition) {
 			this.condition = condition;
 			return this;
+		}
+
+		public TutorialAction setCondition(EditorAction action) {
+			return setCondition(new Condition(action));
+		}
+		
+		public TutorialAction setCondition(EditorButton button) {
+			return setCondition(new Condition(button));
 		}
 		
 		public TutorialAction setDialog(String title) {

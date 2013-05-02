@@ -6,7 +6,7 @@
                     <TextView android:id="@+id/textView5" android:text="Hero" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_height="wrap_content"></TextView>
                 </TableRow>
                 <TableRow android:id="@+id/tableRow3" android:layout_width="wrap_content" android:layout_height="wrap_content">
-                    <TextView android:id="@+id/textView2" android:text="@string/actorImage" android:layout_height="wrap_content" android:layout_width="150dip"></TextView>
+                    <TextView android:id="@+id/textViewImage" android:text="@string/actorImage" android:layout_height="wrap_content" android:layout_width="150dip"></TextView>
                     <edu.elon.honors.price.maker.SelectorActorImage android:id="@+id/spinnerActorImage" android:layout_height="wrap_content" android:layout_width="wrap_content" android:minWidth="200dip"></edu.elon.honors.price.maker.SelectorActorImage>
                 </TableRow>
                 <TableRow android:id="@+id/tableRow5" android:layout_width="wrap_content" android:layout_height="wrap_content">

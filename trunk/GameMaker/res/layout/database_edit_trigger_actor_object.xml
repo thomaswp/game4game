@@ -7,16 +7,16 @@
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:layout_weight="10" >
-
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 
         <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-            <TextView
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
                 android:id="@+id/textViewHelp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -25,20 +25,20 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textViewImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
                 android:text="@string/eventTriggeredWhen"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <RadioGroup
                 android:id="@+id/radioGroupType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
                 android:orientation="vertical" >
-
+
                 <RadioButton
                     android:id="@+id/radioInstance"
                     android:layout_width="wrap_content"
@@ -57,16 +57,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="the specific object" />
-
+
                 <RadioButton
                     android:id="@+id/radioClass"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="any object with the class" />
-
             </RadioGroup>
 
-            
             <edu.elon.honors.price.maker.SelectorActorClass
                 android:id="@+id/selectorActorClass1"
                 android:layout_width="wrap_content"
@@ -88,13 +86,13 @@
                 android:id="@+id/selectorObjectClass1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-                
+
             <LinearLayout
                 android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical" >
-
+
                 <Spinner
                     android:id="@+id/spinnerAction"
                     android:layout_width="wrap_content"
@@ -102,36 +100,10 @@
                     android:layout_marginBottom="10dip"
                     android:layout_marginTop="10dip"
                     android:minWidth="200dip" />
-
             </LinearLayout>
-                
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:gravity="center" 
-        android:layout_weight="1" >
-
-
-        <Button
-            android:id="@+id/buttonOk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dip"
-            android:text="@string/ok"
-            android:width="100dip" />
-
-
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:width="100dip" />
-
-    </LinearLayout>
+    <include layout="@layout/database_footer" />
 
 </LinearLayout>

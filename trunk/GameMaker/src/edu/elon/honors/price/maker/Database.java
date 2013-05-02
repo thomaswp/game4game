@@ -1,5 +1,7 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.maker.R;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,7 +9,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
+@AutoAssign
 public class Database extends DatabaseActivity {
 
 	private Page[] pages;
@@ -15,27 +19,57 @@ public class Database extends DatabaseActivity {
 	
 	private String LAST_PAGE = "lastPage";
 	
-	private Button next, prev;
+	//private Button buttonNext, buttonPrevious;
+	
+	private final static EditorButton[] pageButtons = new EditorButton[] {
+			EditorButton.DatabaseActors,
+			EditorButton.DatabaseObjects,
+			EditorButton.DatabaseMaps,
+			EditorButton.DatabaseEvents,
+			EditorButton.DatabaseBehaviors
+	};
+
+	private ImageButton imageButtonEvents, imageButtonActors,
+		imageButtonObjects, imageButtonMaps, imageButtonBehaviors;
+	ImageButton[] tabButtons;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		pages = new Page[] {
-				new PageEvents(this),
 				new PageActors(this),
 				new PageObjects(this),
 				new PageMap(this),
+				new PageEvents(this),
 				new PageBehaviors(this),
 				//new PageTest(this)
-			};
+		};
 		
 		
-		setContentView(R.layout.database); 
-		next = (Button)findViewById(R.id.buttonNext);
-		prev = (Button)findViewById(R.id.buttonPrevious);
+		setContentView(R.layout.database);
+		AutoAssignUtils.autoAssign(this);
 		
-		setButtonEvents();
+		tabButtons = new ImageButton[] {
+				imageButtonActors,
+				imageButtonObjects,
+				imageButtonMaps,
+				imageButtonEvents,
+				imageButtonBehaviors
+		};
+		
+		for (int i = 0; i < tabButtons.length; i++) {
+			final int fi = i;
+			tabButtons[i].setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					selectPage(fi);
+					TutorialUtils.fireCondition(pageButtons[fi], Database.this);
+				}
+			});
+		}
+		
+		setDefaultButtonActions();
 		
 		selectedPage = -1;
 		if (savedInstanceState != null && 
@@ -46,12 +80,20 @@ public class Database extends DatabaseActivity {
 			selectPage(getIntPreference(LAST_PAGE, 0));
 		}
 		
-		
+		TutorialUtils.fireCondition(EditorAction.DatabaseSelected, this);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		for (int i = 0; i < tabButtons.length; i++) {
+			TutorialUtils.addHighlightable(tabButtons[i], pageButtons[i], this);
+		}
+		for (Page page : pages) { 
+			page.addEditorButtons();
+		}
+		TutorialUtils.addHighlightable(findViewById(R.id.buttonOk), 
+				EditorButton.DatabaseOk, this);
 		pages[selectedPage].onResume();
 	}
 	
@@ -86,41 +128,6 @@ public class Database extends DatabaseActivity {
 		}
 	}
 	
-	private void setButtonEvents() {
-		Button ok = (Button)findViewById(R.id.buttonOk);
-		Button cancel = (Button)findViewById(R.id.buttonCancel);
-				
-		ok.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finishOk();
-			}
-		});
-		
-		cancel.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
-		
-		next.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				selectPage(selectedPage + 1);
-				pages[selectedPage].onResume();
-			}
-		});
-		
-		prev.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				selectPage(selectedPage - 1);
-				pages[selectedPage].onResume();
-			}
-		});
-	}
-	
 	private void selectPage(int page) {
 		if (page >= pages.length) {
 			page = pages.length - 1;
@@ -131,30 +138,35 @@ public class Database extends DatabaseActivity {
 		if (selectedPage >= 0) {
 			pages[selectedPage].onPause();
 			pages[selectedPage].setVisibility(View.GONE);
+			tabButtons[selectedPage].setSelected(false);
 		}
+		
 		selectedPage = page;
 		putPreference(LAST_PAGE, selectedPage);
+		
+		tabButtons[selectedPage].setSelected(true);
 
 		if (!pages[page].isCreated()) {
 			pages[page].onCreate((ViewGroup)findViewById(
 					R.id.relativeLayoutHost));
+			pages[page].addEditorButtons();
 		}
 		
 		pages[page].setVisibility(View.VISIBLE);
 		pages[page].onResume();
 		
-		if (selectedPage > 0) {
-			prev.setVisibility(View.VISIBLE);
-			prev.setText(pages[selectedPage - 1].getName());
-		} else {
-			prev.setVisibility(View.INVISIBLE);
-		}
-		
-		if (selectedPage < pages.length - 1) {
-			next.setVisibility(View.VISIBLE);
-			next.setText(pages[selectedPage + 1].getName());
-		} else {
-			next.setVisibility(View.INVISIBLE);
-		}
+//		if (selectedPage > 0) {
+//			buttonPrevious.setVisibility(View.VISIBLE);
+//			buttonPrevious.setText(pages[selectedPage - 1].getName());
+//		} else {
+//			buttonPrevious.setVisibility(View.INVISIBLE);
+//		}
+//		
+//		if (selectedPage < pages.length - 1) {
+//			buttonNext.setVisibility(View.VISIBLE);
+//			buttonNext.setText(pages[selectedPage + 1].getName());
+//		} else {
+//			buttonNext.setVisibility(View.INVISIBLE);
+//		}
 	}
 }

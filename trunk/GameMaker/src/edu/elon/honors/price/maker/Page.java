@@ -44,6 +44,8 @@ public abstract class Page extends LinearLayout {
 		parentView.addView(this, lps);
 	}
 	
+	public abstract void addEditorButtons();
+	
 	/**
 	 * Called when the page is resumed, meaning that another
 	 * activity was called on top of this page and is now finished.
