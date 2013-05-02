@@ -7,8 +7,8 @@
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10" >
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 
         <LinearLayout
             android:id="@+id/linearLayout1"
@@ -26,7 +26,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textViewImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:text="@string/anyActor" />
-
+
                 <RadioButton
                     android:id="@+id/radioAnyObject"
                     android:layout_width="wrap_content"
@@ -89,27 +89,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center" >
-
-        <Button
-            android:id="@+id/buttonOk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dip"
-            android:text="@string/ok"
-            android:width="100dip" />
-
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:width="100dip" />
-    </LinearLayout>
+    <include layout="@layout/database_footer" />
 
 </LinearLayout>

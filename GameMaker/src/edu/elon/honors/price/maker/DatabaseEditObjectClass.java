@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -86,6 +87,8 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				getObject().moves = isChecked;
 				checkBoxRotates.setEnabled(isChecked);
+				TutorialUtils.fireCondition(EditorButton.EditObjectIsMovable, 
+						DatabaseEditObjectClass.this);
 			}
 		});
 		
@@ -116,8 +119,23 @@ public class DatabaseEditObjectClass extends DatabaseActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				getObject().isPlatform = isChecked;
+				TutorialUtils.fireCondition(EditorButton.EditObjectIsPlatform, 
+						DatabaseEditObjectClass.this);
 			}
 		});
+		
+		TutorialUtils.fireCondition(EditorButton.DatabaseObjectsEdit, this);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		TutorialUtils.addHighlightable(checkBoxIsPlatform, 
+				EditorButton.EditObjectIsPlatform, this);
+		TutorialUtils.addHighlightable(checkBoxMoves, 
+				EditorButton.EditObjectIsMovable, this);
+		TutorialUtils.addHighlightable(findViewById(R.id.buttonOk), 
+				EditorButton.EditObjectOk, this);
 	}
 	
 	protected void setButtonScaleText() {

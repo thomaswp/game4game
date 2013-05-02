@@ -24,6 +24,7 @@ import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.maker.share.WebLogin;
 import edu.elon.honors.price.maker.tutorial.Tutorial1;
 import edu.elon.honors.price.maker.tutorial.Tutorial2;
+import edu.elon.honors.price.maker.tutorial.Tutorial3;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -45,6 +46,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -57,7 +59,7 @@ import android.widget.TabHost.TabContentFactory;
 public class MainMenu extends Activity implements IViewContainer {
 	
 	private final static String APP_NAME = "PlatForge";
-	private final static boolean ALLOW_EXPORT = false;
+	private final static boolean ALLOW_EXPORT = true;
 	
 	private final static String[] HELP_TEXT = new String[] {
 		"Select a game to Edit or Test!",
@@ -158,7 +160,8 @@ public class MainMenu extends Activity implements IViewContainer {
 	private void addTutorials() {
 		Tutorial[] tutorials = new Tutorial[] {
 			new Tutorial1(this),
-			new Tutorial2(this)
+			new Tutorial2(this),
+			new Tutorial3(this)
 		};
 		List<GameDetails> loadedTutorials = gameCache.getGames(GameType.Tutorial);
 		if (!gameCache.tutorialsUpToDate()) {

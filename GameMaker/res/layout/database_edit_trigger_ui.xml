@@ -7,13 +7,13 @@
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10" >
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 
         <LinearLayout
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <TextView
@@ -23,9 +23,9 @@
                 android:layout_marginBottom="10dip"
                 android:text="@string/editUITrigger"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textViewImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
@@ -38,28 +38,27 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dip"
                 android:orientation="horizontal" >
-
+
                 <RadioButton
                     android:id="@+id/radioButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:text="@string/theButton" />
-
+
                 <RadioButton
                     android:id="@+id/radioJoystick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/theJoystick" />
-
+
                 <RadioButton
                     android:id="@+id/radioTouchScreen"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/touchesTheScreen" />
-
             </RadioGroup>
-
+
             <LinearLayout
                 android:id="@+id/linearLayoutButton"
                 android:layout_width="match_parent"
@@ -70,30 +69,28 @@
                     android:id="@+id/selectorUIControlButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
+
                 <RadioGroup
                     android:id="@+id/radioGroupButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
-
+
                     <RadioButton
                         android:id="@+id/radioButtonPressed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="@string/isPressed" />
-
+
                     <RadioButton
                         android:id="@+id/radioButtonRleased"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/isReleased" />
-
                 </RadioGroup>
-
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/linearLayoutJoystick"
                 android:layout_width="match_parent"
@@ -104,42 +101,40 @@
                     android:id="@+id/selectorUIControlJoystick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-
+
                 <RadioGroup
                     android:id="@+id/radioGroupJoy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
-
+
                     <RadioButton
                         android:id="@+id/radioJoyPressed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="@string/isPressed" />
-
+
                     <RadioButton
                         android:id="@+id/radioJoyReleased"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/isReleased" />
-
+
                     <RadioButton
                         android:id="@+id/radioJoyMoved"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/isMoved" />
-
                 </RadioGroup>
-
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/linearLayoutScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
-
+
                 <RadioGroup
                     android:id="@+id/radioGroupScreen"
                     android:layout_width="wrap_content"
@@ -165,33 +160,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/isMoved" />
                 </RadioGroup>
-
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center" >
-
-        <Button
-            android:id="@+id/buttonOk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dip"
-            android:text="@string/ok"
-            android:width="100dip" />
-
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:width="100dip" />
-    </LinearLayout>
+    <include layout="@layout/database_footer" />
 
 </LinearLayout>

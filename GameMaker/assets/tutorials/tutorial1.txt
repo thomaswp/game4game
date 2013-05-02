@@ -1,8 +1,8 @@
-Welcome to your first tutorial! In this tutorial, we’ll introduce you to the <h>Map Editor</h>, and teach your how to add <h>Tiles</h> and <h>Actors</h> to your <h>Map</h>. 
+Welcome to your first tutorial! In this tutorial, we’ll introduce you to the <h>Map Editor</h>, and teach you how to add <h>Tiles</h> and <h>Actors</h> to your <h>Map</h>. 
 
 At any time, you can repeat the last instruction by clicking on the "?" button on the left side of your screen. You can skip back or forward in the tutorial with the "&lt;" and "&gt;" buttons below.
 
-This screen is the <h>Map Editor</h>.  In the bottom-left corner, is the <h>Move Mode</h> button. Pressing this button toggles whether you are moving around the map, or editing it. Try moving around a bit, and then pressing the <h>Move Mode</h> button to switch to <h>Edit</h> mode.
+This screen is the <h>Map Editor</h>.  In the bottom-left corner is the <h>Move Mode</h> button. Pressing this button toggles whether you are moving around the map, or editing it. Try moving around a bit, and then pressing the <h>Move Mode</h> button to switch to <h>Edit</h> mode.
 
 Good job! Now you’re in <h>Edit</h> mode. In this mode you can place objects onto the map. You can choose what to place by pressing the <h>Selection</h> button in the top-right corner.
 
@@ -38,7 +38,7 @@ Try placing some foreground Tiles on your map and test it. Then try selecting th
 
 Good job. Now, there are a few tools you should know about that can make your job a lot easier. Before we start, make sure you’re on one of the Tile layers. Now tap the <h>Selection</h> button, but hold it down like you would with the <h>Layer</h> button. A menu will fan out; select the item with the two-pencils icon:
 
-This is the <h>Paint</h> tool, which lets your paint Tiles in a string, instead of placing them one at a time. Try it out. When you’re done, go back to the <h>Selection</h> button and choose the <h>Selection</h> mode, with the blue box icon:
+This is the <h>Paint</h> tool, which lets you paint Tiles in a string, instead of placing them one at a time. Try it out. When you’re done, go back to the <h>Selection</h> button and choose the <h>Selection</h> mode, with the blue box icon:
 
 <h>Selection<h/> mode lets you grab some Tiles and move them somewhere else. You can also drag them to the <h>Delete</h> button that appears to get rid of them. Be careful – if you drag some Tiles on top of some others, you’ll overwrite the old Tiles. Of course, you can only select items from the <h>Layer</h> you’re currently editing. Try it out, and when you’re done, switch back to the <h>Actor</h> layer. 
 

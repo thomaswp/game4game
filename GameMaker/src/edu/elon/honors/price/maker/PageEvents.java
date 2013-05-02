@@ -103,5 +103,11 @@ public class PageEvents extends PageList<Event> {
 	public void onActivityResult(int requestCode, Intent data) {
 		getEvents()[editIndex] = (Event)data.getSerializableExtra("event");
 		super.onActivityResult(requestCode, data);
+	}
+
+	@Override
+	public void addEditorButtons() {
+		// TODO Auto-generated method stub
+		
 	}	
 }

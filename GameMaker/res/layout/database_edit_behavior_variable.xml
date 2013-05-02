@@ -4,9 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
-
-
-
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
@@ -15,16 +12,12 @@
         android:layout_weight="1"
         android:orientation="vertical" >
 
-
         <TextView
             android:id="@+id/textViewHelp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/name"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-
 
         <EditText
             android:id="@+id/editTextName"
@@ -35,10 +28,7 @@
 
             <requestFocus />
         </EditText>
-
     </LinearLayout>
-
-
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -47,22 +37,19 @@
         android:layout_weight="1"
         android:orientation="vertical" >
 
-
-
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textViewImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/startValue"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
         <EditText
             android:id="@+id/editTextValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberSigned"
             android:maxLength="15" />
-
     </LinearLayout>
 
 </LinearLayout>

@@ -14,8 +14,8 @@
             android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:baselineAligned="false" >
+            android:baselineAligned="false"
+            android:orientation="vertical" >
 
             <LinearLayout
                 android:id="@+id/linearLayout6"
@@ -117,35 +117,15 @@
                     android:text="@string/plus" />
             </LinearLayout>
         </LinearLayout>
-
+
         <TextView
             android:id="@+id/textViewSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/empty"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/buttonOk"
-            android:layout_width="100dip"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dip"
-            android:text="@string/ok" />
-
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="100dip"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel" />
-    </LinearLayout>
+    <include layout="@layout/database_footer" />
 
 </LinearLayout>

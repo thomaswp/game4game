@@ -149,4 +149,10 @@ public class PageBehaviors extends PageList<Behavior> {
 		}
 		super.onActivityResult(requestCode, data);
 	}
+
+	@Override
+	public void addEditorButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,18 +1,25 @@
 package edu.elon.honors.price.maker;
 
 import java.io.Serializable;
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.Event;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
+import edu.elon.honors.price.maker.tutorial.Tutorial1;
 
 /**
  * A {@link SaveableActivity} specifically for {@link PlatformGame}
@@ -25,6 +32,7 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 	public static final int REQUEST_RETURN_GAME = 10;
 	
 	protected PlatformGame game;
+	protected Button buttonHelp;
 	//protected Bundle extras;
 	
 	/**
@@ -53,6 +61,33 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 		}
 
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		TutorialUtils.clearHighlightables();
+		buttonHelp = (Button)findViewById(R.id.buttonHelp);
+		if (buttonHelp != null) {
+			buttonHelp.setVisibility(game.tutorial != null ? View.VISIBLE : View.GONE);
+		}
+		TutorialUtils.addHighlightable(buttonHelp, EditorButton.DatabaseHelp, this);
+	}
+	
+	@Override
+	protected void setDefaultButtonActions() {
+		super.setDefaultButtonActions();
+		buttonHelp = (Button)findViewById(R.id.buttonHelp);
+		if (buttonHelp != null) {
+			if (game.tutorial != null) {
+				buttonHelp.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						TutorialUtils.backOneMessage(DatabaseActivity.this);
+					}
+				});
+			}
+		}
 	}
 	
 	public void showAlert(String title, String message) {
@@ -233,6 +268,8 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 					game = (PlatformGame) obj;
 				}
 			}
+		} else {
+			
 		}
 		//}
 		super.onActivityResult(requestCode, resultCode, data);
