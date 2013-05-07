@@ -17,7 +17,7 @@ import edu.elon.honors.price.physics.Vector;
 @SuppressWarnings("unused")
 public class Upgrader {
 
-	public final static int LATEST_VERSION = 19;
+	public final static int LATEST_VERSION = 20;
 
 	@SuppressWarnings("deprecation")
 	public static void upgrade(PlatformGame game) {
@@ -223,6 +223,15 @@ public class Upgrader {
 			game.tilesets[0] = new Tileset("Grass", "grass.png", 64, 64, 10, 8);
 			game.tilesets[1] = new Tileset("Castle", "castle.png", 64, 64, 10, 8);
 			game.tilesets[2] = new Tileset("Night", "night.png", 64, 64, 10, 8);
+			upgraded(game);
+		} 
+		if (version < 20) {
+			game.tilesets = new Tileset[4];
+			game.tilesets[0] = new Tileset("Grass", "grass.png", 64, 64, 10, 8);
+			game.tilesets[1] = new Tileset("Castle", "castle.png", 64, 64, 10, 8);
+			game.tilesets[2] = new Tileset("Night", "night.png", 64, 64, 10, 8);
+			game.tilesets[3] = new Tileset("Snow", "snow.png", 64, 64, 10, 8);
+			
 			upgraded(game);
 		}
 	}
