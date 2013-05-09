@@ -24,10 +24,18 @@
             android:layout_height="match_parent"
             android:baselineAligned="false" >
 
-            <RelativeLayout
-                android:id="@+id/relativeLayout1"
-                android:layout_width="225dip"
-                android:layout_height="wrap_content" >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dip"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sky"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <ScrollView
                     android:id="@+id/scrollView1"
@@ -40,25 +48,37 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical" >
 
-                        <TextView
-                            android:id="@+id/textViewImage"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/sky"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-
                         <RadioGroup
                             android:id="@+id/radioGroupSky"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" >
                         </RadioGroup>
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/textView3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/ground"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dip"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ground"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <ScrollView
+                    android:id="@+id/scrollView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" >
 
                         <RadioGroup
                             android:id="@+id/radioGroupGround"
@@ -67,43 +87,7 @@
                         </RadioGroup>
                     </LinearLayout>
                 </ScrollView>
-
-                <SlidingDrawer
-                    android:id="@+id/slidingDrawer1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:content="@+id/content"
-                    android:handle="@+id/handle"
-                    android:visibility="gone" >
-
-                    <Button
-                        android:id="@+id/handle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dip"
-                        android:text="" />
-
-                    <LinearLayout
-                        android:id="@+id/content"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:orientation="vertical" >
-
-                        <com.ericharlow.DragNDrop.ScrollContainer
-                            android:id="@+id/scrollContainerUsed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dip"
-                            android:layout_weight="1" >
-                        </com.ericharlow.DragNDrop.ScrollContainer>
-
-                        <com.ericharlow.DragNDrop.ScrollContainer
-                            android:id="@+id/scrollContainerUnused"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dip"
-                            android:layout_weight="1" >
-                        </com.ericharlow.DragNDrop.ScrollContainer>
-                    </LinearLayout>
-                </SlidingDrawer>
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayout5"

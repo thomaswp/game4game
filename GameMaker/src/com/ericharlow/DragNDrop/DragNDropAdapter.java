@@ -28,27 +28,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public final class DragNDropAdapter extends BaseAdapter implements RemoveListener, DropListener{
+public abstract class DragNDropAdapter<T> extends BaseAdapter implements RemoveListener, DropListener<T> {
 
-	private int[] mIds;
-    private int[] mLayouts;
+    private int layoutId;
     private LayoutInflater mInflater;
-    private List<String> mContent;
+    private List<T> mContent;
 
-    public DragNDropAdapter(Context context, List<String> content) {
-        init(context,new int[]{R.layout.dragndrop_list_item},new int[]{R.id.dragndrop_list_item}, content);
-    }
-    
-    public DragNDropAdapter(Context context, int[] itemLayouts, int[] itemIDs, ArrayList<String> content) {
-    	init(context,itemLayouts,itemIDs, content);
-    }
-
-    private void init(Context context, int[] layouts, int[] ids, List<String> content) {
-    	// Cache the LayoutInflate to avoid asking for a new one each time.
+    public DragNDropAdapter(Context context, List<T> content, int layoutId) {
     	mInflater = LayoutInflater.from(context);
-    	mIds = ids;
-    	mLayouts = layouts;
     	mContent = content;
+    	this.layoutId = layoutId;
     }
     
     /**
@@ -69,7 +58,7 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
      * @see android.widget.ListAdapter#getItem(int)
      */
     @Override
-	public String getItem(int position) {
+	public T getItem(int position) {
         return mContent.get(position);
     }
 
@@ -90,37 +79,20 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
      */
     @Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-        // A ViewHolder keeps references to children views to avoid unneccessary calls
-        // to findViewById() on each row.
-        ViewHolder holder;
 
         // When convertView is not null, we can reuse it directly, there is no need
         // to reinflate it. We only inflate a new View when the convertView supplied
         // by ListView is null.
         if (convertView == null) {
-            convertView = mInflater.inflate(mLayouts[0], null);
-
-            // Creates a ViewHolder and store references to the two children views
-            // we want to bind data to.
-            holder = new ViewHolder();
-            holder.text = (TextView) convertView.findViewById(mIds[0]);
-
-            convertView.setTag(holder);
-        } else {
-            // Get the ViewHolder back to get fast access to the TextView
-            // and the ImageView.
-            holder = (ViewHolder) convertView.getTag();
+            convertView = mInflater.inflate(layoutId, null);
         }
-
-        // Bind the data efficiently with the holder.
-        holder.text.setText(mContent.get(position));
+        
+        setView(convertView, position, getItem(position));
 
         return convertView;
     }
-
-    static class ViewHolder {
-        TextView text;
-    }
+    
+    protected abstract void setView(View view, int position, T item);
 
 	@Override
 	public void onRemove(int which) {
@@ -129,14 +101,14 @@ public final class DragNDropAdapter extends BaseAdapter implements RemoveListene
 	}
 
 	@Override
-	public String onDropFrom(int from) {
-		String temp = mContent.get(from);
+	public T onDropFrom(int from) {
+		T temp = mContent.get(from);
 		mContent.remove(from);
 		return temp;
 	}
 
 	@Override
-	public void onDropTo(int to, String item) {
+	public void onDropTo(int to, T item) {
 		mContent.add(to, item);
 	}
 }

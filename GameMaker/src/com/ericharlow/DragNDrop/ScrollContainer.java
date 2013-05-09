@@ -10,13 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
-public class ScrollContainer extends LinearLayout {
+public class ScrollContainer<T> extends LinearLayout {
 
-	private DragNDropListView listView;
+	private DragNDropListView<T> listView;
 	private RelativeLayout block;
 	private OScrollView scrollView;
 
-	public DragNDropListView getListView() {
+	public DragNDropListView<T> getListView() {
 		return listView;
 	}
 
@@ -48,22 +48,22 @@ public class ScrollContainer extends LinearLayout {
 		rlps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		layout.addView(background, rlps);
 		
-		listView = new DragNDropListView(getContext());
+		listView = new DragNDropListView<T>(getContext());
 		rlps = new RelativeLayout.LayoutParams(
 				LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		rlps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		rlps.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		layout.addView(listView, rlps);
 		
-		listView.addOnDragNDropListener(new DragNDropListener() {
+		listView.addOnDragNDropListener(new DragNDropListener<T>() {
 			@Override
-			public void onItemDroppedTo(String item, int to) {
+			public void onItemDroppedTo(T item, int to) {
 				adjustSize();
 				invalidate();
 			}
 			
 			@Override
-			public void onItemDroppedFrom(String item, int from) {
+			public void onItemDroppedFrom(T item, int from) {
 				adjustSize();
 				invalidate();
 			}

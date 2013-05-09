@@ -17,12 +17,12 @@ import android.widget.ScrollView;
 @AutoAssign
 public class DatabaseEditMap extends DatabaseActivity {
 	private EditText editTextName;
-	private RadioGroup radioGroupEdit;
 	private RelativeLayout relativeLayoutHost;
-	private Button buttonEdit;
+	private Button buttonBackground, buttonMidground, buttonSize, 
+		buttonTileset, buttonHorizon, buttonPhysics;
+	private ScrollView scrollView;
 	@AutoAssignIgnore
 	private SelectorMapPreview selectorMapPreview;
-	private ScrollView scrollView;
 	
 	private Map map;
 	private int formerIndex;
@@ -59,23 +59,27 @@ public class DatabaseEditMap extends DatabaseActivity {
 			DatabaseEditMapSize.class,
 			DatabaseEditMapTileset.class,
 			DatabaseEditMapHorizon.class,
-			DatabaseEditMapBehaviors.class,
 			DatabaseEditMapPhysics.class
 		};
-		buttonEdit.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				for (int i = 0; i < editors.length; i++) {
-					if (((RadioButton)radioGroupEdit.getChildAt(i)).isChecked()) {
-						@SuppressWarnings("unchecked")
-						Intent intent = getNewGameIntent(
-								(Class<? extends DatabaseActivity>)editors[i]);
-						startActivityForResult(intent, 
-								DatabaseActivity.REQUEST_RETURN_GAME);
-					}
+		final Button[] buttons = new Button[] {
+				buttonBackground,
+				buttonMidground,
+				buttonSize,
+				buttonTileset,
+				buttonHorizon,
+				buttonPhysics
+		};
+		for (int i = 0; i < buttons.length; i++) {
+			final int fi = i;
+			buttons[i].setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(DatabaseEditMap.this, editors[fi]);
+					intent.putExtra("game", game);
+					startActivityForResult(intent, REQUEST_RETURN_GAME);
 				}
-			}
-		});
+			});
+		}
 		
 		scrollView.setOnTouchListener(new OnTouchListener() {
 			@Override

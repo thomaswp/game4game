@@ -30,7 +30,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-public class DragNDropListView extends ListView {
+public class DragNDropListView<T> extends ListView {
 
 	private static final int MARGIN = 30;
 	
@@ -38,33 +38,33 @@ public class DragNDropListView extends ListView {
 
 	int mStartPosition;
 	int mDragPointOffsetY, mDragPointOffsetX;	//Used to adjust drag view location
-	DragNDropGroup group;
+	DragNDropGroup<T> group;
 
 	ImageView mDragView;
 	GestureDetector mGestureDetector;
 	
-	private LinkedList<DragNDropListener> dragNDropListeners =
-			new LinkedList<DragNDropListener>();
+	private LinkedList<DragNDropListener<T>> dragNDropListeners =
+			new LinkedList<DragNDropListener<T>>();
 
-	DropListener mDropListener = new DropListener() {
+	DropListener<T> mDropListener = new DropListener<T>() {
 		@Override
-		public void onDropTo(int to, String item) {
+		public void onDropTo(int to, T item) {
 			if (getAdapter() instanceof DragNDropAdapter) {
 				((DragNDropAdapter)getAdapter()).onDropTo(to, item);
 				invalidateViews();
-				for (DragNDropListener dragNDropListener : dragNDropListeners) {
+				for (DragNDropListener<T> dragNDropListener : dragNDropListeners) {
 					dragNDropListener.onItemDroppedTo(item, to);
 				}
 			}
 		}
 		
 		@Override
-		public String onDropFrom(int from) {
+		public T onDropFrom(int from) {
 			if (getAdapter() instanceof DragNDropAdapter) {
 				invalidateViews();
-				String item = ((DragNDropAdapter)getAdapter()).onDropFrom(from);
+				T item = (T) ((DragNDropAdapter)getAdapter()).onDropFrom(from);
 				
-				for (DragNDropListener dragNDropListener : dragNDropListeners) {
+				for (DragNDropListener<T> dragNDropListener : dragNDropListeners) {
 					dragNDropListener.onItemDroppedFrom(item, from);
 				}
 			
@@ -93,7 +93,7 @@ public class DragNDropListView extends ListView {
 		}
 	};
 
-	public void setGroup(DragNDropGroup dragNDropGroup) {
+	public void setGroup(DragNDropGroup<T> dragNDropGroup) {
 		this.group = dragNDropGroup;
 	}
 	
@@ -111,13 +111,13 @@ public class DragNDropListView extends ListView {
 		this.setPadding(0, 0, 0, MARGIN);
 	}
 
-	public void addOnDragNDropListener(DragNDropListener dragAndDropListener) {
+	public void addOnDragNDropListener(DragNDropListener<T> dragAndDropListener) {
 		this.dragNDropListeners.add(dragAndDropListener);
 	}
 	
-	public interface DragNDropListener {
-		public void onItemDroppedFrom(String item, int from);
-		public void onItemDroppedTo(String item, int to);
+	public interface DragNDropListener<T> {
+		public void onItemDroppedFrom(T item, int from);
+		public void onItemDroppedTo(T item, int to);
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class DragNDropListView extends ListView {
 				}
 				if (canDrop) {
 					if (mDropListener != null) {
-						String item = mDropListener.onDropFrom(mStartPosition);
+						T item = mDropListener.onDropFrom(mStartPosition);
 						if (group != null) {
 							group.drop(this, x, y, item);
 						} else {
@@ -182,7 +182,7 @@ public class DragNDropListView extends ListView {
 		return pointToDropPosition(x,y) != INVALID_POSITION;
 	}
 	
-	public void drop(int x, int y, String item) {
+	public void drop(int x, int y, T item) {
 		int mEndPosition = pointToDropPosition(x,y);
 		if (mDropListener != null && mEndPosition != INVALID_POSITION) {
 			if (mEndPosition > getAdapter().getCount()) {
