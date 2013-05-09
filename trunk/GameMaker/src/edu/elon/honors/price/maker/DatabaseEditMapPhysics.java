@@ -29,7 +29,7 @@ public class DatabaseEditMapPhysics extends DatabaseActivity {
 		seekBarGravity.setMax(Map.MAX_GRAVITY * GRAVITY_GRADATIONS);
 		seekBarGravity.setProgress(Math.round(v.magnitude() * GRAVITY_GRADATIONS));
 		v.makeUnitVector();
-		if (v.magnitude() == 0) v.set(0, -1);
+		if (v.magnitude() == 0) v.set(0, 1);
 		selectorVectorGravity.setVector(v.getX(), v.getY());
 	}
 	

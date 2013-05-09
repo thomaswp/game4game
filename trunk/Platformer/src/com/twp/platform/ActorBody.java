@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.view.VelocityTracker;
 import edu.elon.honors.price.data.ActorAnimator;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
@@ -37,6 +38,7 @@ public class ActorBody extends PlatformBody {
 	private boolean onLadder;
 	private World world;
 	private Vector2 respawnLocation;
+	private Vector2 tempVector = new Vector2();
 	private ActorAnimator animator;
 	private Bitmap[][] frames;
 	private boolean airJumped;
@@ -213,30 +215,35 @@ public class ActorBody extends PlatformBody {
 		
 		checkDeath();
 		
-		float pi = (float)Math.PI;
-		float gAngle = world.getGravity().angle() *	pi / 180 + 3 * pi / 2;
-		float bAngle = body.getAngle();
-		if (Math.abs(bAngle - gAngle) > 0) {
-			if (bAngle - gAngle > pi) {
-				gAngle += 2 * pi;
+		if (world.getGravity().len() > 0) {
+			float pi = (float)Math.PI;
+			float gAngle = world.getGravity().angle() *	pi / 180 + 3 * pi / 2;
+			float bAngle = body.getAngle();
+			if (Math.abs(bAngle - gAngle) > 0) {
+				if (bAngle - gAngle > pi) {
+					gAngle += 2 * pi;
+				}
+				if (gAngle - bAngle > pi) {
+					bAngle += 2 * pi;
+				}
+				bAngle = bAngle * 0.9f + gAngle * 0.1f;
 			}
-			if (gAngle - bAngle > pi) {
-				bAngle += 2 * pi;
-			}
-			bAngle = bAngle * 0.9f + gAngle * 0.1f;
+			body.setTransform(body.getPosition().x, 
+					body.getPosition().y, bAngle);
 		}
-		body.setTransform(body.getPosition().x, 
-				body.getPosition().y, bAngle);
 		
 		if (isHero) {
 			stopped = true;
-			if (Math.abs(getVelocity().x) > 0.0001) {
-				directionX = (int)Math.signum(getVelocity().x);
+			Vector2 horizontal = world.getGravity().tempCopy().rotate(-90);
+			float hVelocity = getVelocity().dot(horizontal);
+			if (Math.abs(hVelocity) > 0.0001) {
+				directionX = (int)Math.signum(hVelocity);
 				stopped = false;
 				setOnLadder(false);
 			} else {
 				directionX = 0;
 			}
+			horizontal.releaseTemp();
 		}
 
 		animator.update(timeElapsed, directionX, isGrounded(), isOnLadder());
@@ -246,7 +253,7 @@ public class ActorBody extends PlatformBody {
 		}
 		
 		if (!isHero && actor.speed > 0) {
-			setVelocityX(stopped ? 0 : directionX * actor.speed);
+			setHorizontalVelocity(stopped ? 0 : directionX * actor.speed);
 		}
 
 		updateSprite(offset);
@@ -334,6 +341,11 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	public void setHorizontalVelocity(float hv) {
+		if (world.getGravity().len() == 0) {
+			setVelocityX(hv);
+			return;
+		}
+		
 		Vector2 velocity = getVelocity();
 		Vector2 gHat = world.getGravity().tempCopy().nor();
 		//Project b onto gravity to erase horizontal velocity
@@ -348,6 +360,11 @@ public class ActorBody extends PlatformBody {
 	}
 	
 	public void setVerticalVelocity(float hv) {
+		if (world.getGravity().len() == 0) {
+			setVelocityY(-hv);
+			return;
+		}
+		
 		Vector2 velocity = getVelocity();
 		Vector2 gHat = world.getGravity().tempCopy().nor().rotate(-90);
 		//Project b onto gravity to erase horizontal velocity
@@ -403,8 +420,14 @@ public class ActorBody extends PlatformBody {
 		}
 		collidedEdge = false;
 		if (getDirectionX() != 0) {
-			float y = getPosition().y + (sprite.getHeight() / 2f + 10) / SCALE;
-			float x = getPosition().x + (sprite.getWidth() / 2f + 5) * getDirectionX() / SCALE;
+			float x = getPosition().x;
+			float y = getPosition().y;
+			tempVector.set((sprite.getWidth() / 2f + 5) * getDirectionX() / SCALE, 
+					(sprite.getHeight() / 2f + 10) / SCALE);
+			tempVector.rotate(physics.getGravityRotation());
+			x += tempVector.x;
+			y += tempVector.y;
+			
 			fixtureCallback.reset();
 			float r = 1.5f / SCALE;
 			world.QueryAABB(fixtureCallback, x - r, y - r, x + r, y + r);

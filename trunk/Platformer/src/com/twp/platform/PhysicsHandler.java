@@ -43,7 +43,6 @@ import edu.elon.honors.price.physics.Vector;
 public class PhysicsHandler {
 
 
-	public static final float GRAVITY = 10f;
 	public static final float SCALE = 50;
 
 	private ArrayList<ActorBody> actorBodies = new ArrayList<ActorBody>();
@@ -126,11 +125,7 @@ public class PhysicsHandler {
 	}
 
 	public void setGravity(Vector vector) {
-		if (vector.magnitude() < 0.001) {
-			gravity.set(0, 0.001f);
-		} else {
-			gravity.set(vector.getX(), vector.getY());
-		}
+		gravity.set(vector.getX(), vector.getY());
 		world.setGravity(gravity);
 		for (PlatformBody body : platformBodies) {
 			if (body != null) {
@@ -395,59 +390,7 @@ public class PhysicsHandler {
 							}
 							tileShape.set(vertices);
 						} else {
-							if (tileId == 36) {
-								//Ground Up 45
-								Vector2[] vertices = new Vector2[] {
-										new Vector2(-width / 2, height / 2),
-										new Vector2(width / 2, -height / 2),
-										new Vector2(width / 2, height / 2)
-								};
-								tileShape.set(vertices);
-							} else if (tileId == 37) {
-								//Ground Down 45
-								Vector2[] vertices = new Vector2[] {
-										new Vector2(-width / 2, height / 2),
-										new Vector2(-width / 2, -height / 2),
-										new Vector2(width / 2, height / 2)
-								};
-								tileShape.set(vertices);
-							} else if (tileId == 14) {
-								//Ground Down 30 high
-								Vector2[] vertices = new Vector2[] {
-										new Vector2(-width / 2, height / 2),
-										new Vector2(-width / 2, -height / 2),
-										new Vector2(width / 2, 0),
-										new Vector2(width / 2, height / 2)
-								};
-								tileShape.set(vertices);
-							} else if (tileId == 15) {
-								//Ground Down 30 low
-								Vector2[] vertices = new Vector2[] {
-										new Vector2(-width / 2, height / 2),
-										new Vector2(-width / 2, 0),
-										new Vector2(width / 2, height / 2)
-								};
-								tileShape.set(vertices);
-							} else if (tileId == 13) {
-								//Ground Up 30 high
-								Vector2[] vertices = new Vector2[] {
-										new Vector2(-width / 2, height / 2),
-										new Vector2(-width / 2, 0),
-										new Vector2(width / 2, -height / 2),
-										new Vector2(width / 2, height / 2)
-								};
-								tileShape.set(vertices);
-							} else if (tileId == 12) {
-								//Ground Up 30 low
-								Vector2[] vertices = new Vector2[] {
-										new Vector2(-width / 2, height / 2),
-										new Vector2(width / 2, 0),
-										new Vector2(width / 2, height / 2)
-								};
-								tileShape.set(vertices);
-							} else {
-								tileShape.setAsBox(width / 2, height / 2);
-							}
+							tileShape.setAsBox(width / 2, height / 2);
 						}
 						tileBody.createFixture(tileShape, 1);
 						tileShape.dispose();
@@ -729,14 +672,24 @@ public class PhysicsHandler {
 		}
 	}
 	
+	public float getGravityRotation() {
+		if (world.getGravity().len() == 0) {
+			return 0;
+		}
+		return world.getGravity().angle() - 90;
+	}
+	
 	private void doPlatformContact(PlatformBody bodyA, Fixture fixtureB, Sprite spriteB,
 			Vector2 normal) {
-//		RectF rectA = bodyA.getSprite().getRect();
-//		RectF rectB = spriteB.getRect();
-//		
-//		float nx = rectB.centerX() - rectA.centerX();
-//		float ny = rectB.centerY() - rectA.centerY();
-//		
+		
+		if (world.getGravity().len() == 0) {
+			bodyA.doFloorContact(fixtureB);
+			return;
+		}
+		
+		//adjust for different gravities
+		normal = normal.tempCopy().rotate(-getGravityRotation());
+		
 		float nx = normal.x;
 		float ny = -normal.y;
 		
@@ -746,6 +699,7 @@ public class PhysicsHandler {
 			bodyA.doFloorContact(fixtureB);
 		}
 		
+		normal.releaseTemp();
 	}
 
 	public void regionCallback(final BodyCallback callback, float left, 

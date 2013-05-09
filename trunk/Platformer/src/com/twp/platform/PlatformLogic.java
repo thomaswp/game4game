@@ -30,7 +30,6 @@ public class PlatformLogic implements Logic {
 
 	private static final int BORDER_Y = 130;
 	private static final int BORDER_X = 350;
-	public static final float GRAVITY = PhysicsHandler.GRAVITY;
 	public static final float SCALE = PhysicsHandler.SCALE;
 	public static final int MAX_WIDTH = 1024;
 
@@ -50,11 +49,10 @@ public class PlatformLogic implements Logic {
 	private LinkedList<Sprite> drawScreenSprites = new LinkedList<Sprite>();
 	private LinkedList<Sprite> drawWorldSprites = new LinkedList<Sprite>();
 	private Viewport drawViewport;
+	
+	Vector2 tempVector = new Vector2();
 
 	private Interpreter interpreter;
-
-	private Vector2 antiGravity = new Vector2(0, -PhysicsHandler.GRAVITY),
-	zeroVector = new Vector2();
 
 	private long gameTime = 0, lastGameTime = -1;
 	
@@ -204,13 +202,21 @@ public class PlatformLogic implements Logic {
 			}
 
 			if (heroBody.isOnLadder()) {
-				heroBody.setVelocityY(joystickPull.getY() * heroBody.getActor().speed);
-				antiGravity.set(0, -PhysicsHandler.GRAVITY * heroBody.getBody().getMass());
-				heroBody.getBody().applyForce(antiGravity, zeroVector);
+//				heroBody.setVelocityY(joystickPull.getY() * heroBody.getActor().speed);
+//				antiGravity.set(0, -PhysicsHandler.GRAVITY * heroBody.getBody().getMass());
+//				heroBody.getBody().applyForce(antiGravity, zeroVector);
 			}
 			else {
 				if (joyFound) {
-					heroBody.setHorizontalVelocity(joystickPull.getX() * heroBody.getActor().speed);
+					float velocity = joystickPull.getX();
+					if (physics.getWorld().getGravity().len() != 0) {
+						Vector2 horizontal = physics.getWorld().getGravity().tempCopy().rotate(-90).nor();
+						tempVector.set(joystickPull.getX(), joystickPull.getY());
+						velocity = horizontal.dot(tempVector) * heroBody.getActor().speed;
+						horizontal.releaseTemp();
+					}
+					
+					heroBody.setHorizontalVelocity(velocity);
 				} else {
 					heroBody.setHorizontalVelocity(0);
 				}
