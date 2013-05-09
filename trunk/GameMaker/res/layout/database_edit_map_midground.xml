@@ -37,11 +37,11 @@
                     android:text="@string/used"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <com.ericharlow.DragNDrop.ScrollContainer
-                    android:id="@+id/scrollContainerUsed"
+                <LinearLayout
+                    android:id="@+id/linearLayoutUsed"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-                </com.ericharlow.DragNDrop.ScrollContainer>
+                    android:layout_height="match_parent">
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -57,11 +57,11 @@
                     android:text="@string/unused"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <com.ericharlow.DragNDrop.ScrollContainer
-                    android:id="@+id/scrollContainerUnused"
+                <LinearLayout
+                    android:id="@+id/linearLayoutUnused"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" >
-                </com.ericharlow.DragNDrop.ScrollContainer>
+                    android:layout_height="match_parent">
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout

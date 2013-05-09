@@ -16,6 +16,13 @@
             android:orientation="vertical" >
 
             <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/editPhysics"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
                 android:id="@+id/textViewHelp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,6 +72,7 @@
                         android:layout_height="wrap_content" />
                 </TableRow>
             </TableLayout>
+
         </LinearLayout>
     </ScrollView>
 

@@ -170,4 +170,5 @@
     </string>
     <string name="jumpHeight">Jump Height</string>
     <string name="questionMark">\?</string>
+    <string name="editPhysics">Edit Physics</string>
 </resources>

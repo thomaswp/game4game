@@ -23,7 +23,7 @@ package com.ericharlow.DragNDrop;
  *  
  * @author Eric Harlow
  */
-public interface DropListener {
-	String onDropFrom(int from);
-	void onDropTo(int to, String item);
+public interface DropListener<T> {
+	T onDropFrom(int from);
+	void onDropTo(int to, T item);
 }

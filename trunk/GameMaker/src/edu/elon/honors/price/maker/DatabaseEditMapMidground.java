@@ -9,13 +9,16 @@ import com.ericharlow.DragNDrop.DragNDropListView.DragNDropListener;
 import com.ericharlow.DragNDrop.ScrollContainer;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
 
 public class DatabaseEditMapMidground extends DatabaseActivity {
 
-	DragNDropListView listUsed, listUnused;
+	DragNDropListView<String> listUsed, listUnused;
 	SelectorMapPreview selectorMapPreview;
 
 	@Override
@@ -30,9 +33,17 @@ public class DatabaseEditMapMidground extends DatabaseActivity {
 		selectorMapPreview = new SelectorMapPreview(this, game, null);
 		ll.addView(selectorMapPreview);
 		
-		listUsed = ((ScrollContainer)findViewById(R.id.scrollContainerUsed)).getListView();
-		listUnused = ((ScrollContainer)findViewById(R.id.scrollContainerUnused)).getListView();
+		LinearLayout linearLayoutUsed = (LinearLayout)findViewById(R.id.linearLayoutUsed);
+		LinearLayout linearLayoutUnused = (LinearLayout)findViewById(R.id.linearLayoutUnused);
 
+		ScrollContainer<String> scrollUsed = new ScrollContainer<String>(this);
+		linearLayoutUsed.addView(scrollUsed);
+		ScrollContainer<String> scrollUnused = new ScrollContainer<String>(this);
+		linearLayoutUnused.addView(scrollUnused);
+		
+		listUsed = scrollUsed.getListView();
+		listUnused = scrollUnused.getListView();
+		
 		final Map map = game.getSelectedMap();
 
 		List<String> mgs = Data.getResources(Data.MIDGROUNDS_DIR, this);
@@ -43,11 +54,11 @@ public class DatabaseEditMapMidground extends DatabaseActivity {
 		}
 
 
-		DragNDropGroup group = new DragNDropGroup();
+		DragNDropGroup<String> group = new DragNDropGroup<String>();
 		group.addListView(listUsed);
 		group.addListView(listUnused);
 		
-		listUsed.addOnDragNDropListener(new DragNDropListener() {
+		listUsed.addOnDragNDropListener(new DragNDropListener<String>() {
 			@Override
 			public void onItemDroppedTo(String item, int to) {
 				selectorMapPreview.refreshMidgrounds();
@@ -59,8 +70,27 @@ public class DatabaseEditMapMidground extends DatabaseActivity {
 			}
 		});
 		
-		listUsed.setAdapter(new DragNDropAdapter(this, used));
-		listUnused.setAdapter(new DragNDropAdapter(this, mgs));
+		DragNDropAdapter<String> adapterUsed = new DragNDropAdapter<String>(this, used, R.layout.array_adapter_row_only_image) {
+			@Override
+			protected void setView(View view, int position, String item) {
+				setAdapterView(view, position, item);
+			}
+		};
+		
+		DragNDropAdapter<String> adapterUnused = new DragNDropAdapter<String>(this, mgs, R.layout.array_adapter_row_only_image) {
+			@Override
+			protected void setView(View view, int position, String item) {
+				setAdapterView(view, position, item);
+			}
+		};
+		
+		listUsed.setAdapter(adapterUsed);
+		listUnused.setAdapter(adapterUnused);
+	}
+	
+	private static void setAdapterView(View view, int position, String item) {
+		ImageView iv = (ImageView)view.findViewById(R.id.imageView);
+		iv.setImageBitmap(Data.loadMidground(item));
 	}
 }
 
