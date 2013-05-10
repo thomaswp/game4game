@@ -59,7 +59,7 @@ import android.widget.TabHost.TabContentFactory;
 public class MainMenu extends Activity implements IViewContainer {
 	
 	private final static String APP_NAME = "PlatForge";
-	private final static boolean ALLOW_EXPORT = true;
+	private final static boolean ALLOW_EXPORT = false;
 	
 	private final static String[] HELP_TEXT = new String[] {
 		"Select a game to Edit or Test!",

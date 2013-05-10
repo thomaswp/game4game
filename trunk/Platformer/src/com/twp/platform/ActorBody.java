@@ -350,7 +350,6 @@ public class ActorBody extends PlatformBody {
 		Vector2 gHat = world.getGravity().tempCopy().nor();
 		//Project b onto gravity to erase horizontal velocity
 		velocity.set(gHat.mul(gHat.dot(velocity)));
-		//Debug.write("%f, %f", newVelocity.x, newVelocity.y);
 		Vector2 horizontal = world.getGravity().tempCopy().rotate(-90);
 		horizontal.mul(hv / horizontal.len());
 		velocity.add(horizontal);
