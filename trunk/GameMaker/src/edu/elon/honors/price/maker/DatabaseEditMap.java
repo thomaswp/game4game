@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -26,6 +27,16 @@ public class DatabaseEditMap extends DatabaseActivity {
 	
 	private Map map;
 	private int formerIndex;
+	
+	private Button[] editButtons;
+	private final static EditorButton[] editorButtons = new EditorButton[] {
+			EditorButton.EditMapBackground,
+			EditorButton.EditMapMidground,
+			EditorButton.EditMapSize,
+			EditorButton.EditMapTileset,
+			EditorButton.EditMapHorizon,
+			EditorButton.EditMapPhysics
+	};
 	
 	public static void startForResult(DatabaseActivity activity, 
 			int mapIndex, int requestCode) {
@@ -61,7 +72,7 @@ public class DatabaseEditMap extends DatabaseActivity {
 			DatabaseEditMapHorizon.class,
 			DatabaseEditMapPhysics.class
 		};
-		final Button[] buttons = new Button[] {
+		editButtons = new Button[] {
 				buttonBackground,
 				buttonMidground,
 				buttonSize,
@@ -69,15 +80,17 @@ public class DatabaseEditMap extends DatabaseActivity {
 				buttonHorizon,
 				buttonPhysics
 		};
-		for (int i = 0; i < buttons.length; i++) {
+		
+		for (int i = 0; i < editButtons.length; i++) {
 			final int fi = i;
-			buttons[i].setOnClickListener(new OnClickListener() {
+			editButtons[i].setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					onFinishing();
 					Intent intent = new Intent(DatabaseEditMap.this, editors[fi]);
 					intent.putExtra("game", game);
 					startActivityForResult(intent, REQUEST_RETURN_GAME);
+					TutorialUtils.queueButton(editButtons[fi]);
 				}
 			});
 		}
@@ -91,6 +104,19 @@ public class DatabaseEditMap extends DatabaseActivity {
 				return false;
 			}
 		});
+	}
+	
+	@Override
+	protected EditorButton getOkEditorButton() {
+		return EditorButton.EditMapOk;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		for (int i = 0; i < editButtons.length; i++) {
+			TutorialUtils.addHighlightable(editButtons[i], editorButtons[i], this);
+		}
 	}
 	
 	@Override

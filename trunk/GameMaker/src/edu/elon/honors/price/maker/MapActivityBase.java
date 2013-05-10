@@ -162,8 +162,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 							button.onReleasedHandler.run();
 						}
 						if (button.editorButton != null) {
-							TutorialUtils.fireCondition(button.editorButton, 
-									EditorButtonAction.ButtonUp, getContext());
+							if (button.editorButtonDelayed) {
+								TutorialUtils.queueButton(button.editorButton);
+							} else {
+								TutorialUtils.fireCondition(button.editorButton, 
+										EditorButtonAction.ButtonUp, getContext());
+							}
 						}
 					}
 					button.down = false;
@@ -180,8 +184,12 @@ public abstract class MapActivityBase extends SaveableActivity {
 							button.onPressedHandler.run();
 						}
 						if (button.editorButton != null) {
-							TutorialUtils.fireCondition(button.editorButton, 
-									EditorButtonAction.ButtonDown, getContext());
+							if (button.editorButtonDelayed) {
+								TutorialUtils.queueButton(button.editorButton);
+							} else {
+								TutorialUtils.fireCondition(button.editorButton, 
+										EditorButtonAction.ButtonDown, getContext());
+							}
 						}
 						button.down = true;
 					}
@@ -665,6 +673,7 @@ public abstract class MapActivityBase extends SaveableActivity {
 			public float alphaFactor;
 			public boolean enabled;
 			public EditorButton editorButton;
+			public boolean editorButtonDelayed = false;
 			
 			private Rect bounds, src;
 			private RectF dest;

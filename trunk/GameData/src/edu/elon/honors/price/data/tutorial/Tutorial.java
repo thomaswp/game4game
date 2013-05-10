@@ -45,8 +45,8 @@ public abstract class Tutorial implements Serializable {
 		DatabaseObjects,
 		DatabaseObjectsEdit,
 		DatabaseMaps,
-		DatabaseMapsSelectMap, //
-		DatabaseMapsEdit, //
+		DatabaseMapsSelectMap,
+		DatabaseMapsEdit,
 		DatabaseEvents,
 		DatabaseBehaviors, 
 		DatabaseHelp, 
@@ -55,7 +55,7 @@ public abstract class Tutorial implements Serializable {
 		EditObjectIsPlatform, 
 		EditObjectIsMovable, 
 		EditObjectOk, 
-		EditMapBackground, //...
+		EditMapBackground,
 		EditMapBackgroundOk,
 		EditMapMidground,
 		EditMapMidgroundOk,
@@ -69,7 +69,7 @@ public abstract class Tutorial implements Serializable {
 		EditMapPhysicsOk,
 		EditMapOk, 
 		EditMapPhysicsGravityVector,
-		EditMapPhysicsGravityVectorOk,
+		SelectVectorOk,
 	}
 	
 	public enum EditorButtonAction {

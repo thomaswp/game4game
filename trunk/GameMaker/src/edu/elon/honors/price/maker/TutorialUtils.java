@@ -392,14 +392,18 @@ public class TutorialUtils {
 		if (highlightableButtons.values().contains(okButton)) {
 			for (EditorButton button : highlightableButtons.keySet()) {
 				if (highlightableButtons.get(button) == okButton) {
-					queuedButton = button; 
+					queueButton(button); 
 					return;
 				}
 			}
 		}
 	}
+
+	public static void queueButton(EditorButton editorButton) {
+		queuedButton = editorButton;
+	}
 	
-	public synchronized static void fireActivityResult(Context context) {
+	public synchronized static void fireQueuedButton(Context context) {
 		if (queuedButton != null) {
 			fireCondition(queuedButton, context);
 			queuedButton = null;

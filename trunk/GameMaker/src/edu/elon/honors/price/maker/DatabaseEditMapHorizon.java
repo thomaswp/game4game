@@ -4,12 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.input.Input;
 
 public class DatabaseEditMapHorizon extends SelectorMapBase {
 
 	int originalHorizon;
-
+	
 	@Override
 	public MapView getMapView(PlatformGame game,
 			Bundle savedInstanceState) {
@@ -36,6 +37,13 @@ public class DatabaseEditMapHorizon extends SelectorMapBase {
 		public HorizonView(Context context, PlatformGame game,
 				Bundle savedInstanceState) {
 			super(context, game, savedInstanceState);
+		}
+		
+		@Override
+		protected void createButtons() {
+			super.createButtons();
+			rightButton.editorButton = EditorButton.EditMapHorizonOk;
+			rightButton.editorButtonDelayed = true;
 		}
 
 		@Override

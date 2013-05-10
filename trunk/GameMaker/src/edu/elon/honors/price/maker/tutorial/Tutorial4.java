@@ -56,7 +56,7 @@ public class Tutorial4 extends Tutorial {
 		
 		addAction()
 		.setDialog("New Tileset")
-		.setCondition(EditorButton.MapEditorSelection)
+		.setCondition(EditorAction.MapEditorStartTextureSelection)
 		.addHighlight(EditorButton.TextureSelectorOk);
 		
 		addAction()
@@ -135,7 +135,7 @@ public class Tutorial4 extends Tutorial {
 		addAction()
 		.setDialog("Gravity Vector")
 		.setCondition()
-		.addHighlight(EditorButton.EditMapPhysicsGravityVectorOk);
+		.addHighlight(EditorButton.SelectVectorOk);
 		
 		addAction()
 		.setDialog("Gravity Magnitude")

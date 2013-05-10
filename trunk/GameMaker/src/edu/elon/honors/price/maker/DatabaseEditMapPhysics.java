@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.physics.Vector;
 import android.content.Intent;
@@ -24,6 +25,7 @@ public class DatabaseEditMapPhysics extends DatabaseActivity {
 		setDefaultButtonActions();
 		
 		selectorVectorGravity.populate(game);
+		selectorVectorGravity.setEditorButton(EditorButton.EditMapPhysicsGravityVector);
 		
 		Vector v = game.getSelectedMap().gravity.copy();
 		seekBarGravity.setMax(Map.MAX_GRAVITY * GRAVITY_GRADATIONS);
@@ -31,6 +33,18 @@ public class DatabaseEditMapPhysics extends DatabaseActivity {
 		v.makeUnitVector();
 		if (v.magnitude() == 0) v.set(0, 1);
 		selectorVectorGravity.setVector(v.getX(), v.getY());
+	}
+	
+	@Override
+	protected EditorButton getOkEditorButton() {
+		return EditorButton.EditMapPhysicsOk;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		TutorialUtils.addHighlightable(selectorVectorGravity,
+				EditorButton.EditMapPhysicsGravityVector, this);
 	}
 	
 	@Override

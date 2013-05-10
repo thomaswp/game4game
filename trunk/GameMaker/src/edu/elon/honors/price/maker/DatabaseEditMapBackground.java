@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 
 public class DatabaseEditMapBackground extends DatabaseActivity {
 
@@ -79,5 +80,11 @@ public class DatabaseEditMapBackground extends DatabaseActivity {
 			groupGround.addView(radio);
 		}
 	}
+	
+	@Override
+	protected EditorButton getOkEditorButton() {
+		return EditorButton.EditMapBackgroundOk;
+	}
+	
 }
 

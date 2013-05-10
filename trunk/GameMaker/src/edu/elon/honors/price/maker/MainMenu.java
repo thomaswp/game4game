@@ -25,6 +25,7 @@ import edu.elon.honors.price.maker.share.WebLogin;
 import edu.elon.honors.price.maker.tutorial.Tutorial1;
 import edu.elon.honors.price.maker.tutorial.Tutorial2;
 import edu.elon.honors.price.maker.tutorial.Tutorial3;
+import edu.elon.honors.price.maker.tutorial.Tutorial4;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -161,7 +162,8 @@ public class MainMenu extends Activity implements IViewContainer {
 		Tutorial[] tutorials = new Tutorial[] {
 			new Tutorial1(this),
 			new Tutorial2(this),
-			new Tutorial3(this)
+			new Tutorial3(this),
+			new Tutorial4(this)
 		};
 		List<GameDetails> loadedTutorials = gameCache.getGames(GameType.Tutorial);
 		if (!gameCache.tutorialsUpToDate()) {

@@ -2,6 +2,7 @@ package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -61,6 +62,11 @@ public class DatabaseEditMapTileset extends DatabaseActivity {
 		updatePreview();
 	}
 
+	@Override
+	protected EditorButton getOkEditorButton() {
+		return EditorButton.EditMapTilesetOk;
+	}
+	
 	private void updatePreview() {
 		Bitmap bmp = Data.loadTileset(game.
 				tilesets[game.getSelectedMap().tilesetId].bitmapName);
