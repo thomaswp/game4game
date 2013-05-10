@@ -1,8 +1,5 @@
 package edu.elon.honors.price.data.tutorial;
 
-import java.io.BufferedReader;
-import java.io.FileDescriptor;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -11,12 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.PlatformGame;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.graphics.Color;
 
 public abstract class Tutorial implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -51,6 +45,8 @@ public abstract class Tutorial implements Serializable {
 		DatabaseObjects,
 		DatabaseObjectsEdit,
 		DatabaseMaps,
+		DatabaseMapsSelectMap, //
+		DatabaseMapsEdit, //
 		DatabaseEvents,
 		DatabaseBehaviors, 
 		DatabaseHelp, 
@@ -58,7 +54,22 @@ public abstract class Tutorial implements Serializable {
 		EditActorOk,
 		EditObjectIsPlatform, 
 		EditObjectIsMovable, 
-		EditObjectOk,
+		EditObjectOk, 
+		EditMapBackground, //...
+		EditMapBackgroundOk,
+		EditMapMidground,
+		EditMapMidgroundOk,
+		EditMapSize,
+		EditMapSizeOk,
+		EditMapHorizon,
+		EditMapHorizonOk,
+		EditMapTileset,
+		EditMapTilesetOk,
+		EditMapPhysics,
+		EditMapPhysicsOk,
+		EditMapOk, 
+		EditMapPhysicsGravityVector,
+		EditMapPhysicsGravityVectorOk,
 	}
 	
 	public enum EditorButtonAction {
@@ -194,6 +205,11 @@ public abstract class Tutorial implements Serializable {
 		
 		public TutorialAction setCondition(EditorButton button) {
 			return setCondition(new Condition(button));
+		}
+		
+		public TutorialAction setCondition() {
+			TutorialAction last = tutorialActions.get(tutorialActions.size() - 2);
+			return setCondition(last.highlights.getLast());
 		}
 		
 		public TutorialAction setDialog(String title) {

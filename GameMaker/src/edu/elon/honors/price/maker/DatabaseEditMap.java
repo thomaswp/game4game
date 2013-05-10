@@ -74,6 +74,7 @@ public class DatabaseEditMap extends DatabaseActivity {
 			buttons[i].setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					onFinishing();
 					Intent intent = new Intent(DatabaseEditMap.this, editors[fi]);
 					intent.putExtra("game", game);
 					startActivityForResult(intent, REQUEST_RETURN_GAME);
