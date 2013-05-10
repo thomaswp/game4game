@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 public class PageMap extends PageList<Map> {
 
+	private Button buttonSelectMap;
+	
 	public PageMap(Database parent) {
 		super(parent);
 	}
@@ -17,16 +20,18 @@ public class PageMap extends PageList<Map> {
 	public void onCreate(ViewGroup parentView) {
 		super.onCreate(parentView);
 		
-		Button buttonSelect = new Button(parent);
-		buttonSelect.setText("Select Map");
-		buttonSelect.setOnClickListener(new OnClickListener() {
+		buttonSelectMap = new Button(parent);
+		buttonSelectMap.setText("Select Map");
+		buttonSelectMap.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				getGame().selectedMapId = getSelectedIndex();
 				listView.invalidateViews();
+				TutorialUtils.fireCondition(
+						EditorButton.DatabaseMapsSelectMap, parent);
 			}
 		});
-		addPanelView(buttonSelect);
+		addPanelView(buttonSelectMap);
 		
 		Button buttonUI = new Button(parent);
 		buttonUI.setText("Edit UI");
@@ -43,6 +48,7 @@ public class PageMap extends PageList<Map> {
 
 	@Override
 	protected void editItem(int index) {
+		TutorialUtils.queueButton(EditorButton.DatabaseMapsEdit);
 		DatabaseEditMap.startForResult(parent, index, REQUEST_EDIT_ITEM);
 	}
 
@@ -93,121 +99,9 @@ public class PageMap extends PageList<Map> {
 
 	@Override
 	public void addEditorButtons() {
-		// TODO Auto-generated method stub
-		
+		TutorialUtils.addHighlightable(buttonEdit, 
+				EditorButton.DatabaseMapsEdit, parent);
+		TutorialUtils.addHighlightable(buttonSelectMap, 
+				EditorButton.DatabaseMapsSelectMap, parent);
 	}
-
-//	@Override
-//	public int getLayoutId() {
-//		return R.layout.page_map;
-//		//return R.layout.drawer;
-//	}
-//
-//
-//	@Override
-//	public void onCreate(ViewGroup parentView) {
-//		super.onCreate(parentView);
-//		Button buttonEditBackground = (Button)findViewById(R.id.buttonEditBackground);
-//		buttonEditBackground.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(parent, DatabaseEditMapBackground.class);
-//				intent.putExtra("game", getGame());
-//				parent.startActivityForResult(intent, 
-//						DatabaseActivity.REQUEST_RETURN_GAME);
-//			}
-//		});
-//		
-//		Button buttonEditMidground = (Button)findViewById(R.id.buttonEditMidground);
-//		buttonEditMidground.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(parent, DatabaseEditMapMidground.class);
-//				intent.putExtra("game", getGame());
-//				parent.startActivityForResult(intent, 
-//						DatabaseActivity.REQUEST_RETURN_GAME);
-//			}
-//		});
-//		
-//		Button buttonEditMapSize = (Button)findViewById(R.id.buttonEditMapSize);
-//		buttonEditMapSize.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(parent, DatabaseEditMapSize.class);
-//				intent.putExtra("game", getGame());
-//				parent.startActivityForResult(intent, 
-//						DatabaseActivity.REQUEST_RETURN_GAME);
-//			}
-//		});
-//		
-//		Button buttonEditTileset = (Button)findViewById(R.id.buttonEditTileset);
-//		buttonEditTileset.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(parent, DatabaseEditMapTileset.class);
-//				intent.putExtra("game", getGame());
-//				parent.startActivityForResult(intent, 
-//						DatabaseActivity.REQUEST_RETURN_GAME);
-//			}
-//		});
-//		
-//		Button buttonEditHorizon = (Button)findViewById(R.id.buttonEditHorizon);
-//		buttonEditHorizon.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(parent, DatabaseEditMapHorizon.class);
-//				intent.putExtra("game", getGame());
-//				parent.startActivityForResult(intent, 
-//						DatabaseActivity.REQUEST_RETURN_GAME);
-//			}
-//		});
-//
-//		DragNDropGroup group = new DragNDropGroup();
-//		ArrayList<String> list1 = new ArrayList<String>() {
-//			private static final long serialVersionUID = 1L;
-//			{add("One"); add("Two"); add("Three");}
-//		},
-//		list2 = new ArrayList<String>() {
-//			private static final long serialVersionUID = 1L;
-//			{add("Four"); add("Five"); add("Six");}
-//		};
-//		final DragNDropListView lv1 = ((ScrollContainer)findViewById(R.id.scrollContainer2)).getListView();
-//		final DragNDropListView lv2 = ((ScrollContainer)findViewById(R.id.scrollContainer1)).getListView();
-//		lv1.setAdapter(new DragNDropAdapter(parent, list1));
-//		lv2.setAdapter(new DragNDropAdapter(parent, list2));
-//		group.addListView(lv1);
-//		group.addListView(lv2);
-//		
-//		SelectorMapView mv = new SelectorMapView(parent, getGame(), null) {
-//			@Override
-//			protected boolean showRightButton() {
-//				return false;
-//			}
-//
-//			@Override
-//			protected int getBackgroundTransparency() {
-//				return 255;
-//			}
-//		};
-//		LinearLayout content = (LinearLayout)findViewById(R.id.content);
-//		content.addView(mv);
-//	}
-//
-//	@Override
-//	public void onResume() {
-//		// TODO Auto-generated method stub
-//	}
-//
-//	@Override
-//	public void onActivityResult(int requestCode, Intent data) {
-//		super.onActivityResult(requestCode, data);
-//		setGame((PlatformGame)data.getExtras().getSerializable("game"));
-//	}
-//
-//	@Override
-//	protected void onPause() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
 }

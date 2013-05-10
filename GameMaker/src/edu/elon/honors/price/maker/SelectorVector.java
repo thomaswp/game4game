@@ -1,6 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,11 @@ public class SelectorVector extends Button implements IPopulatable{
 
 	private float x, y;
 	private OnVectorChangedListener onVectorChangedListener;
+	private EditorButton editorButton;
+	
+	public void setEditorButton(EditorButton editorButton) {
+		this.editorButton = editorButton;
+	}
 	
 	public float getVectorX() {
 		return x;
@@ -53,6 +59,10 @@ public class SelectorVector extends Button implements IPopulatable{
 						SelectorActivityVector.class);
 				intent.putExtra("x", x);
 				intent.putExtra("y", y);
+				
+				if (editorButton != null) {
+					TutorialUtils.queueButton(editorButton);
+				}
 				
 				((Activity)getContext()).startActivityForResult(
 						intent, getId());

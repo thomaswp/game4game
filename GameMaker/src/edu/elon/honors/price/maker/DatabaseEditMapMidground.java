@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.Map;
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 
 public class DatabaseEditMapMidground extends DatabaseActivity {
 
@@ -86,6 +87,11 @@ public class DatabaseEditMapMidground extends DatabaseActivity {
 		
 		listUsed.setAdapter(adapterUsed);
 		listUnused.setAdapter(adapterUnused);
+	}
+	
+	@Override
+	protected EditorButton getOkEditorButton() {
+		return EditorButton.EditMapMidgroundOk;
 	}
 	
 	private static void setAdapterView(View view, int position, String item) {

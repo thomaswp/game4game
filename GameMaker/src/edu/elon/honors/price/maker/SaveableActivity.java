@@ -51,6 +51,23 @@ public abstract class SaveableActivity extends Activity {
 		});
 	}
 	
+	protected EditorButton getOkEditorButton() {
+		return null;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		TutorialUtils.clearHighlightables();
+		EditorButton okEditorButton = getOkEditorButton();
+		Debug.write(okEditorButton);
+		if (okEditorButton != null) { 
+			TutorialUtils.addHighlightable(findViewById(R.id.buttonOk), 
+					okEditorButton, this);
+		}
+		TutorialUtils.fireQueuedButton(this);
+	}
+	
 	@Override
 	public void onStop() {
 		super.onStop();
@@ -179,7 +196,6 @@ public abstract class SaveableActivity extends Activity {
 		Button buttonCancel = (Button)findViewById(R.id.buttonCancel);
 
 		if (buttonOk != null) {
-			TutorialUtils.addHighlightable(buttonOk, EditorButton.DatabaseOk, this);
 			buttonOk.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -230,7 +246,6 @@ public abstract class SaveableActivity extends Activity {
 				}
 			}
 		}
-		TutorialUtils.fireActivityResult(this);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	

@@ -66,7 +66,6 @@ public class DatabaseActivity extends SaveableActivity implements IViewContainer
 	@Override
 	public void onResume() {
 		super.onResume();
-		TutorialUtils.clearHighlightables();
 		buttonHelp = (Button)findViewById(R.id.buttonHelp);
 		if (buttonHelp != null) {
 			buttonHelp.setVisibility(game.tutorial != null ? View.VISIBLE : View.GONE);

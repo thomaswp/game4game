@@ -1,5 +1,6 @@
 package edu.elon.honors.price.maker;
 
+import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.input.Input;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,11 @@ public class SelectorActivityVector extends SaveableActivity {
 		((LinearLayout)findViewById(R.id.linearLayoutContent)).addView(view);
 		
 		setDefaultButtonActions();
+	}
+	
+	@Override
+	protected EditorButton getOkEditorButton() {
+		return EditorButton.SelectVectorOk;
 	}
 	
 	@Override
