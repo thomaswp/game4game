@@ -72,6 +72,10 @@ public class TutorialUtils {
 		if (tutorial == null) return;
 		fireCondition(context);
 	}
+
+	public static Tutorial getTutorial() {
+		return tutorial;
+	}
 	
 	private static void onHighlightChanged(Context context) {
 		for (View view : highlightedButtons.keySet()) {

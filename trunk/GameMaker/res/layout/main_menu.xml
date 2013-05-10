@@ -104,9 +104,8 @@
 
                         <Button
                             android:id="@+id/buttonAdd"
-                            style="?android:attr/buttonStyleSmall"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/main_menu_context_button_height"
                             android:minWidth="100dip"
                             android:paddingLeft="5dip"
                             android:paddingRight="5dip" />

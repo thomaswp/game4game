@@ -22,7 +22,7 @@ public class Tutorial4 extends Tutorial {
 
 	@Override
 	public boolean isUpToDate() {
-		return false; //myVersion == VERSION; TODO: CHANGE
+		return myVersion == VERSION;
 	}
 
 	public Tutorial4(Context context) {
