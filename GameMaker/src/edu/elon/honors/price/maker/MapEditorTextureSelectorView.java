@@ -62,6 +62,8 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 				TileMode.REPEAT, TileMode.REPEAT);
 		Bitmap bmp = Data.loadTileset(tileset.bitmapName);
 		
+		Bitmap clearIcon = BitmapFactory.decodeResource(getResources(), R.drawable.no);
+		
 		bitmap = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
 		Paint paint = new Paint();
 		paint.setShader(transShader);
@@ -69,6 +71,11 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 		Rect rect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
 		c.drawRect(rect, paint);
 		c.drawBitmap(bmp, 0, 0, paint);
+		paint.reset();
+		paint.setAlpha(150);
+		int offsetX = (tileWidth - clearIcon.getWidth()) / 2;
+		int offsetY = (tileHeight - clearIcon.getHeight()) / 2;
+		c.drawBitmap(clearIcon, offsetX, offsetY, paint);
 		
 
 		setOnTouchListener(new OnTouchListener() {
@@ -108,6 +115,8 @@ public class MapEditorTextureSelectorView extends BasicCanvasView {
 //		paint.setShader(null);
 		
 		c.drawBitmap(bitmap, bitmapX, bitmapY, paint);
+		
+		
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeWidth(MapActivityBase.SELECTION_BORDER_WIDTH);
 		paint.setColor(MapActivityBase.SELECTION_BORDER_COLOR);

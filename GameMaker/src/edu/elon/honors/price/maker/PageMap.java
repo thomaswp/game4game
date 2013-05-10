@@ -25,10 +25,13 @@ public class PageMap extends PageList<Map> {
 		buttonSelectMap.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				getGame().selectedMapId = getSelectedIndex();
-				listView.invalidateViews();
-				TutorialUtils.fireCondition(
-						EditorButton.DatabaseMapsSelectMap, parent);
+				int selected = getSelectedIndex();
+				if (getGame().selectedMapId != selected) {
+					getGame().selectedMapId = selected;
+					listView.invalidateViews();
+					TutorialUtils.fireCondition(
+							EditorButton.DatabaseMapsSelectMap, parent);
+				}
 			}
 		});
 		addPanelView(buttonSelectMap);

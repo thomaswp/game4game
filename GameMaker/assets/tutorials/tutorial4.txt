@@ -1,8 +1,8 @@
-Welcome to the next tutorial. This time we’ll talk through how create and modify <h>Maps</h>. A Map is what you edit on the Map Editor, here, but it also has properties you edit in the <h>Database</h>. A game can have multiple Maps, and each Map has its own set of art and rules.
+Welcome to the next tutorial. This time we’ll talk through how create and modify <h>Maps</h>. A Map is what you edit on the Map Editor here, but it also has properties you edit in the <h>Database</h>. A game can have multiple Maps, and each Map has its own set of art and rules.
 
 Let’s start by going into the <h>Database</h> and selecting the <h>Maps</h> tab.
 
-Here you can see the various <h>Maps</h> this game has. There are quite a few of them to show off some of the different settings you can create. The Map shown in blue is the “selected” Map. This is the one that will show up in the Map Editor and the one that you’ll start on when testing the game. To select a new Map, click on it and then hit the <h>Select Map</h> button. Try selecting the Ice Map.
+Here you can see the various <h>Maps</h> this game has. There are quite a few of them, which show off some of the different kinds of settings you can create. The Map shown in blue is the “selected” Map. This is the one that will show up in the Map Editor and the one that you’ll start on when testing the game. To select a new Map, click on it and then hit the <h>Select Map</h> button. Try selecting the Ice Map.
 
 Good job. To see what this <h>Map</h> looks like, hit the <h>Ok</h> button to return to the Map Editor.
 
@@ -12,7 +12,7 @@ While all of the <h>Tilesets</h> have the same basic blocks, they each have some
 
 You may want to try out some other <h>Maps</h> to get a feel for the other possible settings, but when you’re ready to move on, go to the <h>Map Details</h> tab in the <h>Database</h>, select a Map you want to edit, and click the <h>Edit</h> button. 
 
-This is the Map Details Page. Each of the editors you’ll see on this tab has a “Preview” pane where you can see the changes you’re making to your <h>Map</h>. You can pan around the Preview pane just like on the Map Editor. On this page you can change the name of this Map or edit various properties. Let’s start by changing the <h>Background</h>.
+This is the Map Details Page. Each of the editors you’ll see on this tab has a “Preview” pane where you can see the changes you’re making to your <h>Map</h>. You can pan around the Preview pane just like on the Map Editor. On this page you can change the name of the Map or edit its various properties. Let’s start by changing the <h>Background</h>.
 
 A <h>Background</h> consists of both a <h>Sky</h> and a <h>Ground</h>. The Sky will tile upwards forever, but the Ground is just painted once at the bottom of the screen. Try out some different values for each, and find some that go well together. When you’re done, hit <h>Ok</h>.
 

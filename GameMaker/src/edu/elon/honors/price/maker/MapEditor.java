@@ -4,6 +4,7 @@ import com.twp.platform.Platformer;
 
 import edu.elon.honors.price.data.Data;
 import edu.elon.honors.price.data.GameCache.GameDetails;
+import edu.elon.honors.price.data.tutorial.Tutorial;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.data.GameCache;
@@ -46,6 +47,9 @@ public class MapEditor extends MapActivityBase {
 		if (inDatabase) {
 			TutorialUtils.fireCondition(EditorAction.MapEditorReturnedDatabase, this);
 			inDatabase = false;
+		}
+		if (TutorialUtils.getTutorial() != null) {
+			game.tutorial = TutorialUtils.getTutorial();
 		}
 	}
 	

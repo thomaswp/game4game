@@ -6,7 +6,7 @@ This screen is the <h>Map Editor</h>.  In the bottom-left corner is the <h>Move 
 
 Good job! Now you’re in <h>Edit</h> mode. In this mode you can place objects onto the map. You can choose what to place by pressing the <h>Selection</h> button in the top-right corner.
 
-Right now, you’re on a <h>Tile</h> layer, so you can choose from pieces of terrain to put on the map. The top-left corner tile is blank, which lets you clear other tiles. Select a group of tiles you want to place on the map, then hit the small Ok button in the corner. 
+Right now, you’re on a <h>Tile</h> layer, so you can choose from pieces of terrain to put on the map. The top-left corner tile with the red cross-through icon will clear other tiles, instead of placing one. Select a group of tiles you want to place on the map, then hit the small Ok button in the corner. 
 
 To place the tiles on the map, just tap where you want them. Hold down until you have them just right, then let go to place them. If you decide you’d rather not place that item, just drop it on the <h>Cancel</h> button that appears.
 
