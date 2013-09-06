@@ -1,0 +1,3 @@
+<action id="21" name="Stop" category="Control">
+    <text text="Stop the current event" />
+</action>

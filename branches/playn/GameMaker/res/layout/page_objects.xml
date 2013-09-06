@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/objects"
+        android:textAppearance="?android:attr/textAppearanceMedium" >
+</TextView>
+    <LinearLayout android:id="@+id/linearLayout2" android:orientation="horizontal" android:layout_height="match_parent" android:layout_width="wrap_content">
+
+        <ListView
+            android:id="@+id/listViewObjects"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:choiceMode="singleChoice"
+            android:focusable="false"
+            android:scrollbars="vertical" >
+</ListView>
+        <LinearLayout android:id="@+id/linearLayout3" android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="wrap_content">
+
+            <Button
+                android:id="@+id/buttonEdit"
+                android:layout_width="170dip"
+                android:layout_height="wrap_content"
+                android:text="@string/edit" >
+</Button>
+
+            <Button
+                android:id="@+id/buttonReset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reset" >
+</Button>
+            <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_width="match_parent">
+
+                <Button
+                    android:id="@+id/buttonAdd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/addObject" >
+</Button>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    
+</LinearLayout>

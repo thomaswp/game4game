@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="terrain_selector_button_width">60dip</dimen>
+    <dimen name="main_menu_small_text">12sp</dimen>
+    <dimen name="main_menu_context_button_height">35dip</dimen>
+    
+</resources>

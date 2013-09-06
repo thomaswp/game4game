@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="fill_horizontal"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textViewDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcomeTO"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textViewImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bang"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
+    <TabHost
+        android:id="@android:id/tabhost"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" >
+            </TabWidget>
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:id="@+id/tabEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:padding="3dip" >
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutHint"
+                            android:layout_width="300dip"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                        	android:gravity="center_horizontal"
+                        	android:visibility="gone" >
+
+                            <TextView
+                                android:id="@+id/textViewHint"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text=""
+                                android:textStyle="italic"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:layout_marginBottom="5dip"
+                        		android:gravity="center_horizontal" />
+
+                            <Button
+                                android:id="@+id/buttonHint"
+                                android:layout_width="100dip"
+                                android:layout_height="wrap_content"
+                                android:text="" />
+
+                        </LinearLayout>
+
+                        <ListView
+                            android:id="@+id/listViewGames"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:choiceMode="singleChoice"
+                            android:overScrollFooter="@null" >
+                        </ListView>
+
+                        <Button
+                            android:id="@+id/buttonAdd"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/main_menu_context_button_height"
+                            android:minWidth="100dip"
+                            android:paddingLeft="5dip"
+                            android:paddingRight="5dip" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutButtons"
+                        android:layout_width="120dip"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:padding="5dip" >
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+    </TabHost>
+
+    <TextView
+        android:id="@+id/textViewHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</LinearLayout>

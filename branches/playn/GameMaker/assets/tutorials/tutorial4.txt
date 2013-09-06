@@ -1,0 +1,47 @@
+Welcome to the next tutorial. This time we’ll talk through how create and modify <h>Maps</h>. A Map is what you edit on the Map Editor here, but it also has properties you edit in the <h>Database</h>. A game can have multiple Maps, and each Map has its own set of art and rules.
+
+Let’s start by going into the <h>Database</h> and selecting the <h>Maps</h> tab.
+
+Here you can see the various <h>Maps</h> this game has. There are quite a few of them, which show off some of the different kinds of settings you can create. The Map shown in blue is the “selected” Map. This is the one that will show up in the Map Editor and the one that you’ll start on when testing the game. To select a new Map, click on it and then hit the <h>Select Map</h> button. Try selecting the Ice Map.
+
+Good job. To see what this <h>Map</h> looks like, hit the <h>Ok</h> button to return to the Map Editor.
+
+As you can see, a number of things are different with this <h>Map</h>. Explore around a little, and then try hitting the <h>Selection</h> button to look at the <h>Tiles</h> this Map uses.
+
+While all of the <h>Tilesets</h> have the same basic blocks, they each have some unique <h>Tiles</h> that you can use for platforms or for decorations. You’re welcome to add some to this Map, and at some point try testing it.
+
+You may want to try out some other <h>Maps</h> to get a feel for the other possible settings, but when you’re ready to move on, go to the <h>Map Details</h> tab in the <h>Database</h>, select a Map you want to edit, and click the <h>Edit</h> button. 
+
+This is the Map Details Page. Each of the editors you’ll see on this tab has a “Preview” pane where you can see the changes you’re making to your <h>Map</h>. You can pan around the Preview pane just like on the Map Editor. On this page you can change the name of the Map or edit its various properties. Let’s start by changing the <h>Background</h>.
+
+A <h>Background</h> consists of both a <h>Sky</h> and a <h>Ground</h>. The Sky will tile upwards forever, but the Ground is just painted once at the bottom of the screen. Try out some different values for each, and find some that go well together. When you’re done, hit <h>Ok</h>.
+
+Next, we’ll change the <h>Midground</h> of the <h>Map</h>.
+
+<h>Midgrounds</h> are decorations that go on the horizon of the <h>Map</h>. Right now, we’re using clouds, mountains and trees for our Midground. You can drag items over to the <h>Unused</h> box if you don’t want them in your Map and vice versa. You can also change the order of the Midgrounds you are using by dragging them up or down. Some Midgrounds go well together, and others don’t. Sometimes it depends on what <h>Sky</h> or <h>Ground</h> art you’re using, too. Try out a combination you like, and when you’re done, press <h>Ok</h>.
+
+Next, we’ll look at <h>Tilesets</h>.
+
+<h>Tilesets</h> contain the <h>Tiles</h> you use to build your map. You’ll notice that they all have the same core blocks in the same location, so you can switch them out for one another without too much going wrong. Try finding a Tileset for your <h>Map</h>.
+
+You guessed it. Next is the horizon.
+
+There’s really only one thing that you do here: move the horizon of the <h>Map</h>. If you switch to <h>Edit</h> mode, you can drag it up or down. Be careful not to drag it too high, or there will just be blank space below your <h>Ground</h>. Alternatively, sometimes you don’t want a <h>Ground</h> at all, in which case you can drag the horizon down, off the Map. Try it out, and when you’re done, press <h>Ok</h>.
+
+Ok, now we’ll look at changing your <h>Map’s</h> size.
+
+The (+) and (-) buttons allow you to change the size of the <h>Map</h>. The editor will add or take away from the side of the Map next to button you press. Be careful – if you delete part of your Map here, it won’t come back if you increase the size again. If you make a mistake, remember you can hit <h>Cancel</h> on any screen between here and the Map Editor to cancel your changes.
+
+We’re saving the best for last. If you want to play with your new Map, go ahead and test it (make sure it’s the <h>Selected Map</h>). When you’re done, come back and hit <h>Physics</h>.
+
+For now, the main thing you can do here is change <h>Gravity</h>. This isn’t always advisable, but done correctly it can make for a mind-bending game. You can select a <h>Vector</h> (a direction) for Gravity using the Vector button. Try it out.
+
+Tap the screen to change the arrow’s direction and hit <h>Ok</h> when you’re done.
+
+You can also slide the bar to change the <h>Magnitude</h> (strength) or <h>Gravity</h>. Try it out, and press <h>Ok</h>.
+
+Let’s test out the <h>Map</h>.
+
+Make sure that your <h>Map</h> has enough platforms catch the <h>Hero</h> with your new <h>Gravity</h>, and test it out.
+
+Well done. That’s all for this tutorial. Remember you can keep experimenting with <h>Maps</h> by <h>Branching</h> this tutorial from the Main Menu.

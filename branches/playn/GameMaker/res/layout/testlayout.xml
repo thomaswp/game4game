@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <edu.elon.honors.price.maker.SelectorActorClass
+                android:id="@+id/selectorActorClass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <edu.elon.honors.price.maker.SelectorActorInstance
+                android:id="@+id/selectorActorInstance1"
+                android:layout_width="294dp"
+                android:layout_height="wrap_content"
+                android:text="SelectorActorInstance" />
+
+            <edu.elon.honors.price.maker.SelectorActorInstance
+                android:id="@+id/selectorActorInstance2"
+                android:layout_width="294dp"
+                android:layout_height="wrap_content"
+                android:text="SelectorActorInstance" />
+
+            <edu.elon.honors.price.maker.SelectorRegion
+                android:id="@+id/selectorRegion1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+            </edu.elon.honors.price.maker.SelectorRegion>
+
+            <LinearLayout
+                android:id="@+id/linearLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <edu.elon.honors.price.maker.SelectorSwitch
+                    android:id="@+id/selectorSwitch1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <edu.elon.honors.price.maker.SelectorSwitch
+                    android:id="@+id/selectorSwitch2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <edu.elon.honors.price.maker.SelectorVariable
+                    android:id="@+id/selectorVariable1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SelectorVariable" />
+
+                <edu.elon.honors.price.maker.SelectorVariable
+                    android:id="@+id/selectorVariable2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SelectorVariable" />
+            </LinearLayout>
+
+            <edu.elon.honors.price.maker.SelectorPoint
+                android:id="@+id/selectorPoint1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+            </edu.elon.honors.price.maker.SelectorPoint>
+
+            <edu.elon.honors.price.maker.SelectorObjectInstance
+                android:id="@+id/selectorObjectInstance1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SelectorObjectInstance" />
+
+            <edu.elon.honors.price.maker.SelectorObjectClass
+                android:id="@+id/selectorObjectClass1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.65" >
+
+        <TextView
+            android:id="@+id/textViewHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="22dp"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </RelativeLayout>
+
+</LinearLayout>

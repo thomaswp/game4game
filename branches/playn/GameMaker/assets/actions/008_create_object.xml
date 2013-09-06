@@ -1,0 +1,8 @@
+<action id="8" name="Create Object" category="Object">
+
+	<text text="Create a" />
+	<objectClass />
+	<text text="at" />
+	<point />
+
+</action>

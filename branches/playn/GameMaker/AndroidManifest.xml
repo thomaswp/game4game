@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="6" android:versionName="1.0.6" package="edu.elon.honors.price.maker">
+    
+    
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10"/>
+    
+	<uses-permission android:name="android.permission.VIBRATE"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+	<uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+	<uses-permission android:name="android.permission.INTERNET"/>
+	
+   <application android:icon="@drawable/icon" android:label="@string/app_name" android:allowBackup="true">
+    	<activity android:label="@string/app_name" android:name=".MainMenu" android:screenOrientation="landscape">
+    		<intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+    	
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebLogin" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebEditGame" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="edu.elon.honors.price.maker.share.WebBrowseGames" android:screenOrientation="landscape" android:windowSoftInputMode="stateUnchanged" />
+    
+        <activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name=".MapEditor" android:screenOrientation="landscape" />
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorTextureSelector" android:screenOrientation="landscape" android:theme="@style/Theme.Dialog.NoDim"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorActorSelector" android:screenOrientation="landscape" android:theme="@style/Theme.Dialog.NoDim"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".MapEditorObjectSelector" android:screenOrientation="landscape" android:theme="@style/Theme.Dialog.NoDim"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".Database" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditActorClass" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditObjectClass" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorMapBase" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorMapActorInstance" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorMapObjectInstance" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorMapRegion" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorMapPoint" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorActivitySwitch" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorActivityVariable" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorActivityVector" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".SelectorActivityScale" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditEvent" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name="edu.elon.honors.price.maker.DatabaseEditTrigger" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerVariable" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerActorOrObject" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerRegion" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditTriggerUI" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditUI" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseNewAction" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditAction" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMap" android:screenOrientation="landscape"/>
+        <activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMapPhysics" android:screenOrientation="landscape" />
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMapBackground" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMapMidground" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMapSize" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMapTileset" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMapHorizon" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditMapBehaviors" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditBehavior" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".TestActivity" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:name=".DatabaseEditBehaviorInstance" android:screenOrientation="landscape"/>
+    	<activity android:configChanges="keyboardHidden|orientation" android:label="@string/app_name" android:name="com.twp.platform.Platformer" android:screenOrientation="landscape" />
+    	
+    	<provider android:authorities="edu.elon.honors.price.maker" android:name="ResourceProvider"/>
+    
+    </application>
+</manifest>

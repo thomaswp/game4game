@@ -1,0 +1,17 @@
+Welcome to the second tutorial. You’re probably best off doing these in order, so if you haven’t finished the first tutorial, you may want to give it a try. This will be a quick one – we’re going go over the last main feature of the Map Editor: <h>Objects</h>.
+
+Unlike <h>Actors</h>, <h>Objects</h> don’t usually move on their own. Instead they behave like objects in real life: falling, rolling and colliding with other things on the map. To start using Objects, switch to the <h>Object</h> layer:
+
+Right now the rock object is selected. Try placing a few rocks by switching to <h>Edit</h> mode and tapping on the map where you want them.
+
+Great, now try out the game and play around with the <h>Objects</h> you placed. This time, try out the "Save and Test" shortcut. Hold down the <h>Menu</h> button on the screen and drag to the play icon. There's also a shortcut to the <h>Database</h>, but we'll cover that later.
+
+As you can see, the <h>Objects</h> behave physically realistically. <h>Objects</h> can have different physical properties, such as restitution (bounciness), friction and density. Try selecting a different <h>Object</h> to place on the map. As usual, you do this by pressing the <h>Selection</h> button.
+
+In this game, the triangle is extra bouncy, the block has high friction and density, and the grenade is bouncy and frictionless. Try selecting one by tapping it and confirm your selection by tapping again.
+
+Place some objects, and when you’re ready, try out your game again.
+
+Just like with the other layers, you can select a group of Objects to move or delete using the <h>Selection</h> tool. Hold down the <h>Selection</h> button and select the <h>Selection</h> tool. 
+
+Now try moving some <h>Objects</h> around. That’s all for this tutorial, but feel free to keep playing around with <h>Objects</h>. In the next tutorial, you’ll learn how to modify the properties of <h>Actors</h> and <h>Objects</h>. 

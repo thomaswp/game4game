@@ -1,0 +1,88 @@
+<action id="7" name="If..." category="Control" parent="true">
+
+	<text text="If" />
+	<radio name="checkIf">
+		<choice text="the switch" mute="true">
+			<switch />
+			<radio name="operator">
+				<choice text="equals" />
+				<choice text="does not equal" />
+			</radio>
+			<radio name="with">
+				<choice text="On" color="value" />
+				<choice text="Off" color="value" />
+				<choice text="the switch" mute="true">
+					<switch />
+				</choice>
+			</radio>
+		</choice>
+		<choice text="the variable" mute="true">
+			<variable />
+			<radio name="operator">
+				<choice name="equals" text="="/>
+				<choice name="notEquals" text="≠" />
+				<choice name="greater" text="&gt;" />
+				<choice name="greaterOrEqual" text="≥" />
+				<choice name="less" text="&lt;" />
+				<choice name="lessOrEqual" text="≤" />
+			</radio>
+			<number />
+		</choice>
+		<choice text="the Actor/Object" mute="true">
+		    <radio name="body">
+				<choice text="the actor" mute="true">
+		            <actorInstance />
+		        </choice>
+		        <choice text="the object" mute="true">
+		            <objectInstance />
+		        </choice>
+	        </radio>
+			<radio name="check">
+				<choice text="property" mute="true">
+					<radio name="property" >
+						<choice text="is alive" />
+						<choice text="is dead" />
+					</radio>
+				</choice>
+				<choice text="region" mute="true">
+					<radio name="check">
+						<choice text="is inside" />
+						<choice text="is touching" />
+						<choice text="is outside" />
+					</radio>
+					<region />
+				</choice>
+				<choice text="position" mute="true">
+				    <radio name="direction">
+				        <choice text="is above" />
+				        <choice text="is below" />
+				        <choice text="is left of" />
+				        <choice text="is right of" />
+				    </radio>
+				    <radio name="of">
+				        <choice text="the actor" mute="true">
+				            <actorInstance />
+				        </choice>
+				        <choice text="the object" mute="true">
+				            <objectInstance />
+				        </choice>
+				    </radio>
+				</choice>
+			</radio>
+		</choice>
+		<choice text="the Actor" mute="true">
+		    <actorInstance />
+		    <radio name="check">
+				<choice text="type" mute="true">
+				    <radio name="compare">
+				        <choice text="is" />
+				        <choice text="is not" />
+				    </radio>
+				    <text text="of the type" />
+				    <actorClass />
+				</choice>
+			</radio>
+		</choice>
+	</radio>
+
+</action>

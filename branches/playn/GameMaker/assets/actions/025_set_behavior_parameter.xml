@@ -1,0 +1,15 @@
+<action id="25" name="Set Behavior Parameters" category="Actor|Object">
+    <text text="For" />
+    <radio name="of">
+        <choice text="the actor" mute="true">
+            <actorInstance />
+            <text text="set the parameters of" />
+            <behavior type="actor" />
+        </choice>
+        <choice text="the object" mute="true">
+            <objectInstance />
+            <text text="set the parameters of" />
+            <behavior type="object" />
+        </choice>
+    </radio>
+</action>

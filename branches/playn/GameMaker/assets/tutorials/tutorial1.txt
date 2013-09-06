@@ -1,0 +1,47 @@
+Welcome to your first tutorial! In this tutorial, we’ll introduce you to the <h>Map Editor</h>, and teach you how to add <h>Tiles</h> and <h>Actors</h> to your <h>Map</h>. 
+
+At any time, you can repeat the last instruction by clicking on the "?" button on the left side of your screen. You can skip back or forward in the tutorial with the "&lt;" and "&gt;" buttons below.
+
+This screen is the <h>Map Editor</h>.  In the bottom-left corner is the <h>Move Mode</h> button. Pressing this button toggles whether you are moving around the map, or editing it. Try moving around a bit, and then pressing the <h>Move Mode</h> button to switch to <h>Edit</h> mode.
+
+Good job! Now you’re in <h>Edit</h> mode. In this mode you can place objects onto the map. You can choose what to place by pressing the <h>Selection</h> button in the top-right corner.
+
+Right now, you’re on a <h>Tile</h> layer, so you can choose from pieces of terrain to put on the map. The top-left corner tile with the red cross-through icon will clear other tiles, instead of placing one. Select a group of tiles you want to place on the map, then hit the small Ok button in the corner. 
+
+To place the tiles on the map, just tap where you want them. Hold down until you have them just right, then let go to place them. If you decide you’d rather not place that item, just drop it on the <h>Cancel</h> button that appears.
+
+Great, try placing a few more tiles. Don’t forget, you can pan around the map by switching back into Move mode.
+
+If you don’t like how something turned out, you can use the <h>Undo</h> button to go back one action, or use <h>Redo</h> to try it again. Give it a shot.
+
+Good job. If you haven’t already, add some platforms for your hero to stand on. If you don’t want to switch back to Move mode to move around the map, try panning by pressing down with two fingers (spread-out) at the exact same time and dragging.
+
+When you’re done, tap the <h>Layer</h> button to learn more about layers. 
+
+Each map has 5 <h>Layers</h>. Right now we’re working with the <h>Terrain</h> layer, where you place solid Tiles to walk on. Let’s move the <h>Hero</h> to start on one of your platforms. To do this we need to select the <h>Actor</h> layer. Hold down the Layer button and drag over to select the option with a picture of a ninja on it.
+
+Just like on the Terrain layer, you can place <h>Actors</h> on the map by tapping on the map where you want them. Try placing your <h>Hero</h> (the robot) on one of the platforms. Because you’re only allowed one Hero per map, this just moves it to where you tap.
+
+Good job! Now it’s time to test your map. Tap the <h>Menu</h> button (on the map or on your phone) and select “Test.” When it asks you to save, hit “Save and Test.” When you’re playing, you’ll be able move with the joystick and jump with the button. When you’re done, hit Back to return to editing.
+
+How’d you like your game? It probably didn’t feel much like a game yet, with just a hero, so let’s add some other <h>Actors</h>. Just like the <h>Selection</h> button let you select <h>Tiles</h> to place on the map when you were in the <h>Terrain</h> layer, it also lets you select <h>Actors</h> in the Actor layer. Press the <h>Selection</h> button to choose a different actor to place on the map.
+
+To select an <h>Actor</h> just double tap it once, and then again to confirm. If you select the red “clear” icon, you can delete Actors instead of placing them.
+
+Good job. Now place a few <h>Actors</h> on the map. Remember, you can save and test as you go to see what your updated game will be like.
+
+So now you’ve got a map and some <h>Actors</h>, but maybe you’d like to add some decorations to spruce things up. This tutorial started on the <h>Terrain</h> layer, which is on the same level as the Hero, but that’s not the only layer that can place <h>Tiles</h>.
+
+The <h>Foreground</h> and <h>Background</h> layers let you place Tiles in front of and behind the Hero and other Actors. Select the <h>Layers</h> button and go to the Foreground layer.
+
+Try placing some foreground Tiles on your map and test it. Then try selecting the <h>Background</h> layer and add some background Tiles.
+
+Good job. Now, there are a few tools you should know about that can make your job a lot easier. Before we start, make sure you’re on one of the Tile layers. Now tap the <h>Selection</h> button, but hold it down like you would with the <h>Layer</h> button. A menu will fan out; select the item with the two-pencils icon:
+
+This is the <h>Paint</h> tool, which lets you paint Tiles in a string, instead of placing them one at a time. Try it out. When you’re done, go back to the <h>Selection</h> button and choose the <h>Selection</h> mode, with the blue box icon:
+
+<h>Selection<h/> mode lets you grab some Tiles and move them somewhere else. You can also drag them to the <h>Delete</h> button that appears to get rid of them. Be careful – if you drag some Tiles on top of some others, you’ll overwrite the old Tiles. Of course, you can only select items from the <h>Layer</h> you’re currently editing. Try it out, and when you’re done, switch back to the <h>Actor</h> layer. 
+
+<h>Selection</h> mode also works for <h>Actors</h>, as well as <h>Objects</h>, which are covered in a later tutorial. 
+
+That’s it for this tutorial. If you want to keep working on this map, go back to the Main Menu and choose the <h>Branch</h> option to make a copy of this tutorial for editing. Or, if you’d like to try this tutorial again, select it on the Main Menu and hit the <h>Reset</h> button.

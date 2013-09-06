@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textViewHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:text="@string/editActorObjectTrigger"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/textViewImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:text="@string/eventTriggeredWhen"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:orientation="vertical" >
+
+                <RadioButton
+                    android:id="@+id/radioInstance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/specificActor" />
+
+                <RadioButton
+                    android:id="@+id/RadioButton02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/anyActorWithTheClass" />
+
+                <RadioButton
+                    android:id="@+id/RadioButton01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="the specific object" />
+
+                <RadioButton
+                    android:id="@+id/radioClass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="any object with the class" />
+            </RadioGroup>
+
+            <edu.elon.honors.price.maker.SelectorActorClass
+                android:id="@+id/selectorActorClass1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <edu.elon.honors.price.maker.SelectorActorInstance
+                android:id="@+id/selectorActorInstance1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SelectorActorInstance" />
+
+            <edu.elon.honors.price.maker.SelectorObjectInstance
+                android:id="@+id/selectorObjectInstance1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SelectorObjectInstance" />
+
+            <edu.elon.honors.price.maker.SelectorObjectClass
+                android:id="@+id/selectorObjectClass1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical" >
+
+                <Spinner
+                    android:id="@+id/spinnerAction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dip"
+                    android:layout_marginTop="10dip"
+                    android:minWidth="200dip" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <include layout="@layout/database_footer" />
+
+</LinearLayout>

@@ -1,0 +1,8 @@
+<action id="9" name="Move Object" category="Object">
+
+	<text text="Move" />
+	<objectInstance />
+	<text text="to" />
+	<point />
+
+</action>
