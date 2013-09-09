@@ -3,18 +3,13 @@ package edu.elon.honors.price.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
-
-import android.graphics.Color;
 
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Parameters;
-import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
-import edu.elon.honors.price.graphics.Tilemap;
+import edu.elon.honors.price.game.Color;
+import edu.elon.honors.price.game.DataDebug;
 import edu.elon.honors.price.physics.Vector;
 
-@SuppressWarnings("unused")
 public class Upgrader {
 
 	public final static int LATEST_VERSION = 20;
@@ -42,7 +37,8 @@ public class Upgrader {
 						}
 					}
 					Collections.sort(newActors);
-					map.actors = newActors;
+					map.actors.clear();
+					map.actors.addAll(newActors);
 					map.actorLayer = null;
 				}
 			}
@@ -50,8 +46,8 @@ public class Upgrader {
 		}
 		if (version < 5) {
 			for (ActorClass actor : game.actors) {
-				actor.imageName = Data.ACTOR_7 + actor.imageName;
-				Debug.write(actor.imageName);
+				actor.imageName = Directories.ACTOR_7 + actor.imageName;
+				DataDebug.write(actor.imageName);
 			}
 			upgraded(game);
 		}
@@ -240,7 +236,7 @@ public class Upgrader {
 		int from = game._VERSION_;
 		game._VERSION_++;
 		int to = game._VERSION_;
-		Debug.write("Upgraded game from v%d to v%d...", from, to);
+		DataDebug.write("Upgraded game from v%d to v%d...", from, to);
 	}
 }
 

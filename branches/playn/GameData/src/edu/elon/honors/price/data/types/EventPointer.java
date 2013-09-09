@@ -1,13 +1,13 @@
 package edu.elon.honors.price.data.types;
 
-import java.util.List;
-
 import edu.elon.honors.price.data.Behavior;
-import edu.elon.honors.price.data.Event;
+import edu.elon.honors.price.data.Behavior.BehaviorType;
 import edu.elon.honors.price.data.GameData;
 import edu.elon.honors.price.data.ICopyable;
 import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.Behavior.BehaviorType;
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+import edu.elon.honors.price.game.Formatter;
 
 public class EventPointer extends GameData implements ICopyable<EventPointer>, Cloneable {
 	private static final long serialVersionUID = 1L;
@@ -15,6 +15,14 @@ public class EventPointer extends GameData implements ICopyable<EventPointer>, C
 	private BehaviorType behaviorType;
 	private int behaviorIndex = -1;
 	private int eventIndex = -1;
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		behaviorType = BehaviorType.values()[fields.add(behaviorType.ordinal())];
+		behaviorIndex = fields.add(behaviorIndex);
+		eventIndex = fields.add(eventIndex);
+	}
 	
 	public void setEvent(PlatformGame game, Behavior behavior, int index) {
 		if (behavior != null) {
@@ -40,23 +48,9 @@ public class EventPointer extends GameData implements ICopyable<EventPointer>, C
 	
 	@Override
 	public String toString() {
-		return String.format("Event[%d,%s:%d]", eventIndex, behaviorType, behaviorIndex);
+		return Formatter.format("Event[%d,%s:%d]", eventIndex, behaviorType, behaviorIndex);
 	}
-	
-//	private List<Event> getEvents(PlatformGame game) {
-//		if (behaviorType == null) {
-//			
-//		}
-//	}
-//	
-//	public Event getEvent(PlatformGame game) {
-//		List<Event> events;
-//		if (behaviorIndex >= 0) {
-//			events = 
-//		} else {
-//			
-//		}
-//	}
+
 	
 	@Override
 	public EventPointer copy() {

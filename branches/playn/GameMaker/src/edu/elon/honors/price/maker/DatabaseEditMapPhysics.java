@@ -1,12 +1,12 @@
 package edu.elon.honors.price.maker;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.SeekBar;
 import edu.elon.honors.price.data.Map;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.physics.Vector;
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.SeekBar;
 
 @AutoAssign
 public class DatabaseEditMapPhysics extends DatabaseActivity {

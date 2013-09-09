@@ -127,7 +127,10 @@ public class PlatformLogic implements Logic {
 		}
 		Globals.setInstance(new Globals());
 
-		if (game == null) game = new PlatformGame();
+		if (game == null) {
+			game = new PlatformGame();
+			//TODO: show error
+		}
 		map = game.maps.get(game.selectedMapId);
 
 		backgroundHandler = new BackgroundHandler(game);

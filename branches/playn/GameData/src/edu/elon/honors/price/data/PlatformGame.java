@@ -1,37 +1,27 @@
 package edu.elon.honors.price.data;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.eujeux.data.GameInfo;
-
 import edu.elon.honors.price.data.Behavior.BehaviorType;
-import edu.elon.honors.price.data.tutorial.Tutorial;
-import android.graphics.Rect;
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+import edu.elon.honors.price.game.Formatter;
 
 public class PlatformGame extends GameData {
 	private static final long serialVersionUID = 3L;
 
-	private transient Rect mapRect = new Rect();
-
 	protected int _VERSION_ = Upgrader.LATEST_VERSION;
-	
-	@Deprecated
-	public GameInfo websiteInfo;
-	
+
 	@Deprecated
 	public String name;
 
 	@Deprecated
 	public long lastEdited;
 
-	public Tutorial tutorial;
-	
-	public ArrayList<Map> maps;
+
+	public final ArrayList<Map> maps;
 	public int selectedMapId;
 
 	public UILayout uiLayout;
@@ -45,24 +35,43 @@ public class PlatformGame extends GameData {
 	public boolean[] switchValues;
 	public String[] variableNames;
 	public int[] variableValues;
-	
-	public LinkedList<Behavior> mapBehaviors, 
+
+	public final LinkedList<Behavior> mapBehaviors, 
 	actorBehaviors, objectBehaviors;
 
-	public Object copyData;
-	
+	public transient Object tutorial;
+	public transient Object copyData;
+
 	public String ID;
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		_VERSION_ = fields.add(_VERSION_);
+		fields.addList(maps);
+		selectedMapId = fields.add(selectedMapId);
+		uiLayout = fields.add(uiLayout);
+		tilesets = fields.addArray(tilesets);
+		actors = fields.addArray(actors);
+		switchNames = fields.addArray(switchNames);
+		switchValues = fields.addArray(switchValues);
+		variableNames = fields.addArray(variableNames);
+		variableValues = fields.addArray(variableValues);
+		fields.addList(mapBehaviors);
+		fields.addList(actorBehaviors);
+		fields.addList(objectBehaviors);
+		ID = fields.add(ID);
+	}
 
 	public int getVersion() {
 		return _VERSION_;
 	}
-	
+
 	@Deprecated
 	public String getName(String fallback) {
-		return websiteInfo == null ? fallback :
-			websiteInfo.name;
+		return fallback;
 	}
-	
+
 	public LinkedList<Behavior> getBehaviors(BehaviorType type) {
 		switch (type) {
 		case Map:  return mapBehaviors;
@@ -71,7 +80,7 @@ public class PlatformGame extends GameData {
 		}
 		return null;
 	}
-	
+
 	public List<Event> getAllEvents() {
 		ArrayList<Event> events = new ArrayList<Event>();
 		for (Map map : maps) {
@@ -90,18 +99,17 @@ public class PlatformGame extends GameData {
 		}
 		return events;
 	}
-	
+
 	public void stripEditorData() {
-		websiteInfo = null;
 		tutorial = null;
 		copyData = null;
 		for (Map map : maps) {
 			if (map != null) map.editorData = null;
 		}
 	}
-	
+
 	public PlatformGame() {
-		
+
 		switchNames = new String[] { };
 		switchValues = new boolean[] { };
 		resizeSwitches(100);
@@ -117,7 +125,7 @@ public class PlatformGame extends GameData {
 		tilesets[1] = new Tileset("Castle", "castle.png", 64, 64, 10, 8);
 		tilesets[2] = new Tileset("Night", "night.png", 64, 64, 10, 8);
 		tilesets[3] = new Tileset("Snow", "snow.png", 64, 64, 10, 8);
-		
+
 		maps = new ArrayList<Map>();
 		maps.add(new Map(this));
 		selectedMapId = 0;
@@ -175,26 +183,10 @@ public class PlatformGame extends GameData {
 		}
 
 		uiLayout = new UILayout();
-		
+
 		mapBehaviors = new LinkedList<Behavior>();
 		actorBehaviors = new LinkedList<Behavior>();
 		objectBehaviors = new LinkedList<Behavior>();
-	}
-
-	private void readObject(java.io.ObjectInputStream in)
-	throws IOException, ClassNotFoundException {
-		//long time = System.currentTimeMillis();
-		in.defaultReadObject();
-		Upgrader.upgrade(this);
-		//time = System.currentTimeMillis() - time;
-		//Debug.write("Read in " + time + "ms");
-	}
-	
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		//long time = System.currentTimeMillis();
-		out.defaultWriteObject();
-		//time = System.currentTimeMillis() - time;
-		//Debug.write("Written in " + time + "ms");
 	}
 
 	public Map getSelectedMap() {
@@ -213,17 +205,12 @@ public class PlatformGame extends GameData {
 		return map.rows * getMapTileset(map).tileHeight;
 	}
 
-	public Rect getMapRect(Map map) {
-		mapRect.set(0, 0, getMapWidth(map), getMapHeight(map));
-		return mapRect;
-	}
-	
 	public void resizeSwitches(int newSize) {
-		switchNames = Arrays.copyOf(switchNames, newSize);
-		switchValues = Arrays.copyOf(switchValues, newSize);
+		switchNames = Copy.copyOf(switchNames, newSize);
+		switchValues = Copy.copyOf(switchValues, newSize);
 		for (int i = 0; i < switchNames.length; i++) {
 			if (switchNames[i] == null) {
-				switchNames[i] = String.format("Switch%03d", i);
+				switchNames[i] = Formatter.format("Switch%03d", i);
 			}
 		}
 
@@ -231,11 +218,11 @@ public class PlatformGame extends GameData {
 	}
 
 	public void resizeVariables(int newSize) {
-		variableNames = Arrays.copyOf(variableNames, newSize);
-		variableValues = Arrays.copyOf(variableValues, newSize);
+		variableNames = Copy.copyOf(variableNames, newSize);
+		variableValues = Copy.copyOf(variableValues, newSize);
 		for (int i = 0; i < variableNames.length; i++) {
 			if (variableNames[i] == null) {
-				variableNames[i] = String.format("Variable%03d", i);
+				variableNames[i] = Formatter.format("Variable%03d", i);
 			}
 		}
 

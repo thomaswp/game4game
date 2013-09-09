@@ -3,16 +3,16 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
+import edu.elon.honors.price.data.field.DataObject;
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
 import edu.elon.honors.price.data.types.ActorClassPointer;
-import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.ObjectClassPointer;
 import edu.elon.honors.price.data.types.Switch;
 import edu.elon.honors.price.data.types.Variable;
-import edu.elon.honors.price.game.Debug;
-import android.graphics.Rect;
+import edu.elon.honors.price.game.DataDebug;
 
 /**
  * Represents an Event, including its triggers and actions. Events
@@ -25,8 +25,17 @@ public class Event extends GameData {
 
 	public String name = "";
 	public boolean disabled;
-	public ArrayList<Action> actions = new ArrayList<Event.Action>();
-	public ArrayList<Trigger> triggers = new ArrayList<Event.Trigger>();
+	public final ArrayList<Action> actions;
+	public final ArrayList<Trigger> triggers;
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		name = fields.add(name);
+		disabled = fields.add(disabled);
+		fields.addList(actions);
+		fields.addList(triggers);
+	}
 
 	/**
 	 * Creates a new event with the given list of Actions.
@@ -34,6 +43,7 @@ public class Event extends GameData {
 	 */
 	public Event(ArrayList<Action> actions) {
 		this.actions = actions;
+		this.triggers = new ArrayList<Event.Trigger>();
 	}
 
 	/**
@@ -48,6 +58,8 @@ public class Event extends GameData {
 
 	public Event(String name) {
 		this.name = name;
+		this.actions = new ArrayList<Event.Action>();
+		this.triggers = new ArrayList<Event.Trigger>();
 	}
 
 	public Event() {
@@ -70,14 +82,25 @@ public class Event extends GameData {
 	 * explaining how to set the parameters for a given id.
 	 *
 	 */
-	public static class Action implements Serializable {
+	public static class Action extends GameData implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		public Parameters params;
 		public int id;
 		public int indent;
 		public String description;
-		public Action dependsOn;
+		//TODO: prevent circular references?
+		public Action dependsOn; 
+
+		@Override
+		public void addFields(FieldData fields) throws ParseDataException,
+				NumberFormatException {
+			params = fields.add(params);
+			id = fields.add(id);
+			indent = fields.add(indent);
+			description = fields.add(description);
+			dependsOn = fields.add(dependsOn);
+		}
 
 		/**
 		 * Creates a new Action with the given id and parameters. See the
@@ -108,20 +131,56 @@ public class Event extends GameData {
 	 * Represents a set of parameters for an action.
 	 *
 	 */
-	public static class Parameters implements Serializable {//, Iterable<Object> {
+	public static class Parameters implements Serializable, DataObject {//, Iterable<Object> {
 		private static final long serialVersionUID = 1L;
 
 		private ArrayList<Object> params = new ArrayList<Object>();
-		private Object tag;
 		
 		public int version = 0;
-		
-		public void setTag(Object tag) {
-			this.tag = tag;
-		}
-		
-		public Object getTag() {
-			return tag;
+
+		@Override
+		public void addFields(FieldData fields) throws ParseDataException,
+				NumberFormatException {
+			if (fields.writeMode()) {
+				fields.add(params.size());
+				for (Object o : params) {
+					fields.add(o == null ? null : o.getClass().toString());
+					if (o instanceof Integer) {
+						fields.add((Integer) o);
+					} else if (o instanceof Boolean) {
+						fields.add((Boolean) o);
+					} else if (o instanceof Double) {
+						fields.add((Double) o);
+					} else if (o instanceof Float) {
+						fields.add((Float) o);
+					} else if (o instanceof String) {
+						fields.add((String) o);
+					} else if (o instanceof DataObject) {
+						fields.add((DataObject) o);
+					} else {
+						throw new ParseDataException("Invalid object in Parameters: " + o.toString());
+					}
+				}
+			} else {
+				int length = fields.add(0);
+				for (int i = 0; i < length; i++) {
+					String clazz = fields.add((String) null);
+					if (clazz.equals(Integer.class.getName())) {
+						params.add(fields.add(0));
+					} else if (clazz.equals(Boolean.class.getName())) {
+						params.add(fields.add(false));
+					} else if (clazz.equals(Double.class.getName())) {
+						params.add(fields.add(0.0));
+					} else if (clazz.equals(Float.class.getName())) {
+						params.add(fields.add(0.0f));
+					} else if (clazz.equals(String.class.getName())) {
+						params.add(fields.add(""));
+					} else if (clazz.equals(DataObject.class.getName())) {
+						params.add(fields.add(null, clazz));
+					}
+				}
+			}
+			version = fields.add(version);
 		}
 		
 		public <T> List<T> getAllByClass(Class<T> c) {
@@ -130,15 +189,37 @@ public class Event extends GameData {
 			return list;
 		}
 		
+		//TODO: test!
 		private <T> void addAllByClass(Class<T> c, List<T> list) {
 			for (Object param : params) {
 				if (param instanceof Parameters) {
 					((Parameters) param).addAllByClass(c, list);
-				} else if (c.isInstance(param)) {
-					list.add(c.cast(param));
+				} else {
+					try {
+						@SuppressWarnings("unchecked")
+						T t = (T) param;
+						list.add(t);
+					} catch (Exception e) { }
 				}
 			}
 		}
+		
+//		protected <T> List<T> getAll(Condition condition, Class<T> clazz) {
+//			ArrayList<T> list = new ArrayList<T>();
+//			addAll(condition, list);
+//			return list;
+//		}
+//
+//		@SuppressWarnings("unchecked")
+//		private <T> void addAll(Condition condition, List<T> list) {
+//			for (Object param : params) {
+//				if (param instanceof Parameters) {
+//					((Parameters) param).addAll(condition, list);
+//				} else if (condition.meetsCondition(param)) {
+//					list.add((T) param);
+//				}
+//			}
+//		}
 		
 		public void set(int index, Object object) {
 			params.set(index, object);
@@ -308,7 +389,7 @@ public class Event extends GameData {
 				} else {
 					Object param = params.get(i);
 					if (param instanceof ICopyable) {
-						param = ((ICopyable) param).copy();
+						param = ((ICopyable<?>) param).copy();
 					}
 					o.addParam(param);
 				}
@@ -351,10 +432,10 @@ public class Event extends GameData {
 			public void dispose() {
 				if (toReuse.contains(this)) {
 					//If dispose it called twice
-					Debug.write("Double disposed iterator!!");
+					DataDebug.write("Double disposed iterator!!");
 				} else if (toReuse.size() >= MAX_REUSE) {
 					//Likely if dispose is not called
-					Debug.write("Max iterator reuse occurred");
+					DataDebug.write("Max iterator reuse occurred");
 				} else {
 					toReuse.add(this);
 				}
@@ -410,6 +491,14 @@ public class Event extends GameData {
 		public Parameters params;
 		public String description;
 		public transient Object gameData;
+
+		@Override
+		public void addFields(FieldData fields) throws ParseDataException,
+				NumberFormatException {
+			id = fields.add(id);
+			params = fields.add(params);
+			description = fields.add(description);
+		}
 		
 		public Trigger(int id, Parameters params) {
 			this.id = id;
@@ -453,284 +542,6 @@ public class Event extends GameData {
 			public void dispose() {
 				toReuse.add(this);
 			}
-		}
-	}
-
-	/**
-	 * Represents an Event trigger which is triggered by a switch
-	 * taking on a certain value.
-	 *
-	 */
-	@Deprecated
-	public static class SwitchTrigger extends Trigger {
-		private static final long serialVersionUID = 1L;
-
-		public Switch triggerSwitch;
-		public boolean value;
-
-		/**
-		 * Creates a SwitchTrigger, activated when the switch with
-		 * the given id is set to the given value.
-		 * @param switchId The id of the switch
-		 * @param value The value 
-		 */
-		public SwitchTrigger(int switchId, DataScope switchScope, 
-				boolean value) {
-			this.triggerSwitch = new Switch(switchId, switchScope);
-			this.value = value;
-		}
-
-		public SwitchTrigger() {
-			this(0, DataScope.Global, true);
-		}
-
-//		public boolean equals(SwitchTrigger o) {
-//			return o.triggerSwitch.equals(triggerSwitch) &&
-//			o.value == value;
-//		}
-	}
-
-	/**
-	 * Represents an Event trigger which is triggered by a variable
-	 * falling under a given condition, such as equalling a value
-	 * or exceeding it.
-	 *
-	 */
-	@Deprecated
-	public static class VariableTrigger extends Trigger {
-		private static final long serialVersionUID = 1L;
-
-		/**
-		 * Tests if the variable is equal to the value.
-		 */
-		public static final int TEST_EQUALS = 0;
-		/**
-		 * Tests if the variable is not equal to the value.
-		 */
-		public static final int TEST_NOT_EQUALS = 1;
-		/**
-		 * Tests if the variable is greater than the value.
-		 */
-		public static final int TEST_GT = 2;
-		/**
-		 * Tests if the variable is less than the value.
-		 */
-		public static final int TEST_LT = 3;
-		/**
-		 * Tests if the variable is greater than or equal to the value.
-		 */
-		public static final int TEST_GEQ = 4;
-		/**
-		 * Tests if the variable is less than or equal to the value.
-		 */
-		public static final int TEST_LEQ = 5;
-		/**
-		 * Tests if the variable is divisible by the value.
-		 */
-		public static final int TEST_DIVISIBLE = 6;
-
-		/**
-		 * Tests against another variable
-		 */
-		public static final int WITH_VARIABLE = 0;
-		/**
-		 * Tests against a literal value
-		 */
-		public static final int WITH_VALUE = 1;
-
-		public static final String[] OPERATORS = new String[] {
-			"equal to",
-			"not equal to",
-			"greater than",
-			"less than",
-			"greater than or equal to",
-			"less than or equal to",
-			"divisible by"
-		};
-
-		public Variable variable;
-		public int test;
-		public int with;
-		public int withValue;
-		public Variable withVariable;
-
-		public VariableTrigger(int variableId, DataScope variableScope, 
-				int test, int with) {
-			this.variable = new Variable(variableId, variableScope);
-			this.test = test;
-			this.with = with;
-			withValue = 0;
-			withVariable = new Variable();
-		}
-
-		public VariableTrigger() {
-			this(0, DataScope.Global, 0, 0);
-		}
-
-//		public boolean equals(VariableTrigger o) {
-//			return o.variable.equals(variable) &&
-//			o.test == test &&
-//			o.with == with &&
-//			o.withValue == withValue &&
-//			o.withVariableScope == withVariableScope;
-//		}
-	}
-
-	@Deprecated
-	public static class ActorOrObjectTrigger extends Trigger {
-		private static final long serialVersionUID = 1L;
-
-		public static final String[] ACTIONS = new String[] {
-			"collides with an actor",
-			"collides with the Hero",
-			"collides with an object",
-			"collides with a wall",
-			"is destroyed"
-		};
-
-		public static final int ACTION_COLLIDES_ACTOR = 0;
-		public static final int ACTION_COLLIDES_HERO = 1;
-		public static final int ACTION_COLLIDES_OBJECT = 2;
-		public static final int ACTION_COLLIDES_WALL = 3;
-		public static final int ACTION_DIES = 4;
-		
-		public static final int MODE_ACTOR_INSTANCE = 0;
-		public static final int MODE_ACTOR_CLASS = 1;
-		public static final int MODE_OBJECT_INSTANCE = 2;
-		public static final int MODE_OBJECT_CLASS= 3;
-
-		public int id;
-		public int action;
-		public int mode;
-
-		public ActorOrObjectTrigger(int mode, int id, int action) {
-			this.mode = mode;
-			this.id = id;
-			this.action = action;
-		}
-
-		public ActorOrObjectTrigger() {
-			this(0, 1, 0);
-		}
-		
-		public boolean isActorTrigger() {
-			return mode == MODE_ACTOR_CLASS || 
-			mode == MODE_ACTOR_INSTANCE;
-		}
-		
-		public boolean isObjectTrigger() {
-			return !isActorTrigger();
-		}
-
-		public boolean equals(ActorOrObjectTrigger o) {
-			return o.id == id &&
-			o.action == action &&
-			o.mode == mode;
-		}
-	}
-
-	@Deprecated
-	public static class RegionTrigger extends Trigger {
-		private static final long serialVersionUID = 2L;
-
-		public static final String[] MODES = new String[] {
-			"begins to enter",
-			"fully enters",
-			"begins to leave",
-			"fully leaves"
-		};
-
-		public static final int MODE_TOUCH = 0;
-		public static final int MODE_CONTAIN = 1;
-		public static final int MODE_LOSE_CONTAIN = 2;
-		public static final int MODE_LOSE_TOUCH = 3;
-		
-		public static final int WHO_ACTOR = 0;
-		public static final int WHO_OBJECT = 1;
-		public static final int WHO_HERO = 2;
-
-		public transient ArrayList<Contact> contacts;
-
-		public int left, right, top, bottom;
-		public int mode;
-		public int who;
-
-		public RegionTrigger(Rect rect, int mode, int who) {
-			this(rect.left, rect.top, rect.right, rect.bottom, mode, who);
-		}
-
-		public RegionTrigger(int left, int top, int right, int bottom, int mode, int who) {
-			this.left = left;
-			this.top = top;
-			this.right = right;
-			this.bottom = bottom;
-			this.who = who;
-			this.mode = mode;
-		}
-
-		public RegionTrigger() {
-			this(0, 0, 0, 0, 0, 0);
-		}
-
-		public boolean equals(RegionTrigger o) {
-			return o.left == left &&
-			o.top == top &&
-			o.right == right &&
-			o.bottom == bottom && 
-			o.mode == mode &&
-			o.who == who;
-		}
-
-		public static class Contact {
-
-			public final static int STATE_TOUCHING = 0;
-			public final static int STATE_CONTAINED = 1;
-			
-			public int state;
-			public Object object;
-			public int event;
-			public boolean checked = true;
-
-			public Contact(Object object, int state, int event) {
-				this.object = object;
-				this.state = state;
-				this.event = event;
-			}
-		}
-	}
-
-	@Deprecated
-	public static class UITrigger extends Trigger {
-		private static final long serialVersionUID = 1L;
-		
-		public static final int CONTROL_BUTTON = 0;
-		public static final int CONTROL_JOY = 1;
-		public static final int CONTROL_TOUCH = 2;
-		
-		public static final int CONDITION_PRESS = 0;
-		public static final int CONDITION_RELEASE = 1;
-		public static final int CONDITION_MOVE = 2;
-		
-		public int controlType;
-		public int index;
-		public int condition;
-		
-		public UITrigger() {
-			this(2, 0);
-		}
-		
-		public UITrigger(int controlType, int condition) {
-			this.controlType = controlType;
-			this.condition = condition;
-		}
-		
-		public transient boolean lastButtonDown, lasyJoyDown;
-		public transient float lastJoyX, lastJoyY;
-		
-		public boolean equals(UITrigger o) {
-			return controlType == o.controlType &&
-			index == o.index &&
-			condition == o.condition;
 		}
 	}
 }

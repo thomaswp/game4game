@@ -7,15 +7,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.eujeux.data.GameInfo;
-
-import edu.elon.honors.price.data.GameCache.GameDetails;
-import edu.elon.honors.price.data.GameCache.GameType;
-import edu.elon.honors.price.data.tutorial.Tutorial;
-import edu.elon.honors.price.game.Debug;
-
 import android.content.Context;
 import android.provider.Settings.Secure;
+
+import com.eujeux.data.GameInfo;
+
+import edu.elon.honors.price.data.tutorial.Tutorial;
+import edu.elon.honors.price.game.Debug;
 
 public class GameCache implements Serializable {
 	private static final long serialVersionUID = 2L;
@@ -104,7 +102,7 @@ public class GameCache implements Serializable {
 		game.ID = getNewGameID(context);
 		if (Data.saveData(filename, context, game)) {
 			GameDetails details = new GameDetails(name, filename, websiteInfo);
-			details.tutorial = game.tutorial;
+			details.tutorial = (Tutorial) game.tutorial;
 			getGamesList(type).add(details);
 			save(context);
 			return details;
@@ -122,7 +120,7 @@ public class GameCache implements Serializable {
 	public boolean updateGame(GameDetails details, PlatformGame game, 
 			GameInfo websiteInfo, Context context) {
 		if (Data.saveData(details.filename, context, game)) {
-			details.tutorial = game.tutorial;
+			details.tutorial = (Tutorial) game.tutorial;
 			return updateGame(details, websiteInfo, context);
 		}
 		return false;
@@ -174,6 +172,7 @@ public class GameCache implements Serializable {
 		
 		if (cache != null) return cache;
 		
+		// load old style of storage
 		Debug.write("create cache");
 		context.deleteFile(FILE_NAME);
 		
@@ -183,7 +182,7 @@ public class GameCache implements Serializable {
 			PlatformGame game = (PlatformGame)Data.loadData(file, context);
 			if (game != null) {
 				GameDetails details = new GameDetails(game.getName("Map"), file, 
-						game.websiteInfo);
+						null);
 				details.lastEdited = game.lastEdited;
 				cache.myGames.add(details);
 			}

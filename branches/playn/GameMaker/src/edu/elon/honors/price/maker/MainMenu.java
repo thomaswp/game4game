@@ -1,9 +1,7 @@
 package edu.elon.honors.price.maker;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,21 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import com.eujeux.data.GameInfo;
-import com.twp.platform.Platformer;
-
-import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.GameCache;
-import edu.elon.honors.price.data.PlatformGame;
-import edu.elon.honors.price.data.GameCache.GameDetails;
-import edu.elon.honors.price.data.GameCache.GameType;
-import edu.elon.honors.price.data.tutorial.Tutorial;
-import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.maker.share.WebLogin;
-import edu.elon.honors.price.maker.tutorial.Tutorial1;
-import edu.elon.honors.price.maker.tutorial.Tutorial2;
-import edu.elon.honors.price.maker.tutorial.Tutorial3;
-import edu.elon.honors.price.maker.tutorial.Tutorial4;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -34,27 +17,40 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.LiveFolders;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
-import android.widget.TabHost.TabContentFactory;
+import android.widget.TextView;
+
+import com.eujeux.data.GameInfo;
+import com.twp.platform.Platformer;
+
+import edu.elon.honors.price.data.Data;
+import edu.elon.honors.price.data.GameCache;
+import edu.elon.honors.price.data.GameCache.GameDetails;
+import edu.elon.honors.price.data.GameCache.GameType;
+import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.data.tutorial.Tutorial;
+import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.game.Formatter;
+import edu.elon.honors.price.game.Formatter.Impl;
+import edu.elon.honors.price.maker.share.WebLogin;
+import edu.elon.honors.price.maker.tutorial.Tutorial1;
+import edu.elon.honors.price.maker.tutorial.Tutorial2;
+import edu.elon.honors.price.maker.tutorial.Tutorial3;
+import edu.elon.honors.price.maker.tutorial.Tutorial4;
 
 @AutoAssign
 public class MainMenu extends Activity implements IViewContainer {
@@ -100,6 +96,13 @@ public class MainMenu extends Activity implements IViewContainer {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Formatter.impl = new Impl() {
+			@Override
+			public String format(String format, Object... args) {
+				return String.format(format, args);
+			}
+		};
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
@@ -381,8 +384,12 @@ public class MainMenu extends Activity implements IViewContainer {
 		if (selectedGame != null) {
 			Intent intent = new Intent(this, MapEditor.class);
 			PlatformGame game = Data.loadData(selectedGame.getFilename(), this);
-			if (game.tutorial != null && !game.tutorial.isUpToDate()) {
-				game.tutorial = game.tutorial.getResetCopy(this);
+			if (game == null) {
+				//TODO: error
+				return;
+			}
+			if (game.tutorial != null && !((Tutorial) game.tutorial).isUpToDate()) {
+				game.tutorial = ((Tutorial) game.tutorial).getResetCopy(this);
 			}
 			intent.putExtra("gameDetails", selectedGame);
 			intent.putExtra("game", game);

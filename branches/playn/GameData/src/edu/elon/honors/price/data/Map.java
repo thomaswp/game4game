@@ -2,10 +2,12 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+import edu.elon.honors.price.game.Formatter;
 import edu.elon.honors.price.physics.Vector;
 
 public class Map extends GameData {
@@ -21,18 +23,40 @@ public class Map extends GameData {
 	public String name;
 	public Event[] events;
 	public int tilesetId;
-	public MapLayer[] layers;
-	public ArrayList<ActorInstance> actors;
-	public ArrayList<ObjectInstance> objects;
-	public LinkedList<BehaviorInstance> behaviors;
 	public int rows, columns;
-	public Serializable editorData;
 	public int groundY;
 	public String groundImageName;
 	public String skyImageName;
-	public LinkedList<String> midGrounds = new LinkedList<String>();
-	
 	public Vector gravity = new Vector(0, 10);
+	
+	public final MapLayer[] layers;
+	public final ArrayList<ActorInstance> actors;
+	public final ArrayList<ObjectInstance> objects;
+	public final LinkedList<BehaviorInstance> behaviors;
+	public final LinkedList<String> midGrounds;
+
+	public transient Serializable editorData;
+	
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		name = fields.add(name);
+		events = fields.addArray(events);
+		tilesetId = fields.add(tilesetId);
+		rows = fields.add(rows);
+		columns = fields.add(columns);
+		groundY = fields.add(groundY);
+		groundImageName = fields.add(groundImageName);
+		skyImageName = fields.add(skyImageName);
+		gravity = fields.add(gravity);
+		
+		fields.addArray(layers); 
+		fields.addList(actors);
+		fields.addList(objects);
+		fields.addList(behaviors);
+		fields.addStringList(midGrounds);
+	}
 	
 	private int getNextActorId() {
 		return actors.size() == 0 ? HERO_ID : 
@@ -74,7 +98,7 @@ public class Map extends GameData {
 
 		events = new Event[3];
 		for (int i = 0; i < events.length; i++) 
-			events[i] = new Event(String.format("Event%d", i));
+			events[i] = new Event(Formatter.format("Event%d", i));
 
 		layers = new MapLayer[3];
 		MapLayer layer = new MapLayer("background", rows, columns, false, 0);
@@ -114,9 +138,9 @@ public class Map extends GameData {
 				layer.tiles = newTiles;
 			} else if (dRow < 0) {
 				if (anchorTop) {
-					layer.tiles = Arrays.copyOfRange(layer.tiles, -dRow, rows);
+					layer.tiles = Copy.copyOfRange(layer.tiles, -dRow, rows);
 				} else {
-					layer.tiles = Arrays.copyOfRange(layer.tiles, 0, rows + dRow);
+					layer.tiles = Copy.copyOfRange(layer.tiles, 0, rows + dRow);
 				}
 			}
 
@@ -139,9 +163,9 @@ public class Map extends GameData {
 					if (anchorLeft) {
 						int start = -dCol;
 						int end = tiles.length;
-						layer.tiles[i] = Arrays.copyOfRange(tiles, start, end);
+						layer.tiles[i] = Copy.copyOfRange(tiles, start, end);
 					} else {
-						layer.tiles[i] = Arrays.copyOf(tiles, columns + dCol);	
+						layer.tiles[i] = Copy.copyOf(tiles, columns + dCol);	
 					}
 				}
 			}
