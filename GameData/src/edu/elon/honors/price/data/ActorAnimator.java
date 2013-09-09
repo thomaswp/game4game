@@ -44,11 +44,11 @@ public abstract class ActorAnimator {
 	}
 	
 	public static ActorAnimator create(String imagePath) { 
-		if (imagePath.contains(Data.ACTOR_5)) {
+		if (imagePath.contains(Directories.ACTOR_5)) {
 			return new ActorAnimator5();
-		} else if (imagePath.contains(Data.ACTOR_7)) {
+		} else if (imagePath.contains(Directories.ACTOR_7)) {
 			return new ActorAnimator7();
-		} else if (imagePath.contains(Data.ACTOR_2)){
+		} else if (imagePath.contains(Directories.ACTOR_2)){
 			return new ActorAnimator2();
 		}
 		return null;

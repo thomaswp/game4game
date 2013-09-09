@@ -1,5 +1,8 @@
 package edu.elon.honors.price.data;
 
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+
 public class MapLayer extends GameData {
 	private static final long serialVersionUID = 2L;
 	
@@ -8,6 +11,17 @@ public class MapLayer extends GameData {
 	public int[][] tiles;
 	public boolean active;
 	public int defaultValue;
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		name = fields.add(name);
+		rows = fields.add(rows);
+		columns = fields.add(columns);
+		tiles = fields.add2DArray(tiles);
+		active = fields.add(active);
+		defaultValue = fields.add(defaultValue);
+	}
 	
 	public MapLayer(String name, int rows, int columns, boolean active,
 			int defaultValue) {
@@ -29,5 +43,4 @@ public class MapLayer extends GameData {
 			}
 		}
 	}
-
 }

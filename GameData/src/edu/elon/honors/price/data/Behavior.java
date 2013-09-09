@@ -2,14 +2,13 @@ package edu.elon.honors.price.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.elon.honors.price.data.Behavior.Parameter;
-import edu.elon.honors.price.data.Behavior.ParameterType;
 import edu.elon.honors.price.data.Event.Action;
 import edu.elon.honors.price.data.Event.Trigger;
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
 import edu.elon.honors.price.data.types.ActorClassPointer;
 import edu.elon.honors.price.data.types.DataScope;
 import edu.elon.honors.price.data.types.ObjectClassPointer;
@@ -61,14 +60,26 @@ public class Behavior extends GameData {
 	
 	public String name = "";
 	public BehaviorType type;
-	public LinkedList<Event> events = new LinkedList<Event>();
+	public final LinkedList<Event> events = new LinkedList<Event>();
 	
-	public LinkedList<Integer> variables = new LinkedList<Integer>();
-	public LinkedList<String> variableNames = new LinkedList<String>();
-	public LinkedList<Boolean> switches = new LinkedList<Boolean>();
-	public LinkedList<String> switchNames = new LinkedList<String>();
+	public final LinkedList<Integer> variables = new LinkedList<Integer>();
+	public final LinkedList<String> variableNames = new LinkedList<String>();
+	public final LinkedList<Boolean> switches = new LinkedList<Boolean>();
+	public final LinkedList<String> switchNames = new LinkedList<String>();
 	
 	public LinkedList<Parameter> parameters = new LinkedList<Parameter>();
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		name = fields.add(name);
+		type = BehaviorType.values()[fields.add(type.ordinal())];
+		fields.addList(events);
+		fields.addIntList(variables);
+		fields.addStringList(variableNames);
+		fields.addBooleanList(switches);
+		fields.addStringList(switchNames);
+	}
 	
 	public LinkedList<Parameter> getParamters(ParameterType type) {
 		LinkedList<Parameter> list = new LinkedList<Behavior.Parameter>();

@@ -11,22 +11,21 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import edu.elon.honors.price.game.Cache;
-import edu.elon.honors.price.game.Debug;
-import edu.elon.honors.price.game.Game;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Environment;
+import edu.elon.honors.price.game.Cache;
+import edu.elon.honors.price.game.Debug;
+import edu.elon.honors.price.game.Game;
 
 /**
  * A class for saving and loading persistent data as well as
@@ -35,25 +34,9 @@ import android.os.Environment;
  * @author Thomas Price
  *
  */
-public final class Data {
+public final class Data extends Directories {
 
 	public final static Uri CONTENT_URI = Uri.parse("content://edu.elon.honors.price.maker/");
-	public final static String SD_FOLDER = "Game Maker/";
-	public final static String GRAPHICS = "graphics";
-	public final static String ACTIONS_DIR = "actions";
-	public final static String TRIGGERS_DIR = "triggers";
-	public final static String EDITOR_DIR = "editor/";
-	public final static String ACTORS_DIR = GRAPHICS + "/actors/";
-	public final static String ACTOR_7 = "a7/";
-	public final static String ACTOR_5 = "a5/";
-	public final static String ACTOR_2 = "a2/";
-	//public final static String[] ACTOR_TYPES = new String[] {ACTOR_7, ACTOR_5, ACTOR_2};
-	public final static String[] ACTOR_TYPES = new String[] {ACTOR_5, ACTOR_2};
-	public final static String TILESETS_DIR = GRAPHICS + "/tilesets/";
-	public final static String OBJECTS_DIR = GRAPHICS + "/objects/";
-	public final static String BACKGROUNDS_DIR = GRAPHICS + "/backgrounds/";
-	public final static String FOREGROUNDS_DIR = GRAPHICS + "/foregrounds/";
-	public final static String MIDGROUNDS_DIR = GRAPHICS + "/midgrounds/";
 	private static Context defaultParent;
 
 	public static Context getDefaultParent() {

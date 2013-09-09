@@ -1,11 +1,14 @@
 package edu.elon.honors.price.data;
 
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+
 /**
  * Represents an Actor Class, defining characteristics
  * such as look, speed, jump height and behaviors.
  *
  */
-public class ActorClass extends MapClass implements Cloneable {
+public class ActorClass extends MapClass {
 	private static final long serialVersionUID = 1L;
 	
 	public final static float MAX_SPEED = 7f;
@@ -52,13 +55,34 @@ public class ActorClass extends MapClass implements Cloneable {
 	public int[] heroContactBehaviors = new int[4];
 	public boolean animated = true;
 	public boolean doubleJump = false;
-	
+
 	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		super.addFields(fields);
+		speed = fields.add(speed);
+		jumpVelocity = fields.add(jumpVelocity);
+		edgeBehavior = fields.add(edgeBehavior);
+		wallBehavior = fields.add(wallBehavior);
+		stunDuration = fields.add(stunDuration);
+		animated = fields.add(animated);
+		doubleJump = fields.add(doubleJump);
+		fields.addArray(actorContactBehaviors);
+		fields.addArray(heroContactBehaviors);
+	}
+	
 	public ActorClass clone() {
 		try {
-			ActorClass a = (ActorClass)super.clone();
-			a.actorContactBehaviors = actorContactBehaviors.clone();
-			a.heroContactBehaviors = heroContactBehaviors.clone();
+			ActorClass a = new ActorClass();
+			a.speed = speed;
+			a.jumpVelocity = jumpVelocity;
+			a.edgeBehavior = edgeBehavior;
+			a.wallBehavior = wallBehavior;
+			a.stunDuration = stunDuration;
+			a.actorContactBehaviors = Copy.copyOf(actorContactBehaviors, actorContactBehaviors.length);
+			a.heroContactBehaviors = Copy.copyOf(heroContactBehaviors, heroContactBehaviors.length);
+			a.animated = animated;
+			a.doubleJump = doubleJump;
 			return a;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -70,4 +94,5 @@ public class ActorClass extends MapClass implements Cloneable {
 	protected String getDefaultImageName() {
 		return "a2/zombie.png";
 	}
+
 }

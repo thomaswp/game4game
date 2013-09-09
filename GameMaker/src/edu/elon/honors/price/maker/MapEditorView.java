@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.DialogInterface.OnShowListener;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -19,33 +17,30 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.FloatMath;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.SeekBar;
 import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.ObjectClass;
 import edu.elon.honors.price.data.PlatformGame;
 import edu.elon.honors.price.data.Tileset;
+import edu.elon.honors.price.data.tutorial.Tutorial;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorAction;
 import edu.elon.honors.price.data.tutorial.Tutorial.EditorButton;
-import edu.elon.honors.price.data.tutorial.Tutorial.EditorButtonAction;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.input.Input;
 import edu.elon.honors.price.maker.MapActivityBase.MapView;
 import edu.elon.honors.price.maker.MapEditorLayer.Action;
 import edu.elon.honors.price.maker.MapEditorLayer.DrawMode;
-import edu.elon.honors.price.maker.MapEditor.ReturnResponse;
 import edu.elon.honors.price.maker.MapEditorTextureSelectorView.Poster;
 import edu.elon.honors.price.maker.ScrollingImageSelectorView.OnSelectionListener;
-import edu.elon.honors.price.maker.action.ActionChangeColor.TurnFlashingForData;
 
 public class MapEditorView extends MapView {
 
@@ -123,8 +118,8 @@ public class MapEditorView extends MapView {
 		super(context, game, savedInstanceState);
 		createDarkTiles();
 		
-		boolean goBack = game.tutorial != null && game.tutorial.hasPrevious();
-		TutorialUtils.setTutorial(game.tutorial, getContext());
+		boolean goBack = game.tutorial != null && ((Tutorial) game.tutorial).hasPrevious();
+		TutorialUtils.setTutorial((Tutorial) game.tutorial, getContext());
 		if (goBack) TutorialUtils.backOneMessage(context);
 
 		if (game.getSelectedMap().editorData != null) {

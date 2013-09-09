@@ -1,5 +1,8 @@
 package edu.elon.honors.price.data;
 
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+
 public class ObjectClass extends MapClass {
 	private static final long serialVersionUID = 1L;
 	
@@ -11,6 +14,18 @@ public class ObjectClass extends MapClass {
 	public boolean rotates = true;
 	public float restitution = 0.4f;
 	public boolean isPlatform;
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		super.addFields(fields);
+		density = fields.add(density);
+		friction = fields.add(friction);
+		moves = fields.add(moves);
+		rotates = fields.add(rotates);
+		restitution = fields.add(restitution);
+		isPlatform = fields.add(isPlatform);
+	}
 	
 	@Override
 	protected String getDefaultImageName() {

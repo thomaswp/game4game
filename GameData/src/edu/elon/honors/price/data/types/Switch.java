@@ -2,6 +2,7 @@ package edu.elon.honors.price.data.types;
 
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Formatter;
 
 public class Switch extends ScopedData<Switch> {
 	private static final long serialVersionUID = 1L;
@@ -17,7 +18,7 @@ public class Switch extends ScopedData<Switch> {
 	public String getName(PlatformGame game, Behavior behavior) {
 		if (scope == DataScope.Global) {
 			if (game != null) {
-				return String.format("%03d: %s", id, 
+				return Formatter.format("%03d: %s", id, 
 						game.switchNames[id]);
 			}
 		} else if (scope == DataScope.Local) {
@@ -34,7 +35,7 @@ public class Switch extends ScopedData<Switch> {
 	
 	@Override 
 	public String toString() {
-		return String.format("[S[%d,%d]", id, scope.toInt());
+		return Formatter.format("[S[%d,%d]", id, scope.toInt());
 	}
 
 	@Override

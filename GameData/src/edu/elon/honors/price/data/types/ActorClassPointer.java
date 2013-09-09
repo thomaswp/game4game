@@ -2,6 +2,7 @@ package edu.elon.honors.price.data.types;
 
 import edu.elon.honors.price.data.Behavior;
 import edu.elon.honors.price.data.PlatformGame;
+import edu.elon.honors.price.game.Formatter;
 
 public class ActorClassPointer extends ScopedData<ActorClassPointer> {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +36,6 @@ public class ActorClassPointer extends ScopedData<ActorClassPointer> {
 	
 	@Override
 	public String toString() {
-		return String.format("AC[%d,%d]", id, scope.toInt());
+		return Formatter.format("AC[%d,%d]", id, scope.toInt());
 	}
 }

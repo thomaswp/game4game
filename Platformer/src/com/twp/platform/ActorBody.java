@@ -2,24 +2,24 @@ package com.twp.platform;
 
 import java.util.List;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.view.VelocityTracker;
 import edu.elon.honors.price.data.ActorAnimator;
+import edu.elon.honors.price.data.ActorAnimator.Action;
+import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.BehaviorInstance;
 import edu.elon.honors.price.data.Data;
-import edu.elon.honors.price.data.ActorClass;
 import edu.elon.honors.price.data.MapClass;
-import edu.elon.honors.price.data.ActorAnimator.Action;
 import edu.elon.honors.price.data.MapClass.CollidesWith;
 import edu.elon.honors.price.game.Debug;
 import edu.elon.honors.price.graphics.Sprite;

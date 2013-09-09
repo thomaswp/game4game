@@ -3,7 +3,9 @@ package edu.elon.honors.price.data;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import android.graphics.Color;
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+import edu.elon.honors.price.game.Color;
 
 public class UILayout extends GameData {
 	private static final long serialVersionUID = 1L;
@@ -11,21 +13,39 @@ public class UILayout extends GameData {
 	public final static int DEFAULT_RAD = 65; 
 	public final static int DEFAULT_ALPHA = 150;
 	
-	public LinkedList<Button> buttons = new LinkedList<Button>();
-	public LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
+	public final LinkedList<Button> buttons = new LinkedList<Button>();
+	public final LinkedList<JoyStick> joysticks = new LinkedList<JoyStick>();
+	
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		fields.addList(buttons);
+		fields.addList(joysticks);
+	}
 	
 	public UILayout() {
 		buttons.add(new Button(-80, -80, DEFAULT_RAD, Color.argb(DEFAULT_ALPHA, 255, 0, 0), true));
 		joysticks.add(new JoyStick(80, -80, DEFAULT_RAD, Color.argb(DEFAULT_ALPHA, 0, 0, 255), true));
 	}
 	
-	public static abstract class CircleControl implements Serializable {
+	public static abstract class CircleControl extends GameData implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		public int x, y;
 		public int radius, color;
 		public boolean defaultAction;
 		public String name;
+		
+		@Override
+		public void addFields(FieldData fields) throws ParseDataException,
+				NumberFormatException {
+			x = fields.add(x);
+			y = fields.add(y);
+			radius = fields.add(radius);
+			color= fields.add(color);
+			defaultAction = fields.add(defaultAction);
+			name = fields.add(name);
+		}
 		
 		public CircleControl(int x, int y, int radius, int color,
 				boolean defaultAction) {

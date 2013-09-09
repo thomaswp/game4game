@@ -2,10 +2,21 @@ package edu.elon.honors.price.physics;
 
 import java.io.Serializable;
 
-public class Vector implements Serializable{
+import edu.elon.honors.price.data.GameData;
+import edu.elon.honors.price.data.field.FieldData;
+import edu.elon.honors.price.data.field.FieldData.ParseDataException;
+
+public class Vector extends GameData implements Serializable{
 	private static final long serialVersionUID = 2L;
 	
 	private float x, y;
+
+	@Override
+	public void addFields(FieldData fields) throws ParseDataException,
+			NumberFormatException {
+		x = fields.add(x);
+		y = fields.add(y);
+	}
 	
 	public float getX() {
 		return x;
