@@ -37,6 +37,11 @@
 			<locationURI>_android_GameLib_578f9913/src</locationURI>
 		</link>
 		<link>
+			<name>src_data</name>
+			<type>2</type>
+			<location>C:/Users/Thomas/Documents/Eclipse/GameMaker/platforge-player/data/src/main/java</location>
+		</link>
+		<link>
 			<name>src_shared</name>
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/Eujeux/src_shared</locationURI>
