@@ -67,11 +67,21 @@ public class ActionFactoryWriter extends Writer {
 		tab--;
 		writeLn("};");
 		
-		writeLn("public static ScriptableInstance getInstance(int id) {");
+		writeLn("public static ScriptableInstance getActionInstance(int id) {");
 		tab++;
 		for (ScriptableWriter action : actions) {
 			writeLn("if (id == %s.ID) return new %s();", 
 					action.name, action.name);
+		}
+		writeLn("return null;");
+		tab--;
+		writeLn("}");
+		
+		writeLn("public static ActionInterpreter<?> getInterpreterInstance(int id) {");
+		tab++;
+		for (ScriptableWriter action : actions) {
+			writeLn("if (id == %s.ID) return new %s();", 
+					action.name, action.name.replaceFirst("Action", "Interpreter"));
 		}
 		writeLn("return null;");
 		tab--;
@@ -89,21 +99,21 @@ public class ActionFactoryWriter extends Writer {
 		tab--;
 		writeLn("}");
 		
-		writeLn("public static java.util.LinkedList<Class<?>> getInterpreters() {");
-		tab++;
-		writeLn("java.util.LinkedList<Class<?>> classes = " +
-				"new java.util.LinkedList<Class<?>>();");
-		for (ScriptableWriter action : actions) {
-			writeLn("try {");
-			tab++;
-			writeLn("classes.add(Class.forName(\"%s.%s\"));", ScriptableWriter.PACKAGE, 
-					action.name.replaceFirst("Action", "Interpreter"));
-			tab--;
-			writeLn("} catch (Exception e) { }");
-		}
-		writeLn("return classes;");
-		tab--;
-		writeLn("}");
+//		writeLn("public static java.util.LinkedList<Class<?>> getInterpreters() {");
+//		tab++;
+//		writeLn("java.util.LinkedList<Class<?>> classes = " +
+//				"new java.util.LinkedList<Class<?>>();");
+//		for (ScriptableWriter action : actions) {
+//			writeLn("try {");
+//			tab++;
+//			writeLn("classes.add(Class.forName(\"%s.%s\"));", ScriptableWriter.PACKAGE, 
+//					action.name.replaceFirst("Action", "Interpreter"));
+//			tab--;
+//			writeLn("} catch (Exception e) { }");
+//		}
+//		writeLn("return classes;");
+//		tab--;
+//		writeLn("}");
 		
 		tab--;
 		writeLn("}");

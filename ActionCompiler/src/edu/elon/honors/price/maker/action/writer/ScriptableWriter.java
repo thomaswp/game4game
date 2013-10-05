@@ -7,17 +7,16 @@ import org.xml.sax.Attributes;
 public class ScriptableWriter extends ActionFragmentWriter {
 	
 	protected final static String[] IMPORTS = new String[] {
-			"edu.elon.honors.price.maker.action.*",
 			"edu.elon.honors.price.data.*",
 			"edu.elon.honors.price.data.types.*",
 			"edu.elon.honors.price.data.Event.Parameters.Iterator",
 			"edu.elon.honors.price.data.Event.Parameters",
-			"com.twp.platform.*",
 			"edu.elon.honors.price.physics.*",
-			"edu.elon.honors.price.input.*"
+			"com.twp.core.input.*",
+			"com.twp.core.platform.*",
 	};
 	
-	protected final static String PACKAGE = "edu.elon.honors.price.maker.action";
+	protected final static String PACKAGE = "com.twp.core.action";
 	
 	public String fileName;
 	protected String readableName;

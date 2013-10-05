@@ -109,6 +109,7 @@ public abstract class Writer {
 		writeLn("");
 	}
 	
+	@SuppressWarnings("unused")
 	protected void writeLn(String format, Object... args) {
 		String text = format;
 		if (args.length > 0) {
