@@ -1,0 +1,17 @@
+<action id="11" name="Debug Message" category="Debug">
+
+	<text text="Show" />
+	
+	<radio name="show">
+		<choice text="the message">
+			<string length="100" />
+		</choice>
+		<choice text="the switch">
+			<switch />
+		</choice>
+		<choice text="the variable">
+			<variable />
+		</choice>
+	</radio>
+
+</action>

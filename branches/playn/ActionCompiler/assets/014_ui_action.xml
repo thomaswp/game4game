@@ -1,0 +1,13 @@
+<action id="14" name="UI Action" category="UI">
+
+	<text text="For" />
+	<ui />
+	<text text="set its" />
+	<radio name="setIts">
+		<choice text="visibility" />
+		<choice text="default behavior" />
+	</radio>
+	<text text="to" />
+	<boolean name="to" />
+
+</action>
