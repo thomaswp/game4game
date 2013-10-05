@@ -1,0 +1,8 @@
+<action id="13" name="Change Gravity" category="Physics">
+
+	<text text="Set gravity in the direction of" />
+	<vector />
+	<text text="with the magnitude" />
+	<number name="magnitude" />
+
+</action>
