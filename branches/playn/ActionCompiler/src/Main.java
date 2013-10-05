@@ -24,7 +24,7 @@ public class Main {
 			args = new String[] {
 				new File("").getAbsolutePath() + "\\..\\GameMaker\\assets\\actions",
 				new File("").getAbsolutePath() + "\\..\\GameMaker\\assets\\triggers",
-				new File("").getAbsolutePath() + "\\..\\Platformer\\pregen\\edu\\elon\\honors\\price\\maker\\action"
+				new File("").getAbsolutePath() + "\\..\\platforge-player\\core\\pregen\\com\\twp\\core\\action"
 			};
 		}
 
