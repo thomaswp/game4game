@@ -1,0 +1,1 @@
+Platforge is a game making app for Android. It allows users to make, play and share games on their phones and tablets. PlatForge is current in its Beta phase, and the app can be found at https://play.google.com/store/apps/details?id=edu.elon.honors.price.maker.
